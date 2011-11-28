@@ -88,9 +88,8 @@ RED_COLOR=$'%{\033[31m%}'
 RESET_DISPLAY=$'%{\033[0m%}'
 
 #define prompt
-PROMPT='[>%?] [%n'$RED_COLOR'@'$RESET_DISPLAY'%M]
-[&%j] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
-RPROMPT=''
+PROMPT='['$RED_COLOR'%j'$RESET_DISPLAY'|%?] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
+RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
 #PROMPT='[%j] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
 #RPROMPT='[%?] [%n'$RED_COLOR'@'$RESET_DISPLAY'%m]'
 
