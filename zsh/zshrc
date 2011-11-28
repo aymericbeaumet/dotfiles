@@ -88,8 +88,11 @@ RED_COLOR=$'%{\033[31m%}'
 RESET_DISPLAY=$'%{\033[0m%}'
 
 #define prompt
-PROMPT='[%j] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
-RPROMPT='[%?] [%n'$RED_COLOR'@'$RESET_DISPLAY'%m]'
+PROMPT='[>%?] [%n'$RED_COLOR'@'$RESET_DISPLAY'%M]
+[&%j] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
+RPROMPT=''
+#PROMPT='[%j] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
+#RPROMPT='[%?] [%n'$RED_COLOR'@'$RESET_DISPLAY'%m]'
 
 ###############################################################################
 # common env var							      #
