@@ -8,46 +8,41 @@ set shell=zsh
 
 set showcmd         " show command
 set showmode        " show current mode
+set timeoutlen=200  " (default 1000) time to wait when a part of a maped sequence is typped
 set laststatus=2    " set the status line always on
 
 syn on              " syntax coloring
-set nohlsearch      " do not highlight last search matches
+set hlsearch        " do not highlight last search matches
 set incsearch       " show matches as soon as possible
 set wrapscan        "
 set autoread        " watch for file changes by other programs
 set ignorecase      " ignore case when searching
-set smartcase       " ... except if there is one uppercase character
+set smartcase       "    `-> except if there is one uppercase character
 set showmatch       " show the matching bracket when inserting
 set matchtime=3     " tenths of second to show the matching bracket
 set nowrap          " do not split the line if it is too long
 set cpoptions=ces$  " make the 'cw' and like commands put a $ at the end
 set scrolloff=8     " keep at least 8 lines after the cusor when scrolling
 set wildmenu        " better command line completion menu
-set wildignore+=*.o,*.a,*.git
+set wildignore+=*.o,*.a,*.git,*.sw*
 
 set tags=tags;/     " look in the parent directories for the ctags file
 
 set autowrite       " save before :next and :make
 
-" H/l -> prev/next tab
+set mouse=a	    " activate mouse (usefull some time...)
+
+" H/L -> prev/next tab
 :map <S-h> gT
 :map <S-l> gt
 
-" ,s/S : split-open corresponding .h/.c
-nmap ,s :vsp %<.h<CR>
-nmap ,S :vsp %<.c<CR>
-
-" ,c : close tab
-nmap ,c	:tabclose<CR>
-
-command Z execute "r!zlock -immed &"
+set shiftwidth=2    " n spaces when using <Tab>
+set expandtab       " insert `shiftwidth` spaces when using <Tab>
 
 let ext = expand("%:e")
-if (ext == "h" || ext == "c" || ext == "hpp" || ext == "cpp")
+if (ext == "h" || ext == "c")
   set cindent         " automatic C indenting
   set softtabstop=2   " <BS> will delete n spaces
-  set shiftwidth=2    " n spaces when using <Tab>
-  set expandtab       " insert `shiftwidth` spaces when using <Tab>
   set comments=sr:/*,mb:**,ex:*/ " it seems it doesn't work when
   highlight OverLength ctermbg=red ctermfg=white guibg=#592929
   match OverLength /\%81v.\+/ "highlight 80+col lines
@@ -57,26 +52,12 @@ endif
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "
 " Plugin vim pour les headers Epitech | Nathan Appere
 "    > Mise a jour de la 1ere ligne et de l'update a la sauvegarde
-"    > HeaderF10 remet integralement a jour le header
 "    > Genere les .h correspondants au .c
+"
+"
 
 if exists("loaded_epitech")
   finish
@@ -100,13 +81,8 @@ endfunction
 
 autocmd BufWritePre * :call RemoveST()
 
+autocmd BufWritePre,FileWritePre	*	call HeaderUpdate()
 
-
-autocmd BufNewFile			*	call HeaderCreate(1)
-"autocmd BufWritePre,FileWritePre	*	call HeaderUpdate()
-
-nnoremap <F9>	:call InsertPrototypes()<cr>
-nnoremap <F10>	:call HeaderF10()<cr>
 
 "
 " Format a la norme de l'ecole (/usr/local/share/emacs/site-lisp/std_comment.el)
