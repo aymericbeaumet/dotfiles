@@ -50,6 +50,15 @@ else
   set autoindent
 endif
 
+" :W -> :w
+cnoreabbrev W w
+" :Q -> :q
+cnoreabbrev Q q
+" :Wq -> :wq
+cnoreabbrev Wq wq
+" :WQ -> :wq
+cnoreabbrev WQ wq
+
 
 
 "
