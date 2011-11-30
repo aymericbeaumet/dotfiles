@@ -7,6 +7,8 @@ rm -f ~/.gitconfig
 if which git &> /dev/null ; then
   ln -sf `pwd`/git/gitconfig ~/.gitconfig || (echo '-> git ko!' && exit 1)
   echo '-> git ok!'
+else
+  echo '-> git not found!'
 fi
 
 ##
@@ -18,6 +20,8 @@ if which tmux &> /dev/null ; then
   ln -sf `pwd`/tmux/tmux ~/.tmux || (echo '-> tmux ko!' && exit 1)
   ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf || (echo '-> tmux ko!' && exit 1)
   echo '-> tmux ok!'
+else
+  echo '-> tmux not found!'
 fi
 
 ##
@@ -29,6 +33,8 @@ if which vi &> /dev/null || which vim &> /dev/null ; then
   ln -sf `pwd`/vim/vim ~/.vim || (echo '-> vi(m) ko!' && exit 1)
   ln -sf `pwd`/vim/vimrc ~/.vimrc || (echo '-> vi(m) ko!' && exit 1)
   echo '-> vi(m) ok!'
+else
+  echo '-> vi(m) not found!'
 fi
 
 ##
@@ -39,6 +45,8 @@ if which zsh &> /dev/null ; then
   echo '(Change your login shell to zsh)' && chsh -s `which zsh` || (echo '-> zsh ko!' && exit 1)
   ln -sf `pwd`/zsh/zshrc ~/.zshrc || (echo '-> zsh ko!' && exit 1)
   echo '-> zsh ok!'
+else
+  echo '-> zsh not found!'
 fi
 
 exit 0
