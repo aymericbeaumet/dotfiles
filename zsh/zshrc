@@ -1,6 +1,6 @@
-                          ############################
-                          #    aymeric@beaumet.fr    #
-                          ############################
+############################
+#    aymeric@beaumet.fr    #
+############################
 
 ###############################################################################
 ###############################################################################
@@ -13,20 +13,20 @@
 ###############################################################################
 func cmd_exists()
 {
-	if [[ $# -eq 0 ]] || ! which $1 &> /dev/null ; then
-		return 1
-	fi
-	return 0
+  if [[ $# -eq 0 ]] || ! which $1 &> /dev/null ; then
+    return 1
+  fi
+  return 0
 }
 
 ###############################################################################
 # function uname return 'unknown', only defined if uname(1) is not in $PATH   #
 ###############################################################################
 if ! cmd_exists uname ; then
-	func uname()
-	{
-		echo 'unknown'
-	}
+  func uname()
+  {
+    echo 'unknown'
+  }
 fi
 
 ###############################################################################
@@ -91,48 +91,48 @@ export TERM='xterm-256color'
 
 export PATH=$PATH':/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/local/java/bin'
 export EDITOR=$(which vim 2> /dev/null \
-	|| which vi 2> /dev/null \
-	|| which emacs 2> /dev/null \
-	|| which nano 2> /dev/null \
-	|| echo $EDITOR)
+  || which vi 2> /dev/null \
+  || which emacs 2> /dev/null \
+  || which nano 2> /dev/null \
+  || echo $EDITOR)
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export VIEWER=$(which eog 2> /dev/null \
-	|| echo $VIEWER)
+  || echo $VIEWER)
 export PAGER=$(which less 2> /dev/null \
-	|| which more 2> /dev/null \
-	|| which cat 2> /dev/null \
-	|| echo $PAGER)
+  || which more 2> /dev/null \
+  || which cat 2> /dev/null \
+  || echo $PAGER)
 export SHELL=$(which zsh 2> /dev/null \
-	|| echo $SHELL)
+  || echo $SHELL)
 
 ###############################################################################
 # aliases							              #
 ###############################################################################
 if cmd_exists rm ; then
-	alias clean='rm -f **/.*.sw[a|o|p] **/*~'
-	if cmd_exists find ; then
-		alias clean='find . -type f -and \( -name ".*.sw[a|o|p]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
-	fi
+  alias clean='rm -f **/.*.sw[a|o|p] **/*~'
+  if cmd_exists find ; then
+    alias clean='find . -type f -and \( -name ".*.sw[a|o|p]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
+  fi
 fi
 
 if cmd_exists ls ; then
-	if [[ $UNAME_S == 'Linux' ]] ; then
-		alias ls='ls --color=auto'
-	elif [[ $UNAME_S == 'FreeBSD' || $UNAME_S == 'Darwin' ]] ; then
-		alias ls='ls -G'
-	else
-		unalias ls &> /dev/null
-	fi
-	alias ll='ls -hl'
-	alias l='ll'
-	alias la='ll -A'	#list [.]* files (but not . and ..)
+  if [[ $UNAME_S == 'Linux' ]] ; then
+    alias ls='ls --color=auto'
+  elif [[ $UNAME_S == 'FreeBSD' || $UNAME_S == 'Darwin' ]] ; then
+    alias ls='ls -G'
+  else
+    unalias ls &> /dev/null
+  fi
+  alias ll='ls -hl'
+  alias l='ll'
+  alias la='ll -A'	#list [.]* files (but not . and ..)
 fi
 
 if cmd_exists vim ; then
-	unalias vim &> /dev/null
-	alias vi='vim'
-	alias v='vim'
+  unalias vim &> /dev/null
+  alias vi='vim'
+  alias v='vim'
 fi
 
 #bind some extension to $EDITOR
@@ -194,6 +194,6 @@ bindkey '^[[3~'		delete-char			#DELETE
 ###############################################################################
 # tmux									      #
 ###############################################################################
-if which tmux &> /dev/null && [[ -r ~/.tmux/zsh.sh ]] ; then
-	source ~/.tmux/zsh.sh
+if cmd_exists tmux  && [[ -r ~/.tmux/zsh.sh ]] ; then
+  source ~/.tmux/zsh.sh
 fi
