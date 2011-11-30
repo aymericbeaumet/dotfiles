@@ -147,6 +147,8 @@ if cmd_exists vim ; then
 	alias v='vim'
 fi
 
+alias tmux='tmux attach || tmux'
+
 #bind some extension to $EDITOR
 alias -s c=$EDITOR
 alias -s h=$EDITOR
