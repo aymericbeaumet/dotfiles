@@ -3,9 +3,9 @@
 ##
 #git
 ##
-rm -f ~/.gitconfig
 if which git &> /dev/null ; then
-  ln -sf `pwd`/git/gitconfig ~/.gitconfig || (echo '-> git ko!' && exit 1)
+  rm -f ~/.gitconfig
+  ln -sf `pwd`/git/gitconfig ~/.gitconfig || (echo '-> git ko!' && break)
   echo '-> git ok!'
 else
   echo '-> git not found!'
@@ -14,11 +14,11 @@ fi
 ##
 #tmux
 ##
-rm -f ~/.tmux
-rm -f ~/.tmux.conf
 if which tmux &> /dev/null ; then
-  ln -sf `pwd`/tmux/tmux ~/.tmux || (echo '-> tmux ko!' && exit 1)
-  ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf || (echo '-> tmux ko!' && exit 1)
+  rm -f ~/.tmux
+  ln -sf `pwd`/tmux/tmux ~/.tmux || (echo '-> tmux ko!' && break)
+  rm -f ~/.tmux.conf
+  ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf || (echo '-> tmux ko!' && break)
   echo '-> tmux ok!'
 else
   echo '-> tmux not found!'
@@ -27,11 +27,11 @@ fi
 ##
 #vim
 ##
-rm -f ~/.vim
-rm -f ~/.vimrc
 if which vi &> /dev/null || which vim &> /dev/null ; then
-  ln -sf `pwd`/vim/vim ~/.vim || (echo '-> vi(m) ko!' && exit 1)
-  ln -sf `pwd`/vim/vimrc ~/.vimrc || (echo '-> vi(m) ko!' && exit 1)
+  rm -f ~/.vim
+  ln -sf `pwd`/vim/vim ~/.vim || (echo '-> vi(m) ko!' && break)
+  rm -f ~/.vimrc
+  ln -sf `pwd`/vim/vimrc ~/.vimrc || (echo '-> vi(m) ko!' && break)
   echo '-> vi(m) ok!'
 else
   echo '-> vi(m) not found!'
@@ -40,13 +40,11 @@ fi
 ##
 #zsh
 ##
-rm -f ~/.zshrc
 if which zsh &> /dev/null ; then
-  echo '(Change your login shell to zsh)' && chsh -s `which zsh` || (echo '-> zsh ko!' && exit 1)
-  ln -sf `pwd`/zsh/zshrc ~/.zshrc || (echo '-> zsh ko!' && exit 1)
+  echo '(Change your login shell to zsh)' && chsh -s `which zsh` || (echo '-> zsh ko!' && break)
+  rm -f ~/.zshrc
+  ln -sf `pwd`/zsh/zshrc ~/.zshrc || (echo '-> zsh ko!' && break)
   echo '-> zsh ok!'
 else
   echo '-> zsh not found!'
 fi
-
-exit 0
