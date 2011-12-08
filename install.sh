@@ -4,8 +4,8 @@
 #git
 ##
 if which git &> /dev/null ; then
-  rm -f ~/.gitconfig
-  ln -sf `pwd`/git/gitconfig ~/.gitconfig || (echo '-> git ko!' && break)
+  #rm -f ~/.gitconfig
+  #ln -sf `pwd`/git/gitconfig ~/.gitconfig || (echo '-> git ko!' && break)
   echo '-> git ok!'
 else
   echo '-> git not found!'
