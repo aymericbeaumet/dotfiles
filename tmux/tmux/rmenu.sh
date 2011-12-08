@@ -1,6 +1,11 @@
 #!/bin/zsh
 
-uptime_day=$(uptime | sed 's#.\+ up \([0-9]\+\) day.\+#\1d#')
+if `uptime` | grep day ; then
+  uptime_day=$(uptime | sed 's#.\+ up \([0-9]\+\) day.\+#\1d#')
+else
+  uptime_day=0
+fi
+
 date=$(date '+%d.%m.%Y %H:%M')
 
 echo "[$uptime_day] [$date]"
