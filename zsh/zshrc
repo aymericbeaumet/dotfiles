@@ -180,7 +180,7 @@ cmd_exists tail && alias -g T=' | tail'
 ###############################################################################
 # key binding								      #
 ###############################################################################
-bindkey -e	#Emacs binds
+bindkey -e
 
 bindkey '^[OH'		beginning-of-line		#HOME
 bindkey '^[OF'		end-of-line			#END
@@ -194,6 +194,4 @@ bindkey '^[[3~'		delete-char			#DELETE
 ###############################################################################
 # tmux									      #
 ###############################################################################
-if cmd_exists tmux  && [[ -r ~/.tmux/zsh.sh ]] ; then
-  source ~/.tmux/zsh.sh
-fi
+alias tmux='(pgrep tmux && tmux attach) || tmux'
