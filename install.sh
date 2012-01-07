@@ -50,7 +50,7 @@ else
 fi
 
 ##
-#zsh
+#fluxbox
 ##
 if which fluxbox &> /dev/null ; then
   rm -rf ~/.fluxbox
@@ -59,3 +59,12 @@ if which fluxbox &> /dev/null ; then
 else
   echo '-> fluxbox not found!'
 fi
+
+##
+#anonymous pro font
+##
+if ! [ -d ~/.fonts ] ; then
+  mkdir ~/.fonts
+fi
+cp -r ./anonymous_pro/*.ttf ~/.fonts/
+echo '-> anonymous pro font ok!'
