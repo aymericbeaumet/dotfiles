@@ -1,0 +1,18 @@
+cr
+ibsetxkbmap fr
+bmap us
+libreoffice
+r
+bmap us
+setxkbmap fr
+libreoffice
+r
+bmap us
+setxkbmap us
+fr
+
+libreoffice
+r
+bmap us
+firefox
+halt

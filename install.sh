@@ -48,3 +48,14 @@ if which zsh &> /dev/null ; then
 else
   echo '-> zsh not found!'
 fi
+
+##
+#zsh
+##
+if which fluxbox &> /dev/null ; then
+  rm -rf ~/.fluxbox
+  ln -sf `pwd`/fluxbox ~/.fluxbox || (echo '-> fluxbox ko!' ; break)
+  echo '-> fluxbox ok!'
+else
+  echo '-> fluxbox not found!'
+fi
