@@ -1,42 +1,42 @@
+" colors
+set t_Co=256
 colorscheme ir_black
+syn on              " syntax coloring
+syntax on
 
 filetype on        " enable file type detection
 filetype plugin on
 filetype indent on
 
 set shell=zsh
-
 set showcmd         " show command
 set showmode        " show current mode
 set timeoutlen=200  " (default 1000) time to wait when a part of a maped sequence is typped
 set laststatus=2    " set the status line always on
-
-syn on              " syntax coloring
 set hlsearch        " do not highlight last search matches
-set incsearch       " show matches as soon as possible
+set incsearch       " show matches as soon as posseble
 set wrapscan        "
 set autoread        " watch for file changes by other programs
 set ignorecase      " ignore case when searching
 set smartcase       "    `-> except if there is one uppercase character
 set showmatch       " show the matching bracket when inserting
 set matchtime=3     " tenths of second to show the matching bracket
-set nowrap          " do not split the line if it is too long
+set wrap            " split the line if it is too long
 set cpoptions=ces$  " make the 'cw' and like commands put a $ at the end
 set scrolloff=8     " keep at least 8 lines after the cusor when scrolling
 set wildmenu        " better command line completion menu
 set wildignore+=*.o,*.a,*.git,*.sw*
-
-set tags=tags;/     " look in the parent directories for the ctags file
-
+set mouse=a
+set tags=./tags;../tags     " look in the parent directories for the ctags file
 set autowrite       " save before :next and :make
+set shiftwidth=2    " n spaces when using <Tab>
+set expandtab       " insert `shiftwidth` spaces when using <Tab>
 
 " H/L -> prev/next tab
 :map <S-h> gT
 :map <S-l> gt
 
-set shiftwidth=2    " n spaces when using <Tab>
-set expandtab       " insert `shiftwidth` spaces when using <Tab>
-
+" indentation
 let ext = expand("%:e")
 if (ext == "h" || ext == "c")
   set cindent         " automatic C indenting
@@ -48,11 +48,13 @@ else
   set autoindent
 endif
 
-" :W -> :w
-cnoreabbrev W w
-" :Q -> :q
+" typing error...
 cnoreabbrev Q q
-" :Wq -> :wq
-cnoreabbrev Wq wq
-" :WQ -> :wq
+cnoreabbrev W w
 cnoreabbrev WQ wq
+cnoreabbrev Wq wq
+cnoreabbrev WQA wqa
+cnoreabbrev WQa wqa
+cnoreabbrev Wqa wqa
+cnoreabbrev QA qa
+cnoreabbrev Qa qa
