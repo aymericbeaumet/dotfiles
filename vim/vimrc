@@ -32,9 +32,13 @@ set autowrite       " save before :next and :make
 set shiftwidth=2    " n spaces when using <Tab>
 set expandtab       " insert `shiftwidth` spaces when using <Tab>
 
-" H/L -> prev/next tab
-:map <S-h> gT
-:map <S-l> gt
+map <S-h> gT
+map <S-l> gt
+
+map <C-h> <C-W>h
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-l> <C-W>l
 
 " indentation
 let ext = expand("%:e")
