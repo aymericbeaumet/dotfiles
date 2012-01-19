@@ -1,64 +1,66 @@
-" colors
-set t_Co=256
-colorscheme ir_black
-syn on              " syntax coloring
-syntax on
+" Colors {
+set t_Co=256            " enable 256 colors
+colorscheme wombat256	" vim theme
+syntax on		" syntax coloring
+" }
 
-filetype on        " enable file type detection
+" FileType Detection {
+filetype on
 filetype plugin on
 filetype indent on
+" }
 
-set shell=zsh
-set showcmd         " show command
-set showmode        " show current mode
-set timeoutlen=200  " (default 1000) time to wait when a part of a maped sequence is typped
-set laststatus=2    " set the status line always on
-set hlsearch        " do not highlight last search matches
-set incsearch       " show matches as soon as posseble
-set wrapscan        "
-set autoread        " watch for file changes by other programs
-set ignorecase      " ignore case when searching
-set smartcase       "    `-> except if there is one uppercase character
-set showmatch       " show the matching bracket when inserting
-set matchtime=3     " tenths of second to show the matching bracket
-set wrap            " split the line if it is too long
-set cpoptions=ces$  " make the 'cw' and like commands put a $ at the end
-set scrolloff=8     " keep at least 8 lines after the cusor when scrolling
-set wildmenu        " better command line completion menu
-set wildignore+=*.o,*.a,*.git,*.sw*
-set mouse=a
-set tags=./tags;../tags     " look in the parent directories for the ctags file
-set autowrite       " save before :next and :make
-set shiftwidth=2    " n spaces when using <Tab>
-set expandtab       " insert `shiftwidth` spaces when using <Tab>
+" Options {
+set shell=zsh           " set shell for :sh
+set expandtab           " insert `shiftwidth` spaces when using <Tab>
+set shiftwidth=2        " n spaces when using <Tab>
+set ignorecase          " ignore case when searching
+set smartcase           "    `-> except if there is one uppercase character
+set wildmenu            " better command line completion menu
+set wildignore+=*.o,*.a,*.git,*.sw*,*~  " ignore those files in completion
+set mouse=a		" enable mouse
+set showcmd             " show (partial) command in the last line of the screen
+set showmode            " show current mode in status bar
+set showmatch           " show the matching bracket when inserting
+set matchtime=3         " tenths of second to show the matching bracket
+set tags=./tags;../tags " look in the parent directories for the ctags file
+set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
+set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
+set wrap                " split the line if it is too long
+set autoread            " watch for file changes by other programs
+set incsearch           " show matches as soon as posseble
+set nohlsearch          " do not highlight last search matches
+set laststatus=2        " set the status line always on
+set timeoutlen=200      " (default 1000) time to wait when a part of a maped sequence is typped
+set wrapscan            " searches wrap around the end of the file
+set number              " show line number
+" }
 
-map <S-h> gT
-map <S-l> gt
+" Binds {
+map <S-h> gT            " left tab
+map <S-l> gt            " right tab
+" }
 
-map <C-h> <C-W>h
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-l> <C-W>l
-
-" indentation
+" Indentation {
 let ext = expand("%:e")
 if (ext == "h" || ext == "c")
   set cindent         " automatic C indenting
   set softtabstop=2   " <BS> will delete n spaces
-  set comments=sr:/*,mb:**,ex:*/ " it seems it doesn't work when
   highlight OverLength ctermbg=red ctermfg=white guibg=#592929
   match OverLength /\%81v.\+/ "highlight 80+col lines
 else
   set autoindent
 endif
+" }
 
-" typing error...
+" Typing Errors {
 cnoreabbrev Q q
 cnoreabbrev W w
 cnoreabbrev WQ wq
 cnoreabbrev Wq wq
+cnoreabbrev QA qa
+cnoreabbrev Qa qa
 cnoreabbrev WQA wqa
 cnoreabbrev WQa wqa
 cnoreabbrev Wqa wqa
-cnoreabbrev QA qa
-cnoreabbrev Qa qa
+" }
