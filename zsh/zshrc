@@ -87,7 +87,7 @@ RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
 ###############################################################################
 # common env var							      #
 ###############################################################################
-if [ -r /usr/share/terminfo/x/xterm-256color ] ; then
+if [ -r `locate xterm-256color | head -1` ] ; then
   export TERM='xterm-256color'
 else
   export TERM='xterm'
