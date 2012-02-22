@@ -3,68 +3,53 @@
 ##
 #git
 ##
-if which git &> /dev/null ; then
+if which git &>/dev/null ; then
   rm -f ~/.gitconfig
-  ln -sf `pwd`/git/gitconfig ~/.gitconfig || (echo '-> git ko!' && break)
+  ln -sf `pwd`/git/gitconfig ~/.gitconfig
   echo '-> git ok!'
-else
-  echo '-> git not found!'
 fi
 
 ##
 #tmux
 ##
-if which tmux &> /dev/null ; then
+if which tmux &>/dev/null ; then
   rm -f ~/.tmux
-  ln -sf `pwd`/tmux/tmux ~/.tmux || (echo '-> tmux ko!' ; break)
+  ln -sf `pwd`/tmux/tmux ~/.tmux
   rm -f ~/.tmux.conf
-  ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf || (echo '-> tmux ko!' ; break)
+  ln -sf `pwd`/tmux/tmux.conf ~/.tmux.conf
   echo '-> tmux ok!'
-else
-  echo '-> tmux not found!'
 fi
 
 ##
 #vim
 ##
-if which vim &> /dev/null ; then
+if which vim &>/dev/null ; then
   rm -rf ~/.vim
-  ln -sf `pwd`/vim/vim ~/.vim || (echo '-> vim ko!' ; break)
+  ln -sf `pwd`/vim/vim ~/.vim
   rm -f ~/.vimrc
-  ln -sf `pwd`/vim/vimrc ~/.vimrc || (echo '-> vim ko!' ; break)
+  ln -sf `pwd`/vim/vimrc ~/.vimrc
   echo '-> vim ok!'
-else
-  echo '-> vim not found!'
 fi
 
 ##
 #zsh
 ##
-if which zsh &> /dev/null ; then
-  echo '(Change your login shell to zsh)' && chsh -s `which zsh` || (echo '-> zsh ko!' ; break)
+if which zsh &>/dev/null ; then
+  if which chsh &>/dev/null ; then
+    chsh -s `which zsh`
+  fi
   rm -f ~/.zshrc
-  ln -sf `pwd`/zsh/zshrc ~/.zshrc || (echo '-> zsh ko!' ; break)
+  ln -sf `pwd`/zsh/zshrc ~/.zshrc
   echo '-> zsh ok!'
-else
-  echo '-> zsh not found!'
-fi
-
-##
-#fluxbox
-##
-if which fluxbox &> /dev/null ; then
-  rm -rf ~/.fluxbox
-  ln -sf `pwd`/fluxbox ~/.fluxbox || (echo '-> fluxbox ko!' ; break)
-  echo '-> fluxbox ok!'
-else
-  echo '-> fluxbox not found!'
 fi
 
 ##
 #anonymous pro font
 ##
-if ! [ -d ~/.fonts ] ; then
-  mkdir ~/.fonts
+if [ "$(uname -s)" = 'Linux' ] ; then
+  if ! [ -d ~/.fonts ] ; then
+    mkdir ~/.fonts
+  fi
+  cp -r ./anonymous_pro/*.ttf ~/.fonts/
+  echo '-> anonymous pro font ok!'
 fi
-cp -r ./anonymous_pro/*.ttf ~/.fonts/
-echo '-> anonymous pro font ok!'

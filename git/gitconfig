@@ -2,10 +2,15 @@
 	diff = auto
 	status = auto
 	branch = origin
+
 [user]
 	name = Aymeric Beaumet
 	email = aymeric@beaumet.fr
+
+[github]
+	user = abeaumet
+
 [alias]
-        ci = commit
-        co = checkout
+	ci = commit
+	co = checkout
         st = status

@@ -1,16 +1,15 @@
-############################
-#    aymeric@beaumet.fr    #
-############################
+                   #########################################
+                   # This is a configuration file for zsh. #
+                   #########################################
+
+
 
 ###############################################################################
 ###############################################################################
-################################## Functions ##################################
-###############################################################################
+# I. Functions                                                                #
 ###############################################################################
 
-###############################################################################
-# function cmd_exists return 0 if $1 exists (as an alias or bin in $PATH)     #
-###############################################################################
+# return 0 if $1 exists (as an alias or executable file in $PATH)
 func cmd_exists()
 {
   if [[ $# -eq 0 ]] || ! which $1 &> /dev/null ; then
@@ -19,9 +18,7 @@ func cmd_exists()
   return 0
 }
 
-###############################################################################
-# function uname return 'unknown', only defined if uname(1) is not in $PATH   #
-###############################################################################
+# write 'unknown', only defined if uname(1) is not in $PATH   #
 if ! cmd_exists uname ; then
   func uname()
   {
@@ -29,23 +26,49 @@ if ! cmd_exists uname ; then
   }
 fi
 
+# return 0 if the os is linux
+func is_linux
+{
+  if [ "$(uname -s)" = 'Linux' ] ; then
+    return 1
+  fi
+  return 0
+}
+
+# return 0 if the os is macosx
+func is_linux
+{
+  if [ "$(uname -s)" = 'Darwin' ] ; then
+    return 1
+  fi
+  return 0
+}
+
+# return 0 if the os is bsd
+func is_linux
+{
+  if [ "$(uname -s)" = 'Linux' ] ; then
+    return 1
+  fi
+  return 0
+}
+
+
 ###############################################################################
 ###############################################################################
-################################# Globals var #################################
-###############################################################################
+# II. Globals var                                                             #
 ###############################################################################
 
-UNAME_S=$(uname -s)
+# OS name (Linux, Darwin...)
+UNAME_S="$(uname -s)"
+
+
 
 ###############################################################################
 ###############################################################################
-############################### Global Settings ###############################
-###############################################################################
+# III. zsh options                                                            #
 ###############################################################################
 
-###############################################################################
-# zsh options						      		      #
-###############################################################################
 #basic settings
 setopt AUTO_CD			#change directory without cd
 setopt CORRECT_ALL		#auto-correct
@@ -73,76 +96,81 @@ zstyle ':completion:*:*:kill:*:processes'	list-colors '=(#b) #([0-9]#)*=36=31'
 zstyle ':completion:*:approximate:'		max-errors 'reply=( $((($#PREFIX+$#SUFFIX)/3 )) numeric )'
 zstyle ':completion:*:warnings'			format '%Bnothing match for %d%b type'
 
+
+
 ###############################################################################
-# prompt								      #
 ###############################################################################
+# IV. Prompt								      #
+###############################################################################
+
 #colors
 RED_COLOR=$'%{\033[31m%}'
 RESET_DISPLAY=$'%{\033[0m%}'
 
-#define prompt
+#content
 PROMPT='['$RED_COLOR'%j'$RESET_DISPLAY'|%?] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
 RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
 
+
+
 ###############################################################################
-# common env var							      #
 ###############################################################################
-if [ -r `locate xterm-256color | head -1` ] ; then
+# V. Environment                                                              #
+###############################################################################
+
+if [ -r '/usr/share/terminfo/78/xterm-256color' ] || [ -r '/lib/terminfo/x/xterm-256color' ] || locate 'xterm-256color' ; then
   export TERM='xterm-256color'
 else
   export TERM='xterm'
 fi
 
-export PATH=$PATH':/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/local/java/bin'
-export EDITOR=$(which vim 2> /dev/null \
-  || which vi 2> /dev/null \
-  || which emacs 2> /dev/null \
-  || which nano 2> /dev/null \
-  || echo $EDITOR)
+export PATH=$PATH':/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin'
+export EDITOR=$(which vim 2>/dev/null || which vi 2>/dev/null || echo $EDITOR)
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
-export VIEWER=$(which eog 2> /dev/null \
-  || echo $VIEWER)
-export PAGER=$(which less 2> /dev/null \
-  || which more 2> /dev/null \
-  || which cat 2> /dev/null \
-  || echo $PAGER)
-export SHELL=$(which zsh 2> /dev/null \
-  || echo $SHELL)
+export VIEWER=$(which eog 2>/dev/null || echo $VIEWER)
+export PAGER=$(which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER)
+export SHELL=$(which zsh 2>/dev/null || echo $SHELL)
+
+
 
 ###############################################################################
-# aliases							              #
 ###############################################################################
-if cmd_exists rm ; then
-  alias clean='rm -f **/.*.sw[a|o|p] **/*~'
-  if cmd_exists find ; then
+# VI. Alias                                                                   #
+###############################################################################
+
+if cmd_exists 'rm' ; then
+  if cmd_exists 'find' ; then
     alias clean='find . -type f -and \( -name ".*.sw[a|o|p]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
+  else
+    alias clean='rm -f **/.*.sw[a|o|p] **/*~'
   fi
 fi
 
-if cmd_exists ls ; then
-  if [[ $UNAME_S == 'Linux' ]] ; then
+if cmd_exists 'ls' ; then
+  if is_linux ; then
     alias ls='ls --color=auto'
-  elif [[ $UNAME_S == 'FreeBSD' || $UNAME_S == 'Darwin' ]] ; then
+  elif is_bsd || is_macosx ; then
     alias ls='ls -G'
   else
-    unalias ls &> /dev/null
+    unalias ls &>/dev/null
   fi
   alias ll='ls -hl'
   alias l='ll'
   alias la='ll -A'	#list [.]* files (but not . and ..)
 fi
 
-if cmd_exists vim ; then
-  unalias vim &> /dev/null
+if cmd_exists 'vim' ; then
+  unalias vim &>/dev/null
   alias vi='vim'
   alias v='vim'
 fi
 
 #bind some extension to $EDITOR
 alias -s c=$EDITOR
-alias -s h=$EDITOR
 alias -s cpp=$EDITOR
+alias -s h=$EDITOR
+alias -s hh=$EDITOR
 alias -s hpp=$EDITOR
 alias -s html=$EDITOR
 alias -s css=$EDITOR
@@ -161,27 +189,33 @@ alias -s png=$VIEWER
 alias -s sh=$SHELL
 
 #bind some extension to be directly executed
-cmd_exists php && alias -s php=$(which php 2> /dev/null)
-cmd_exists python && alias -s py=$(which python 2> /dev/null)
-cmd_exists perl && alias -s pl=$(which perl 2> /dev/null)
-cmd_exists ocaml && alias -s ml=$(which ocaml 2> /dev/null)
+cmd_exists 'php' && alias -s php="$(which php 2> /dev/null)"
+cmd_exists 'python' && alias -s py="$(which python 2> /dev/null)"
+cmd_exists 'perl' && alias -s pl="$(which perl 2> /dev/null)"
+cmd_exists 'ocaml' && alias -s ml="$(which ocaml 2> /dev/null)"
 
 #classic aliases
-cmd_exists grep && alias grep='grep --color=auto'
-cmd_exists cp && alias cp='cp -v'
-cmd_exists mv && alias mv='mv -v'
-cmd_exists rm && alias rm='rm -v'
-cmd_exists mkdir && alias mkdir='mkdir -v'
-cmd_exists jobs && alias j='jobs'
+cmd_exists 'grep' && alias grep='grep --color=auto'
+cmd_exists 'cp' && alias cp='cp -v'
+cmd_exists 'mv' && alias mv='mv -v'
+cmd_exists 'rm' && alias rm='rm -v'
+cmd_exists 'mkdir' && alias mkdir='mkdir -v'
+cmd_exists 'rmdir' && is_linux && alias rmdir='rmdir -v'
+cmd_exists 'jobs' && alias j='jobs'
 
-cmd_exists grep && alias -g G=' | grep' # ex: 'ls | grep toto' == 'ls G toto'
-cmd_exists less && alias -g L=' | less'
-cmd_exists head && alias -g H=' | head'
-cmd_exists tail && alias -g T=' | tail'
-[[ -w '/dev/null' ]] && alias -g N=' > /dev/null'
+cmd_exists 'grep' && alias -g G=' | grep' # ex: 'ls | grep toto' == 'ls G toto'
+cmd_exists 'less' && alias -g L=' | less'
+cmd_exists 'head' && alias -g H=' | head'
+cmd_exists 'tail' && alias -g T=' | tail'
+[[ -w '/dev/null' ]] && alias -g N=' &>/dev/null'
+
+#builtins
+alias source='source ~/.zshrc'
+
 
 ###############################################################################
-# key binding								      #
+###############################################################################
+# VII. Binding                                                                #
 ###############################################################################
 bindkey -e
 
@@ -194,7 +228,11 @@ bindkey '^[[1;5D'	backward-word			#CTRL <-
 bindkey '^[[1;5C'	forward-word			#CTRL ->
 bindkey '^[[3~'		delete-char			#DELETE
 
+
+
 ###############################################################################
-# tmux									      #
 ###############################################################################
-alias tmux='(pgrep tmux && tmux attach) || tmux'
+# VIII. Others                                                                #
+###############################################################################
+
+cmd_exists 'tmux' && alias tmux='(pgrep tmux &>/dev/null && tmux attach) || tmux'
