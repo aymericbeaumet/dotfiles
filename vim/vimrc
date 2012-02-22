@@ -1,6 +1,6 @@
 " Colors {
 set t_Co=256            " enable 256 colors
-colorscheme wombat256	" vim theme
+colorscheme wombat256mod	" vim theme
 syntax on		" syntax coloring
 " }
 
