@@ -172,7 +172,6 @@ cmd_exists cp && alias cp='cp -v'
 cmd_exists mv && alias mv='mv -v'
 cmd_exists rm && alias rm='rm -v'
 cmd_exists mkdir && alias mkdir='mkdir -v'
-cmd_exists rmdir && alias rmdir='rmdir -v'
 cmd_exists jobs && alias j='jobs'
 
 cmd_exists grep && alias -g G=' | grep' # ex: 'ls | grep toto' == 'ls G toto'
