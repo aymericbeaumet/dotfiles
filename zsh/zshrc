@@ -10,9 +10,9 @@
 ###############################################################################
 
 # return 0 if $1 exists (as an alias or executable file in $PATH)
-func cmd_exists()
+function cmd_exists()
 {
-  if [[ $# -eq 0 ]] || ! which $1 &> /dev/null ; then
+  if [[ $# -eq 0 ]] || ! which $1 &>/dev/null ; then
     return 1
   fi
   return 0
@@ -20,23 +20,23 @@ func cmd_exists()
 
 # write 'unknown', only defined if uname(1) is not in $PATH   #
 if ! cmd_exists uname ; then
-  func uname()
+  function uname()
   {
     echo 'unknown'
   }
 fi
 
 # return 0 if the os is linux
-func is_linux
+function is_linux()
 {
-  if [ "$(uname -s)" = 'Linux' ] ; then
+  if [ $(uname -s) = 'Linux' ] ; then
     return 1
   fi
   return 0
 }
 
 # return 0 if the os is macosx
-func is_linux
+function is_macosx()
 {
   if [ "$(uname -s)" = 'Darwin' ] ; then
     return 1
@@ -45,13 +45,14 @@ func is_linux
 }
 
 # return 0 if the os is bsd
-func is_linux
+function is_bsd()
 {
-  if [ "$(uname -s)" = 'Linux' ] ; then
+  if [ "$(uname -s)" = 'BSD' ] ; then
     return 1
   fi
   return 0
 }
+
 
 
 ###############################################################################
@@ -110,7 +111,6 @@ RESET_DISPLAY=$'%{\033[0m%}'
 #content
 PROMPT='['$RED_COLOR'%j'$RESET_DISPLAY'|%?] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
 RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
-
 
 
 ###############################################################################
