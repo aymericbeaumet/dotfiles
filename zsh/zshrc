@@ -29,39 +29,29 @@ fi
 # return 0 if the os is linux
 function is_linux()
 {
-  if [ $(uname -s) = 'Linux' ] ; then
-    return 1
+  if [ "$(uname -s)" = 'Linux' ] ; then
+    return 0
   fi
-  return 0
+  return 1
 }
 
 # return 0 if the os is macosx
 function is_macosx()
 {
   if [ "$(uname -s)" = 'Darwin' ] ; then
-    return 1
+    return 0
   fi
-  return 0
+  return 1
 }
 
 # return 0 if the os is bsd
 function is_bsd()
 {
   if [ "$(uname -s)" = 'BSD' ] ; then
-    return 1
+    return 0
   fi
-  return 0
+  return 1
 }
-
-
-
-###############################################################################
-###############################################################################
-# II. Globals var                                                             #
-###############################################################################
-
-# OS name (Linux, Darwin...)
-UNAME_S="$(uname -s)"
 
 
 
