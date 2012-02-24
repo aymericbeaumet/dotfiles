@@ -87,6 +87,11 @@ zstyle ':completion:*:*:kill:*:processes'	list-colors '=(#b) #([0-9]#)*=36=31'
 zstyle ':completion:*:approximate:'		max-errors 'reply=( $((($#PREFIX+$#SUFFIX)/3 )) numeric )'
 zstyle ':completion:*:warnings'			format '%Bnothing match for %d%b type'
 
+#history
+setopt APPEND_HISTORY
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
+
 
 
 ###############################################################################
@@ -108,7 +113,7 @@ RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
 # IV. Environment                                                             #
 ###############################################################################
 
-if [ -r '/usr/share/terminfo/78/xterm-256color' ] || [ -r '/lib/terminfo/x/xterm-256color' ] || locate 'xterm-256color' ; then
+if [ -r '/usr/share/terminfo/78/xterm-256color' ] || [ -r '/lib/terminfo/x/xterm-256color' ] || locate 'xterm-256color' &>/dev/null ; then
   export TERM='xterm-256color'
 else
   export TERM='xterm'
@@ -121,6 +126,11 @@ export VISUAL=$EDITOR
 export VIEWER=$(which eog 2>/dev/null || echo $VIEWER)
 export PAGER=$(which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER)
 export SHELL=$(which zsh 2>/dev/null || echo $SHELL)
+
+#improved history
+export SAVEHIST='10000'
+export HISTSIZE='10000'
+export HISTFILE=~/.zsh_history
 
 
 
@@ -226,3 +236,7 @@ bindkey '^[[3~'		delete-char			#DELETE
 ###############################################################################
 
 cmd_exists 'tmux' && alias tmux='(pgrep tmux &>/dev/null && tmux attach) || tmux'
+
+if ! [ -f "$HISTFILE" ] ; then
+  touch "$HISTFILE"
+fi
