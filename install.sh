@@ -36,7 +36,7 @@ fi
 ##
 if which zsh &>/dev/null ; then
   if which chsh &>/dev/null ; then
-    chsh -s `which zsh | head -1`
+    chsh -s `which zsh | head -1` || exit 1
   fi
   rm -f ~/.zshrc
   ln -sf `pwd`/zsh/zshrc ~/.zshrc
