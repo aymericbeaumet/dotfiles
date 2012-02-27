@@ -91,6 +91,9 @@ zstyle ':completion:*:warnings'			format '%Bnothing match for %d%b type'
 setopt APPEND_HISTORY
 setopt EXTENDED_HISTORY
 setopt INC_APPEND_HISTORY
+if ! [ -f "$HISTFILE" ] ; then
+  touch "$HISTFILE"
+fi
 
 
 
@@ -106,6 +109,7 @@ RESET_DISPLAY=$'%{\033[0m%}'
 #content
 PROMPT='['$RED_COLOR'%j'$RESET_DISPLAY'|%?] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
 RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
+
 
 
 ###############################################################################
@@ -131,6 +135,12 @@ export SHELL=$(which zsh 2>/dev/null || echo $SHELL)
 export SAVEHIST='10000'
 export HISTSIZE='10000'
 export HISTFILE=~/.zsh_history
+
+#good ls colors under Mac OS X
+if is_macosx ; then
+  export CLICOLOR='1'
+  export LSCOLORS='EaGaxxdaCaDaDaxxadEaEa'
+fi
 
 
 
@@ -213,6 +223,7 @@ cmd_exists 'tail' && alias -g T=' | tail'
 alias source='source ~/.zshrc'
 
 
+
 ###############################################################################
 ###############################################################################
 # VI. Binding                                                                 #
@@ -236,7 +247,3 @@ bindkey '^[[3~'		delete-char			#DELETE
 ###############################################################################
 
 cmd_exists 'tmux' && alias tmux='(pgrep tmux &>/dev/null && tmux attach) || tmux'
-
-if ! [ -f "$HISTFILE" ] ; then
-  touch "$HISTFILE"
-fi
