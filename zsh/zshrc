@@ -91,9 +91,6 @@ zstyle ':completion:*:warnings'			format '%Bnothing match for %d%b type'
 setopt APPEND_HISTORY
 setopt EXTENDED_HISTORY
 setopt INC_APPEND_HISTORY
-if ! [ -f "$HISTFILE" ] ; then
-  touch "$HISTFILE"
-fi
 
 
 
