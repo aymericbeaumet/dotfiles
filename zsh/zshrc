@@ -9,16 +9,16 @@
 # I. Functions                                                                #
 ###############################################################################
 
-# return 0 if $1 exists (as an alias or executable file in $PATH)
+#return 0 if $1 exists (as an alias or executable file in $PATH)
 function cmd_exists()
 {
-  if [[ $# -eq 0 ]] || ! which $1 &>/dev/null ; then
+  if [[ "$#" -eq '0' ]] || ! which "$1" &>/dev/null ; then
     return 1
   fi
   return 0
 }
 
-# write 'unknown', only defined if uname(1) is not in $PATH   #
+#write 'unknown', only defined if uname(1) is not in $PATH
 if ! cmd_exists uname ; then
   function uname()
   {
@@ -26,7 +26,7 @@ if ! cmd_exists uname ; then
   }
 fi
 
-# return 0 if the os is linux
+#return 0 if the os is linux
 function is_linux()
 {
   if [ "$(uname -s)" = 'Linux' ] ; then
@@ -35,7 +35,7 @@ function is_linux()
   return 1
 }
 
-# return 0 if the os is macosx
+#return 0 if the os is macosx
 function is_macosx()
 {
   if [ "$(uname -s)" = 'Darwin' ] ; then
@@ -44,10 +44,10 @@ function is_macosx()
   return 1
 }
 
-# return 0 if the os is bsd
+#return 0 if the os is bsd
 function is_bsd()
 {
-  if [ "$(uname -s)" = "FreeBSD" ] ; then
+  if [ "$(uname -s)" =~ '*BSD*' ; then
     return 0
   fi
   return 1
@@ -104,8 +104,8 @@ RED_COLOR=$'%{\033[31m%}'
 RESET_DISPLAY=$'%{\033[0m%}'
 
 #content
-PROMPT='['$RED_COLOR'%j'$RESET_DISPLAY'|%?] ['$RED_COLOR'%20<...<%~%<<'$RESET_DISPLAY'] %(!.#.$) '
-RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
+PROMPT="[$RED_COLOR%j$RESET_DISPLAY|%?] [$RED_COLOR%20<...<%~%<<$RESET_DISPLAY] %(!.#.$) "
+RPROMPT="[%n$RED_COLOR@$RESET_DISPLAY%M]"
 
 
 
@@ -114,21 +114,25 @@ RPROMPT='[%n'$RED_COLOR'@'$RESET_DISPLAY'%M]'
 # IV. Environment                                                             #
 ###############################################################################
 
-if [ -r '/usr/share/terminfo/78/xterm-256color' ] || [ -r '/lib/terminfo/x/xterm-256color' ] || locate 'xterm-256color' &>/dev/null ; then
+if [ -n "$TMUX" ]
+then
+  export TERM='screen-256color'
+elif [ -r '/usr/share/terminfo/78/xterm-256color' ] || [ -r '/lib/terminfo/x/xterm-256color' ] || locate 'xterm-256color' &>/dev/null
+then
   export TERM='xterm-256color'
 else
   export TERM='xterm'
 fi
 
-export PATH=$PATH':/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/local/bin'
-export EDITOR=$(which vim 2>/dev/null || which vi 2>/dev/null || echo $EDITOR)
-export USE_EDITOR=$EDITOR
-export VISUAL=$EDITOR
-export VIEWER=$(which eog 2>/dev/null || echo $VIEWER)
-export PAGER=$(which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER)
-export SHELL=$(which zsh 2>/dev/null || echo $SHELL)
+export PATH="$PATH:/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/local/bin"
+export EDITOR="$(which 'vim' 2>/dev/null || which 'vi' 2>/dev/null || echo "$EDITOR")"
+export USE_EDITOR="$EDITOR"
+export VISUAL="$EDITOR"
+export VIEWER="$(which 'eog' 2>/dev/null || echo "$VIEWER")"
+export PAGER="$(which 'less' 2>/dev/null || which 'more' 2>/dev/null || which 'cat' 2>/dev/null || echo "$PAGER")"
+export SHELL="$(which 'zsh' 2>/dev/null || echo "$SHELL")"
 
-#improved history
+#history
 export SAVEHIST='10000'
 export HISTSIZE='10000'
 export HISTFILE=~/.zsh_history
@@ -174,35 +178,40 @@ if cmd_exists 'vim' ; then
 fi
 
 #bind some extension to $EDITOR
-alias -s c=$EDITOR
-alias -s cpp=$EDITOR
-alias -s h=$EDITOR
-alias -s hh=$EDITOR
-alias -s hpp=$EDITOR
-alias -s html=$EDITOR
-alias -s css=$EDITOR
-alias -s js=$EDITOR
+alias -s c="$EDITOR"
+alias -s cpp="$EDITOR"
+alias -s h="$EDITOR"
+alias -s hh="$EDITOR"
+alias -s hpp="$EDITOR"
+alias -s html="$EDITOR"
+alias -s css="$EDITOR"
+alias -s js="$EDITOR"
 
 #bind some extension to $PAGER
-alias -s txt=$PAGER
+alias -s txt="$PAGER"
 
 #bind some extension to $VIEWER
-alias -s bmp=$VIEWER
-alias -s gif=$VIEWER
-alias -s jpg=$VIEWER
-alias -s png=$VIEWER
+alias -s bmp="$VIEWER"
+alias -s gif="$VIEWER"
+alias -s jpg="$VIEWER"
+alias -s png="$VIEWER"
 
 #bind some extension to $SHELL
-alias -s sh=$SHELL
+alias -s sh="$SHELL"
 
 #bind some extension to be directly executed
-cmd_exists 'php' && alias -s php="$(which php 2> /dev/null)"
+if cmd_exists 'php' ; then
+  alias -s php="$(which php 2> /dev/null)"
+  alias -s php3="$(which php 2> /dev/null)"
+  alias -s php4="$(which php 2> /dev/null)"
+fi
+cmd_exists 'php' && alias -s php5="$(which php 2> /dev/null)"
 cmd_exists 'python' && alias -s py="$(which python 2> /dev/null)"
 cmd_exists 'perl' && alias -s pl="$(which perl 2> /dev/null)"
 cmd_exists 'ocaml' && alias -s ml="$(which ocaml 2> /dev/null)"
 
 #classic aliases
-cmd_exists 'grep' && alias grep='grep --color=auto'
+cmd_exists 'grep' && alias grep='grep -E --color=auto'
 cmd_exists 'cp' && alias cp='cp -v'
 cmd_exists 'mv' && alias mv='mv -v'
 cmd_exists 'rm' && alias rm='rm -v'
@@ -219,12 +228,19 @@ cmd_exists 'tail' && alias -g T=' | tail'
 #builtins
 alias source='source ~/.zshrc'
 
+#tmux
+if cmd_exists 'tmux' ; then
+  alias tmux="TERM='screen-256color' tmux"
+  alias tmux='(pgrep tmux &>/dev/null && tmux attach) || tmux'
+fi
+
 
 
 ###############################################################################
 ###############################################################################
 # VI. Binding                                                                 #
 ###############################################################################
+
 bindkey -e
 
 bindkey '^[OH'		beginning-of-line		#HOME
@@ -235,12 +251,3 @@ bindkey '^[[2~'		overwrite-mode			#INSERT
 bindkey '^[[1;5D'	backward-word			#CTRL <-
 bindkey '^[[1;5C'	forward-word			#CTRL ->
 bindkey '^[[3~'		delete-char			#DELETE
-
-
-
-###############################################################################
-###############################################################################
-# VII. Others                                                                 #
-###############################################################################
-
-cmd_exists 'tmux' && alias tmux='(pgrep tmux &>/dev/null && tmux attach) || tmux'
