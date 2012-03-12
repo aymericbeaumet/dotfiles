@@ -53,3 +53,10 @@ if [ "$(uname -s)" = 'Linux' ] ; then
   cp -r ./anonymous_pro/*.ttf ~/.fonts/
   echo '-> anonymous pro font ok!'
 fi
+
+##
+#ssh scripts
+##
+for link in `pwd`/ssh/* ; do
+  ln -sf "$link" ~/"$(basename "$link")"
+done
