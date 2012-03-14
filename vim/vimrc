@@ -34,6 +34,7 @@ set laststatus=2        " set the status line always on
 set timeoutlen=200      " (default 1000) time to wait when a part of a maped sequence is typped
 set wrapscan            " searches wrap around the end of the file
 set number              " show line number
+set ruler               " show line number
 " }
 
 " Binds {
