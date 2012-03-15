@@ -47,7 +47,7 @@ function is_macosx()
 #return 0 if the os is bsd
 function is_bsd()
 {
-  if [ "$(uname -s)" =~ '*BSD*' ; then
+  if echo "$(uname -s)" | grep -E '*BSD*' &>/dev/null ; then
     return 0
   fi
   return 1
