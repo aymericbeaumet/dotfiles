@@ -1,5 +1,5 @@
 #!/bin/sh
 
-echo "[$(uname -o) $(whoami)@$(hostname)]"
+echo "[$(whoami)@$(hostname)] [$(uname -o)]"
 
 exit 0
