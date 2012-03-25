@@ -137,13 +137,14 @@ export SAVEHIST='10000'
 export HISTSIZE='10000'
 export HISTFILE=~/.zsh_history
 
-#good ls colors under Mac OS X
+#good ls colors
+unset LS_COLORS
+unset LSCOLORS
 if is_macosx || is_bsd ; then
   export CLICOLOR='1'
   export LSCOLORS='EaGaxxdaCaDaDaxxadEaEa'
 else
   export CLICOLOR='0'
-  export LSCOLORS='xxxxxxxxxxxxxxxxxxxxxx'
 fi
 
 
