@@ -141,6 +141,9 @@ export HISTFILE=~/.zsh_history
 if is_macosx ; then
   export CLICOLOR='1'
   export LSCOLORS='EaGaxxdaCaDaDaxxadEaEa'
+else
+  export CLICOLOR='0'
+  export LSCOLORS='xxxxxxxxxxxxxxxxxxxxxx'
 fi
 
 
