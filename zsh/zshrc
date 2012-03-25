@@ -138,7 +138,7 @@ export HISTSIZE='10000'
 export HISTFILE=~/.zsh_history
 
 #good ls colors under Mac OS X
-if is_macosx ; then
+if is_macosx || is_bsd ; then
   export CLICOLOR='1'
   export LSCOLORS='EaGaxxdaCaDaDaxxadEaEa'
 else
