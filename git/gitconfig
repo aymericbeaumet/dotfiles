@@ -1,16 +1,19 @@
 [color]
-	diff = auto
-	status = auto
-	branch = origin
+  diff = auto
+  status = auto
+  branch = origin
 
 [user]
-	name = Aymeric Beaumet
-	email = aymeric@beaumet.fr
+  name = Aymeric Beaumet
+  email = aymeric@beaumet.fr
 
 [github]
-	user = abeaumet
+  user = abeaumet
 
 [alias]
-	ci = commit
-	co = checkout
-        st = status
+  amend = commit --amend
+  co = checkout
+  ci = commit
+  oneline = log --pretty=oneline --abbrev-commit --graph
+  st = status
+  who = shortlog -sne
