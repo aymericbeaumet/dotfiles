@@ -1,19 +1,36 @@
-[color]
-  diff = auto
-  status = auto
-  branch = origin
+[alias]
+  ; fast access
+  br = branch
+  co = checkout
+  ci = commit
+  st = status
+  pl = pull
+  ps = push
+  ; usefull aliases
+  amend = commit --amend
+  oneline = log --pretty=oneline --abbrev-commit --graph
+  who = shortlog -sne
 
 [user]
   name = Aymeric Beaumet
   email = aymeric@beaumet.fr
+  editor = vim
+
+[core]
+  pager = less
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+
+[mergetool]
+  keepbackup = false
+  keeptemporaries = false
 
 [github]
   user = abeaumet
+  token = 69ea9bacd63001a8fbeb0de298fcb292
 
-[alias]
-  amend = commit --amend
-  co = checkout
-  ci = commit
-  oneline = log --pretty=oneline --abbrev-commit --graph
-  st = status
-  who = shortlog -sne
+[man]
+  viewer = less
