@@ -6,7 +6,7 @@
   df = diff
   st = status
   pl = pull
-  ps = push
+  ph = push
   ; usefull aliases
   amend = commit --amend
   oneline = log --pretty=oneline --abbrev-commit --graph
