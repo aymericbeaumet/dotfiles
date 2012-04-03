@@ -3,6 +3,7 @@
   br = branch
   co = checkout
   ci = commit
+  df = diff
   st = status
   pl = pull
   ps = push
