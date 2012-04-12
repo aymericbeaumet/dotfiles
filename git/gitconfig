@@ -1,3 +1,8 @@
+[user]
+  name = Aymeric Beaumet
+  email = aymeric@beaumet.fr
+  editor = vim
+
 [alias]
   ; fast access
   br = branch
@@ -12,11 +17,6 @@
   oneline = log --pretty=oneline --abbrev-commit --graph
   who = shortlog -sne
 
-[user]
-  name = Aymeric Beaumet
-  email = aymeric@beaumet.fr
-  editor = vim
-
 [core]
   pager = less
 
@@ -28,10 +28,6 @@
 [mergetool]
   keepbackup = false
   keeptemporaries = false
-
-[github]
-  user = abeaumet
-  token = 69ea9bacd63001a8fbeb0de298fcb292
 
 [man]
   viewer = less
