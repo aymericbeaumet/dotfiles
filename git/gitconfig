@@ -31,3 +31,6 @@
 
 [man]
   viewer = less
+
+[branch]
+  autosetuprebase = always
