@@ -16,7 +16,7 @@ ZSH_CONF_DIR=~/.zsh
 ##
 if which git &>/dev/null ; then
   rm -rf "$GIT_CONF_FILE"
-  ln -sf "$(pwd)/_git/conf_file" "$GIT_CONF_FILE"
+  ln -sf "$(pwd)/git/conf_file" "$GIT_CONF_FILE"
   echo '-> git ok!'
 fi
 
@@ -25,9 +25,9 @@ fi
 ##
 if which tmux &>/dev/null ; then
   rm -rf "$TMUX_CONF_FILE"
-  ln -sf "$(pwd)/_tmux/conf_file" "$TMUX_CONF_FILE"
+  ln -sf "$(pwd)/tmux/conf_file" "$TMUX_CONF_FILE"
   rm -rf "$TMUX_CONF_DIR"
-  ln -sf "$(pwd)/_tmux/data" "$TMUX_CONF_DIR"
+  ln -sf "$(pwd)/tmux/data" "$TMUX_CONF_DIR"
   echo '-> tmux ok!'
 fi
 
@@ -36,11 +36,11 @@ fi
 ##
 if which vim &>/dev/null ; then
   rm -rf "$VIM_CONF_FILE"
-  ln -sf "$(pwd)/_vim/conf_file" "$VIM_CONF_FILE"
+  ln -sf "$(pwd)/vim/conf_file" "$VIM_CONF_FILE"
   rm -rf "$VIM_CONF_DIR"
-  ln -sf "$(pwd)/_vim/data" "$VIM_CONF_DIR"
-  rm -rf "$(pwd)/_vim/data/autoload/pathogen.vim"
-  ln -sf "$(pwd)/_vim/pathogen/autoload/pathogen.vim" "$(pwd)/_vim/data/autoload/pathogen.vim"
+  ln -sf "$(pwd)/vim/data" "$VIM_CONF_DIR"
+  rm -rf "$(pwd)/vim/data/autoload/pathogen.vim"
+  ln -sf "$(pwd)/vim/pathogen/autoload/pathogen.vim" "$(pwd)/vim/data/autoload/pathogen.vim"
   echo '-> vim ok!'
 fi
 
@@ -52,9 +52,9 @@ if which zsh &>/dev/null ; then
     chsh -s $(which zsh | head -1)
   fi
   rm -rf "$ZSH_CONF_FILE"
-  ln -sf "$(pwd)/_zsh/conf_file" "$ZSH_CONF_FILE"
+  ln -sf "$(pwd)/zsh/conf_file" "$ZSH_CONF_FILE"
   rm -rf "$ZSH_CONF_DIR"
-  ln -sf "$(pwd)/_zsh/data" "$ZSH_CONF_DIR"
+  ln -sf "$(pwd)/zsh/data" "$ZSH_CONF_DIR"
   echo '-> zsh ok!'
 fi
 
@@ -65,7 +65,7 @@ if [ "$(uname -s)" = 'Linux' ] ; then
   if ! [ -d ~/.fonts ] ; then
     mkdir ~/.fonts
   fi
-  cp -r ./__anonymous_pro_font/*.ttf ~/.fonts/
+  cp -r ./anonymous_pro_font/*.ttf ~/.fonts/
   echo '-> anonymous pro font ok!'
 fi
 
@@ -73,7 +73,7 @@ fi
 #ssh scripts
 ##
 if which ssh &>/dev/null ; then
-  for link in "$(pwd)/__ssh_fast_connect_scripts/"* ; do
+  for link in "$(pwd)/ssh_fast_connect_scripts/"* ; do
     ln -sf "$link" ~/"$(basename "$link")"
   done
   echo '-> ssh scripts ok!'

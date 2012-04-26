@@ -1,8 +1,8 @@
-[submodule "_vim/data/bundle/surround"]
-	path = _vim/data/bundle/surround
-	url = https://github.com/tpope/vim-surround.git
-        ignore = dirty
-[submodule "_vim/pathogen"]
-	path = _vim/pathogen
+[submodule "vim/pathogen"]
+	path = vim/pathogen
 	url = https://github.com/tpope/vim-pathogen.git
+        ignore = dirty
+[submodule "vim/data/bundle/surround"]
+	path = vim/data/bundle/surround
+	url = https://github.com/tpope/vim-surround.git
         ignore = dirty
