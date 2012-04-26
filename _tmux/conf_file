@@ -99,9 +99,9 @@ set -g message-bg colour124
 set -g message-attr dim
 
 # left side of status bar
-set -g status-left-length 45
+set -g status-left-length 50
 set -g status-left '#(~/.tmux/lmenu.sh)'
 
 # right side of status bar
-set -g status-right-length 45
+set -g status-right-length 50
 set -g status-right '#(~/.tmux/rmenu.sh)'
