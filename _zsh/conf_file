@@ -6,7 +6,7 @@
 
 ###############################################################################
 ###############################################################################
-# I. Functions                                                                #
+# I. Global Functions                                                         #
 ###############################################################################
 
 #return 0 if $1 exists (as an alias or executable file in $PATH)
@@ -104,8 +104,8 @@ RED_COLOR=$'%{\033[31m%}'
 RESET_DISPLAY=$'%{\033[0m%}'
 
 #content
-PROMPT="[$RED_COLOR%j$RESET_DISPLAY|%?] [$RED_COLOR%20<...<%~%<<$RESET_DISPLAY] %(!.#.$) "
-RPROMPT="{$SHLVL}[%n$RED_COLOR@$RESET_DISPLAY%M]"
+PROMPT="[$RED_COLOR%j${RESET_DISPLAY}&:?$RED_COLOR%?$RESET_DISPLAY] [$RED_COLOR%20<...<%~%<<$RESET_DISPLAY] %(!.#.$) "
+RPROMPT="{^${RED_COLOR}${SHLVL}$RESET_DISPLAY} [%n$RED_COLOR@$RESET_DISPLAY%M]"
 
 
 
@@ -114,10 +114,11 @@ RPROMPT="{$SHLVL}[%n$RED_COLOR@$RESET_DISPLAY%M]"
 # IV. Environment                                                             #
 ###############################################################################
 
-if [ -n "$TMUX" ]
-then
+if [ -n "$TMUX" ] ; then
   export TERM='screen-256color'
-elif [ -r '/usr/share/terminfo/78/xterm-256color' ] || [ -r '/lib/terminfo/x/xterm-256color' ] || locate 'xterm-256color' &>/dev/null
+elif [ -r '/usr/share/terminfo/78/xterm-256color' ] || \
+     [ -r '/lib/terminfo/x/xterm-256color' ]        || \
+     locate 'xterm-256color' &>/dev/null
 then
   export TERM='xterm-256color'
 else
@@ -135,7 +136,7 @@ export SHELL="$(which 'zsh' 2>/dev/null || echo "$SHELL")"
 #history
 export SAVEHIST='10000'
 export HISTSIZE='10000'
-export HISTFILE=~/.zsh_history
+export HISTFILE=~'/.zsh/history'
 
 #good ls colors
 unset LS_COLORS
@@ -235,14 +236,14 @@ alias source='source ~/.zshrc'
 #tmux
 if cmd_exists 'tmux' ; then
   alias tmux="TERM='screen-256color' tmux"
-  alias tmux='(pgrep tmux &>/dev/null && tmux attach) || tmux'
+  alias tmux='tmux attach || tmux'
 fi
 
 
 
 ###############################################################################
 ###############################################################################
-# VI. Binding                                                                 #
+# VI. Key Binding                                                             #
 ###############################################################################
 
 bindkey -e
@@ -255,3 +256,4 @@ bindkey '^[[2~'		overwrite-mode			#INSERT
 bindkey '^[[1;5D'	backward-word			#CTRL <-
 bindkey '^[[1;5C'	forward-word			#CTRL ->
 bindkey '^[[3~'		delete-char			#DELETE
+

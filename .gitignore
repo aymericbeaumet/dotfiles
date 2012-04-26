@@ -1,3 +1,5 @@
 .*.sw*
-vim/vim/.netrwhist
 .DS_Store
+_vim/data/.netrwhist
+_vim/data/autoload/pathogen.vim
+_zsh/data/history

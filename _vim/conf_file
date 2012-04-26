@@ -54,6 +54,11 @@ else
 endif
 " }
 
+" Pathogen {
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+" }
+
 " Typing Errors {
 cnoreabbrev Q q
 cnoreabbrev W w
