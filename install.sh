@@ -72,7 +72,11 @@ fi
 ##
 #ssh scripts
 ##
-for link in "$(pwd)/__ssh_fast_connect_scripts/"* ; do
-  ln -sf "$link" ~/"$(basename "$link")"
-done
-echo '-> ssh scripts ok!'
+if which ssh &>/dev/null ; then
+  for link in "$(pwd)/__ssh_fast_connect_scripts/"* ; do
+    ln -sf "$link" ~/"$(basename "$link")"
+  done
+  echo '-> ssh scripts ok!'
+fi
+
+exit 0
