@@ -43,7 +43,7 @@ echo '  - git'
 echo '  - tmux'
 echo '  - zsh'
 echo 'And also the font Anonymous Pro.'
-echo 'Do you wish to continue [Y/n]?'
+echo 'Do you wish to continue [Y/n]? '
 read answer
 answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
 if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then exit 0 ; fi
@@ -54,10 +54,10 @@ if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then exit 0 ; fi
 if cmd_exists git ; then
   do_backup "$GIT_CONF_FILE"
   ln -sf "$current_path/git/conf_file" "$GIT_CONF_FILE"
-  echo '-> git ok!'
+  echo '-> Git ok!'
 
   git submodule update --init
-  echo '-> submodules ok!'
+  echo '-> Submodules ok!'
 fi
 
 ##
@@ -68,7 +68,7 @@ if cmd_exists tmux ; then
   ln -sf "$current_path/tmux/conf_file" "$TMUX_CONF_FILE"
   do_backup "$TMUX_CONF_DIR"
   ln -sf "$current_path/tmux/data" "$TMUX_CONF_DIR"
-  echo '-> tmux ok!'
+  echo '-> Tmux ok!'
 fi
 
 ##
@@ -81,7 +81,7 @@ if cmd_exists vim ; then
   ln -sf "$current_path/vim/data" "$VIM_CONF_DIR"
   rm -rf "$current_path/vim/data/autoload/pathogen.vim"
   ln -sf "$current_path/vim/pathogen/autoload/pathogen.vim" "$current_path/vim/data/autoload/pathogen.vim"
-  echo '-> vim ok!'
+  echo '-> Vim ok!'
 fi
 
 ##
@@ -101,7 +101,7 @@ if cmd_exists zsh ; then
   ln -sf "$current_path/zsh/conf_file" "$ZSH_CONF_FILE"
   do_backup "$ZSH_CONF_DIR"
   ln -sf "$current_path/zsh/data" "$ZSH_CONF_DIR"
-  echo '-> zsh ok!'
+  echo '-> Zsh ok!'
 fi
 
 ##
@@ -111,6 +111,6 @@ if ! [ -d "$FONTS_DIR" ] ; then
   mkdir "$FONTS_DIR"
 fi
 cp -r ./fonts/*.ttf "$FONTS_DIR"
-echo '-> fonts ok!'
+echo '-> Fonts ok!'
 
 exit 0
