@@ -22,9 +22,17 @@ echo '  - git'
 echo '  - tmux'
 echo '  - zsh'
 echo -n 'Do you wish to continue [y/N]? '
-read answer
-answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
-if [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; then exit 0 ; fi
+answer=''
+while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
+  if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then
+    exit 0
+  fi
+  read answer
+  answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+  if [ -z "$answer" ] ; then
+    exit 0
+  fi
+done
 
 restore_backup "$GIT_CONF_FILE"
 restore_backup "$TMUX_CONF_FILE"

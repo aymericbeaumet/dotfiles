@@ -44,9 +44,16 @@ echo '  - tmux'
 echo '  - zsh'
 echo 'And also the font Anonymous Pro.'
 echo 'Do you wish to continue [Y/n]? '
-read answer
-answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
-if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then exit 0 ; fi
+while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
+  if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
+    exit 0
+  fi
+  read answer
+  answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+  if [ -z "$answer" ] ; then
+    break
+  fi
+done
 
 ##
 #git
@@ -90,12 +97,19 @@ fi
 if cmd_exists zsh ; then
   if cmd_exists chsh ; then
     echo -n 'Do you want to set your default shell to zsh [y/N]? '
-    read answer
-    answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
-    if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
-      echo "$current_user, please enter your password to proceed:"
-      chsh -s $(which zsh | head -1)
-    fi
+    answer=''
+    while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
+      read answer
+      answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+      if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
+        echo "$current_user, please enter your password to proceed:"
+        chsh -s $(which zsh | head -1)
+        break
+      fi
+      if [ -z "$answer" ] ; then
+        break
+      fi
+    done
   fi
   do_backup "$ZSH_CONF_FILE"
   ln -sf "$current_path/zsh/conf_file" "$ZSH_CONF_FILE"
