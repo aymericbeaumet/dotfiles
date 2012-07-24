@@ -1,12 +1,12 @@
 #!/bin/sh
 
+#the script will exit if a command fail
 set -e
 
 ##
 #functions
 ##
 
-#return 0 if $1 exists (as an alias or executable file in $PATH)
 function cmd_exists()
 {
   if [ "$#" -eq '0' ] || ! which "$1" &>/dev/null ; then
@@ -32,6 +32,19 @@ current_user="$(whoami)"
 
 if [ -z "$current_path" ] ; then current_path="/tmp" ; fi
 if [ -z "$current_user" ] ; then current_user="unknown" ; fi
+
+##
+#warning
+##
+echo 'This script will install the configuration files for the following programs:'
+echo '  - git'
+echo '  - tmux'
+echo '  - zsh'
+echo 'And also the font Anonymous Pro.'
+echo 'Do you wish to continue [Y/n]?'
+read answer
+answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then exit 0 ; fi
 
 ##
 #git
