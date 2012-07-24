@@ -13,6 +13,19 @@ function restore_backup()
   fi
 }
 
+##
+#Warning
+##
+
+echo 'This script will restore your original configuration files for:'
+echo '  - git'
+echo '  - tmux'
+echo '  - zsh'
+echo -n 'Do you wish to continue [y/N]? '
+read answer
+answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+if [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; then exit 0 ; fi
+
 restore_backup "$GIT_CONF_FILE"
 restore_backup "$TMUX_CONF_FILE"
 restore_backup "$TMUX_CONF_DIR"
@@ -20,5 +33,7 @@ restore_backup "$VIM_CONF_FILE"
 restore_backup "$VIM_CONF_DIR"
 restore_backup "$ZSH_CONF_FILE"
 restore_backup "$ZSH_CONF_DIR"
+
+echo 'Done!'
 
 exit 0
