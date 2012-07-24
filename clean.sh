@@ -14,7 +14,7 @@ function restore_backup()
 }
 
 ##
-#Warning
+#warning
 ##
 
 echo 'This script will restore your original configuration files for:'
