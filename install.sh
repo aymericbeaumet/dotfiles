@@ -1,5 +1,20 @@
 #!/bin/sh
 
+set -e
+
+##
+#functions
+##
+
+#return 0 if $1 exists (as an alias or executable file in $PATH)
+function cmd_exists()
+{
+  if [ "$#" -eq '0' ] || ! which "$1" &>/dev/null ; then
+    return 1
+  fi
+  return 0
+}
+
 ##
 #config
 ##
@@ -11,72 +26,76 @@ VIM_CONF_DIR=~/.vim
 ZSH_CONF_FILE=~/.zshrc
 ZSH_CONF_DIR=~/.zsh
 
+current_path="$(pwd)"
+current_user="$(whoami)"
+
+
+if [ -z "$current_path" ] ; then current_path="/tmp" ; fi
+if [ -z "$current_user" ] ; then current_user="unknown" ; fi
+
 ##
 #git
 ##
-if which git &>/dev/null ; then
+if cmd_exists git ; then
   rm -rf "$GIT_CONF_FILE"
-  ln -sf "$(pwd)/git/conf_file" "$GIT_CONF_FILE"
+  ln -sf "$current_path/git/conf_file" "$GIT_CONF_FILE"
   echo '-> git ok!'
+
+  git submodule update --init
+  echo '-> submodules ok!'
 fi
 
 ##
 #tmux
 ##
-if which tmux &>/dev/null ; then
+if cmd_exists tmux ; then
   rm -rf "$TMUX_CONF_FILE"
-  ln -sf "$(pwd)/tmux/conf_file" "$TMUX_CONF_FILE"
+  ln -sf "$current_path/tmux/conf_file" "$TMUX_CONF_FILE"
   rm -rf "$TMUX_CONF_DIR"
-  ln -sf "$(pwd)/tmux/data" "$TMUX_CONF_DIR"
+  ln -sf "$current_path/tmux/data" "$TMUX_CONF_DIR"
   echo '-> tmux ok!'
 fi
 
 ##
 #vim
 ##
-if which vim &>/dev/null ; then
+if cmd_exists vim ; then
   rm -rf "$VIM_CONF_FILE"
-  ln -sf "$(pwd)/vim/conf_file" "$VIM_CONF_FILE"
+  ln -sf "$current_path/vim/conf_file" "$VIM_CONF_FILE"
   rm -rf "$VIM_CONF_DIR"
-  ln -sf "$(pwd)/vim/data" "$VIM_CONF_DIR"
-  rm -rf "$(pwd)/vim/data/autoload/pathogen.vim"
-  ln -sf "$(pwd)/vim/pathogen/autoload/pathogen.vim" "$(pwd)/vim/data/autoload/pathogen.vim"
+  ln -sf "$current_path/vim/data" "$VIM_CONF_DIR"
+  rm -rf "$current_path/vim/data/autoload/pathogen.vim"
+  ln -sf "$current_path/vim/pathogen/autoload/pathogen.vim" "$current_path/vim/data/autoload/pathogen.vim"
   echo '-> vim ok!'
 fi
 
 ##
 #zsh
 ##
-if which zsh &>/dev/null ; then
-  if which chsh &>/dev/null ; then
-    chsh -s $(which zsh | head -1)
+if cmd_exists zsh ; then
+  if cmd_exists chsh ; then
+    echo -n 'Do you want to set your default shell to zsh [y/N]? '
+    read answer
+    answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+    if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
+      echo "$current_user, please enter your password to proceed:"
+      chsh -s $(which zsh | head -1)
+    fi
   fi
   rm -rf "$ZSH_CONF_FILE"
-  ln -sf "$(pwd)/zsh/conf_file" "$ZSH_CONF_FILE"
+  ln -sf "$current_path/zsh/conf_file" "$ZSH_CONF_FILE"
   rm -rf "$ZSH_CONF_DIR"
-  ln -sf "$(pwd)/zsh/data" "$ZSH_CONF_DIR"
+  ln -sf "$current_path/zsh/data" "$ZSH_CONF_DIR"
   echo '-> zsh ok!'
 fi
 
 ##
 #anonymous pro font
 ##
-if [ "$(uname -s)" = 'Linux' ] ; then
-  if ! [ -d ~/.fonts ] ; then
-    mkdir ~/.fonts
-  fi
-  cp -r ./anonymous_pro_font/*.ttf ~/.fonts/
-  echo '-> anonymous pro font ok!'
+if ! [ -d ~/.fonts ] ; then
+  mkdir ~/.fonts
 fi
-
-##
-#ssh scripts
-##
-if which ssh &>/dev/null ; then
-  for link in "$(pwd)/ssh_fast_connect_scripts/"* ; do
-    ln -sf "$link" ~/"$(basename "$link")"
-  done
-  echo '-> ssh scripts ok!'
-fi
+cp -r ./anonymous_pro_font/*.ttf ~/.fonts/
+echo '-> fonts ok!'
 
 exit 0
