@@ -4,8 +4,11 @@ source './config.cfg'
 
 function restore_backup()
 {
-  if [ -n "$1" ] && [ -f "$1" ] ; then
-    rm -rf "$1"
+  if [ -z "$1" ] ; then
+    return
+  fi
+  rm -rf "$1"
+  if [ -f "$1.$BACKUP_EXT" ] || [ -d "$1.$BACKUP_EXT" ] ; then
     mv -f "$1.$BACKUP_EXT" "$1"
   fi
 }

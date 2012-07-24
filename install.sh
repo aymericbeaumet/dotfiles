@@ -25,7 +25,11 @@ function cmd_exists()
 
 function do_backup()
 {
-  if [ -n "$1" ] && [ -f "$1" ] ; then
+  if [ -z "$1" ] ; then
+    return
+  fi
+  if [ -f "$1" ] || [ -d "$1" ] ; then
+    rm -rf "$1.$BACKUP_EXT"
     mv -f "$1" "$1.$BACKUP_EXT"
   fi
 }
