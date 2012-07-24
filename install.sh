@@ -107,10 +107,10 @@ fi
 ##
 #anonymous pro font
 ##
-if ! [ -d ~/.fonts ] ; then
-  mkdir ~/.fonts
+if ! [ -d "$FONTS_DIR" ] ; then
+  mkdir "$FONTS_DIR"
 fi
-cp -r ./anonymous_pro_font/*.ttf ~/.fonts/
+cp -r ./fonts/*.ttf "$FONTS_DIR"
 echo '-> fonts ok!'
 
 exit 0
