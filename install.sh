@@ -1,7 +1,15 @@
 #!/bin/sh
 
-#the script will exit if a command fail
-set -e
+##
+#config
+##
+
+source './config.cfg'
+current_path="$(pwd)"
+current_user="$(whoami)"
+
+if [ -z "$current_path" ] ; then current_path="/tmp" ; fi
+if [ -z "$current_user" ] ; then current_user="unknown" ; fi
 
 ##
 #functions
@@ -15,27 +23,17 @@ function cmd_exists()
   return 0
 }
 
-##
-#config
-##
-GIT_CONF_FILE=~/.gitconfig
-TMUX_CONF_FILE=~/.tmux.conf
-TMUX_CONF_DIR=~/.tmux
-VIM_CONF_FILE=~/.vimrc
-VIM_CONF_DIR=~/.vim
-ZSH_CONF_FILE=~/.zshrc
-ZSH_CONF_DIR=~/.zsh
-
-current_path="$(pwd)"
-current_user="$(whoami)"
-
-
-if [ -z "$current_path" ] ; then current_path="/tmp" ; fi
-if [ -z "$current_user" ] ; then current_user="unknown" ; fi
+function do_backup()
+{
+  if [ -n "$1" ] && [ -f "$1" ] ; then
+    mv -f "$1" "$1.$BACKUP_EXT"
+  fi
+}
 
 ##
 #warning
 ##
+
 echo 'This script will install the configuration files for the following programs:'
 echo '  - git'
 echo '  - tmux'
@@ -50,7 +48,7 @@ if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then exit 0 ; fi
 #git
 ##
 if cmd_exists git ; then
-  rm -rf "$GIT_CONF_FILE"
+  do_backup "$GIT_CONF_FILE"
   ln -sf "$current_path/git/conf_file" "$GIT_CONF_FILE"
   echo '-> git ok!'
 
@@ -62,9 +60,9 @@ fi
 #tmux
 ##
 if cmd_exists tmux ; then
-  rm -rf "$TMUX_CONF_FILE"
+  do_backup "$TMUX_CONF_FILE"
   ln -sf "$current_path/tmux/conf_file" "$TMUX_CONF_FILE"
-  rm -rf "$TMUX_CONF_DIR"
+  do_backup "$TMUX_CONF_DIR"
   ln -sf "$current_path/tmux/data" "$TMUX_CONF_DIR"
   echo '-> tmux ok!'
 fi
@@ -73,9 +71,9 @@ fi
 #vim
 ##
 if cmd_exists vim ; then
-  rm -rf "$VIM_CONF_FILE"
+  do_backup "$VIM_CONF_FILE"
   ln -sf "$current_path/vim/conf_file" "$VIM_CONF_FILE"
-  rm -rf "$VIM_CONF_DIR"
+  do_backup "$VIM_CONF_DIR"
   ln -sf "$current_path/vim/data" "$VIM_CONF_DIR"
   rm -rf "$current_path/vim/data/autoload/pathogen.vim"
   ln -sf "$current_path/vim/pathogen/autoload/pathogen.vim" "$current_path/vim/data/autoload/pathogen.vim"
@@ -95,9 +93,9 @@ if cmd_exists zsh ; then
       chsh -s $(which zsh | head -1)
     fi
   fi
-  rm -rf "$ZSH_CONF_FILE"
+  do_backup "$ZSH_CONF_FILE"
   ln -sf "$current_path/zsh/conf_file" "$ZSH_CONF_FILE"
-  rm -rf "$ZSH_CONF_DIR"
+  do_backup "$ZSH_CONF_DIR"
   ln -sf "$current_path/zsh/data" "$ZSH_CONF_DIR"
   echo '-> zsh ok!'
 fi
