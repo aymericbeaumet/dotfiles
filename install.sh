@@ -105,7 +105,7 @@ if cmd_exists zsh ; then
 fi
 
 ##
-#anonymous pro font
+#fonts
 ##
 if ! [ -d "$FONTS_DIR" ] ; then
   mkdir "$FONTS_DIR"
