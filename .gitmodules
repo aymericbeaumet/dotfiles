@@ -6,3 +6,7 @@
 	path = vim/data/bundle/surround
 	url = https://github.com/tpope/vim-surround.git
         ignore = dirty
+[submodule "vim/data/bundle/cocoa"]
+	path = vim/data/bundle/cocoa
+	url = git://github.com/msanders/cocoa.vim.git
+        ignore = dirty
