@@ -46,7 +46,7 @@ echo 'And also the font Anonymous Pro.'
 echo 'Do you wish to continue [Y/n]? '
 while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
   if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
-    exit 0
+    break
   fi
   read answer
   answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
