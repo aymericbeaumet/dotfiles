@@ -10,3 +10,11 @@
 	path = vim/data/bundle/cocoa
 	url = git://github.com/msanders/cocoa.vim.git
         ignore = dirty
+[submodule "vim/data/bundle/omlet"]
+	path = vim/data/bundle/omlet
+	url = git://github.com/vim-scripts/omlet.vim.git
+        ignore = dirty
+[submodule "vim/data/bundle/fugitive"]
+	path = vim/data/bundle/fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+        ignore = dirty
