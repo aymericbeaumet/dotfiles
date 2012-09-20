@@ -1,17 +1,21 @@
 [user]
   name = Aymeric Beaumet
   email = aymeric@beaumet.fr
-  editor = vim
 
 [alias]
   ; fast access
   br = branch
-  co = checkout
   ci = commit
+  co = checkout
   df = diff
-  st = status
+  fe = fetch
   pl = pull
   ps = push
+  rb = rebase
+  rs = reset
+  rv = revert
+  sa = stash
+  st = status
   ; usefull aliases
   amend = commit --amend
   oneline = log --pretty=oneline --abbrev-commit --graph
@@ -20,19 +24,26 @@
   trash = clean -fdx
 
 [core]
+  editor = vim
   pager = less
+  whitespace = trailing-space,space-before-tab,indent-with-non-tab,cr-at-eol
 
 [color]
-  diff = auto
-  status = auto
   branch = auto
+  diff = auto
+  interactive = auto
+  status = auto
+  ui = auto
 
 [mergetool]
-  keepbackup = false
-  keeptemporaries = false
+  keepbackup = true
+  keeptemporaries = true
 
 [man]
   viewer = less
 
 [branch]
   autosetuprebase = always
+
+[apply]
+  whitespace = fix
