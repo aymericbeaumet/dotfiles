@@ -14,7 +14,7 @@
   rb = rebase
   rs = reset
   rv = revert
-  sa = stash
+  sh = stash
   st = status
   ; usefull aliases
   amend = commit --amend
