@@ -22,6 +22,8 @@
   who = shortlog -sne
   rubbish = clean -ndx
   trash = clean -fdx
+  ignore = update-index --assume-unchanged
+  track = update-index --no-assume-unchanged
 
 [core]
   editor = vim
