@@ -24,6 +24,7 @@
   trash = clean -fdx
   ignore = update-index --assume-unchanged
   track = update-index --no-assume-unchanged
+  gitconfig = !cat ~/.gitconfig
 
 [core]
   editor = vim
