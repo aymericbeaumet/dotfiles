@@ -29,7 +29,7 @@
 [core]
   editor = vim
   pager = less
-  whitespace = trailing-space,space-before-tab,indent-with-non-tab,cr-at-eol
+  whitespace = trailing-space,space-before-tab
 
 [color]
   branch = auto
