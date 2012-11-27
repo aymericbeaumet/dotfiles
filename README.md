@@ -4,7 +4,8 @@ Here you'll find my configuration files for:
   - tmux
   - vim
   - zsh
-and also the Anonymous Pro font.
+
+And also the Anonymous Pro font.
 
 There are two scripts at the root:
   - install.sh: install the new configuration files (backup the previous)
