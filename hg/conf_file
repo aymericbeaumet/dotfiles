@@ -1,0 +1,13 @@
+[ui]
+  username = Aymeric Beaumet <aymeric@beaumet.fr>
+  editor = vim
+
+[alias]
+  ; fast access
+  br = branch
+  ci = commit
+  df = diff
+  pl = pull
+  ps = push
+  rv = revert
+  st = status

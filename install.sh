@@ -40,10 +40,12 @@ function do_backup()
 
 echo 'This script will install the configuration files for the following programs:'
 echo '  - git'
+echo '  - mercurial'
 echo '  - tmux'
+echo '  - vim'
 echo '  - zsh'
-echo 'And also the font Anonymous Pro.'
-echo 'Do you wish to continue [Y/n]? '
+echo 'and also the Anonymous Pro font.'
+echo -n 'Do you wish to continue [Y/n]? '
 while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
   if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
     break
@@ -65,6 +67,15 @@ if cmd_exists git ; then
 
   git submodule update --init
   echo '-> Submodules ok!'
+fi
+
+##
+#hg
+##
+if cmd_exists hg ; then
+  do_backup "$HG_CONF_FILE"
+  ln -sf "$current_path/hg/conf_file" "$HG_CONF_FILE"
+  echo '-> Mercurial ok!'
 fi
 
 ##
