@@ -11,3 +11,4 @@ pl = pull
 ps = push
 rv = revert
 st = status
+up = update
