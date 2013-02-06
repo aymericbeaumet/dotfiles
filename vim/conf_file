@@ -1,13 +1,11 @@
 " Colors {
-set t_Co=256            " enable 256 colors
+set t_Co=256            	" enable 256 colors
 colorscheme wombat256mod	" vim theme
-syntax on		" syntax coloring
+syntax on			" syntax coloring
 " }
 
 " FileType Detection {
-filetype on
-filetype plugin on
-filetype indent on
+filetype plugin indent on
 " }
 
 " Options {
@@ -55,18 +53,5 @@ endif
 " }
 
 " Pathogen {
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
-" }
-
-" Typing Errors {
-cnoreabbrev Q q
-cnoreabbrev W w
-cnoreabbrev WQ wq
-cnoreabbrev Wq wq
-cnoreabbrev QA qa
-cnoreabbrev Qa qa
-cnoreabbrev WQA wqa
-cnoreabbrev WQa wqa
-cnoreabbrev Wqa wqa
+execute pathogen#infect()
 " }

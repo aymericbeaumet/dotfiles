@@ -18,3 +18,6 @@
 	path = vim/data/bundle/fugitive
 	url = git://github.com/tpope/vim-fugitive.git
         ignore = dirty
+[submodule "vim/data/bundle/coffee-script"]
+	path = vim/data/bundle/coffee-script
+	url = git://github.com/kchmck/vim-coffee-script.git
