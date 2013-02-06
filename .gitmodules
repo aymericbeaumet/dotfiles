@@ -21,3 +21,6 @@
 [submodule "vim/data/bundle/coffee-script"]
 	path = vim/data/bundle/coffee-script
 	url = git://github.com/kchmck/vim-coffee-script.git
+[submodule "vim/data/bundle/javascript"]
+	path = vim/data/bundle/javascript
+	url = git://github.com/pangloss/vim-javascript.git
