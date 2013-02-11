@@ -46,9 +46,9 @@ echo '  - vim'
 echo '  - zsh'
 echo 'and also the Anonymous Pro font.'
 echo -n 'Do you wish to continue [Y/n]? '
-while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
-  if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
-    break
+while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
+  if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then
+    exit 1
   fi
   read answer
   answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
