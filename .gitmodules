@@ -24,3 +24,6 @@
 [submodule "vim/data/bundle/javascript"]
 	path = vim/data/bundle/javascript
 	url = git://github.com/pangloss/vim-javascript.git
+[submodule "vim/data/bundle/json"]
+	path = vim/data/bundle/json
+	url = git://github.com/jakar/vim-json.git
