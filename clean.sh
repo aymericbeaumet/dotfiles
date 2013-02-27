@@ -19,7 +19,9 @@ function restore_backup()
 
 echo 'This script will restore your original configuration files for:'
 echo '  - git'
+echo '  - mercurial'
 echo '  - tmux'
+echo '  - vim'
 echo '  - zsh'
 echo -n 'Do you wish to continue [y/N]? '
 answer=''
@@ -35,6 +37,7 @@ while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
 done
 
 restore_backup "$GIT_CONF_FILE"
+restore_backup "$HG_CONF_FILE"
 restore_backup "$TMUX_CONF_FILE"
 restore_backup "$TMUX_CONF_DIR"
 restore_backup "$VIM_CONF_FILE"
