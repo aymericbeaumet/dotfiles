@@ -64,9 +64,6 @@ if cmd_exists git ; then
   do_backup "$GIT_CONF_FILE"
   ln -sf "$current_path/git/conf_file" "$GIT_CONF_FILE"
   echo '-> Git ok!'
-
-  git submodule update --init
-  echo '-> Submodules ok!'
 fi
 
 ##
@@ -137,5 +134,8 @@ if ! [ -d "$FONTS_DIR" ] ; then
 fi
 cp -r ./fonts/*.ttf "$FONTS_DIR"
 echo '-> Fonts ok!'
+
+git submodule update --init
+echo '-> Submodules ok!'
 
 exit 0
