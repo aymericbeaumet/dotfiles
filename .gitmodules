@@ -27,3 +27,6 @@
 [submodule "vim/data/bundle/json"]
 	path = vim/data/bundle/json
 	url = git://github.com/jakar/vim-json.git
+[submodule "vim/data/bundle/transmit"]
+	path = vim/data/bundle/transmit
+	url = git://github.com/abeaumet/transmit-vim.git
