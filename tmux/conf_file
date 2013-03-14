@@ -17,8 +17,6 @@ set -g display-time 1000
 
 # dont let tmux rename term
 set -g set-titles off
-# let tmux rename windows
-set -g automatic-rename on
 
 # disable window notifications
 set-window-option -g monitor-activity off
@@ -65,12 +63,12 @@ bind 7 select-window -t 7
 bind 8 select-window -t 8
 bind 9 select-window -t 9
 bind 0 select-window -t 10
-bind v select-window -p
-bind C-v select-window -p
-bind n select-window -n
-bind C-n select-window -n
-bind m select-window -l
-bind C-m select-window -l
+bind v previous-window
+bind C-v previous-window
+bind n next-window
+bind C-n next-window
+bind m last-window
+bind C-m last-window
 
 #-----------------------------------------------------------------------------#
 #   STATUSBAR
