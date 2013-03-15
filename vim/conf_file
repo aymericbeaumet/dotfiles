@@ -36,9 +36,12 @@ set ruler               " show line number
 " }
 
 " Binds {
-map <S-h> gT            " left tab
-map <S-l> gt            " right tab
-cmap W %!sudo tee % 2>&1 2>/dev/null " root write
+" left tab
+map <S-h> gT
+" right tab
+map <S-l> gt
+" root write
+cmap W %!sudo tee % 2>&1 2>/dev/null
 " }
 
 " Indentation {
