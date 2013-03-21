@@ -41,7 +41,7 @@ map <S-h> gT
 " right tab
 map <S-l> gt
 " root write
-cmap W %!sudo tee % 2>&1 >/dev/null
+command W w !sudo tee % 2>&1 >/dev/null
 " }
 
 " Indentation {
