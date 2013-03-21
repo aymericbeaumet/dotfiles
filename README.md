@@ -4,6 +4,7 @@ Here you'll find my configuration files for:
   - tmux;
   - vim;
   - zsh;
+
 and also the Anonymous Pro font.
 
 There are three scripts in this repository:
