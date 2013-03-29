@@ -1,56 +1,66 @@
 #-----------------------------------------------------------------------------#
-#   DEFAULT CONFIGURATION
+#   CONFIGURATION
 #-----------------------------------------------------------------------------#
 
 # default colors configuration
 set -g default-terminal "screen-256color"
 
-# copy mod use vi cmd
-set-option -g status-keys vi
-set-window-option -g mode-keys vi
-
 # windows index starts at 1
 set -g base-index 1
+
+# make it faster!
+set -g escape-time 0
+
+# smallest client terminal contraint is now proper to window, not session
+setw -g aggressive-resize on
 
 # display messages for a second
 set -g display-time 1000
 
-# dont let tmux rename term
-set -g set-titles off
-
 # disable window notifications
-set-window-option -g monitor-activity off
+setw -g monitor-activity on
 set -g visual-activity off
+set -g visual-bell off
+
+# allow tmux to rename tabs
+setw -g automatic-rename on
 
 # utf8
-set-window-option -g utf8 on
+setw -g utf8 on
 
-#-----------------------------------------------------------------------------#
-#    SHORTCUTS
-#-----------------------------------------------------------------------------#
+# allow mouse
+set -g mouse-resize-pane on
+set -g mouse-select-pane on
+set -g mouse-select-window on
+set -g mouse-utf8 on
 
-#
-# global
-#
+# remove default binds
+unbind-key -a
+
+# just to be sure
+set -g prefix C-b
+
+# vim key binding
+setw -g mode-keys vi
 
 # reload .tmux.conf file
 bind r source ~/.tmux.conf
 
-#
-# window
-#
+# show helper
+bind ? list-keys
 
-# new window
-bind c new-window
-bind C-c new-window
+#-----------------------------------------------------------------------------#
+#    WINDOW
+#-----------------------------------------------------------------------------#
+
+# create new tab
+bind t new-window
 
 # detach window
 bind d detach
-bind C-d detach
 
-# kill current window
-bind x killw
-bind C-x killw
+# quit current tab
+bind q killw
 
 # switch between windows
 bind 1 select-window -t 1
@@ -63,15 +73,36 @@ bind 7 select-window -t 7
 bind 8 select-window -t 8
 bind 9 select-window -t 9
 bind 0 select-window -t 10
-bind v previous-window
-bind C-v previous-window
-bind n next-window
-bind C-n next-window
-bind m last-window
-bind C-m last-window
+bind -n M-C-h previous-window
+bind -n M-C-l next-window
 
 #-----------------------------------------------------------------------------#
-#   STATUSBAR
+#   PANE
+#-----------------------------------------------------------------------------#
+
+#
+# pane
+#
+bind s split-window -v
+bind v split-window -h
+
+# switch between pane
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# resize pane
+bind -r C-h resize-pane -L
+bind -r C-j resize-pane -D
+bind -r C-k resize-pane -U
+bind -r C-l resize-pane -R
+
+# pane border color
+set-option -g pane-active-border-fg colour38
+
+#-----------------------------------------------------------------------------#
+#   STATUS BAR
 #-----------------------------------------------------------------------------#
 
 # status bar refresh time in second(s) (change it to 1 for dev)
@@ -83,23 +114,23 @@ set -g status-fg colour235
 set -g status-attr dim
 
 # status bar options
-set-option -g status-justify centre                     # alignment of windows
-set-window-option -g window-status-format ' [#I]#W '    # Inactive windows in status bar
+set -g status-justify centre                     # alignment of windows
+setw -g window-status-format ' [#I]#W '    # Inactive windows in status bar
 
 # current or active window in status bar
-set-window-option -g window-status-current-bg colour16
-set-window-option -g window-status-current-fg colour38
-set-window-option -g window-status-current-format ' {#I}#W '
+setw -g window-status-current-bg colour232
+setw -g window-status-current-fg colour38
+setw -g window-status-current-format ' {#I}#W '
 
 # command/message line colors
 set -g message-fg colour15
 set -g message-bg colour124
 set -g message-attr dim
+#
+# set status bar (left side)
+set -g status-left-length 0
+set -g status-left ''
 
-# left side of status bar
-set -g status-left-length 50
-set -g status-left '#(~/.tmux/lmenu.sh)'
-
-# right side of status bar
-set -g status-right-length 50
-set -g status-right '#(~/.tmux/rmenu.sh)'
+# set status bar (right side)
+set -g status-right-length 75
+set -g status-right '#(sh ~/.tmux/rmenu.sh)'

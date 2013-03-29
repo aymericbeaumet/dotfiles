@@ -57,7 +57,7 @@ function is_bsd()
 
 ###############################################################################
 ###############################################################################
-# II. zsh options                                                             #
+# II. ZSH options                                                             #
 ###############################################################################
 
 #basic settings
@@ -118,20 +118,19 @@ if [ -n "$TMUX" ] ; then
   export TERM='screen-256color'
 elif [ -r '/usr/share/terminfo/78/xterm-256color' ] || \
      [ -r '/lib/terminfo/x/xterm-256color' ]        || \
-     locate 'xterm-256color' &>/dev/null
-then
+     locate 'xterm-256color' &>/dev/null ; then
   export TERM='xterm-256color'
 else
   export TERM='xterm'
 fi
 
-export PATH="$PATH:/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/opt/local/bin"
+export PATH="/usr/local/bin:$PATH:/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/opt/local/bin"
 export EDITOR="$(which 'vim' 2>/dev/null || which 'vi' 2>/dev/null || echo "$EDITOR")"
 export USE_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
 export VIEWER="$(which 'eog' 2>/dev/null || echo "$VIEWER")"
 export PAGER="$(which 'less' 2>/dev/null || which 'more' 2>/dev/null || which 'cat' 2>/dev/null || echo "$PAGER")"
-export SHELL="$(which 'zsh' 2>/dev/null || echo "$SHELL")"
+export SHELL="$(which 'zsh' 2>/dev/null || which 'bash' 2>/dev/null echo "$SHELL")"
 
 #history
 export SAVEHIST='10000'
@@ -148,6 +147,7 @@ else
   export CLICOLOR='0'
 fi
 
+#mail directory
 export MAIL=~'/Maildir'
 
 
@@ -159,9 +159,9 @@ export MAIL=~'/Maildir'
 
 if cmd_exists 'rm' ; then
   if cmd_exists 'find' ; then
-    alias clean='find . -type f -and \( -name ".*.sw[a|o|p]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
+    alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
   else
-    alias clean='rm -f **/.*.sw[a|o|p] **/*~'
+    alias clean='rm -f **/{.*.sw[a-z],*~}'
   fi
 fi
 
@@ -184,7 +184,7 @@ if cmd_exists 'vim' ; then
   alias v='vim'
 fi
 
-#bind some extension to $EDITOR
+#bind some extension to be opened with $EDITOR
 alias -s c="$EDITOR"
 alias -s cpp="$EDITOR"
 alias -s h="$EDITOR"
@@ -194,16 +194,16 @@ alias -s html="$EDITOR"
 alias -s css="$EDITOR"
 alias -s js="$EDITOR"
 
-#bind some extension to $PAGER
+#bind some extension to be opened with $PAGER
 alias -s txt="$PAGER"
 
-#bind some extension to $VIEWER
+#bind some extension to be opened with $VIEWER
 alias -s bmp="$VIEWER"
 alias -s gif="$VIEWER"
 alias -s jpg="$VIEWER"
 alias -s png="$VIEWER"
 
-#bind some extension to $SHELL
+#bind some extension to be opened with $SHELL
 alias -s sh="$SHELL"
 
 #bind some extension to be directly executed
@@ -211,14 +211,14 @@ if cmd_exists 'php' ; then
   alias -s php="$(which php 2> /dev/null)"
   alias -s php3="$(which php 2> /dev/null)"
   alias -s php4="$(which php 2> /dev/null)"
+  alias -s php5="$(which php 2> /dev/null)"
 fi
-cmd_exists 'php' && alias -s php5="$(which php 2> /dev/null)"
 cmd_exists 'python' && alias -s py="$(which python 2> /dev/null)"
 cmd_exists 'perl' && alias -s pl="$(which perl 2> /dev/null)"
 cmd_exists 'ocaml' && alias -s ml="$(which ocaml 2> /dev/null)"
 
 #classic aliases
-cmd_exists 'grep' && alias grep='grep -E --color=auto'
+cmd_exists 'grep' && alias grep='grep --color=auto'
 cmd_exists 'cp' && alias cp='cp -v'
 cmd_exists 'mv' && alias mv='mv -v'
 cmd_exists 'rm' && alias rm='rm -v'
@@ -226,20 +226,14 @@ cmd_exists 'mkdir' && alias mkdir='mkdir -v'
 cmd_exists 'rmdir' && is_linux && alias rmdir='rmdir -v'
 cmd_exists 'jobs' && alias j='jobs'
 
-cmd_exists 'grep' && alias -g G=' | grep' # ex: 'ls | grep toto' == 'ls G toto'
+cmd_exists 'grep' && alias -g G=' | grep' # ex: 'ls | grep -e toto' == 'ls G -e toto'
 cmd_exists 'less' && alias -g L=' | less'
 cmd_exists 'head' && alias -g H=' | head'
 cmd_exists 'tail' && alias -g T=' | tail'
 [[ -w '/dev/null' ]] && alias -g N=' &>/dev/null'
 
-#builtins
-alias source='source ~/.zshrc'
-
 #tmux
-if cmd_exists 'tmux' ; then
-  alias tmux="TERM='screen-256color' tmux"
-  alias tmux='tmux attach || tmux'
-fi
+cmd_exists 'tmux' && alias tmux="TERM='screen-256color' tmux"
 
 
 
@@ -258,4 +252,3 @@ bindkey '^[[2~'		overwrite-mode			#INSERT
 bindkey '^[[1;5D'	backward-word			#CTRL <-
 bindkey '^[[1;5C'	forward-word			#CTRL ->
 bindkey '^[[3~'		delete-char			#DELETE
-
