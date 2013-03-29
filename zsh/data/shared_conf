@@ -1,0 +1,11 @@
+                   #########################################
+                   # This is a configuration file for zsh. #
+                   #########################################
+
+if [ -r ~'/.zsh/shared' ] ; then
+  source ~'/.zsh/shared'
+fi
+
+if [ -r ~'/.zsh/user' ] ; then
+  source ~'/.zsh/user'
+fi
