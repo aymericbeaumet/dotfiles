@@ -5,15 +5,12 @@
 ##
 
 source './config.cfg'
+
 current_path="$(pwd)"
 current_user="$(whoami)"
 
 if [ -z "$current_path" ] ; then current_path="/tmp" ; fi
 if [ -z "$current_user" ] ; then current_user="unknown" ; fi
-
-##
-#functions
-##
 
 function cmd_exists()
 {
@@ -37,13 +34,12 @@ function do_backup()
 ##
 #warning
 ##
-
 echo 'This script will install the configuration files for the following programs:'
-echo '  - git'
-echo '  - tmux'
-echo '  - vim'
-echo '  - zsh'
-echo 'and also the Anonymous Pro font.'
+echo '  - git;'
+echo '  - tmux;'
+echo '  - vim;'
+echo '  - zsh.'
+echo
 echo -n 'Do you wish to continue [Y/n]? '
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
   if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then
@@ -116,16 +112,7 @@ if cmd_exists zsh ; then
   echo '-> Zsh ok!'
 fi
 
-##
-#fonts
-##
-if ! [ -d "$FONTS_DIR" ] ; then
-  mkdir "$FONTS_DIR"
-fi
-cp -r ./fonts/*.ttf "$FONTS_DIR"
-echo '-> Fonts ok!'
-
 git submodule update --init
-echo '-> Submodules ok!'
+echo '-> Submodules init ok!'
 
 exit 0
