@@ -40,7 +40,6 @@ function do_backup()
 
 echo 'This script will install the configuration files for the following programs:'
 echo '  - git'
-echo '  - mercurial'
 echo '  - tmux'
 echo '  - vim'
 echo '  - zsh'
@@ -64,15 +63,6 @@ if cmd_exists git ; then
   do_backup "$GIT_CONF_FILE"
   ln -sf "$current_path/git/conf_file" "$GIT_CONF_FILE"
   echo '-> Git ok!'
-fi
-
-##
-#hg
-##
-if cmd_exists hg ; then
-  do_backup "$HG_CONF_FILE"
-  ln -sf "$current_path/hg/conf_file" "$HG_CONF_FILE"
-  echo '-> Mercurial ok!'
 fi
 
 ##

@@ -1,11 +1,8 @@
 Here you'll find my configuration files for:
   - git;
-  - mercurial;
   - tmux;
   - vim;
-  - zsh;
-
-and also the Anonymous Pro font.
+  - zsh.
 
 There are three scripts in this repository:
   - install.sh: install the new configuration files (backup the previous);
