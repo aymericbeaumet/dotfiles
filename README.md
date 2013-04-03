@@ -1,12 +1,14 @@
-Here you'll find my configuration files for:
-  - git;
-  - tmux;
-  - vim;
-  - zsh.
+Here you'll find my configuration files.
 
-There are three scripts in this repository:
-  - install.sh: install the new configuration files (backup the previous);
-  - update.sh: update the configuration files (including the submodules);
-  - clean.sh: restore your previous configuration files (erase the currently used).
+## Installation
 
-Enjoy!
+Simply do a `make` (to update the dotfiles), followed by a `make install`.
+
+    make
+    make install
+
+Note: a backup will be automatically made.
+
+## Restore your backups
+
+    make clean

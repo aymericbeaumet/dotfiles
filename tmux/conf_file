@@ -53,11 +53,11 @@ bind ? list-keys
 #    WINDOW
 #-----------------------------------------------------------------------------#
 
-# create new tab
-bind t new-window
-
 # detach window
 bind d detach
+
+# create new tab
+bind t new-window
 
 # quit current tab
 bind q killw
@@ -75,6 +75,7 @@ bind 9 select-window -t 9
 bind 0 select-window -t 10
 bind -n M-C-h previous-window
 bind -n M-C-l next-window
+bind n next-window
 
 #-----------------------------------------------------------------------------#
 #   PANE

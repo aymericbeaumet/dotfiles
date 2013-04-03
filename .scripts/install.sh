@@ -1,10 +1,12 @@
 #!/bin/sh
 
+# Fix path
+cd "$(dirname "$0")/.."
+
 ##
 #config
 ##
-
-source './config.cfg'
+. "$(cd "$(dirname "$0")"; pwd)/config.cfg"
 
 current_path="$(pwd)"
 current_user="$(whoami)"
@@ -12,7 +14,7 @@ current_user="$(whoami)"
 if [ -z "$current_path" ] ; then current_path="/tmp" ; fi
 if [ -z "$current_user" ] ; then current_user="unknown" ; fi
 
-function cmd_exists()
+cmd_exists()
 {
   if [ "$#" -eq '0' ] || ! which "$1" &>/dev/null ; then
     return 1
@@ -20,7 +22,7 @@ function cmd_exists()
   return 0
 }
 
-function do_backup()
+do_backup()
 {
   if [ -z "$1" ] ; then
     return
@@ -43,7 +45,7 @@ echo
 echo -n 'Do you wish to continue [Y/n]? '
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
   if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then
-    exit 1
+    exit 0
   fi
   read answer
   answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"

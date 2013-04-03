@@ -1,8 +1,8 @@
 #!/bin/sh
 
-source './config.cfg'
+. "$(cd "$(dirname "$0")"; pwd)/config.cfg"
 
-function restore_backup()
+restore_backup()
 {
   if [ -z "$1" ] ; then
     return
