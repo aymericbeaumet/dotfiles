@@ -1,32 +1,43 @@
+# Vim
 [submodule "vim/pathogen"]
 	path = vim/pathogen
 	url = https://github.com/tpope/vim-pathogen.git
-        ignore = dirty
-[submodule "vim/data/bundle/surround"]
-	path = vim/data/bundle/surround
-	url = https://github.com/tpope/vim-surround.git
         ignore = dirty
 [submodule "vim/data/bundle/cocoa"]
 	path = vim/data/bundle/cocoa
 	url = git://github.com/msanders/cocoa.vim.git
         ignore = dirty
-[submodule "vim/data/bundle/omlet"]
-	path = vim/data/bundle/omlet
-	url = git://github.com/vim-scripts/omlet.vim.git
+[submodule "vim/data/bundle/coffee-script"]
+	path = vim/data/bundle/coffee-script
+	url = git://github.com/kchmck/vim-coffee-script.git
         ignore = dirty
 [submodule "vim/data/bundle/fugitive"]
 	path = vim/data/bundle/fugitive
 	url = git://github.com/tpope/vim-fugitive.git
         ignore = dirty
-[submodule "vim/data/bundle/coffee-script"]
-	path = vim/data/bundle/coffee-script
-	url = git://github.com/kchmck/vim-coffee-script.git
 [submodule "vim/data/bundle/javascript"]
 	path = vim/data/bundle/javascript
 	url = git://github.com/pangloss/vim-javascript.git
+        ignore = dirty
 [submodule "vim/data/bundle/json"]
 	path = vim/data/bundle/json
 	url = git://github.com/jakar/vim-json.git
+        ignore = dirty
+[submodule "vim/data/bundle/omlet"]
+	path = vim/data/bundle/omlet
+	url = git://github.com/vim-scripts/omlet.vim.git
+        ignore = dirty
+[submodule "vim/data/bundle/surround"]
+	path = vim/data/bundle/surround
+	url = https://github.com/tpope/vim-surround.git
+        ignore = dirty
 [submodule "vim/data/bundle/transmit"]
 	path = vim/data/bundle/transmit
 	url = git://github.com/abeaumet/transmit-vim.git
+        ignore = dirty
+
+# Xcode
+[submodule "xcode/plugins/XVim"]
+	path = xcode/plugins/XVim
+	url = git://github.com/JugglerShu/XVim.git
+        ignore = dirty
