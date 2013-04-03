@@ -9,9 +9,6 @@ set the following configuration files:
  * vim;
  * zsh.
 
-    make
-    make install
-
 _Note: a backup will be automatically made of your existing configuration files._
 
 ## Restore your backups
