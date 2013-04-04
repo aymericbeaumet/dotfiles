@@ -36,12 +36,8 @@ do_backup()
 }
 
 
-##
-#warning
-##
 echo 'This script will install the configuration files for the following programs:'
 find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
-echo
 echo -n 'Do you wish to continue [Y/n]? '
 answer=''
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
@@ -61,9 +57,6 @@ git submodule update --init
 echo '-> Dependencies ok!'
 
 
-##
-#git
-##
 if cmd_exists git ; then
   git_path="$current_path/_git"
 
@@ -74,9 +67,6 @@ if cmd_exists git ; then
 fi
 
 
-##
-#tmux
-##
 if cmd_exists tmux ; then
   tmux_path="$current_path/_tmux"
 
@@ -88,9 +78,6 @@ if cmd_exists tmux ; then
   echo '-> Tmux ok!'
 fi
 
-##
-#vim
-##
 if cmd_exists vim ; then
   vim_path="$current_path/_vim"
 
@@ -106,9 +93,6 @@ if cmd_exists vim ; then
 fi
 
 
-##
-#zsh
-##
 if cmd_exists zsh ; then
   zsh_path="$current_path/_zsh"
 

@@ -13,13 +13,8 @@ restore_backup()
   fi
 }
 
-##
-#warning
-##
-
 echo 'This script will restore your original configuration files for:'
 find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
-echo
 echo -n 'Do you wish to continue [y/N]? '
 answer=''
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
