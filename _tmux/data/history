@@ -1,0 +1,91 @@
+: 1365085750:0;l
+: 1365085751:0;git st
+: 1365085756:0;git df --cached
+: 1365085795:0;vim .scripts/clean.sh
+: 1365085869:0;find . -name '_(
+: 1365085883:0;find . -name '_*'
+: 1365086206:0;find . -name '_*' -mindepth 0 -maxdepth 1
+: 1365086209:0;find . -name '_*' -mindepth 1 -maxdepth 1
+: 1365086311:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} | sed 's/_\(.\+\)/\1/g'
+: 1365086313:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} | sed 's/_\(.\+\)/\1/g' \;
+: 1365086315:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} | sed 's/_\(.\+\)/\1/g'\;
+: 1365086317:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} | sed 's/_\(.\+\)/\1/g' \;
+: 1365086319:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} | sed 's/_\(.\+\)/\1/g' ;
+: 1365086321:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} | sed 's/_\(.\+\)/\1/g' \;
+: 1365086386:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's/_\(.\+\)/\1/g'
+: 1365086393:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's/\.\/_\(.\+\)/\1/g'
+: 1365086436:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(/.\+\)#\1#g'
+: 1365086438:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(/.\+\)#a\1#g'
+: 1365086443:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(.\+\)#a\1#g'
+: 1365086453:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(.\+\)#\1#g'
+: 1365086511:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(.\+\)#\1a#g'
+: 1365086525:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(\.\+\)#\1#g'
+: 1365086527:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(.\+\)#\1#g'
+: 1365086543:0;echo ./_git | sed 's#\(.\+\)#\1#g'
+: 1365086550:0;echo ./_git | sed 's#\(.\+\)#a\1#g'
+: 1365086557:0;echo ./_git | sed 's#.\+#\1#g'
+: 1365086560:0;echo ./_git | sed 's#.\+#a#g'
+: 1365086568:0;echo ./_git | sed 's#.\+##g'
+: 1365086575:0;echo ./_git | sed 's#.+##g'
+: 1365086578:0;echo ./_git | sed 's#\.\+##g'
+: 1365086579:0;echo ./_git | sed 's#\.+##g'
+: 1365086583:0;echo ./_git | sed 's#.\+##g'
+: 1365086634:0;echo sunday | sed 's#day#night#'
+: 1365086637:0;echo sunday | sed 's#day#night#g'
+: 1365086642:0;echo sunday | sed 's#.\+#night#g'
+: 1365086654:0;echo sunday | sed 's#.\+#night#'
+: 1365086769:0;echo sunday | sed 's#.+#night#'
+: 1365086800:0;echo sunday | sed -r 's#.+#night#'
+: 1365086803:0;man sed
+: 1365086810:0;echo sunday | sed -r 's#.*#night#'
+: 1365086813:0;echo sunday | sed 's#.*#night#'
+: 1365086822:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#\(.*\)#\1#g'
+: 1365086831:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#./_\(.*\)#\1#g'
+: 1365086840:0;find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
+: 1365086848:0;fg
+: 1365086878:0;make install
+: 1365086881:0;fg
+: 1365087135:0;/bin/sh -c 'echo -n lol'
+: 1365087138:0;/bin/bash -c 'echo -n lol'
+: 1365087158:0;/bin/sh -c 'echo --help'
+: 1365087161:0;fg
+: 1365087187:0;l
+: 1365087188:0;make
+: 1365087213:0;fg
+: 1365087222:0;make install
+: 1365087238:0;l
+: 1365087239:0;fg
+: 1365087377:0;l
+: 1365087378:0;git st
+: 1365087380:0;git add -A
+: 1365087381:0;l
+: 1365087383:0;git st
+: 1365087391:0;git df --cached
+: 1365087398:0;cat _tmux/data/history
+: 1365087404:0;la ~
+: 1365087412:0;la ~/.tmux/
+: 1365087417:0;vim ~/.tmux/history
+: 1365087424:0;l
+: 1365087426:0;cd -
+: 1365087427:0;l
+: 1365087549:0;cd ~/.dotfiles
+: 1365087549:0;l
+: 1365087553:0;vim .scripts/install.sh
+: 1365088191:0;l
+: 1365088192:0;git st
+: 1365088193:0;git add -A
+: 1365088194:0;l
+: 1365088196:0;git st
+: 1365088201:0;git df --cached
+: 1365088213:0;cat ~/.zsh/history
+: 1365088219:0;cat ~/.tmux/history
+: 1365088220:0;cat ~/.zsh/history
+: 1365088222:0;l
+: 1365088237:0;vim _git/conf_file
+: 1365088245:0;vim _zsh/conf_file
+: 1365088258:0;l
+: 1365088259:0;git st
+: 1365088261:0;git add -A
+: 1365088263:0;git st
+: 1365088265:0;vim .gitignore
+: 1365088269:0;git add -A

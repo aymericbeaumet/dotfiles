@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Fix path
 cd "$(dirname "$0")/.."
@@ -40,20 +40,19 @@ do_backup()
 #warning
 ##
 echo 'This script will install the configuration files for the following programs:'
-echo '  - git;'
-echo '  - tmux;'
-echo '  - vim;'
-echo '  - zsh.'
+find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
 echo
 echo -n 'Do you wish to continue [Y/n]? '
+answer=''
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
-  if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then
-    exit 0
-  fi
   read answer
   answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+  # default
   if [ -z "$answer" ] ; then
-    break
+    break;
+  fi
+  if [ "$answer" = 'n' ] || [ "$answer" = 'no' ] ; then
+    exit 0
   fi
 done
 
@@ -111,7 +110,7 @@ fi
 #zsh
 ##
 if cmd_exists zsh ; then
-  zsh_path="$current_path/_tmux"
+  zsh_path="$current_path/_zsh"
 
   if cmd_exists chsh ; then
     echo -n 'Do you want to set your default shell to zsh [y/N]? '
@@ -119,12 +118,14 @@ if cmd_exists zsh ; then
     while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
       read answer
       answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+      # default
+      if [ -z "$answer" ] ; then
+        echo "Will keep the default shell."
+        break
+      fi
       if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
         echo "$current_user, please enter your password to proceed:"
         chsh -s $(which zsh | head -1)
-        break
-      fi
-      if [ -z "$answer" ] ; then
         break
       fi
     done

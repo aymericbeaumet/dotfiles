@@ -1,7 +1,3 @@
-                   #########################################
-                   # This is a configuration file for zsh. #
-                   #########################################
-
 if [ -r ~'/.zsh/shared_conf' ] ; then
   source ~'/.zsh/shared_conf'
 fi

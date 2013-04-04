@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Fix path
 cd "$(dirname "$0")/.."
