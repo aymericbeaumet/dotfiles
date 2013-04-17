@@ -42,6 +42,9 @@ map <S-h> gT
 map <S-l> gt
 " root write
 command W w !sudo tee % 2>&1 >/dev/null
+" fix backspace
+set backspace=2
+set backspace=indent,eol,start
 " }
 
 " Indentation {
