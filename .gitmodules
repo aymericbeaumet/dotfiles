@@ -41,3 +41,6 @@
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
         ignore = dirty
+[submodule "_vim/data/bundle/multiple-cursors"]
+	path = _vim/data/bundle/multiple-cursors
+	url = git://github.com/terryma/vim-multiple-cursors.git
