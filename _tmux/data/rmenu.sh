@@ -6,7 +6,7 @@ if which 'whoami' >/dev/null 2>&1 ; then
 fi
 
 host='unknown_host'
-if which 'host' >/dev/null 2>&1 ; then
+if which 'hostname' >/dev/null 2>&1 ; then
   host="$(hostname)"
 fi
 
