@@ -37,7 +37,7 @@ do_backup()
 
 
 echo 'This script will install the configuration files for the following programs:'
-find . -name '_*' -mindepth 1 -maxdepth 1 -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
+find . -mindepth 1 -maxdepth 1 -name '_*' -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
 echo -n 'Do you wish to continue [Y/n]? '
 answer=''
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
