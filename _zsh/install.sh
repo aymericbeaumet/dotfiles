@@ -1,0 +1,20 @@
+#!/bin/sh
+# This script will be sourced during installation
+
+if cmd_exists chsh ; then
+  echo -n 'Do you want to set your default shell to zsh [y/N]? '
+  answer=''
+  while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
+    read answer
+    answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
+    # default
+    if [ -z "$answer" ] ; then
+      break
+    fi
+    if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
+      echo "$current_user, please type your password to proceed:"
+      chsh -s "$(which zsh | head -1)"
+      break
+    fi
+  done
+fi

@@ -16,6 +16,9 @@ if [ -z "$current_path" ] || [ -z "$current_user" ] ; then
   exit 1
 fi
 
+# get the configuration file to install (directories prefixed by an '_')
+files2install=($(find . -mindepth 1 -maxdepth 1 -name '_*' -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'))
+
 cmd_exists()
 {
   if [ "$#" -eq '0' ] || ! which "$1" &>/dev/null ; then
@@ -27,17 +30,18 @@ cmd_exists()
 do_backup()
 {
   if [ -z "$1" ] ; then
-    return
+    return 1
   fi
   if [ -f "$1" ] || [ -d "$1" ] ; then
-    rm -rf "$1.$BACKUP_EXT"
-    mv -f "$1" "$1.$BACKUP_EXT"
+    rm -rf "$1.$BACKUP_EXT" &>/dev/null || return $?
+    mv -f "$1" "$1.$BACKUP_EXT" &>/dev/null || return $?
   fi
+  return 0
 }
 
 
 echo 'This script will install the configuration files for the following programs:'
-find . -mindepth 1 -maxdepth 1 -name '_*' -exec echo {} \; | sed 's#./_\(.*\)# - \1#g'
+for i in "${files2install[@]}" ; do echo "- $i" ; done
 echo -n 'Do you wish to continue [Y/n]? '
 answer=''
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
@@ -53,74 +57,43 @@ while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
 done
 
 
+echo '---'
+echo 'Checking dependencies...'
 git submodule update --init
-echo '-> Dependencies ok!'
 
 
-if cmd_exists git ; then
-  git_path="$current_path/_git"
-
-  do_backup "$GIT_CONF_FILE"
-  ln -sf "$git_path/conf_file" "$GIT_CONF_FILE"
-
-  echo '-> Git ok!'
-fi
-
-
-if cmd_exists tmux ; then
-  tmux_path="$current_path/_tmux"
-
-  do_backup "$TMUX_CONF_FILE"
-  ln -sf "$tmux_path/conf_file" "$TMUX_CONF_FILE"
-  do_backup "$TMUX_CONF_DIR"
-  ln -sf "$tmux_path/data" "$TMUX_CONF_DIR"
-
-  echo '-> Tmux ok!'
-fi
-
-if cmd_exists vim ; then
-  vim_path="$current_path/_vim"
-
-  do_backup "$VIM_CONF_FILE"
-  ln -sf "$vim_path/conf_file" "$VIM_CONF_FILE"
-  do_backup "$VIM_CONF_DIR"
-  ln -sf "$vim_path/data" "$VIM_CONF_DIR"
-  mkdir -p "$vim_path/data/autoload"
-  rm -rf "$vim_path/data/autoload/pathogen.vim"
-  ln -sf "$vim_path/pathogen/autoload/pathogen.vim" "$vim_path/data/autoload/pathogen.vim"
-
-  echo '-> Vim ok!'
-fi
-
-
-if cmd_exists zsh ; then
-  zsh_path="$current_path/_zsh"
-
-  if cmd_exists chsh ; then
-    echo -n 'Do you want to set your default shell to zsh [y/N]? '
-    answer=''
-    while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
-      read answer
-      answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
-      # default
-      if [ -z "$answer" ] ; then
-        echo "Will keep the default shell."
-        break
-      fi
-      if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
-        echo "$current_user, please enter your password to proceed:"
-        chsh -s $(which zsh | head -1)
-        break
-      fi
-    done
+# Installing configuration files
+echo '---'
+for i in "${files2install[@]}" ; do
+  if ! cmd_exists "$i" ; then
+    echo "Skipping $i stuff..."
+    continue
   fi
-  do_backup "$ZSH_CONF_FILE"
-  ln -sf "$zsh_path/conf_file" "$ZSH_CONF_FILE"
-  do_backup "$ZSH_CONF_DIR"
-  ln -sf "$zsh_path/data" "$ZSH_CONF_DIR"
 
-  echo '-> Zsh ok!'
-fi
+  echo "Installing $i stuff..."
 
+  for j in $(ls "_$i/") ; do
+    # if a custom installation script is present, skip it
+    if [ "$j" = 'install.sh' ] ; then
+      continue
+    fi
+
+    file_from="$current_path/_$i/$j"
+    file_toward="$INSTALL_DIR/.$j"
+    do_backup "$file_toward" &&
+      ln -sf "$file_from" "$file_toward" &>/dev/null &&
+      echo "    \"$file_from\" -> \"$file_toward\""
+  done
+
+  custom_install_script="$current_path/_$i/install.sh"
+  if [ -f "$custom_install_script" ] ; then
+    echo "    Loading custom installation script \"$custom_install_script\""
+    . "$custom_install_script"
+  fi
+
+  echo '---'
+done
+
+echo 'Done!'
 
 exit 0

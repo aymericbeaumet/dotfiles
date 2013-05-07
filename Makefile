@@ -8,7 +8,3 @@ all:
 install:
 	@echo 'Installing dotfiles...'
 	@$(SCRIPTS_DIR)/install.sh
-
-clean:
-	@echo 'Removing dotfiles...'
-	@$(SCRIPTS_DIR)/clean.sh

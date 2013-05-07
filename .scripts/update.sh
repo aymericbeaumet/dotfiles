@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.."
 
 # Update repo and init/update submodules
-git pull origin master && \
-  git submodule update --init
+git pull origin master || exit $?
+git submodule update --init || exit $?
 
-exit $?
+exit 0

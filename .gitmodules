@@ -1,46 +1,27 @@
-# Vim
-[submodule "_vim/pathogen"]
-	path = _vim/pathogen
+#Vim
+[submodule "_vim/vim/autoload/pathogen"]
+	path = _vim/vim/autoload/pathogen
 	url = git://github.com/tpope/vim-pathogen.git
         ignore = dirty
-[submodule "_vim/data/bundle/cocoa"]
-	path = _vim/data/bundle/cocoa
-	url = git://github.com/msanders/cocoa.vim.git
-        ignore = dirty
-[submodule "_vim/data/bundle/coffee-script"]
-	path = _vim/data/bundle/coffee-script
-	url = git://github.com/kchmck/vim-coffee-script.git
-        ignore = dirty
-[submodule "_vim/data/bundle/fugitive"]
-	path = _vim/data/bundle/fugitive
-	url = git://github.com/tpope/vim-fugitive.git
-        ignore = dirty
-[submodule "_vim/data/bundle/javascript"]
-	path = _vim/data/bundle/javascript
+[submodule "_vim/vim/bundle/js/javascript"]
+	path = _vim/vim/bundle/js/javascript
 	url = git://github.com/pangloss/vim-javascript.git
         ignore = dirty
-[submodule "_vim/data/bundle/json"]
-	path = _vim/data/bundle/json
+[submodule "_vim/vim/bundle/js/json"]
+	path = _vim/vim/bundle/js/json
 	url = git://github.com/jakar/vim-json.git
         ignore = dirty
-[submodule "_vim/data/bundle/omlet"]
-	path = _vim/data/bundle/omlet
-	url = git://github.com/vim-scripts/omlet.vim.git
+[submodule "_vim/vim/bundle/multiple_cursors"]
+	path = _vim/vim/bundle/multiple_cursors
+	url = git://github.com/terryma/vim-multiple-cursors.git
         ignore = dirty
-[submodule "_vim/data/bundle/surround"]
-	path = _vim/data/bundle/surround
+[submodule "_vim/vim/bundle/surround"]
+	path = _vim/vim/bundle/surround
 	url = git://github.com/tpope/vim-surround.git
         ignore = dirty
-[submodule "_vim/data/bundle/transmit"]
-	path = _vim/data/bundle/transmit
-	url = git://github.com/abeaumet/transmit-vim.git
-        ignore = dirty
 
-# Xcode
-[submodule "xcode/plugins/XVim"]
-	path = xcode/plugins/XVim
+#Xcode
+[submodule "xcode/plugins/xvim"]
+	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git
         ignore = dirty
-[submodule "_vim/data/bundle/multiple-cursors"]
-	path = _vim/data/bundle/multiple-cursors
-	url = git://github.com/terryma/vim-multiple-cursors.git
