@@ -16,7 +16,6 @@ set ignorecase          " ignore case when searching
 set smartcase           "    `-> except if there is one uppercase character
 set wildmenu            " better command line completion menu
 set wildignore+=*.o,*.a,*.git,*.sw*,*~  " ignore those files in completion
-set mouse=a		" enable mouse
 set showcmd             " show (partial) command in the last line of the screen
 set showmode            " show current mode in status bar
 set showmatch           " show the matching bracket when inserting

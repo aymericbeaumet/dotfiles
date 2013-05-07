@@ -28,12 +28,6 @@ setw -g automatic-rename on
 # utf8
 setw -g utf8 on
 
-# allow mouse
-set -g mouse-resize-pane on
-set -g mouse-select-pane on
-set -g mouse-select-window on
-set -g mouse-utf8 on
-
 # remove default binds
 unbind-key -a
 
