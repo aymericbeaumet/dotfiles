@@ -1,3 +1,8 @@
+" Pathogen {
+runtime pathogen/autoload/pathogen.vim
+execute pathogen#infect()
+" }
+
 " Colors {
 set t_Co=256            	" enable 256 colors
 colorscheme wombat256mod	" vim theme
@@ -56,8 +61,4 @@ if (ext == "h" || ext == "c")
 else
   set autoindent
 endif
-" }
-
-" Pathogen {
-execute pathogen#infect()
 " }

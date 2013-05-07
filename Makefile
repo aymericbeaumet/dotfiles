@@ -1,4 +1,3 @@
-# Script dir
 SCRIPTS_DIR=$(dir $(lastword $(MAKEFILE_LIST)))/.scripts
 
 all:

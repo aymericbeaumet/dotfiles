@@ -57,13 +57,11 @@ while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
 done
 
 
-echo '---'
 echo 'Checking dependencies...'
 git submodule update --init
 
 
 # Installing configuration files
-echo '---'
 for i in "${files2install[@]}" ; do
   if ! cmd_exists "$i" ; then
     echo "Skipping $i stuff..."
@@ -72,12 +70,7 @@ for i in "${files2install[@]}" ; do
 
   echo "Installing $i stuff..."
 
-  for j in $(ls "_$i/") ; do
-    # if a custom installation script is present, skip it
-    if [ "$j" = 'install.sh' ] ; then
-      continue
-    fi
-
+  for j in $(ls "_$i/" | sort) ; do
     file_from="$current_path/_$i/$j"
     file_toward="$INSTALL_DIR/.$j"
     do_backup "$file_toward" &&
@@ -85,15 +78,15 @@ for i in "${files2install[@]}" ; do
       echo "    \"$file_from\" -> \"$file_toward\""
   done
 
-  custom_install_script="$current_path/_$i/install.sh"
-  if [ -f "$custom_install_script" ] ; then
-    echo "    Loading custom installation script \"$custom_install_script\""
+  for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' | sort) ; do
+    custom_install_script="$script"
+    echo "    Loading custom installation script: \"$custom_install_script\""
+    echo '<<<'
     . "$custom_install_script"
-  fi
-
-  echo '---'
+    echo '>>>'
+  done
 done
 
-echo 'Done!'
+echo 'dotfiles successfully installed!'
 
 exit 0

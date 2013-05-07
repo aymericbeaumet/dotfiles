@@ -1,4 +1,4 @@
 .*.sw*
 .DS_Store
 _vim/vim/.netrwhist
-_zsh/vim/history
+_zsh/zsh/history
