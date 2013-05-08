@@ -1,26 +1,96 @@
-#Vim
-[submodule "_vim/vim/pathogen"]
-	path = _vim/vim/pathogen
+###
+# Vim
+
+[submodule "_vim/vim/autoload/pathogen"]
+	path = _vim/vim/autoload/pathogen
 	url = git://github.com/tpope/vim-pathogen.git
         ignore = dirty
-[submodule "_vim/vim/bundle/js/javascript"]
-	path = _vim/vim/bundle/js/javascript
+
+[submodule "_vim/vim/bundle/languages/python"]
+	path = _vim/vim/bundle/languages/python
+	url = git://github.com/klen/python-mode.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/languages/php"]
+	path = _vim/vim/bundle/languages/php
+	url = git://github.com/vim-scripts/php.vim--Hodge.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/languages/objectivec"]
+	path = _vim/vim/bundle/languages/objectivec
+	url = git://github.com/vim-scripts/cocoa.vim.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/languages/git"]
+	path = _vim/vim/bundle/languages/git
+	url = git://github.com/tpope/vim-git.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/languages/javascript"]
+	path = _vim/vim/bundle/languages/javascript
 	url = git://github.com/pangloss/vim-javascript.git
         ignore = dirty
-[submodule "_vim/vim/bundle/js/json"]
-	path = _vim/vim/bundle/js/json
+[submodule "_vim/vim/bundle/languages/json"]
+	path = _vim/vim/bundle/languages/json
 	url = git://github.com/jakar/vim-json.git
         ignore = dirty
-[submodule "_vim/vim/bundle/multiple_cursors"]
-	path = _vim/vim/bundle/multiple_cursors
-	url = git://github.com/terryma/vim-multiple-cursors.git
-        ignore = dirty
-[submodule "_vim/vim/bundle/surround"]
-	path = _vim/vim/bundle/surround
-	url = git://github.com/tpope/vim-surround.git
+[submodule "_vim/vim/bundle/languages/markdown"]
+	path = _vim/vim/bundle/languages/markdown
+	url = git://github.com/tpope/vim-markdown.git
         ignore = dirty
 
-#Xcode
+[submodule "_vim/vim/bundle/tools/multiple_cursors"]
+	path = _vim/vim/bundle/tools/multiple_cursors
+	url = git://github.com/terryma/vim-multiple-cursors.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/narrowregion"]
+	path = _vim/vim/bundle/tools/narrowregion
+	url = git://github.com/chrisbra/NrrwRgn.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/nerdcommenter"]
+	path = _vim/vim/bundle/tools/nerdcommenter
+	url = git://github.com/scrooloose/nerdcommenter.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/nerdtree"]
+	path = _vim/vim/bundle/tools/nerdtree
+	url = git://github.com/scrooloose/nerdtree.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/surround"]
+	path = _vim/vim/bundle/tools/surround
+	url = git://github.com/tpope/vim-surround.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/supertab"]
+	path = _vim/vim/bundle/tools/supertab
+	url = git://github.com/ervandew/supertab.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/snippets"]
+	path = _vim/vim/bundle/tools/snippets
+	url = git://github.com/honza/vim-snippets.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/easymotion"]
+	path = _vim/vim/bundle/tools/easymotion
+	url = git://github.com/Lokaltog/vim-easymotion.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/fugitive"]
+	path = _vim/vim/bundle/tools/fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/powerline"]
+	path = _vim/vim/bundle/tools/powerline
+	url = git://github.com/Lokaltog/powerline.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/syntastic"]
+	path = _vim/vim/bundle/tools/syntastic
+	url = git://github.com/scrooloose/syntastic.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/avim"]
+	path = _vim/vim/bundle/tools/avim
+	url = git://github.com/vim-scripts/a.vim.git
+        ignore = dirty
+[submodule "_vim/vim/bundle/tools/bufexplorer"]
+	path = _vim/vim/bundle/tools/bufexplorer
+	url = git://github.com/vim-scripts/bufexplorer.zip.git
+        ignore = dirty
+
+###
+# Xcode
+
 [submodule "xcode/plugins/xvim"]
 	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git

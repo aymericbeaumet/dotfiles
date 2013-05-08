@@ -1,19 +1,12 @@
-" Pathogen {
-runtime pathogen/autoload/pathogen.vim
-execute pathogen#infect()
-" }
-
-" Colors {
+" Colors
 set t_Co=256            	" enable 256 colors
 colorscheme wombat256mod	" vim theme
 syntax on			" syntax coloring
-" }
 
-" FileType Detection {
+" FileType Detection
 filetype plugin indent on
-" }
 
-" Options {
+" Options
 set shell=zsh           " set shell for :sh
 set expandtab           " insert `shiftwidth` spaces when using <Tab>
 set shiftwidth=2        " n spaces when using <Tab>
@@ -37,28 +30,25 @@ set timeoutlen=200      " (default 1000) time to wait when a part of a maped seq
 set wrapscan            " searches wrap around the end of the file
 set number              " show line number
 set ruler               " show line number
-" }
 
-" Binds {
-" left tab
+" Binds
+" - left tab
 map <S-h> gT
-" right tab
+" - right tab
 map <S-l> gt
-" root write
+" - root write
 command W w !sudo tee % 2>&1 >/dev/null
-" fix backspace
+
+" 80 characters per line convention
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/ "highlight 80+col lines
+
+" Auto-indentation
+set autoindent
+
+" Fix backspace (on some OS/term)
 set backspace=2
 set backspace=indent,eol,start
-" }
 
-" Indentation {
-let ext = expand("%:e")
-if (ext == "h" || ext == "c")
-  set cindent         " automatic C indenting
-  set softtabstop=2   " <BS> will delete n spaces
-  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-  match OverLength /\%81v.\+/ "highlight 80+col lines
-else
-  set autoindent
-endif
-" }
+" Load plugins using pathogen
+execute pathogen#infect()
