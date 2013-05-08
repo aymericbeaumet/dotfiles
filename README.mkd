@@ -1,13 +1,8 @@
-This repository contains my configuration files.
+Here you can find some of my configurations file. Feel free to use it :)
 
 ## Installation
 
-Simply do a `make`, followed by a `make install` to set the configuration
-files stored in a directory starting with an underscore.
+    make
+    make install
 
-_Note: a backup will be automatically made of your existing configuration files._
-
-## Restore your backups
-
-Delete my configurations files and restore the previous ones by typing
-`make clean`.
+_Note: your previous configuration files will be automatically backed up._
