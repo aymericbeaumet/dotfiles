@@ -1,0 +1,25 @@
+# Inspired from https://github.com/github/gitignore
+
+# Vim
+.*.s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# ctags / etags
+TAGS
+!TAGS/
+tags
+!tags/
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~

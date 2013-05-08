@@ -29,7 +29,11 @@
 [core]
   editor = vim
   pager = less
-  whitespace = trailing-space,space-before-tab
+  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  excludesfile = ~/.gitignore
+
+[apply]
+  whitespace = fix
 
 [color]
   branch = auto
@@ -47,6 +51,3 @@
 
 [branch]
   autosetuprebase = always
-
-[apply]
-  whitespace = fix
