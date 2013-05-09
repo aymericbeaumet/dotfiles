@@ -1,6 +1,6 @@
-###########################################################
-# User configuration file: used for user specific options #
-###########################################################
+#########################
+# User specific options #
+#########################
 
 #mail directory
 export MAIL=~'/Maildir'

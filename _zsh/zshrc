@@ -108,16 +108,6 @@ RPROMPT="{^${RED_COLOR}${SHLVL}$RESET_DISPLAY} [%n$RED_COLOR@$RESET_DISPLAY%M]"
 # IV. Environment                                                             #
 ###############################################################################
 
-if [ -n "$TMUX" ] ; then
-  export TERM='screen-256color'
-elif [ -r '/usr/share/terminfo/78/xterm-256color' ] || \
-     [ -r '/lib/terminfo/x/xterm-256color' ]        || \
-     locate 'xterm-256color' &>/dev/null ; then
-  export TERM='xterm-256color'
-else
-  export TERM='xterm'
-fi
-
 export PATH="/usr/local/bin:$PATH:/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/opt/local/bin"
 export EDITOR="$(which 'vim' 2>/dev/null || which 'vi' 2>/dev/null || echo "$EDITOR")"
 export USE_EDITOR="$EDITOR"
@@ -229,9 +219,6 @@ cmd_exists 'less' && alias -g L=' | less'
 cmd_exists 'head' && alias -g H=' | head'
 cmd_exists 'tail' && alias -g T=' | tail'
 [[ -w '/dev/null' ]] && alias -g N=' &>/dev/null'
-
-#tmux
-cmd_exists 'tmux' && alias tmux="TERM='screen-256color' tmux"
 
 
 

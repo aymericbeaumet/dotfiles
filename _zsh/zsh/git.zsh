@@ -2,18 +2,22 @@
 # Git stuff #
 #############
 
-alias ga='git add'
-alias gA='git add -A'
-alias gamend='git commit --amend'
-alias gl='git log'
+if cmd_exists git ; then
 
-# based on ~/.gitconfig
-alias gbr='git branch'
-alias gci='git commit -m'
-alias gco='git checkout'
-alias gdf='git diff'
-alias gps='git push origin'
-alias gpl='git pull origin'
-alias grs='git reset'
-alias gst='git status'
-alias gsh='git stash'
+  alias ga='git add'
+  alias gA='git add -A'
+  alias gamend='git commit --amend'
+  alias gl='git log'
+
+  # based on ~/.gitconfig
+  alias gbr='git branch'
+  alias gci='git commit -m'
+  alias gco='git checkout'
+  alias gdf='git diff'
+  alias gps='git push origin'
+  alias gpl='git pull origin'
+  alias grs='git reset'
+  alias gst='git status'
+  alias gsh='git stash'
+
+fi
