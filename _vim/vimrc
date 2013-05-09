@@ -35,10 +35,6 @@ map <S-h> gT
 " - right tab
 map <S-l> gt
 
-" Alias
-" - root write
-command W w !sudo tee % 2>&1 >/dev/null
-
 " 80 characters line convention
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%81v.\+/
