@@ -87,6 +87,10 @@
 	path = _vim/vim/bundle/tools/bufexplorer
 	url = git://github.com/vim-scripts/bufexplorer.zip.git
         ignore = dirty
+[submodule "_vim/vim/bundle/tools/eunuch"]
+	path = _vim/vim/bundle/tools/eunuch
+	url = git://github.com/tpope/vim-eunuch.git
+        ignore = dirty
 
 ###
 # Xcode
