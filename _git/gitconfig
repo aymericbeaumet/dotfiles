@@ -29,7 +29,7 @@
   editor = vim
   pager = less
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
-  excludesfile = ~/.git/ignore.git
+  excludesfile = ~/.git/ignore
 
 [apply]
   whitespace = fix
