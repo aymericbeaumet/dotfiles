@@ -5,6 +5,7 @@
 alias ga='git add'
 alias gA='git add -A'
 alias gamend='git commit --amend'
+alias gl='git log'
 
 # based on ~/.gitconfig
 alias gbr='git branch'
