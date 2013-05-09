@@ -1,23 +1,24 @@
 #!/bin/bash
 
+# Config
+INSTALL_DIR=~
+BACKUP_EXT='bkp'
+
 # Fix path
 cd "$(dirname "$0")/.."
 
-##
-#config
-##
-. "$(cd "$(dirname "$0")"; pwd)/config.cfg"
-
+# Get useful informations
 current_path="$(pwd)"
 current_user="$(whoami)"
 
 if [ -z "$current_path" ] || [ -z "$current_user" ] ; then
-  echo 'Error: need the current path and the current user.'
+  echo 'Error: the current path and the current user are mandatory. Aborting...'
   exit 1
 fi
 
-# get the configuration file to install (directories prefixed by an '_')
-files2install=($(find . -mindepth 1 -maxdepth 1 -name '_*' -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'))
+# Get the configuration files to install (directories prefixed by an '_')
+files2install=($(find . -mindepth 1 -maxdepth 1 -name '_*' -exec echo {} \; \
+  | sort | sed 's#./_\(.*\)#\1#g'))
 
 cmd_exists()
 {
@@ -40,7 +41,9 @@ do_backup()
 }
 
 
-echo 'This script will install the configuration files for the following programs:'
+# warning
+echo 'This script install the configuration files for the following programs.'
+echo 'A backup will automatically be done of your current files.'
 for i in "${files2install[@]}" ; do echo "- $i" ; done
 echo -n 'Do you wish to continue [Y/n]? '
 answer=''
@@ -58,13 +61,13 @@ done
 
 
 echo 'Checking dependencies...'
-git submodule update --init
+git submodule init
 
 
 # Installing configuration files
 for i in "${files2install[@]}" ; do
   if ! cmd_exists "$i" ; then
-    echo "Skipping $i stuff..."
+    echo "Skipping $i stuff... (not found on the system)"
     continue
   fi
 
@@ -78,12 +81,13 @@ for i in "${files2install[@]}" ; do
       echo "    \"$file_from\" -> \"$file_toward\""
   done
 
-  for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' | sort) ; do
-    custom_install_script="$script"
-    echo "    Loading custom installation script: \"$custom_install_script\""
-    echo '<<<'
-    . "$custom_install_script"
-    echo '>>>'
+  # Each file starting with a dot in the directory will be sourced
+  for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
+    | sort) ; do
+    echo "    Loading custom installation script: \"$script\""
+    echo '    <<<'
+    . "$script"
+    echo '    >>>'
   done
 done
 
