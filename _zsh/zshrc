@@ -147,12 +147,11 @@ if cmd_exists 'rm' ; then
 fi
 
 if cmd_exists 'ls' ; then
-  COMMON_LS_ENV='CLICOLOR_FORCE=1'
   COMMON_LS_OPTIONS='-p -F'
   if is_linux ; then
-    alias ls="$COMMON_LS_ENV ls $COMMON_LS_OPTIONS --color=auto"
+    alias ls="ls $COMMON_LS_OPTIONS --color=auto"
   elif is_bsd || is_macosx ; then
-    alias ls="$COMMON_LS_ENV ls $COMMON_LS_OPTIONS -G"
+    alias ls="ls $COMMON_LS_OPTIONS -G"
   else
     unalias ls &>/dev/null
   fi
@@ -245,6 +244,6 @@ bindkey '^[[3~'		delete-char			#DELETE
 # VII. Load external configuration files                                      #
 ###############################################################################
 
-for i in $(find ~/.zsh/ -mindepth 1 -maxdepth 1 -name '*.zsh') ; do
+for i in $(find ~/.zsh/ -mindepth 1 -maxdepth 1 -name '*.zsh' -type f) ; do
   source "$i"
 done
