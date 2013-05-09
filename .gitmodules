@@ -6,21 +6,9 @@
 	url = git://github.com/tpope/vim-pathogen.git
         ignore = dirty
 
-[submodule "_vim/vim/bundle/languages/python"]
-	path = _vim/vim/bundle/languages/python
-	url = git://github.com/klen/python-mode.git
-        ignore = dirty
-[submodule "_vim/vim/bundle/languages/php"]
-	path = _vim/vim/bundle/languages/php
-	url = git://github.com/vim-scripts/php.vim--Hodge.git
-        ignore = dirty
 [submodule "_vim/vim/bundle/languages/objectivec"]
 	path = _vim/vim/bundle/languages/objectivec
 	url = git://github.com/vim-scripts/cocoa.vim.git
-        ignore = dirty
-[submodule "_vim/vim/bundle/languages/git"]
-	path = _vim/vim/bundle/languages/git
-	url = git://github.com/tpope/vim-git.git
         ignore = dirty
 [submodule "_vim/vim/bundle/languages/javascript"]
 	path = _vim/vim/bundle/languages/javascript
