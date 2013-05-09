@@ -1,3 +1,4 @@
+# Getting the scripts directory
 SCRIPTS_DIR=$(dir $(lastword $(MAKEFILE_LIST)))/.scripts
 
 all:
@@ -7,3 +8,5 @@ all:
 install:
 	@echo 'Installing dotfiles...'
 	@$(SCRIPTS_DIR)/install.sh
+
+.PHONY:	all install
