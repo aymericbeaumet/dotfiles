@@ -1,7 +1,256 @@
-if [ -r ~'/.zsh/shared_conf' ] ; then
-  source ~'/.zsh/shared_conf'
+###############################################################################
+###############################################################################
+# I. Global Functions                                                         #
+###############################################################################
+
+#return 0 if $1 exists (as an alias or executable file in $PATH)
+function cmd_exists()
+{
+  if [[ "$#" -eq '0' ]] || ! which "$1" &>/dev/null ; then
+    return 1
+  fi
+  return 0
+}
+
+#write 'unknown', only defined if uname(1) is not in $PATH
+if ! cmd_exists uname ; then
+  function uname()
+  {
+    echo 'unknown'
+  }
 fi
 
-if [ -r ~'/.zsh/user_conf' ] ; then
-  source ~'/.zsh/user_conf'
+#return 0 if the os is linux
+function is_linux()
+{
+  if [ "$(uname -s)" = 'Linux' ] ; then
+    return 0
+  fi
+  return 1
+}
+
+#return 0 if the os is macosx
+function is_macosx()
+{
+  if [ "$(uname -s)" = 'Darwin' ] ; then
+    return 0
+  fi
+  return 1
+}
+
+#return 0 if the os is bsd
+function is_bsd()
+{
+  if echo "$(uname -s)" | grep -E '*BSD*' &>/dev/null ; then
+    return 0
+  fi
+  return 1
+}
+
+
+
+###############################################################################
+###############################################################################
+# II. ZSH options                                                             #
+###############################################################################
+
+#basic settings
+setopt AUTO_CD			#change directory without cd
+setopt CORRECT_ALL		#auto-correct
+setopt ALIASES			#expand aliases
+setopt SHORT_LOOPS		#allow short forms (if, for, functions...)
+setopt AUTO_CONTINUE		#background process stay alive on shell exit
+setopt HIST_IGNORE_DUPS		#do not enter cmdline in history if = previous
+setopt HIST_REDUCE_BLANKS	#remove superfluous blanks from history
+setopt HIST_VERIFY		#reload the line into the editing buffer
+setopt RM_STAR_SILENT		#do not ask user before rm *
+
+unsetopt BEEP			#no beep
+unsetopt HIST_BEEP		#no beep
+unsetopt LIST_BEEP		#no beep
+
+#advanced completion
+autoload -U compinit
+compinit
+
+setopt COMPLETE_ALIASES		#autocomplete on aliases
+
+zstyle ':completion:*'				menu select
+zstyle ':completion:*:*:vim:*:*files' 		ignored-patterns '*.o'
+zstyle ':completion:*:*:kill:*:processes'	list-colors '=(#b) #([0-9]#)*=36=31'
+zstyle ':completion:*:approximate:'		max-errors 'reply=( $((($#PREFIX+$#SUFFIX)/3 )) numeric )'
+zstyle ':completion:*:warnings'			format '%Bnothing match for %d%b type'
+
+#history
+setopt APPEND_HISTORY
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
+
+
+
+###############################################################################
+###############################################################################
+# III. Prompt								      #
+###############################################################################
+
+#colors
+RED_COLOR=$'%{\033[31m%}'
+RESET_DISPLAY=$'%{\033[0m%}'
+
+#content
+PROMPT="[$RED_COLOR%j${RESET_DISPLAY}&:?$RED_COLOR%?$RESET_DISPLAY] [$RED_COLOR%20<...<%~%<<$RESET_DISPLAY] %(!.#.$) "
+RPROMPT="{^${RED_COLOR}${SHLVL}$RESET_DISPLAY} [%n$RED_COLOR@$RESET_DISPLAY%M]"
+
+
+
+###############################################################################
+###############################################################################
+# IV. Environment                                                             #
+###############################################################################
+
+if [ -n "$TMUX" ] ; then
+  export TERM='screen-256color'
+elif [ -r '/usr/share/terminfo/78/xterm-256color' ] || \
+     [ -r '/lib/terminfo/x/xterm-256color' ]        || \
+     locate 'xterm-256color' &>/dev/null ; then
+  export TERM='xterm-256color'
+else
+  export TERM='xterm'
 fi
+
+export PATH="/usr/local/bin:$PATH:/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/opt/local/bin"
+export EDITOR="$(which 'vim' 2>/dev/null || which 'vi' 2>/dev/null || echo "$EDITOR")"
+export USE_EDITOR="$EDITOR"
+export VISUAL="$EDITOR"
+export VIEWER="$(which 'eog' 2>/dev/null || echo "$VIEWER")"
+export PAGER="$(which 'less' 2>/dev/null || which 'more' 2>/dev/null || which 'cat' 2>/dev/null || echo "$PAGER")"
+export SHELL="$(which 'zsh' 2>/dev/null || which 'bash' 2>/dev/null echo "$SHELL")"
+
+#history
+export SAVEHIST='10000'
+export HISTSIZE='10000'
+export HISTFILE=~'/.zsh/history'
+
+#good ls colors
+unset LS_COLORS
+unset LSCOLORS
+if is_macosx || is_bsd ; then
+  export CLICOLOR='1'
+  export LSCOLORS='EaGaxxdaCaDaDaxxadEaEa'
+else
+  export CLICOLOR='0'
+fi
+
+
+
+###############################################################################
+###############################################################################
+# V. Alias                                                                    #
+###############################################################################
+
+if cmd_exists 'rm' ; then
+  if cmd_exists 'find' ; then
+    alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
+  else
+    alias clean='rm -f **/{.*.sw[a-z],*~}'
+  fi
+fi
+
+if cmd_exists 'ls' ; then
+  if is_linux ; then
+    alias ls='ls --color=auto'
+  elif is_bsd || is_macosx ; then
+    alias ls='ls -G'
+  else
+    unalias ls &>/dev/null
+  fi
+  alias ll='ls -hl'
+  alias l='ll'
+  alias la='ll -A'	#list [.]* files (but not . and ..)
+fi
+
+if cmd_exists 'vim' ; then
+  unalias vim &>/dev/null
+  alias vi='vim'
+  alias v='vim'
+fi
+
+#bind some extension to be opened with $EDITOR
+alias -s c="$EDITOR"
+alias -s cpp="$EDITOR"
+alias -s h="$EDITOR"
+alias -s hh="$EDITOR"
+alias -s hpp="$EDITOR"
+alias -s html="$EDITOR"
+alias -s css="$EDITOR"
+alias -s js="$EDITOR"
+
+#bind some extension to be opened with $PAGER
+alias -s txt="$PAGER"
+
+#bind some extension to be opened with $VIEWER
+alias -s bmp="$VIEWER"
+alias -s gif="$VIEWER"
+alias -s jpg="$VIEWER"
+alias -s png="$VIEWER"
+
+#bind some extension to be opened with $SHELL
+alias -s sh="$SHELL"
+
+#bind some extension to be directly executed
+if cmd_exists 'php' ; then
+  alias -s php="$(which php 2> /dev/null)"
+  alias -s php3="$(which php 2> /dev/null)"
+  alias -s php4="$(which php 2> /dev/null)"
+  alias -s php5="$(which php 2> /dev/null)"
+fi
+cmd_exists 'python' && alias -s py="$(which python 2> /dev/null)"
+cmd_exists 'perl' && alias -s pl="$(which perl 2> /dev/null)"
+cmd_exists 'ocaml' && alias -s ml="$(which ocaml 2> /dev/null)"
+
+#classic aliases
+cmd_exists 'grep' && alias grep='grep --color=auto'
+cmd_exists 'cp' && alias cp='cp -v'
+cmd_exists 'mv' && alias mv='mv -v'
+cmd_exists 'rm' && alias rm='rm -v'
+cmd_exists 'mkdir' && alias mkdir='mkdir -v'
+cmd_exists 'rmdir' && is_linux && alias rmdir='rmdir -v'
+cmd_exists 'jobs' && alias j='jobs'
+
+cmd_exists 'grep' && alias -g G=' | grep' # ex: 'ls | grep -e toto' == 'ls G -e toto'
+cmd_exists 'less' && alias -g L=' | less'
+cmd_exists 'head' && alias -g H=' | head'
+cmd_exists 'tail' && alias -g T=' | tail'
+[[ -w '/dev/null' ]] && alias -g N=' &>/dev/null'
+
+#tmux
+cmd_exists 'tmux' && alias tmux="TERM='screen-256color' tmux"
+
+
+
+###############################################################################
+###############################################################################
+# VI. Key Binding                                                             #
+###############################################################################
+
+bindkey -e
+
+bindkey '^[OH'		beginning-of-line		#HOME
+bindkey '^[OF'		end-of-line			#END
+bindkey '^[[6~'		history-search-forward		#PAGE DOWN
+bindkey '^[[5~'		history-search-backward		#PAGE UP
+bindkey '^[[2~'		overwrite-mode			#INSERT
+bindkey '^[[1;5D'	backward-word			#CTRL <-
+bindkey '^[[1;5C'	forward-word			#CTRL ->
+bindkey '^[[3~'		delete-char			#DELETE
+
+
+
+###############################################################################
+###############################################################################
+# VII. Load external configuration files                                      #
+###############################################################################
+
+for i in $(find ~/.zsh/ -mindepth 1 -maxdepth 1 -name '*.zsh') ; do
+  source "$i"
+done
