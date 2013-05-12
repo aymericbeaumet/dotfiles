@@ -74,3 +74,6 @@
 [submodule "xcode/plugins/xvim"]
 	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git
+[submodule "_vim/vim/bundle/tools/ctrlp"]
+	path = _vim/vim/bundle/tools/ctrlp
+	url = git://github.com/kien/ctrlp.vim.git
