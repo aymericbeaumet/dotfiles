@@ -1,5 +1,13 @@
+" don't care about vi compability (at the first to avoid bad surprise)
+set nocompatible
+
+" store useful path
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
+
+" 80 characters line convention
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/
 
 " Load plugins using pathogen
 runtime bundle/pathogen/autoload/pathogen.vim
@@ -7,9 +15,12 @@ execute pathogen#infect(s:vim_dir . '/bundle/themes/{}', s:vim_dir . '/bundle/la
 execute pathogen#helptags()
 
 " Theme
-set t_Co=256            	" enable 256 colors
-colorscheme ir_black            " theme
-syntax on			" syntax coloring
+set t_Co=256            " enable 256 colors
+colorscheme ir_black    " theme
+syntax on		" syntax coloring
+
+" File type detection
+filetype plugin indent on
 
 " Options
 set shell=zsh           " set shell for :sh
@@ -20,10 +31,8 @@ set smartcase           "   `-> except if there is one uppercase character
 set wildmenu            " better command line completion menu
 set wildignore+=*.o,*.pyc,*.sw*,*~ " ignore those files in completion
 set showcmd             " show (partial) command in the last line of the screen
-set showmode            " show current mode in status bar
 set showmatch           " show the matching bracket when inserting
 set matchtime=3         " tenths of second to show the matching bracket
-set tags=./tags;../tags " look in the parent directories for the ctags file
 set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
 set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set wrap                " split the line if it is too long
@@ -36,23 +45,25 @@ set wrapscan            " searches wrap around the end of the file
 set number              " show line number
 set ruler               " show line number
 set autoindent          " auto-indentation (most of time override by plugins)
-set nocompatible        " don't care about vi compability
+set shortmess+=I        " disable vim welcome message
+set encoding=utf-8      " ensure proper encoding
 
 " Fix backspace (on some OS/term)
 set backspace=2
 set backspace=indent,eol,start
 
 " Binds
-" - reset leading key
+" - set leading key
 let mapleader = ','
 " - left tab
 map <S-h> gT
 " - right tab
 map <S-l> gt
 
-" 80 characters line convention
-highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-match OverLength /\%81v.\+/
-
-" File type detection
-filetype plugin indent on
+" Plugins options
+" - nerdtree
+map <Leader>nt :NERDTreeToggle<CR>
+" - vim-easymotion
+map <Leader>em <Leader><Leader>w
+" - vim-powerline
+set noshowmode          "hide the duplicate mode in bottom status bar

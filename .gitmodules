@@ -25,9 +25,6 @@
 	path = _vim/vim/bundle/themes/wombat256
 	url = git://github.com/vim-scripts/wombat256.vim.git
 
-[submodule "_vim/vim/bundle/tools/vim-buffergator"]
-	path = _vim/vim/bundle/tools/vim-buffergator
-	url = git://github.com/jeetsukumaran/vim-buffergator.git
 [submodule "_vim/vim/bundle/tools/vim-easymotion"]
 	path = _vim/vim/bundle/tools/vim-easymotion
 	url = git://github.com/Lokaltog/vim-easymotion.git
@@ -49,12 +46,6 @@
 [submodule "_vim/vim/bundle/tools/vim-surround"]
 	path = _vim/vim/bundle/tools/vim-surround
 	url = git://github.com/tpope/vim-surround.git
-[submodule "_vim/vim/bundle/tools/syntastic"]
-	path = _vim/vim/bundle/tools/syntastic
-	url = git://github.com/scrooloose/syntastic.git
-[submodule "_vim/vim/bundle/tools/tagbar"]
-	path = _vim/vim/bundle/tools/tagbar
-	url = git://github.com/majutsushi/tagbar.git
 [submodule "_vim/vim/bundle/tools/vim-unimpaired"]
 	path = _vim/vim/bundle/tools/vim-unimpaired
 	url = git://github.com/tpope/vim-unimpaired.git
@@ -74,6 +65,3 @@
 [submodule "xcode/plugins/xvim"]
 	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git
-[submodule "_vim/vim/bundle/tools/ctrlp"]
-	path = _vim/vim/bundle/tools/ctrlp
-	url = git://github.com/kien/ctrlp.vim.git
