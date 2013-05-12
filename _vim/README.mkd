@@ -1,0 +1,10 @@
+Binds:
+
+- `cs' cs" cs( cs{ cs[...` vim-surround (replace in ...)
+- `^N ^P ^X` vim-multiple-cursors
+- `,em` vim-easymotion (place marks)
+- `,nc` nerdcommenter (toggle comment)
+- `,nr` narrowregion (isolate code)
+- `,nw` narrowregion (isolate window)
+- `,nt` nerdtree (toggle nerdtree)
+- `zc` open/close fold

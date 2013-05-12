@@ -49,9 +49,6 @@
 [submodule "_vim/vim/bundle/tools/vim-unimpaired"]
 	path = _vim/vim/bundle/tools/vim-unimpaired
 	url = git://github.com/tpope/vim-unimpaired.git
-[submodule "_vim/vim/bundle/tools/vim-addon-mw-utils"]
-	path = _vim/vim/bundle/tools/vim-addon-mw-utils
-	url = git://github.com/MarcWeber/vim-addon-mw-utils.git
 [submodule "_vim/vim/bundle/tools/vim-powerline"]
 	path = _vim/vim/bundle/tools/vim-powerline
 	url = git://github.com/Lokaltog/vim-powerline.git

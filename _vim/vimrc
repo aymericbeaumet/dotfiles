@@ -5,10 +5,6 @@ set nocompatible
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
-" 80 characters line convention
-highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-match OverLength /\%81v.\+/
-
 " Load plugins using pathogen
 runtime bundle/pathogen/autoload/pathogen.vim
 execute pathogen#infect(s:vim_dir . '/bundle/themes/{}', s:vim_dir . '/bundle/languages/{}', s:vim_dir . '/bundle/tools/{}')
@@ -18,6 +14,10 @@ execute pathogen#helptags()
 set t_Co=256            " enable 256 colors
 colorscheme ir_black    " theme
 syntax on		" syntax coloring
+
+" 80 characters line convention
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/
 
 " File type detection
 filetype plugin indent on
@@ -29,6 +29,7 @@ set shiftwidth=2        " n spaces when using <Tab>
 set ignorecase          " ignore case when searching
 set smartcase           "   `-> except if there is one uppercase character
 set wildmenu            " better command line completion menu
+set wildmode=list:longest,full " `-> better
 set wildignore+=*.o,*.pyc,*.sw*,*~ " ignore those files in completion
 set showcmd             " show (partial) command in the last line of the screen
 set showmatch           " show the matching bracket when inserting
@@ -38,7 +39,7 @@ set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set wrap                " split the line if it is too long
 set autoread            " watch for file changes by other programs
 set incsearch           " show matches as soon as posseble
-set nohlsearch          " do not highlight last search matches
+set hlsearch            " highlight last search matches
 set laststatus=2        " set the status line always on
 set timeoutlen=500      " time to wait when a part of a maped sequence is typped
 set wrapscan            " searches wrap around the end of the file
@@ -47,6 +48,8 @@ set ruler               " show line number
 set autoindent          " auto-indentation (most of time override by plugins)
 set shortmess+=I        " disable vim welcome message
 set encoding=utf-8      " ensure proper encoding
+set foldmethod=manual   " ensure that no foldmethod is enabled
+set nohidden            " When I close a tab, remove the buffer
 
 " Fix backspace (on some OS/term)
 set backspace=2
@@ -55,15 +58,30 @@ set backspace=indent,eol,start
 " Binds
 " - set leading key
 let mapleader = ','
-" - left tab
+" - easily move in tab
 map <S-h> gT
-" - right tab
 map <S-l> gt
+" - easily create/delete tabs
+cabbrev tn tabnew
+cabbrev tc tabclose
+cabbrev tm tabmove
+" - remap `jj` to escape in insert mode
+inoremap jj <Esc>
+" - up and down are more logical with g..
+nnoremap <silent> k gk
+nnoremap <silent> j gj
+" - center on the found line in a search
+map N Nzz
+map n nzz
 
-" Plugins options
-" - nerdtree
+" Plugins configuration
+"  - narrowregion
+map <Leader>nw :NarrowWindow<CR>
+"  - nerdcommenter
+map <Leader>nc <Leader>c<space>
+"  - nerdtree
 map <Leader>nt :NERDTreeToggle<CR>
-" - vim-easymotion
-map <Leader>em <Leader><Leader>w
-" - vim-powerline
+"  - vim-easymotion
+map <Leader><Leader>w <Leader>em
+"  - vim-powerline
 set noshowmode          "hide the duplicate mode in bottom status bar
