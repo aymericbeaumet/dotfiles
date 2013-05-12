@@ -1,8 +1,24 @@
-Here you can find some of my configurations file. Feel free to use it :)
+## What's here?
+
+The following configuration files are present in this repo:
+- Git
+- Tmux
+- Vim
+- Zsh
 
 ## Installation
 
+You can use `make` to easily install the above configuration files.
+
+    git clone git://github.com/abeaumet/dotfiles.git ~/.dotfiles
+    cd ~/.dotfiles
     make
     make install
 
 _Note: your previous configuration files will be automatically backed up._
+
+## Also
+
+You can also find here:
+- My Xcode plugins
+- My favorite fonts
