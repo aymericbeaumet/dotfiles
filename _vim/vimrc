@@ -1,3 +1,16 @@
+let s:vim_conf = expand('<sfile>:p')
+let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
+
+" Load plugins using pathogen
+runtime bundle/pathogen/autoload/pathogen.vim
+execute pathogen#infect(s:vim_dir . '/bundle/themes/{}', s:vim_dir . '/bundle/languages/{}', s:vim_dir . '/bundle/tools/{}')
+execute pathogen#helptags()
+
+" Theme
+set t_Co=256            	" enable 256 colors
+colorscheme ir_black            " theme
+syntax on			" syntax coloring
+
 " Options
 set shell=zsh           " set shell for :sh
 set expandtab           " insert `shiftwidth` spaces when using <Tab>
@@ -18,7 +31,7 @@ set autoread            " watch for file changes by other programs
 set incsearch           " show matches as soon as posseble
 set nohlsearch          " do not highlight last search matches
 set laststatus=2        " set the status line always on
-set timeoutlen=200      " time to wait when a part of a maped sequence is typped
+set timeoutlen=500      " time to wait when a part of a maped sequence is typped
 set wrapscan            " searches wrap around the end of the file
 set number              " show line number
 set ruler               " show line number
@@ -30,6 +43,8 @@ set backspace=2
 set backspace=indent,eol,start
 
 " Binds
+" - reset leading key
+let mapleader = ','
 " - left tab
 map <S-h> gT
 " - right tab
@@ -39,15 +54,5 @@ map <S-l> gt
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%81v.\+/
 
-" Theme
-set t_Co=256            	" enable 256 colors
-colorscheme wombat256mod	" theme
-syntax on			" syntax coloring
-
 " File type detection
 filetype plugin indent on
-
-" Load plugins using pathogen
-runtime pathogen/autoload/pathogen.vim
-call pathogen#infect('bundle/tools/{}', 'bundle/languages/{}')
-call pathogen#helptags()
