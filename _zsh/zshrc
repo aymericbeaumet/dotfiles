@@ -166,11 +166,6 @@ if cmd_exists 'vim' ; then
   alias v='vim'
 fi
 
-if cmd_exists less ; then
-  unalias less &>/dev/null
-  alias less='less -R'
-fi
-
 #bind some extension to be opened with $EDITOR
 alias -s c="$EDITOR"
 alias -s cpp="$EDITOR"
