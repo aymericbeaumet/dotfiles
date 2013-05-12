@@ -1,6 +1,7 @@
 ## What's here?
 
-The following configuration files are present in this repo:
+The following configuration files for the following utils are present in this
+repo:
 - Git
 - Tmux
 - Vim
