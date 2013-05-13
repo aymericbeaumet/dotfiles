@@ -6,7 +6,7 @@
 - `,r` narrowregion (isolate code)
 - `,w` narrowregion (isolate window)
 - `,e` show files explorer (toggle nerdtree)
-- `,/` nerdcommenter (toggle comment on the current line)
+- `meta /` nerdcommenter (toggle comment on the current line)
 - `H` and `L` left/right tab
 - `^h` and `^l` prev/next buffer
 - `,q` close the current buffer

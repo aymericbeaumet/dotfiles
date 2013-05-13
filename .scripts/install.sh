@@ -42,7 +42,7 @@ do_backup()
 
 
 # warning
-echo 'This script install the configuration files for the following programs.'
+echo 'This script install this configuration files.'
 echo 'A backup will automatically be done of your current files.'
 for i in "${files2install[@]}" ; do echo "- $i" ; done
 echo -n 'Do you wish to continue [Y/n]? '
@@ -66,29 +66,39 @@ git submodule init
 
 # Installing configuration files
 for i in "${files2install[@]}" ; do
-  if ! cmd_exists "$i" ; then
-    echo "Skipping $i stuff... (not found on the system)"
-    continue
-  fi
+  if [ -d "_$i" ] ; then
+    if ! cmd_exists "$i" ; then
+      echo "Skipping $i stuff... (not found on the system)"
+      continue
+    fi
 
-  echo "Installing $i stuff..."
+    echo "Installing $i stuff..."
 
-  for j in $(ls "_$i/" | sort) ; do
-    file_from="$current_path/_$i/$j"
-    file_toward="$INSTALL_DIR/.$j"
+    for j in $(ls "_$i/" | sort) ; do
+      file_from="$current_path/_$i/$j"
+      file_toward="$INSTALL_DIR/.$j"
+      do_backup "$file_toward" &&
+        ln -sf "$file_from" "$file_toward" &>/dev/null &&
+        echo "    \"$file_from\" -> \"$file_toward\""
+    done
+
+    # Each file starting with a dot in the directory will be sourced
+    for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
+      | sort) ; do
+      echo "    Loading custom installation script: \"$script\""
+      echo '    <<<'
+      . "$script"
+      echo '    >>>'
+    done
+  else
+    echo "Linking $i..."
+
+    file_from="$current_path/_$i"
+    file_toward="$INSTALL_DIR/.$i"
     do_backup "$file_toward" &&
       ln -sf "$file_from" "$file_toward" &>/dev/null &&
       echo "    \"$file_from\" -> \"$file_toward\""
-  done
-
-  # Each file starting with a dot in the directory will be sourced
-  for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
-    | sort) ; do
-    echo "    Loading custom installation script: \"$script\""
-    echo '    <<<'
-    . "$script"
-    echo '    >>>'
-  done
+  fi
 done
 
 echo 'dotfiles successfully installed!'

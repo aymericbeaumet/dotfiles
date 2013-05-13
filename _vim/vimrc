@@ -132,7 +132,7 @@ nnoremap <silent> <leader>p :CtrlP<CR>
 noremap <silent> <leader>r :NarrowRegion<CR>
 noremap <silent> <leader>w :NarrowWindow<CR>
 "  - nerdcommenter
-map <silent> <leader>/ <leader>c<space>
+map <silent> <Esc>/ <leader>c<space>
 "  - nerdtree
 nnoremap <silent> <leader>e :NERDTreeToggle<CR>
 "  - powerline

@@ -1,4 +1,5 @@
 # Inspired from https://github.com/github/gitignore
+# Thanks tpope@github for .cvsignore trick
 
 # Vim
 .*.s[a-w][a-z]

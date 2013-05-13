@@ -85,11 +85,9 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=36=31'
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':completion:*' group-name ''
 zstyle ':completion:*:default' menu 'select=0'
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
@@ -179,7 +177,7 @@ if cmd_exists 'ls' ; then
   else
     unalias ls &>/dev/null
   fi
-  alias ls="pwd ; ls -p -F $SPECIFIC_LS_OPTIONS"
+  alias ls="ls -p -F $SPECIFIC_LS_OPTIONS"
   alias ll='ls -hl'
   alias l='ll'
   alias la='ll -A' #list .* files (but not . and ..)
@@ -264,6 +262,6 @@ bindkey '^[[3~'		delete-char			#DELETE
 # VII. Load external configuration files                                      #
 ###############################################################################
 
-for i in $(find ~/.zsh/plugins/ -mindepth 1 -maxdepth 1 -name '*.zsh' -type f) ; do
+for i in $(find ~/.zsh/ -mindepth 1 -maxdepth 1 -name '*.zsh' -type f) ; do
   source "$i"
 done

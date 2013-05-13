@@ -1,0 +1,31 @@
+: 1368453269:4;make
+: 1368453276:2;make install
+: 1368453283:0;l
+: 1368453286:0;vim .scripts/install.sh
+: 1368453314:0;l
+: 1368453315:0;la ~
+: 1368453320:0;cat ~/.cvsignore
+: 1368453328:0;l
+: 1368453330:0;git st
+: 1368453338:0;l
+: 1368453339:0;cd _git
+: 1368453339:0;l
+: 1368453341:0;la ~
+: 1368453347:0;l
+: 1368453351:0;vim gitconfig
+: 1368453358:0;la ~/.gitconfig
+: 1368453375:0;la
+: 1368453376:0;l
+: 1368453382:0;vim ~/.zshrc
+: 1368453385:0;la ~
+: 1368453391:0;vim ~/.dotfiles/.scripts/install.sh
+: 1368453408:0;la ~/.cvsignore
+: 1368453410:0;fg
+: 1368453455:0;make install
+: 1368453457:0;cd ..
+: 1368453458:0;make install
+: 1368453465:0;vim .scripts/install.sh
+: 1368453493:0;make install
+: 1368453497:0;fg
+: 1368453514:0;vim .scripts/install.sh
+: 1368453545:0;make install
