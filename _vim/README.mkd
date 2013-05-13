@@ -5,7 +5,7 @@
 - `,,w` vim-easymotion (place marks)
 - `,r` narrowregion (isolate code)
 - `,w` narrowregion (isolate window)
-- `,f` show files (toggle nerdtree)
+- `,e` show files explorer (toggle nerdtree)
 - `,/` nerdcommenter (toggle comment on the current line)
 - `H` and `L` left/right tab
 - `^h` and `^l` prev/next buffer

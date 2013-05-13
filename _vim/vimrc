@@ -132,7 +132,9 @@ noremap <silent> <leader>w :NarrowWindow<CR>
 "  - nerdcommenter
 map <silent> <leader>/ <leader>c<space>
 "  - nerdtree
-nnoremap <silent> <leader>f :NERDTreeToggle<CR>
+nnoremap <silent> <leader>e :NERDTreeToggle<CR>
 "  - powerline
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode "hide the duplicate mode in bottom status bar
+"  - tagbar
+nnoremap <silent> <leader>t :TagbarToggle<CR>
