@@ -53,7 +53,9 @@ set wrap                " split the line if it is too long
 set shortmess=atI       " disable vim welcome message and shorter messages
 set wildmenu            " better command line completion menu
 set wildmode=list:longest,full " `-> better
-set wildignore+=*.o,*.pyc,*.sw*,*~ " ignore those files in completion
+set wildignore+=*.o,*.pyc,*.sw*,*.zip " ignore those files in completion
+set wildignore+=*/tmp/*,*.so,*~ " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.exe " Windows
 
 " Text editing && Search behavior
 set backspace=2         " fix backspace (on some OS/term)
@@ -116,18 +118,21 @@ cabbrev tm tabmove
 cabbrev tq tabclose
 
 " Plugins configuration
+"  - a.vim
+nnoremap <silent> <leader>a :A<CR>
 "  - buffergattor
 let g:buffergator_suppress_keymaps = 1
 nnoremap <silent> <C-h> :BuffergatorMruCyclePrev<CR>
 nnoremap <silent> <C-l> :BuffergatorMruCycleNext<CR>
 nnoremap <silent> <leader>b :BuffergatorToggle<CR>
+nnoremap <silent> <leader>q :bdelete<CR>
 "  - narrowregion
 noremap <silent> <leader>r :NarrowRegion<CR>
 noremap <silent> <leader>w :NarrowWindow<CR>
 "  - nerdcommenter
 map <silent> <leader>/ <leader>c<space>
 "  - nerdtree
-nnoremap <silent> <leader>t :NERDTreeToggle<CR>
+nnoremap <silent> <leader>f :NERDTreeToggle<CR>
 "  - powerline
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode "hide the duplicate mode in bottom status bar
