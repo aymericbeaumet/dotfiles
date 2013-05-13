@@ -40,7 +40,7 @@ set ttyfast             " we have a fast terminal
 set tags=tags;/         " search parent directories for ctags file
 
 " Console UI
-set timeoutlen=500      " time to wait when a part of a maped sequence is typped
+set timeoutlen=250      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
 set cmdheight=1         " explicitly set the command line height
@@ -122,8 +122,8 @@ cabbrev tq tabclose
 nnoremap <silent> <leader>a :A<CR>
 "  - buffergattor
 let g:buffergator_suppress_keymaps = 1
-nnoremap <silent> <C-h> :BuffergatorMruCyclePrev<CR>
-nnoremap <silent> <C-l> :BuffergatorMruCycleNext<CR>
+nnoremap <silent> <C-h> :bprevious<CR>
+nnoremap <silent> <C-l> :bnext<CR>
 nnoremap <silent> <leader>b :BuffergatorToggle<CR>
 nnoremap <silent> <leader>q :bdelete<CR>
 "  - CtrlP
