@@ -126,6 +126,8 @@ nnoremap <silent> <C-h> :BuffergatorMruCyclePrev<CR>
 nnoremap <silent> <C-l> :BuffergatorMruCycleNext<CR>
 nnoremap <silent> <leader>b :BuffergatorToggle<CR>
 nnoremap <silent> <leader>q :bdelete<CR>
+"  - CtrlP
+nnoremap <silent> <leader>p :CtrlP<CR>
 "  - narrowregion
 noremap <silent> <leader>r :NarrowRegion<CR>
 noremap <silent> <leader>w :NarrowWindow<CR>

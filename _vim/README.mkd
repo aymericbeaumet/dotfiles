@@ -12,6 +12,7 @@
 - `,q` close the current buffer
 - `meta hjkl` resize pane
 - `,a` switch between header/source
+- `,p` open CtrlP
 
 ## Abbrev memo
 

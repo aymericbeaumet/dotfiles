@@ -71,3 +71,6 @@
 [submodule "_vim/vim/bundle/tools/tagbar"]
 	path = _vim/vim/bundle/tools/tagbar
 	url = git://github.com/majutsushi/tagbar.git
+[submodule "_vim/vim/bundle/tools/ctrlp.vim"]
+	path = _vim/vim/bundle/tools/ctrlp.vim
+	url = git://github.com/kien/ctrlp.vim.git
