@@ -1,10 +1,16 @@
-Binds:
+## Binds memo
 
 - `cs' cs" cs( cs{ cs[...` vim-surround (replace in ...)
 - `^N ^P ^X` vim-multiple-cursors
-- `,em` vim-easymotion (place marks)
-- `,nc` nerdcommenter (toggle comment)
-- `,nr` narrowregion (isolate code)
-- `,nw` narrowregion (isolate window)
-- `,nt` nerdtree (toggle nerdtree)
-- `zc` open/close fold
+- `,,w` vim-easymotion (place marks)
+- `,r` narrowregion (isolate code)
+- `,w` narrowregion (isolate window)
+- `,t` nerdtree (toggle nerdtree)
+- `,/` nerdcommenter (toggle comment on the current line)
+- `H` and `L` left/right tab
+
+## Abbrev memo
+
+- `tn` tabnew
+- `tm` tabmove
+- `tq` tabclose
