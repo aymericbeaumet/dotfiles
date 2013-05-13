@@ -6,7 +6,7 @@ let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
 " Load plugins using pathogen
-runtime bundle/pathogen/autoload/pathogen.vim
+runtime pathogen/autoload/pathogen.vim
 execute pathogen#infect(s:vim_dir . '/bundle/themes/{}', s:vim_dir . '/bundle/languages/{}', s:vim_dir . '/bundle/tools/{}')
 execute pathogen#helptags()
 
