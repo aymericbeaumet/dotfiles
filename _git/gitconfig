@@ -17,6 +17,7 @@
   sh = stash
   st = status
   ; usefull aliases
+  amend = commit --amend
   oneline = log --pretty=oneline --abbrev-commit --graph
   who = shortlog -sne
   rubbish = clean -ndx

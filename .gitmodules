@@ -70,6 +70,9 @@
 [submodule "_vim/vim/bundle/tools/vim-transmit"]
 	path = _vim/vim/bundle/tools/vim-transmit
 	url = git://github.com/abeaumet/vim-transmit.git
+[submodule "_vim/vim/bundle/tools/vim-fugitive"]
+	path = _vim/vim/bundle/tools/vim-fugitive
+	url = git://github.com/tpope/vim-fugitive.git
 
 ###
 # Xcode
