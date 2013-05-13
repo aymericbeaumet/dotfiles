@@ -1,6 +1,9 @@
 ###
 # Vim
 
+[submodule "_vim/vim/pathogen"]
+	path = _vim/vim/pathogen
+	url = git://github.com/tpope/vim-pathogen.git
 
 [submodule "_vim/vim/bundle/languages/csv"]
 	path = _vim/vim/bundle/languages/csv
@@ -49,6 +52,9 @@
 [submodule "_vim/vim/bundle/tools/vim-eunuch"]
 	path = _vim/vim/bundle/tools/vim-eunuch
 	url = https://github.com/tpope/vim-eunuch.git
+[submodule "_vim/vim/bundle/tools/powerline"]
+	path = _vim/vim/bundle/tools/powerline
+	url = git://github.com/Lokaltog/powerline.git
 
 ###
 # Xcode
@@ -56,9 +62,6 @@
 [submodule "xcode/plugins/xvim"]
 	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git
-[submodule "_vim/vim/bundle/tools/powerline"]
-	path = _vim/vim/bundle/tools/powerline
-	url = git://github.com/Lokaltog/powerline.git
-[submodule "_vim/vim/pathogen"]
-	path = _vim/vim/pathogen
-	url = git://github.com/tpope/vim-pathogen.git
+[submodule "_vim/vim/bundle/tools/vim-buffergator"]
+	path = _vim/vim/bundle/tools/vim-buffergator
+	url = git://github.com/jeetsukumaran/vim-buffergator.git

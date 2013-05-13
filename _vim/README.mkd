@@ -8,6 +8,8 @@
 - `,t` nerdtree (toggle nerdtree)
 - `,/` nerdcommenter (toggle comment on the current line)
 - `H` and `L` left/right tab
+- `^h` and `^l` prev/next buffer
+- `meta hjkl` resize pane
 
 ## Abbrev memo
 
