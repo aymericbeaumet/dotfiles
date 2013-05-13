@@ -67,6 +67,9 @@
 [submodule "_vim/vim/bundle/tools/ctrlp.vim"]
 	path = _vim/vim/bundle/tools/ctrlp.vim
 	url = git://github.com/kien/ctrlp.vim.git
+[submodule "_vim/vim/bundle/tools/vim-transmit"]
+	path = _vim/vim/bundle/tools/vim-transmit
+	url = git://github.com/abeaumet/vim-transmit.git
 
 ###
 # Xcode
