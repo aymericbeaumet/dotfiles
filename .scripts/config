@@ -1,0 +1,3 @@
+# Config
+INSTALL_DIR=~
+BACKUP_EXT='bkp'

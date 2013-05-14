@@ -1,22 +1,21 @@
 #!/bin/bash
 
-# Config
-INSTALL_DIR=~
-BACKUP_EXT='bkp'
-
 # Abort on error
 set -e
 
 # Fix path
 cd "$(dirname "$0")/.."
 
+# Source configuration
+source '.scripts/config'
+
 # Get useful informations
 current_path="$(pwd)"
 current_user="$(whoami)"
 
 # Get the configuration files to install (directories prefixed by an '_')
-files2install=($(find . -mindepth 1 -maxdepth 1 -name '_*' -type d \
-  -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'))
+files2install=(`find . -mindepth 1 -maxdepth 1 -name '_*' -type d \
+  -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'`)
 
 cmd_exists()
 {
@@ -40,8 +39,8 @@ do_backup()
 
 
 # warning
-echo 'This script install this configuration files.'
-echo 'A backup will automatically be done of your current files.'
+echo "This script will install the following configuration files:"
+echo '(a backup will automatically be done of your current files)'
 for i in "${files2install[@]}" ; do echo "- $i" ; done
 echo -n 'Do you wish to continue [Y/n]? '
 answer=''
@@ -64,7 +63,8 @@ git submodule init
 
 # Installing configuration files
 for i in "${files2install[@]}" ; do
-  if [[ "$i" =~ '_.+' ]] && ! cmd_exists "$i" ; then
+  ## if the directory starts with '__', it will not be considered as a command
+  if ! cmd_exists "$i" && ! [[ "$i" =~ ^_.+$ ]] ; then
     echo "Skipping $i stuff... (not found on the system)"
     continue
   fi
@@ -72,6 +72,11 @@ for i in "${files2install[@]}" ; do
   echo "Installing $i stuff..."
 
   for j in $(ls "_$i/" | sort) ; do
+    # if the file extension is '.md' or '.mkd', just skip it
+    if [[ "$j" =~ ^.+.mk*d$ ]] ; then
+      continue
+    fi
+
     file_from="$current_path/_$i/$j"
     file_toward="$INSTALL_DIR/.$j"
     do_backup "$file_toward" &&
@@ -80,15 +85,13 @@ for i in "${files2install[@]}" ; do
   done
 
   # Each file starting with a dot in the directory will be sourced
-  for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
-    | sort) ; do
+  for script in `find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
+    | sort` ; do
     echo "    Loading custom installation script: \"$script\""
     echo '    <<<'
     . "$script"
     echo '    >>>'
   done
 done
-
-echo 'dotfiles successfully installed!'
 
 exit 0

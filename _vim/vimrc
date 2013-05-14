@@ -34,9 +34,11 @@ set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
 set laststatus=2        " status line always on
 set encoding=utf-8      " ensure proper encoding
-set nowritebackup       " no more temporary files
 set ttyfast             " we have a fast terminal
 set tags=tags;/         " search parent directories for ctags file
+set nobackup            " no backup files
+set nowritebackup       " no backup file while editing
+set noswapfile          " no swap files
 
 " Console UI
 set timeoutlen=200      " time to wait when a part of a maped sequence is typped
@@ -44,8 +46,8 @@ set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
 set cmdheight=1         " explicitly set the command line height
 set showcmd             " show (partial) command in the last line of the screen
-set scrolloff=5         " keep at least 5 lines after the cusor when scrolling
-set sidescrolloff=5     " (same as above for side scrolling)
+set scrolloff=8         " keep at least 5 lines after the cusor when scrolling
+set sidescrolloff=10     " (same as above for side scrolling)
 set lazyredraw          " only redraw when needed
 set nolist              " hide invisible characters
 set wrap                " split the line if it is too long
