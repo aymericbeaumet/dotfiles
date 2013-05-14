@@ -4,6 +4,9 @@
 INSTALL_DIR=~
 BACKUP_EXT='bkp'
 
+# Abort on error
+set -e
+
 # Fix path
 cd "$(dirname "$0")/.."
 
@@ -11,14 +14,9 @@ cd "$(dirname "$0")/.."
 current_path="$(pwd)"
 current_user="$(whoami)"
 
-if [ -z "$current_path" ] || [ -z "$current_user" ] ; then
-  echo 'Error: the current path and the current user are mandatory. Aborting...'
-  exit 1
-fi
-
 # Get the configuration files to install (directories prefixed by an '_')
-files2install=($(find . -mindepth 1 -maxdepth 1 -name '_*' -exec echo {} \; \
-  | sort | sed 's#./_\(.*\)#\1#g'))
+files2install=($(find . -mindepth 1 -maxdepth 1 -name '_*' -type d \
+  -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'))
 
 cmd_exists()
 {
@@ -66,39 +64,29 @@ git submodule init
 
 # Installing configuration files
 for i in "${files2install[@]}" ; do
-  if [ -d "_$i" ] ; then
-    if ! cmd_exists "$i" ; then
-      echo "Skipping $i stuff... (not found on the system)"
-      continue
-    fi
+  if [[ "$i" =~ '_.+' ]] && ! cmd_exists "$i" ; then
+    echo "Skipping $i stuff... (not found on the system)"
+    continue
+  fi
 
-    echo "Installing $i stuff..."
+  echo "Installing $i stuff..."
 
-    for j in $(ls "_$i/" | sort) ; do
-      file_from="$current_path/_$i/$j"
-      file_toward="$INSTALL_DIR/.$j"
-      do_backup "$file_toward" &&
-        ln -sf "$file_from" "$file_toward" &>/dev/null &&
-        echo "    \"$file_from\" -> \"$file_toward\""
-    done
-
-    # Each file starting with a dot in the directory will be sourced
-    for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
-      | sort) ; do
-      echo "    Loading custom installation script: \"$script\""
-      echo '    <<<'
-      . "$script"
-      echo '    >>>'
-    done
-  else
-    echo "Linking $i..."
-
-    file_from="$current_path/_$i"
-    file_toward="$INSTALL_DIR/.$i"
+  for j in $(ls "_$i/" | sort) ; do
+    file_from="$current_path/_$i/$j"
+    file_toward="$INSTALL_DIR/.$j"
     do_backup "$file_toward" &&
       ln -sf "$file_from" "$file_toward" &>/dev/null &&
       echo "    \"$file_from\" -> \"$file_toward\""
-  fi
+  done
+
+  # Each file starting with a dot in the directory will be sourced
+  for script in $(find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
+    | sort) ; do
+    echo "    Loading custom installation script: \"$script\""
+    echo '    <<<'
+    . "$script"
+    echo '    >>>'
+  done
 done
 
 echo 'dotfiles successfully installed!'
