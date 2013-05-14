@@ -104,6 +104,12 @@ nnoremap <silent> k gk
 "  - center on each search result
 nnoremap <silent> n nzz
 nnoremap <silent> <S-N> Nzz
+"  - easy pane resizing
+nnoremap <silent> <esc>_ <C-W>-
+nnoremap <silent> <esc>+ <C-W>+
+nnoremap <silent> <esc>< <C-W><
+nnoremap <silent> <esc>> <C-W>>
+nnoremap <silent> <esc>= <C-W>=
 
 " Abbrev
 "  - create/move/close tabs/buffers

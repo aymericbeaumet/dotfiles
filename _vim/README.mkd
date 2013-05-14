@@ -1,17 +1,24 @@
 ## Binds memo
 
 - `cs' cs" cs( cs{ cs[...` vim-surround (replace in ...)
-- `H` and `L` left/right tab
+- `H` `L` prev/next tab
 
 - `^N ^P ^X` vim-multiple-cursors
 
 - `Meta /` nerdcommenter (toggle comment on the current line)
+- `Meta _` reduce pan height
+- `Meta +` increase pan height
+- `Meta <` reduce pan width
+- `Meta >` increase pan width
+- `Meta =` auto pan resize
+- `Meta h` `Meta l` prev/next buffer
 
 - `,a` [a]lternate between header/source
-- `,e` [e]xplore files (toggle nerdtree)
+- `,b` list [b]uffers
+- `,e` [e]xplore files
 - `,o` [o]pen file
-- `,r` narrowregion (isolate [r]egion)
-- `,w` narrowregion (isolate [w]indow)
+- `,r` isolate [r]egion
+- `,w` isolate [w]indow
 
 - `,,w` vim-easymotion (place marks)
 
