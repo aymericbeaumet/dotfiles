@@ -74,7 +74,6 @@ unsetopt LIST_BEEP		# no beep
 autoload -U compinit
 compinit
 
-setopt NO_CASE_GLOB             # case insensitive globbing
 setopt NUMERIC_GLOB_SORT
 setopt EXTENDED_GLOB
 setopt COMPLETE_ALIASES		# autocomplete on aliases
@@ -91,6 +90,7 @@ zstyle ':completion:*:warnings' format 'No matches for: %d'
 zstyle ':completion:*:default' menu 'select=0'
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 #history
 setopt APPEND_HISTORY
