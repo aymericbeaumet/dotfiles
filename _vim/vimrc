@@ -7,7 +7,6 @@ autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
 set nocompatible                " break away from old vi compatibility
 set fileformats=unix,dos,mac    " support all three newline formats
 set viminfo=                    " don't use or save viminfo files
-set nocompatible                " don't care about vi compability
 
 " Load plugins using pathogen
 let s:vim_conf = expand('<sfile>:p')
@@ -40,7 +39,7 @@ set ttyfast             " we have a fast terminal
 set tags=tags;/         " search parent directories for ctags file
 
 " Console UI
-set timeoutlen=250      " time to wait when a part of a maped sequence is typped
+set timeoutlen=200      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
 set cmdheight=1         " explicitly set the command line height
@@ -86,7 +85,7 @@ set t_vb=
 " Instant escape
 if ! has('gui_running')
   set ttimeoutlen=10
-  augroup FastEscape
+  augroup Fastescape
     autocmd!
     au InsertEnter * set timeoutlen=0
     au InsertLeave * set timeoutlen=1000
@@ -96,43 +95,38 @@ endif
 " Binds
 "  - set leading key
 let mapleader = ','
-"  - change/close in tabs
-nnoremap <silent> <S -h> gT
-nnoremap <silent> <S -l> gt
+"  - change tabs
+nnoremap <silent> <S-h> gT
+nnoremap <silent> <S-l> gt
 "  - up and down are more logical with g
 nnoremap <silent> j gj
 nnoremap <silent> k gk
 "  - center on each search result
-noremap <silent> n nzz
-noremap <silent> N Nzz
-"  - resize a pane
-nnoremap <silent> <Esc>h <C-w><
-nnoremap <silent> <Esc>j <C-w>+
-nnoremap <silent> <Esc>k <C-w>-
-nnoremap <silent> <Esc>l <C-W>>
+nnoremap <silent> n nzz
+nnoremap <silent> <S-N> Nzz
 
 " Abbrev
-"  - create/move/close tabs
+"  - create/move/close tabs/buffers
 cabbrev tn tabnew
 cabbrev tm tabmove
 cabbrev tq tabclose
+cabbrev bq bdelete
 
 " Plugins configuration
 "  - a.vim
 nnoremap <silent> <leader>a :A<CR>
 "  - buffergattor
 let g:buffergator_suppress_keymaps = 1
-nnoremap <silent> <C-h> :bprevious<CR>
-nnoremap <silent> <C-l> :bnext<CR>
+nnoremap <silent> <esc>h :bprevious<CR>
+nnoremap <silent> <esc>l :bnext<CR>
 nnoremap <silent> <leader>b :BuffergatorToggle<CR>
-nnoremap <silent> <leader>q :bdelete<CR>
 "  - CtrlP
-nnoremap <silent> <leader>p :CtrlP<CR>
+nnoremap <silent> <leader>o :CtrlP<CR>
 "  - narrowregion
 noremap <silent> <leader>r :NarrowRegion<CR>
 noremap <silent> <leader>w :NarrowWindow<CR>
 "  - nerdcommenter
-map <silent> <Esc>/ <leader>c<space>
+map <silent> <esc>/ <leader>c<space>
 "  - nerdtree
 nnoremap <silent> <leader>e :NERDTreeToggle<CR>
 "  - powerline
