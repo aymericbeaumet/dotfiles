@@ -41,7 +41,7 @@ set nowritebackup       " no backup file while editing
 set noswapfile          " no swap files
 
 " Console UI
-set timeoutlen=200      " time to wait when a part of a maped sequence is typped
+set timeoutlen=150      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
 set cmdheight=1         " explicitly set the command line height
@@ -90,7 +90,7 @@ if ! has('gui_running')
   augroup Fastescape
     autocmd!
     au InsertEnter * set timeoutlen=0
-    au InsertLeave * set timeoutlen=1000
+    au InsertLeave * set timeoutlen=150
   augroup END
 endif
 
@@ -105,19 +105,14 @@ nnoremap <silent> j gj
 nnoremap <silent> k gk
 "  - center on each search result
 nnoremap <silent> n nzz
-nnoremap <silent> <S-N> Nzz
-"  - easy pane resizing
-nnoremap <silent> <esc>_ <C-W>-
-nnoremap <silent> <esc>+ <C-W>+
-nnoremap <silent> <esc>< <C-W><
-nnoremap <silent> <esc>> <C-W>>
-nnoremap <silent> <esc>= <C-W>=
+nnoremap <silent> <S-n> Nzz
 
 " Abbrev
-"  - create/move/close tabs/buffers
+"  - create/move/close tabs
 cabbrev tn tabnew
 cabbrev tm tabmove
 cabbrev tq tabclose
+"  - close buffers
 cabbrev bq bdelete
 
 " Plugins configuration
@@ -125,16 +120,16 @@ cabbrev bq bdelete
 nnoremap <silent> <leader>a :A<CR>
 "  - buffergattor
 let g:buffergator_suppress_keymaps = 1
-nnoremap <silent> <esc>h :bprevious<CR>
-nnoremap <silent> <esc>l :bnext<CR>
 nnoremap <silent> <leader>b :BuffergatorToggle<CR>
 "  - CtrlP
 nnoremap <silent> <leader>o :CtrlP<CR>
+"  - easymotion
+let g:EasyMotion_leader_key = '<Leader>m'
+nmap <silent> <leader>w <leader>mw
 "  - narrowregion
 noremap <silent> <leader>r :NarrowRegion<CR>
-noremap <silent> <leader>w :NarrowWindow<CR>
 "  - nerdcommenter
-map <silent> <esc>/ <leader>c<space>
+map <silent> <leader><leader> <leader>c<space>
 "  - nerdtree
 nnoremap <silent> <leader>e :NERDTreeToggle<CR>
 "  - powerline
