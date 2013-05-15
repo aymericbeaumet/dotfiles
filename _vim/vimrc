@@ -95,9 +95,9 @@ if ! has('gui_running')
 endif
 
 " Binds
-"  - set leading key
+"  - define leading key
 let mapleader = ','
-"  - change tabs
+"  - easy switch between tabs
 nnoremap <silent> <S-h> gT
 nnoremap <silent> <S-l> gt
 "  - up and down are more logical with g
@@ -106,13 +106,18 @@ nnoremap <silent> k gk
 "  - center on each search result
 nnoremap <silent> n nzz
 nnoremap <silent> <S-n> Nzz
+"  - pan resizing
+nnoremap <silent> _ <C-w>-
+nnoremap <silent> + <C-w>+
+nnoremap <silent> < <C-w><
+nnoremap <silent> > <C-w>>
 
 " Abbrev
-"  - create/move/close tabs
+"  - create/move/close tab
 cabbrev tn tabnew
 cabbrev tm tabmove
 cabbrev tq tabclose
-"  - close buffers
+"  - close buffer
 cabbrev bq bdelete
 
 " Plugins configuration

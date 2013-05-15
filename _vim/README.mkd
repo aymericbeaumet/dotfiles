@@ -2,6 +2,8 @@
 
 - `cs' cs" cs( cs{ cs[...` vim-surround (replace in ...)
 - `H` `L` prev/next tab
+- `_` `+` reduce/increase pane height
+- `<` `>` reduce/increase pane width
 
 - `^N ^P ^X` vim-multiple-cursors
 
