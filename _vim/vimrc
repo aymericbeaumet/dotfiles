@@ -131,6 +131,8 @@ nnoremap <silent> <leader>o :CtrlP<CR>
 "  - easymotion
 let g:EasyMotion_leader_key = '<Leader>m'
 nmap <silent> <leader>w <leader>mw
+"  - fugitive
+cabbrev g Git
 "  - narrowregion
 noremap <silent> <leader>r :NarrowRegion<CR>
 "  - nerdcommenter

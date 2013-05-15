@@ -22,3 +22,4 @@
 - `tm` move the current tab
 - `tq` close the current tab
 - `bq` close the current buffer
+- `g` type git commands (like: `g status`)
