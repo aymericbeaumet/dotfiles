@@ -16,4 +16,4 @@ uninstall:
 	@$(SCRIPTS_DIR)/clean.sh
 	@echo 'dotfiles successfully cleaned!'
 
-.PHONY:	all install
+.PHONY:	all install uninstall
