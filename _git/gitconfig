@@ -5,7 +5,11 @@
 [alias]
   ; fast access
   a = add
+  aa = add -A
   br = branch
+  bra = branch -a
+  brd = branch -d
+  brr = branch -r
   ci = commit
   cia = commit --amend
   ciam = commit --amend -m

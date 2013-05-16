@@ -100,6 +100,9 @@ let mapleader = ','
 "  - easy switch between tabs
 nnoremap <silent> <S-h> gT
 nnoremap <silent> <S-l> gt
+"  - easy switch between buffers
+nnoremap <silent> <C-h> :bprevious<CR>
+nnoremap <silent> <C-l> :bnext<CR>
 "  - up and down are more logical with g
 nnoremap <silent> j gj
 nnoremap <silent> k gk
@@ -111,6 +114,13 @@ nnoremap <silent> _ <C-w>-
 nnoremap <silent> + <C-w>+
 nnoremap <silent> < <C-w><
 nnoremap <silent> > <C-w>>
+"  - ^A in command line
+cnoremap <C-a> <C-b>
+"  - ^P/^N act as Up/down in command line
+cmap <C-p> <Up>
+cmap <C-n> <Down>
+"  - R (refresh screen)
+nnoremap <C-r> <C-l>
 
 " Abbrev
 "  - create/move/close tab
