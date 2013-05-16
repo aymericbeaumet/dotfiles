@@ -120,7 +120,7 @@ cnoremap <C-a> <C-b>
 cmap <C-p> <Up>
 cmap <C-n> <Down>
 "  - ^R (refresh screen)
-nnoremap <C-r> <C-l>
+nnoremap <F5> <C-l>
 
 " Abbrev
 "  - create/move/close tab

@@ -6,7 +6,6 @@
 - `<` `>` reduce/increase pane width
 
 - `^H` `^L` prev/next buffer
-- `^R` refresh screen
 - `^N ^P ^X` vim-multiple-cursors
 
 - `,,` comment line
@@ -17,6 +16,8 @@
 - `,r` isolate [r]egion
 - `,t` show [t]ags
 - `,w` easymotion (place marks)
+
+- `F5` refresh screen
 
 ## Abbrev memo
 
