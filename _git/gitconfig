@@ -6,22 +6,24 @@
   ; fast access
   br = branch
   ci = commit
-  cia = commit --amend
-  cim = commit -m
+  ca = commit --amend
+  cm = commit -m
   co = checkout
-  cob = checkout -b
+  cb = checkout -b
   df = diff
-  dfc = diff --cached
+  dc = diff --cached
   fe = fetch
   l = log
   me = merge
   pl = pull
+  po = pull origin
   ps = push
+  po = push origin
   rb = rebase
   rs = reset
   rv = revert
   sh = stash
-  shl = stash list
+  sl = stash list
   st = status
   ; usefull aliases
   last = log -1
