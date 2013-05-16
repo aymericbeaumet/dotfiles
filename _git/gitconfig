@@ -8,6 +8,7 @@
   br = branch
   ci = commit
   cia = commit --amend
+  ciam = commit --amend -m
   cim = commit -m
   co = checkout
   cob = checkout -b
@@ -15,6 +16,8 @@
   dfc = diff --cached
   fe = fetch
   l = log
+  l1 = log -1
+  ln = log -n
   me = merge
   pl = pull
   plo = pull origin
@@ -23,11 +26,12 @@
   rb = rebase
   rs = reset
   rv = revert
-  sh = stash
-  shl = stash list
+  sh = show
+  st = stash
+  stc = stash clear
+  stl = stash list
   st = status
   ; usefull aliases
-  last = log -1
   oneline = log --pretty=oneline --abbrev-commit
   tree = log --pretty=oneline --graph --decorate
   who = shortlog -sne
