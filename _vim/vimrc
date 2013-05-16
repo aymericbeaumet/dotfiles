@@ -114,12 +114,12 @@ nnoremap <silent> _ <C-w>-
 nnoremap <silent> + <C-w>+
 nnoremap <silent> < <C-w><
 nnoremap <silent> > <C-w>>
-"  - ^A in command line
+"  - make ^A move cursor to line beginning (in command line)
 cnoremap <C-a> <C-b>
 "  - ^P/^N act as Up/down in command line
 cmap <C-p> <Up>
 cmap <C-n> <Down>
-"  - R (refresh screen)
+"  - ^R (refresh screen)
 nnoremap <C-r> <C-l>
 
 " Abbrev
