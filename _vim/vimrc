@@ -1,7 +1,5 @@
 " clear all autocommands!
 autocmd!
-" Automatically cd into the directory that the file is in
-autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
 
 " Meta options
 set nocompatible                " break away from old vi compatibility
