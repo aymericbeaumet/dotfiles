@@ -1,24 +1,32 @@
 # Include external dependencies
 [include]
-  path = ~/.git/user.git # User configuration file
+  path = ~/.gituser # User configuration file (name, email, etc...)
 
 [alias]
   ; fast access
   br = branch
   ci = commit
+  cia = commit --amend
+  cim = commit -m
   co = checkout
+  cob = checkout -b
   df = diff
+  dfc = diff --cached
   fe = fetch
+  l = log
+  me = merge
   pl = pull
   ps = push
   rb = rebase
   rs = reset
   rv = revert
   sh = stash
+  shl = stash list
   st = status
   ; usefull aliases
-  amend = commit --amend
-  oneline = log --pretty=oneline --abbrev-commit --graph
+  last = log -1
+  oneline = log --pretty=oneline --abbrev-commit
+  tree = log --pretty=oneline --graph --decorate
   who = shortlog -sne
   rubbish = clean -ndx
   trash = clean -fdx
@@ -27,10 +35,12 @@
   gitconfig = !cat ~/.gitconfig
 
 [core]
-  editor = vim
-  pager = less
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
   excludesfile = ~/.cvsignore
+  pager = less -FRX
+
+[man]
+  viewer = less -FRX
 
 [apply]
   whitespace = fix
@@ -41,13 +51,14 @@
   interactive = auto
   status = auto
   ui = auto
+  pager = true
 
 [mergetool]
-  keepbackup = true
-  keeptemporaries = true
-
-[man]
-  viewer = less
+  keepbackup = false
+  keeptemporaries = false
 
 [branch]
   autosetuprebase = always
+
+[help]
+  autocorrect = 10

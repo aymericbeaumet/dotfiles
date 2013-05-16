@@ -1,6 +1,6 @@
 ###############################################################################
 ###############################################################################
-# I. Global Functions                                                         #
+# Global Functions
 ###############################################################################
 
 #return 0 if $1 exists (as an alias or executable file in $PATH)
@@ -51,18 +51,14 @@ function is_bsd()
 
 ###############################################################################
 ###############################################################################
-# II. ZSH options                                                             #
+# ZSH options
 ###############################################################################
 
-#basic settings
 setopt AUTO_CD			# change directory without cd
 setopt CORRECT_ALL		# auto-correct
 setopt ALIASES			# expand aliases
 setopt SHORT_LOOPS		# allow short forms (if, for, functions...)
 setopt AUTO_CONTINUE		# background process stay alive on shell exit
-setopt HIST_IGNORE_DUPS		# do not enter cmdline in history if = previous
-setopt HIST_REDUCE_BLANKS	# remove superfluous blanks from history
-setopt HIST_VERIFY		# reload the line into the editing buffer
 setopt RM_STAR_WAIT             # 10 second wait before `rm *`
 setopt RC_EXPAND_PARAM          # expand on all the param array
 
@@ -70,64 +66,15 @@ unsetopt BEEP			# no beep
 unsetopt HIST_BEEP		# no beep
 unsetopt LIST_BEEP		# no beep
 
-#completion
-autoload -U compinit
-compinit
-
 setopt NUMERIC_GLOB_SORT
 setopt EXTENDED_GLOB
-setopt COMPLETE_ALIASES		# autocomplete on aliases
-setopt COMPLETE_IN_WORD
 unsetopt LIST_AMBIGUOUS
 
-zstyle ':completion:*' menu select
-zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o'
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=36=31'
-zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':completion:*:default' menu 'select=0'
-zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
-#history
-setopt APPEND_HISTORY
-setopt EXTENDED_HISTORY
-setopt INC_APPEND_HISTORY
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_REDUCE_BLANKS
-setopt HIST_IGNORE_SPACE
-setopt HIST_NO_STORE
-setopt HIST_VERIFY
-setopt EXTENDED_HISTORY
-setopt HIST_SAVE_NO_DUPS
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_FIND_NO_DUPS
-
 
 
 ###############################################################################
 ###############################################################################
-# III. Prompt								      #
-###############################################################################
-
-#colors
-RED_COLOR=$'%{\033[31m%}'
-RESET_DISPLAY=$'%{\033[0m%}'
-
-#content
-PROMPT="[$RED_COLOR%j${RESET_DISPLAY}&:?$RED_COLOR%?$RESET_DISPLAY] [$RED_COLOR%20<...<%~%<<$RESET_DISPLAY] %(!.#.$) "
-RPROMPT="{^${RED_COLOR}${SHLVL}$RESET_DISPLAY} [%n$RED_COLOR@$RESET_DISPLAY%M]"
-
-
-
-###############################################################################
-###############################################################################
-# IV. Environment                                                             #
+# Environment
 ###############################################################################
 
 export PATH="/usr/local/bin:$PATH:/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/opt/local/bin"
@@ -138,26 +85,11 @@ export VIEWER="$(which 'eog' 2>/dev/null || echo "$VIEWER")"
 export PAGER="$(which 'less' 2>/dev/null || which 'more' 2>/dev/null || which 'cat' 2>/dev/null || echo "$PAGER")"
 export SHELL="$(which 'zsh' 2>/dev/null || which 'bash' 2>/dev/null echo "$SHELL")"
 
-#history
-export SAVEHIST='10000'
-export HISTSIZE='10000'
-export HISTFILE=~'/.zsh/history'
-
-#good ls colors
-unset LS_COLORS
-unset LSCOLORS
-if is_macosx || is_bsd ; then
-  export CLICOLOR='1'
-  export LSCOLORS='ExGxxxdxCxDxDxxxaxExEx'
-else
-  export CLICOLOR='0'
-fi
-
 
 
 ###############################################################################
 ###############################################################################
-# V. Alias                                                                    #
+# Alias
 ###############################################################################
 
 if cmd_exists 'rm' ; then
@@ -166,21 +98,6 @@ if cmd_exists 'rm' ; then
   else
     alias clean='rm -f **/{.*.sw[a-z],*~}'
   fi
-fi
-
-if cmd_exists 'ls' ; then
-  SPECIFIC_LS_OPTIONS=''
-  if is_linux ; then
-    SPECIFIC_LS_OPTIONS='--color=auto'
-  elif is_bsd || is_macosx ; then
-    SPECIFIC_LS_OPTIONS='-G'
-  else
-    unalias ls &>/dev/null
-  fi
-  alias ls="ls -p -F $SPECIFIC_LS_OPTIONS"
-  alias ll='ls -hl'
-  alias l='ll'
-  alias la='ll -A' #list .* files (but not . and ..)
 fi
 
 if cmd_exists 'vim' ; then
@@ -230,6 +147,8 @@ cmd_exists 'rm' && alias rm='rm -v'
 cmd_exists 'mkdir' && alias mkdir='mkdir -v'
 cmd_exists 'rmdir' && is_linux && alias rmdir='rmdir -v'
 cmd_exists 'jobs' && alias j='jobs'
+cmd_exists less && alias less='less -FR'
+alias m=man
 
 cmd_exists 'grep' && alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
 cmd_exists 'less' && alias -g L=' | less'
@@ -241,23 +160,7 @@ cmd_exists 'tail' && alias -g T=' | tail'
 
 ###############################################################################
 ###############################################################################
-# VI. Key Binding                                                             #
-###############################################################################
-
-#bindkey '^[OH'		beginning-of-line		#HOME
-#bindkey '^[OF'		end-of-line			#END
-#bindkey '^[[6~'		history-search-forward		#PAGE DOWN
-#bindkey '^[[5~'		history-search-backward		#PAGE UP
-#bindkey '^[[2~'		overwrite-mode			#INSERT
-#bindkey '^[[1;5D'	backward-word			#CTRL <-
-#bindkey '^[[1;5C'	forward-word			#CTRL ->
-bindkey '^[[3~'		delete-char			#DELETE
-
-
-
-###############################################################################
-###############################################################################
-# VII. Load external configuration files                                      #
+# Load external configuration files
 ###############################################################################
 
 for i in $(find ~/.zsh/ -mindepth 1 -maxdepth 1 -name '*.zsh' -type f) ; do
