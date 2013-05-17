@@ -68,8 +68,8 @@
   alias = "!git config -l | grep alias | cut -c 7- | sort"
   who = shortlog -sne
 
-  waste = clean -ndx
-  clean = clean -fdx
+  totrash = clean -ndx
+  trash = clean -fdx
 
   forget = update-index --assume-unchanged
   unforget = update-index --no-assume-unchanged
