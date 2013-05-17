@@ -1,9 +1,9 @@
-###############################################################################
-###############################################################################
+################################################################################
+################################################################################
 # Global Functions
-###############################################################################
+################################################################################
 
-#return 0 if $1 exists (as an alias or executable file in $PATH)
+# return 0 if $1 exists (as an alias or executable file in $PATH)
 function cmd_exists()
 {
   if [[ "$#" -eq '0' ]] || ! which "$1" &>/dev/null ; then
@@ -12,7 +12,7 @@ function cmd_exists()
   return 0
 }
 
-#write 'unknown', only defined if uname(1) is not in $PATH
+# write 'unknown', only defined if uname(1) is not in $PATH
 if ! cmd_exists uname ; then
   function uname()
   {
@@ -20,7 +20,7 @@ if ! cmd_exists uname ; then
   }
 fi
 
-#return 0 if the os is linux
+# return 0 if the os is linux
 function is_linux()
 {
   if [ "$(uname -s)" = 'Linux' ] ; then
@@ -29,7 +29,7 @@ function is_linux()
   return 1
 }
 
-#return 0 if the os is macosx
+# return 0 if the os is macosx
 function is_macosx()
 {
   if [ "$(uname -s)" = 'Darwin' ] ; then
@@ -38,7 +38,7 @@ function is_macosx()
   return 1
 }
 
-#return 0 if the os is bsd
+# return 0 if the os is bsd
 function is_bsd()
 {
   if echo "$(uname -s)" | grep -E '*BSD*' &>/dev/null ; then
@@ -49,10 +49,10 @@ function is_bsd()
 
 
 
-###############################################################################
-###############################################################################
+################################################################################
+################################################################################
 # ZSH options
-###############################################################################
+################################################################################
 
 setopt AUTO_CD			# change directory without cd
 setopt CORRECT_ALL		# auto-correct
@@ -72,12 +72,12 @@ unsetopt LIST_AMBIGUOUS
 
 
 
-###############################################################################
-###############################################################################
+################################################################################
+################################################################################
 # Environment
-###############################################################################
+################################################################################
 
-export PATH="/usr/local/bin:$PATH:/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/opt/local/bin"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
 export EDITOR="$(which 'vim' 2>/dev/null || which 'vi' 2>/dev/null || echo "$EDITOR")"
 export USE_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
@@ -87,10 +87,10 @@ export SHELL="$(which 'zsh' 2>/dev/null || which 'bash' 2>/dev/null echo "$SHELL
 
 
 
-###############################################################################
-###############################################################################
+################################################################################
+################################################################################
 # Alias
-###############################################################################
+################################################################################
 
 if cmd_exists 'rm' ; then
   if cmd_exists 'find' ; then
@@ -106,7 +106,7 @@ if cmd_exists 'vim' ; then
   alias v='vim'
 fi
 
-#bind some extension to be opened with $EDITOR
+# bind some extension to be opened with $EDITOR
 alias -s c="$EDITOR"
 alias -s cpp="$EDITOR"
 alias -s h="$EDITOR"
@@ -116,19 +116,19 @@ alias -s html="$EDITOR"
 alias -s css="$EDITOR"
 alias -s js="$EDITOR"
 
-#bind some extension to be opened with $PAGER
+# bind some extension to be opened with $PAGER
 alias -s txt="$PAGER"
 
-#bind some extension to be opened with $VIEWER
+# bind some extension to be opened with $VIEWER
 alias -s bmp="$VIEWER"
 alias -s gif="$VIEWER"
 alias -s jpg="$VIEWER"
 alias -s png="$VIEWER"
 
-#bind some extension to be opened with $SHELL
+# bind some extension to be opened with $SHELL
 alias -s sh="$SHELL"
 
-#bind some extension to be directly executed
+# bind some extension to be directly executed
 if cmd_exists 'php' ; then
   alias -s php="$(which php 2> /dev/null)"
   alias -s php3="$(which php 2> /dev/null)"
@@ -139,7 +139,7 @@ cmd_exists 'python' && alias -s py="$(which python 2> /dev/null)"
 cmd_exists 'perl' && alias -s pl="$(which perl 2> /dev/null)"
 cmd_exists 'ocaml' && alias -s ml="$(which ocaml 2> /dev/null)"
 
-#classic aliases
+# classic aliases
 cmd_exists 'grep' && alias grep='grep --color=auto'
 cmd_exists 'cp' && alias cp='cp -v'
 cmd_exists 'mv' && alias mv='mv -v'
@@ -158,10 +158,10 @@ cmd_exists 'tail' && alias -g T=' | tail'
 
 
 
-###############################################################################
-###############################################################################
+################################################################################
+################################################################################
 # Load external configuration files
-###############################################################################
+################################################################################
 
 for i in $(find ~/.zsh/ -mindepth 1 -maxdepth 1 -name '*.zsh' -type f) ; do
   source "$i"
