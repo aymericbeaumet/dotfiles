@@ -59,8 +59,8 @@ setopt CORRECT_ALL		# auto-correct
 setopt ALIASES			# expand aliases
 setopt SHORT_LOOPS		# allow short forms (if, for, functions...)
 setopt AUTO_CONTINUE		# background process stay alive on shell exit
-setopt RM_STAR_WAIT             # 10 second wait before `rm *`
 setopt RC_EXPAND_PARAM          # expand on all the param array
+unsetopt RM_STAR_WAIT           # don't wait before `rm *`
 
 unsetopt BEEP			# no beep
 unsetopt HIST_BEEP		# no beep
