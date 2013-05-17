@@ -4,6 +4,7 @@
 
 [alias]
   ; fast access
+
   a = add
   aa = add -A
   ai = add --interactive
@@ -62,6 +63,7 @@
   sts = status -s
 
   ; usefull aliases
+
   gitconfig = "!cat ~/.gitconfig"
   alias = "!git config -l | grep alias | cut -c 7- | sort"
   who = shortlog -sne
@@ -86,7 +88,7 @@
   viewer = less -FRX
 
 [apply]
-    whitespace = nowarn
+  whitespace = nowarn
 
 [color]
   branch = auto
