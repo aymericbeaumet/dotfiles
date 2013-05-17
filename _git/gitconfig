@@ -7,38 +7,57 @@
   a = add
   aa = add -A
   ai = add --interactive
-  ap = add --interactive
+  ap = add --patch
+
   br = branch
   bra = branch -a
   brd = branch -d
   brr = branch -r
+
   ci = commit
   cia = commit --amend
   ciam = commit --amend -m
   cim = commit -m
+
+  cl = clone
+  clr = clone --recursive
+
   co = checkout
   cob = checkout -b
+
   df = diff
   dfc = diff --cached
+
   fe = fetch
+
   l = log
   l1 = log -1
   ln = log -n
+
   me = merge
+
   pl = pull
   plo = pull origin
+
   ps = push
   pso = push origin
+
   rb = rebase
+
   re = remote -v
+
   rs = reset
   rsh = reset --hard
+
   rv = revert
+
   sw = show
+
   sh = stash
   sha = stash apply
   shc = stash clear
   shl = stash list
+
   st = status
   sts = status -s
 
