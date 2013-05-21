@@ -38,13 +38,13 @@ set nowritebackup       " no backup file while editing
 set noswapfile          " no swap files
 
 " Console UI
-set timeoutlen=150      " time to wait when a part of a maped sequence is typped
+set timeoutlen=250      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
 set cmdheight=1         " explicitly set the command line height
 set showcmd             " show (partial) command in the last line of the screen
 set scrolloff=8         " keep at least 5 lines after the cusor when scrolling
-set sidescrolloff=10     " (same as above for side scrolling)
+set sidescrolloff=10    " (same as above for side scrolling)
 set lazyredraw          " only redraw when needed
 set nolist              " hide invisible characters
 set wrap                " split the line if it is too long
@@ -87,7 +87,7 @@ if ! has('gui_running')
   augroup Fastescape
     autocmd!
     au InsertEnter * set timeoutlen=0
-    au InsertLeave * set timeoutlen=150
+    au InsertLeave * set timeoutlen=250
   augroup END
 endif
 
@@ -110,11 +110,8 @@ nnoremap <silent> < <C-w><
 nnoremap <silent> > <C-w>>
 "  - make ^A move cursor to line beginning (in command line)
 cnoremap <C-a> <C-b>
-"  - ^P/^N act as Up/down in command line
-cmap <C-p> <Up>
-cmap <C-n> <Down>
-"  - ^R (refresh screen)
-nnoremap <F5> <C-l>
+"  - fix ^R bind
+nnoremap <C-r> :redo<CR>
 
 " Abbrev
 "  - create/move/close tab
@@ -135,8 +132,6 @@ nnoremap <silent> <leader>o :CtrlP<CR>
 "  - easymotion
 let g:EasyMotion_leader_key = '<Leader>m'
 nmap <silent> <leader>w <leader>mw
-"  - fugitive
-cabbrev g Git
 "  - narrowregion
 noremap <silent> <leader>r :NarrowRegion<CR>
 "  - nerdcommenter
@@ -145,6 +140,6 @@ map <silent> <leader><leader> <leader>c<space>
 nnoremap <silent> <leader>e :NERDTreeToggle<CR>
 "  - powerline
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
-set noshowmode "hide the duplicate mode in bottom status bar
+set noshowmode " hide the duplicate mode in bottom status bar
 "  - tagbar
 nnoremap <silent> <leader>t :TagbarToggle<CR>
