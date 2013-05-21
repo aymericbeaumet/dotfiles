@@ -5,7 +5,6 @@
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
 
-- `^H` `^L` prev/next buffer
 - `^N ^P ^X` vim-multiple-cursors
 
 - `,,` comment line

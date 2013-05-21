@@ -16,8 +16,7 @@ execute pathogen#helptags()
 " File type / syntax detection
 syntax on
 filetype on
-filetype plugin on
-filetype indent on
+filetype plugin indent on
 
 " Theme
 set t_Co=256            " enable 256 colors
@@ -98,9 +97,6 @@ let mapleader = ','
 "  - easy switch between tabs
 nnoremap <silent> <S-h> gT
 nnoremap <silent> <S-l> gt
-"  - easy switch between buffers
-nnoremap <silent> <C-h> :bprevious<CR>
-nnoremap <silent> <C-l> :bnext<CR>
 "  - up and down are more logical with g
 nnoremap <silent> j gj
 nnoremap <silent> k gk
