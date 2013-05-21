@@ -5,9 +5,9 @@
 if cmd_exists tmux ; then
 
   if [ -n "$TMUX" ] ; then
-    export TERM='screen-256color'
+    export TERM=screen-256color
   else
-    export TERM='xterm-256color'
+    export TERM=xterm-256color
   fi
 
   # one session at once

@@ -3,4 +3,4 @@
 #########################
 
 #mail directory
-export MAIL=~'/Maildir'
+export MAIL=~/Maildir

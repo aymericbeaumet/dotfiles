@@ -6,45 +6,33 @@
 # return 0 if $1 exists (as an alias or executable file in $PATH)
 function cmd_exists()
 {
-  if [[ "$#" -eq '0' ]] || ! which "$1" &>/dev/null ; then
-    return 1
-  fi
-  return 0
+  return $([ $# -ne 0 ] && which $1 &>/dev/null);
 }
 
 # write 'unknown', only defined if uname(1) is not in $PATH
 if ! cmd_exists uname ; then
   function uname()
   {
-    echo 'unknown'
+    echo unknown
   }
 fi
 
 # return 0 if the os is linux
 function is_linux()
 {
-  if [ "$(uname -s)" = 'Linux' ] ; then
-    return 0
-  fi
-  return 1
+  return $([ `uname -s` = Linux ]);
 }
 
 # return 0 if the os is macosx
 function is_macosx()
 {
-  if [ "$(uname -s)" = 'Darwin' ] ; then
-    return 0
-  fi
-  return 1
+  return $([ `uname -s` = Darwin ]);
 }
 
 # return 0 if the os is bsd
 function is_bsd()
 {
-  if echo "$(uname -s)" | grep -E '*BSD*' &>/dev/null ; then
-    return 0
-  fi
-  return 1
+  return $([[ `uname -s` =~ .*bsd.* ]]);
 }
 
 
@@ -76,15 +64,14 @@ unsetopt LIST_AMBIGUOUS
 ################################################################################
 
 export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
-export EDITOR="$(which 'vim' 2>/dev/null || which 'vi' 2>/dev/null \
-  || echo "$EDITOR")"
-export USE_EDITOR="$EDITOR"
-export VISUAL="$EDITOR"
-export VIEWER="$(which 'eog' 2>/dev/null || echo "$VIEWER")"
-export PAGER="$(which 'less' 2>/dev/null || which 'more' 2>/dev/null \
-  || which 'cat' 2>/dev/null || echo "$PAGER")"
-export SHELL="$(which 'zsh' 2>/dev/null \
-  || which 'bash' 2>/dev/null echo "$SHELL")"
+export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null \
+  || echo $EDITOR`
+export USE_EDITOR=$EDITOR
+export VISUAL=$EDITOR
+export VIEWER=`which eog 2>/dev/null || echo $VIEWER`
+export PAGER=`which less 2>/dev/null || which more 2>/dev/null \
+  || which cat 2>/dev/null || echo $PAGER`
+export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null echo $SHELL`
 
 
 ################################################################################
@@ -92,6 +79,6 @@ export SHELL="$(which 'zsh' 2>/dev/null \
 # Load external configuration files
 ################################################################################
 
-for i in $(find ~/.zsh/ -maxdepth 1 -name '*.zsh' -type f) ; do
-  source "$i"
+for i in `find ~/.zsh/ -maxdepth 1 -name '*.zsh' -type f` ; do
+  source $i
 done

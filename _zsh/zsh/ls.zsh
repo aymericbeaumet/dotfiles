@@ -1,9 +1,9 @@
-if cmd_exists 'ls' ; then
+if cmd_exists ls ; then
   SPECIFIC_LS_OPTIONS=''
   if is_linux ; then
-    SPECIFIC_LS_OPTIONS='--color=auto'
+    SPECIFIC_LS_OPTIONS=--color=auto
   elif is_bsd || is_macosx ; then
-    SPECIFIC_LS_OPTIONS='-G'
+    SPECIFIC_LS_OPTIONS=-G
   else
     unalias ls &>/dev/null
   fi
@@ -16,10 +16,10 @@ if cmd_exists 'ls' ; then
   unset LS_COLORS
   unset LSCOLORS
   if is_macosx || is_bsd ; then
-    export CLICOLOR='1'
-    export LSCOLORS='ExGxxxdxCxDxDxxxaxExEx'
+    export CLICOLOR=1
+    export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
   else
-    export CLICOLOR='0'
+    export CLICOLOR=0
   fi
 fi
 
