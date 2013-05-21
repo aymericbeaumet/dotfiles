@@ -54,7 +54,7 @@ function is_bsd()
 ################################################################################
 
 setopt AUTO_CD			# change directory without cd
-setopt CORRECT_ALL		# auto-correct
+unsetopt CORRECT_ALL		# don't auto-correct
 setopt ALIASES			# expand aliases
 setopt SHORT_LOOPS		# allow short forms (if, for, functions...)
 setopt AUTO_CONTINUE		# background process stay alive on shell exit

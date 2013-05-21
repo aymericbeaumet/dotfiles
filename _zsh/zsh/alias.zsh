@@ -10,6 +10,8 @@ if cmd_exists 'vim' ; then
   unalias vim &>/dev/null
   alias vi='vim'
   alias v='vim'
+  compdef vi=vim
+  compdef v=vim
 fi
 
 # bind some extension to be opened with $EDITOR
@@ -54,7 +56,10 @@ cmd_exists 'mkdir' && alias mkdir='mkdir -v'
 cmd_exists 'rmdir' && is_linux && alias rmdir='rmdir -v'
 cmd_exists 'jobs' && alias j='jobs'
 cmd_exists less && alias less='less -FR'
-alias m=man
+if cmd_exists man ; then
+  alias m=man
+  compdef m=man
+fi
 
 cmd_exists 'grep' && alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
 cmd_exists 'less' && alias -g L=' | less'

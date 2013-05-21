@@ -82,10 +82,10 @@
 
 [core]
   excludesfile = ~/.cvsignore
-  pager = less -FRX
+  pager = less
 
 [man]
-  viewer = less -FRX
+  viewer = less
 
 [apply]
   whitespace = nowarn
@@ -107,3 +107,6 @@
 
 [help]
   autocorrect = 10
+
+[advice]
+  statusHints = false
