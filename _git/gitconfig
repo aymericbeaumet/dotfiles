@@ -4,85 +4,54 @@
 
 [alias]
   ; fast access
-
   a = add
-  aa = add -A
-  ai = add --interactive
-  ap = add --patch
-
   br = branch
-  bra = branch -a
-  brd = branch -d
-  brr = branch -r
-
   ci = commit
   cia = commit --amend
-  ciam = commit --amend -m
-  cim = commit -m
-
   cl = clone
-  clr = clone --recursive
-
   co = checkout
-  cob = checkout -b
-
   df = diff
   dfc = diff --cached
-
   fe = fetch
-  fep = fetch -p
-
   l = log
-  l1 = log -1
-  ln = log -n
-
   me = merge
-
   pl = pull
   plo = pull origin
-
   ps = push
   pso = push origin
-
   rb = rebase
-  rbi = rebase -i
-
-  re = remote -v
-
+  re = remote
   rs = reset
   rss = reset --soft
   rsh = reset --hard
-
   rv = revert
-
   sw = show
-
   sh = stash
   sha = stash apply
   shc = stash clear
   shl = stash list
+  shp = stash pop
   shs = stash save
-
   st = status
-  sts = status -s
+  t = tag
 
   ; usefull aliases
+  forget = update-index --assume-unchanged
+  unforget = update-index --no-assume-unchanged
 
-  gitconfig = "!cat ~/.gitconfig"
   alias = "!git config -l | grep alias | cut -c 7- | sort"
-  who = shortlog -sne
+  gitconfig = "!cat ~/.gitconfig"
+
+  find = "!git ls-files | grep -i"
+  grep = grep -Ii
 
   totrash = clean -ndx
   trash = clean -fdx
 
-  forget = update-index --assume-unchanged
-  unforget = update-index --no-assume-unchanged
-
-  ls = log --pretty=oneline --decorate --abbrev-commit
-  tree = log --pretty=oneline --decorate --graph
-
-  grep = grep -Ii
-  find = "!git ls-files | grep -i"
+  tree = log --graph --abbrev-commit --decorate --date=relative --all \
+    --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) \
+    %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+  who = shortlog -sne
 
 [core]
   excludesfile = ~/.cvsignore
