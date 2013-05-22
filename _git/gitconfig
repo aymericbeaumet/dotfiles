@@ -44,6 +44,7 @@
   pso = push origin
 
   rb = rebase
+  rbi = rebase -i
 
   re = remote -v
 
