@@ -57,6 +57,9 @@ setopt NUMERIC_GLOB_SORT
 setopt EXTENDED_GLOB
 unsetopt LIST_AMBIGUOUS
 
+# URL automatic escape
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
 
 ################################################################################
 ################################################################################
