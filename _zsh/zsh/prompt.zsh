@@ -16,7 +16,9 @@ function set_prompt()
   # right prompt
   RPROMPT=''
   if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
-    RPROMPT="{^${RED_COLOR}${SHLVL}$RESET_DISPLAY} "
+    RPROMPT="{^${RED_COLOR}${SHLVL}$RESET_DISPLAY}"
   fi
-  RPROMPT="${RPROMPT}[%n$RED_COLOR@$RESET_DISPLAY%M]"
+  if [ -n "$SSH_CLIENT" ] ; then
+    RPROMPT="${RPROMPT:+$RPROMPT }[%n$RED_COLOR@$RESET_DISPLAY%M]"
+  fi
 }
