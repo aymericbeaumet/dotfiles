@@ -17,6 +17,12 @@ current_user="$(whoami)"
 files2install=(`find . -mindepth 1 -maxdepth 1 -name '_*' -type d \
   -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'`)
 
+# return 0 if $1 exists (as an alias or executable file in $PATH)
+function cmd_exists()
+{
+  return $([ $# -ne 0 ] && which $1 &>/dev/null);
+}
+
 cmd_exists()
 {
   if [ "$#" -eq '0' ] || ! which "$1" &>/dev/null ; then
