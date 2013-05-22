@@ -30,6 +30,7 @@
   dfc = diff --cached
 
   fe = fetch
+  fep = fetch -p
 
   l = log
   l1 = log -1
@@ -49,6 +50,7 @@
   re = remote -v
 
   rs = reset
+  rss = reset --soft
   rsh = reset --hard
 
   rv = revert
@@ -59,6 +61,7 @@
   sha = stash apply
   shc = stash clear
   shl = stash list
+  shs = stash save
 
   st = status
   sts = status -s
