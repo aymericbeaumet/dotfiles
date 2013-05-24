@@ -14,9 +14,9 @@
 	path = _vim/vim/bundle/languages/git
 	url = git://github.com/tpope/vim-git.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/languages/javascript"]
-	path = _vim/vim/bundle/languages/javascript
-	url = git://github.com/pangloss/vim-javascript.git
+[submodule "_vim/vim/bundle/languages/html"]
+	path = _vim/vim/bundle/languages/html
+	url = git://github.com/vim-scripts/indenthtml.vim.git
 	ignore = dirty
 [submodule "_vim/vim/bundle/languages/markdown"]
 	path = _vim/vim/bundle/languages/markdown
@@ -99,6 +99,10 @@
 [submodule "_vim/vim/bundle/tools/vim-rooter"]
 	path = _vim/vim/bundle/tools/vim-rooter
 	url = git://github.com/airblade/vim-rooter.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/tools/closetag"]
+	path = _vim/vim/bundle/tools/closetag
+	url = git://github.com/vim-scripts/closetag.vim.git
 	ignore = dirty
 
 ###
