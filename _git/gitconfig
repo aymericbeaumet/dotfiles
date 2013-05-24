@@ -49,7 +49,7 @@
   grep = grep -Ii
 
   totrash = clean -ndx
-  trash = clean -fdx
+  trash = clean -ffdx
 
   tree = log --graph --abbrev-commit --decorate --date=relative --all \
     --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) \
