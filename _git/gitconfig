@@ -6,6 +6,7 @@
   ; fast access
   a = add
   br = branch
+  cf = cat-file
   ci = commit
   cia = commit --amend
   cl = clone
@@ -20,6 +21,8 @@
   ps = push
   pso = push origin
   rb = rebase
+  rba = rebase --abort
+  rbc = rebase --continue
   re = remote
   rs = reset
   rss = reset --soft
