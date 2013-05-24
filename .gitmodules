@@ -23,13 +23,17 @@
 	url = git://github.com/tpope/vim-markdown.git
 	ignore = dirty
 
-[submodule "_vim/vim/bundle/themes/ir_black"]
-	path = _vim/vim/bundle/themes/ir_black
-	url = git://github.com/twerth/ir_black.git
-	ignore = dirty
 [submodule "_vim/vim/bundle/themes/wombat256"]
 	path = _vim/vim/bundle/themes/wombat256
 	url = git://github.com/vim-scripts/wombat256.vim.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/themes/mustang"]
+	path = _vim/vim/bundle/themes/mustang
+	url = git://github.com/croaker/mustang-vim.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/themes/ir_black"]
+	path = _vim/vim/bundle/themes/ir_black
+	url = git://github.com/wesgibbs/vim-irblack.git
 	ignore = dirty
 
 [submodule "_vim/vim/bundle/tools/vim-easymotion"]

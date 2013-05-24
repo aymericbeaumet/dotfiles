@@ -4,6 +4,7 @@
 - `H` `L` prev/next tab
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
+- `^_` close html/xml tags
 
 - `^N ^P ^X` vim-multiple-cursors
 

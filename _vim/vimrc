@@ -16,12 +16,13 @@ execute pathogen#infect(s:vim_dir . '/bundle/tools/{}')
 execute pathogen#helptags()
 
 " File type / syntax detection
-syntax on
+syntax enable
 filetype plugin indent on
 
 " Theme
 set t_Co=256            " enable 256 colors
-colorscheme ir_black    " theme
+set background=dark
+colorscheme mustang
 
 " 80 characters line convention
 highlight OverLength ctermbg=red ctermfg=white
