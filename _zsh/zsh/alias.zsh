@@ -54,7 +54,7 @@ cmd_exists mv && alias mv='mv -v'
 cmd_exists rm && alias rm='rm -v'
 cmd_exists mkdir && alias mkdir='mkdir -v'
 cmd_exists rmdir && is_linux && alias rmdir='rmdir -v'
-cmd_exists jobs && alias j='jobs'
+cmd_exists jobs && (alias j='jobs' ; compdef j=jobs)
 if cmd_exists man ; then
   alias m=man
   compdef m=man

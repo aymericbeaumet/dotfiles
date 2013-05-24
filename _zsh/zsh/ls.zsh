@@ -9,8 +9,11 @@ if cmd_exists ls ; then
   fi
   alias ls="ls -p -F $SPECIFIC_LS_OPTIONS"
   alias ll='ls -hl'
+  compdef ll=ls
   alias l='ll'
+  compdef l=ls
   alias la='ll -A' # list .* files (but not . and ..)
+  compdef la=ls
 
   # good ls colors (even on OSX)
   unset LS_COLORS
