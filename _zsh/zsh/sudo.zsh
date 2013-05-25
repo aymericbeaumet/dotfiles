@@ -1,4 +1,5 @@
-# insert sudo at start of command line using M-S
+# Sudo
+###
 
 if cmd_exists sudo ; then
   insert_sudo () { zle beginning-of-line; zle -U "sudo " }

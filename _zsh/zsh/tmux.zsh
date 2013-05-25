@@ -1,6 +1,5 @@
-##############
-# Tmux stuff #
-##############
+# Tmux
+###
 
 if cmd_exists tmux ; then
 

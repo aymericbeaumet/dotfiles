@@ -68,3 +68,6 @@ cmd_exists less && alias -g L=' | less'
 cmd_exists head && alias -g H=' | head'
 cmd_exists tail && alias -g T=' | tail'
 [[ -w /dev/null ]] && alias -g N=' &>/dev/null'
+
+alias g=git
+compdef g=git

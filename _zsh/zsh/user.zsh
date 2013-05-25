@@ -1,6 +1,5 @@
-#########################
-# User specific options #
-#########################
+# User
+###
 
-#mail directory
+# mail directory
 export MAIL=~/Maildir
