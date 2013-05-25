@@ -28,14 +28,17 @@
   rss = reset --soft
   rsh = reset --hard
   rv = revert
-  sw = show
   sh = stash
   sha = stash apply
   shc = stash clear
   shl = stash list
   shp = stash pop
   shs = stash save
+  sm = submodule
+  sma = submodule add
+  smf = submodule foreach
   st = status
+  sw = show
   t = tag
 
   ; usefull aliases
