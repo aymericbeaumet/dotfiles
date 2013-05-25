@@ -37,6 +37,3 @@ function _update_clipboard()
     pbcopy <<< "$1"
   fi
 }
-
-# yeah I'm lazy...
-alias clip=clipboard
