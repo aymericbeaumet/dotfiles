@@ -116,3 +116,6 @@
 	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/vim-sparkup"]
+	path = _vim/vim/bundle/tools/vim-sparkup
+	url = git://github.com/bingaman/vim-sparkup.git
