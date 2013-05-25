@@ -72,8 +72,8 @@ export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null \
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export VIEWER=`which eog 2>/dev/null || echo $VIEWER`
-export PAGER=`which most 2>/dev/null || which less 2>/dev/null \
-  || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER`
+export PAGER=`which less 2>/dev/null || which more 2>/dev/null \
+  || which cat 2>/dev/null || echo $PAGER`
 export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null || echo $SHELL`
 
 
