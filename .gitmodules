@@ -119,3 +119,6 @@
 [submodule "_vim/vim/bundle/tools/vim-sparkup"]
 	path = _vim/vim/bundle/tools/vim-sparkup
 	url = git://github.com/bingaman/vim-sparkup.git
+[submodule "_vim/vim/bundle/languages/vim-javascript"]
+	path = _vim/vim/bundle/languages/vim-javascript
+	url = git://github.com/pangloss/vim-javascript.git
