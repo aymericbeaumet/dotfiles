@@ -1,46 +1,72 @@
-" clear all autocommands!
+" clear all autocommands
 autocmd!
 
-" Meta options
-set nocompatible                " break away from old vi compatibility
-set fileformats=unix,dos,mac    " support all three newline formats
-set viminfo=                    " don't use or save viminfo files
+" Pathogen ----------------------------------------------------------------- {{{
 
-" Load plugins using pathogen
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
+
 runtime pathogen/autoload/pathogen.vim
+
 execute pathogen#infect(s:vim_dir . '/bundle/themes/{}')
 execute pathogen#infect(s:vim_dir . '/bundle/languages/{}')
 execute pathogen#infect(s:vim_dir . '/bundle/tools/{}')
 execute pathogen#helptags()
 
-" File type / syntax detection
+" -------------------------------------------------------------------------- }}}
+
+
+" File type / Syntax detection / Theme ------------------------------------- {{{
+
 syntax enable
 filetype plugin indent on
-
-" Theme
 set t_Co=256            " enable 256 colors
 set background=dark
 colorscheme mustang
+hi CursorLine cterm=bold
 
-" 80 characters line convention
-highlight OverLength ctermbg=red ctermfg=white
-match OverLength /\%81v.\+/
+" -------------------------------------------------------------------------- }}}
 
-" Various options
+
+" Autocommands ------------------------------------------------------------- {{{
+
+" disable auto comment
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" instant escape
+if ! has('gui_running')
+  set ttimeoutlen=10
+  augroup Fastescape
+    autocmd!
+    au InsertEnter * set timeoutlen=0
+    au InsertLeave * set timeoutlen=250
+  augroup END
+endif
+
+" -------------------------------------------------------------------------- }}}
+
+
+" Global options - --------------------------------------------------------- {{{
+
+set nocompatible        " break away from old vi compatibility
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
 set autowrite           " automatically save before :next and :make
 set laststatus=2        " status line always on
 set encoding=utf-8      " ensure proper encoding
 set ttyfast             " we have a fast terminal
-set tags=tags;/         " search parent directories for ctags file
 set nobackup            " no backup files
 set nowritebackup       " no backup file while editing
 set noswapfile          " no swap filewatch for file changes by other programss
+set modelines=0         " don't care about modeline
+set fileformats=unix,mac,dos    " support all three newline formats
+set viminfo=                    " don't use or save viminfo files
 
-" Console UI
+" -------------------------------------------------------------------------- }}}
+
+
+" User Interface ----------------------------------------------------------- {{{
+
 set timeoutlen=250      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
@@ -54,108 +80,178 @@ set wrap                " split the line if it is too long
 set shortmess=atI       " disable vim welcome message and shorter messages
 set wildmenu            " better command line completion menu
 set wildmode=list:longest,full " `-> better
-set wildignore+=*.o,*.pyc,*.sw*,*.zip " ignore those files in completion
-set wildignore+=*/tmp/*,*.so,*~ " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.exe " Windows
+set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
+set wildignore+=*.zip,*.gz,*.xz             " ignore compressed files
+set wildignore+=.*.sw*,*~                   " ignore temporary files
+set relativenumber      " show lines distance from the selected one
+set undolevels=1000     " use much levels of undo
+set cursorline          " highlight cursor line
 
-" Text editing && Search behavior
+" -------------------------------------------------------------------------- }}}
+
+
+" Text editing && Search behavior ------------------------------------------ {{{
 set backspace=2         " fix backspace (on some OS/term)
 set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
 set incsearch           " show matches as soon as posseble
-set nohlsearch          " don't highlight last search matches
+set hlsearch            " highlight last search matches
 set wrapscan            " searches wrap around the end of the file
 set diffopt=filler,iwhite " ignore all whitespace and sync
 set showmatch           " show the matching bracket when inserting
 set completeopt=menu,longest,preview " more autocomplete <Ctrl>-P options
 set nostartofline       " leave my cursor position alone!
 set foldmethod=manual   " ensure that foldmethod is manual
+set virtualedit=block   " allow the cursor to go in to 'invalid' places
+set wrap linebreak textwidth=0 " disable autowrap
+set history=1000        " increase history size
 
-" Indent and tabs
+" -------------------------------------------------------------------------- }}}
+
+
+" Convention --------------------------------------------------------------- {{{
+
+"match Error /\%81v.\+/  " 80 characters line convention
+
+" -------------------------------------------------------------------------  }}}
+
+
+" Indentation / Tabulations ------------------------------------------------ {{{
+
 set autoindent          " auto-indentation (most of time override by plugins)
+set copyindent          " copy the previous indentation on autoindenting
 set expandtab           " insert `shiftwidth` spaces when using <Tab>
 set shiftwidth=2        " n spaces when using <Tab>
 set softtabstop=2       " n spaces when using <Tab>
+set tabstop=2           " n spaces when using <Tab>
 set hidden              " when I close a tab, don't remove the buffer
 
-" History
-set history=1000        " increase history size
+" -------------------------------------------------------------------------- }}}
 
-" Turn off error bells
+
+" Errors ------------------------------------------------------------------- {{{
+
+" turn off error bells 
 set noerrorbells
 set novisualbell
 set t_vb=
 
-" Instant escape
-if ! has('gui_running')
-  set ttimeoutlen=10
-  augroup Fastescape
-    autocmd!
-    au InsertEnter * set timeoutlen=0
-    au InsertLeave * set timeoutlen=250
-  augroup END
-endif
+" -------------------------------------------------------------------------- }}}
 
-" Binds
-"  - define leading key
+
+
+" Binds -------------------------------------------------------------------- {{{
+
+" define leading key
 let mapleader = ','
-"  - easy switch between tabs
+
+" easy switch between tabs
 nnoremap <silent> <S-h> gT
 nnoremap <silent> <S-l> gt
-"  - up and down are more logical with g
+
+" up and down are more logical with g
 nnoremap <silent> j gj
 nnoremap <silent> k gk
-"  - center on each search result
+
+" center on each search result
 nnoremap <silent> n nzz
 nnoremap <silent> <S-n> Nzz
-"  - pan resizing
+
+" pan resizing
 nnoremap <silent> _ <C-w>-
 nnoremap <silent> + <C-w>+
 nnoremap <silent> < <C-w><
 nnoremap <silent> > <C-w>>
-"  - make ^A move cursor to line beginning (in command line)
+
+" make `^A` move cursor to line beginning (in command line)
 cnoremap <C-a> <C-b>
-"  - fix ^R bind
-nnoremap <C-r> :redo<CR>
-"  - easily search in command line history with ^R (like zsh)
+
+" fix `^R` bind
+nnoremap <C-r> :redo<cr>
+
+" easily search in command line history with `^R` (like Zsh)
 cnoremap <C-r> <esc>q:/
-"  - copy from the cursor to the end of line
+
+" copy from the cursor to the end of line
 nnoremap Y y$
-"  - ^O to up command line (useful history search)
+
+" ^O to up command line (useful history search)
 cnoremap <C-o> <up>
 
-" Abbrev
-"  - create/move/close tab
+" quickly edit/reload the vimrc file
+nnoremap <silent> <leader>ve :e $MYVIMRC<cr>
+nnoremap <silent> <leader>vs :source $MYVIMRC<cr>
+
+" hide last search matches
+nnoremap <leader><space> :nohlsearch<cr>
+
+" move between matching brackets using tab
+nnoremap <tab> %
+vnoremap <tab> %
+
+" complete whole filenames/lines with a quicker shortcut key in insert mode
+inoremap <C-f> <C-x><C-f>
+inoremap <C-l> <C-x><C-l>
+
+" use `,d` to delete a line without adding it to the yanked stack
+nnoremap <silent> <leader>d "_d
+vnoremap <silent> <leader>d "_d
+
+" -------------------------------------------------------------------------- }}}
+
+
+" Abbrev ------------------------------------------------------------------- {{{
+
+" create/move/close tab
 cabbrev tn tabnew
 cabbrev tm tabmove
 cabbrev tq tabclose
-"  - close buffer
+
+" close buffer
 cabbrev bq bdelete
 
-" Plugins configuration
-"  - a.vim
-nnoremap <silent> <leader>a :A<CR>
-"  - buffergattor
+" -------------------------------------------------------------------------- }}}
+
+
+" Plugins extra-configuration ---------------------------------------------- {{{
+
+" a.vim
+nnoremap <silent> <leader>a :A<cr>
+
+" buffergattor
 let g:buffergator_suppress_keymaps = 1
-nnoremap <silent> <leader>b :BuffergatorToggle<CR>
-"  - CtrlP
-nnoremap <silent> <leader>o :CtrlP<CR>
-"  - easymotion
+nnoremap <silent> <leader>b :BuffergatorToggle<cr>
+
+" CtrlP
+nnoremap <silent> <leader>o :CtrlP<cr>
+
+" easymotion
 let g:EasyMotion_leader_key = '<Leader>m'
 nmap <silent> <leader>w <leader>mw
-"  - html
+
+" html
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
-"  - narrowregion
-noremap <silent> <leader>r :NarrowRegion<CR>
-"  - nerdcommenter
+
+" narrowregion
+noremap <silent> <leader>r :NarrowRegion<cr>
+
+" nerdcommenter
 map <silent> <leader><leader> <leader>c<space>
-"  - nerdtree
-nnoremap <silent> <leader>e :NERDTreeToggle<CR>
-"  - powerline
+
+" nerdtree
+let NERDTreeShowFiles=1   " show files
+let NERDTreeShowHidden=1  " show hidden files
+let NERDTreeQuitOnOpen=1  " quit on opening files from the tree
+nnoremap <silent> <leader>e :NERDTreeToggle<cr>
+
+" powerline
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode " hide the duplicate mode in bottom status bar
-"  - tagbar
-nnoremap <silent> <leader>t :TagbarToggle<CR>
+
+" tagbar
+nnoremap <silent> <leader>t :TagbarToggle<cr>
+
+" -------------------------------------------------------------------------- }}}

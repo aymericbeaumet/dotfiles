@@ -1,5 +1,7 @@
 ## Binds memo
 
+- `<tab>` move between matching brackets
+
 - `cs' cs" cs( cs{ cs[...` vim-surround (replace in ...)
 - `H` `L` prev/next tab
 - `_` `+` reduce/increase pane height
@@ -8,14 +10,17 @@
 
 - `^N ^P ^X` vim-multiple-cursors
 
+- `, ` hide highlighted matches
 - `,,` comment line
 - `,a` [a]lternate between header/source
 - `,b` list [b]uffers
+- `,d` [d]elete current line without store it in the buffer
 - `,e` [e]xplore files
 - `,o` [o]pen file
 - `,r` isolate [r]egion
 - `,t` show [t]ags
 - `,w` easymotion (place marks)
+- `,ve` / `,vs` [e]dit and [s]ource [v]imrc
 
 - `F5` refresh screen
 
