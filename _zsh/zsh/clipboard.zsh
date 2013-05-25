@@ -4,21 +4,24 @@
 function clipboard()
 {
   content=''
-  if [ -t 0 ] ; then
-    while read -t 0 line ; do
-      content="$content$line"
-    done
-  fi
 
-  echo $content
-
+  # if parameters, use it
   if [ $# -gt 0 ] ; then
-    _update_clipboard "$@"
-  elif [ -n "$content" ] ; then
+    for i in $@ ; do content="$content$(<$i)" done
     _update_clipboard "$content"
-  else
-    _print_clipboard
+    return
   fi
+
+  # if not tty, read standard input
+  if ! [ -t 0 ] ; then
+    while read line ; do content="$content$line" done
+  fi
+
+  # if data on standard input, use it
+  [ -n "$content" ] && (_update_clipboard "$content" ; return)
+
+  # else print clipboard
+  _print_clipboard
 }
 
 function _print_clipboard()
@@ -30,5 +33,10 @@ function _print_clipboard()
 
 function _update_clipboard()
 {
-  echo "Update keyboard with '$1'"
+  if is_macosx ; then
+    pbcopy <<< "$1"
+  fi
 }
+
+# yeah I'm lazy...
+alias clip=clipboard
