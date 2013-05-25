@@ -1,4 +1,7 @@
-# useful in a term (but vim rox)
+# Binding
+###
+
+# Useful in a term (but vim rox)
 set -o emacs
 
 bindkey '^[OH'		beginning-of-line		#HOME

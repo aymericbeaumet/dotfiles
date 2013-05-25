@@ -22,8 +22,6 @@
 - `,w` easymotion (place marks)
 - `,ve` / `,vs` [e]dit and [s]ource [v]imrc
 
-- `F5` refresh screen
-
 ## Abbrev memo
 
 - `tn` create a new tab

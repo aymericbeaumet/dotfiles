@@ -1,4 +1,6 @@
-# completion
+# Autocomplete
+###
+
 autoload -U compinit
 compinit
 

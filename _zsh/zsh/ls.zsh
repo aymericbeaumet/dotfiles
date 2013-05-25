@@ -1,3 +1,6 @@
+# ls
+###
+
 if cmd_exists ls ; then
   SPECIFIC_LS_OPTIONS=''
   if is_linux ; then

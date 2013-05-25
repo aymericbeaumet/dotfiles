@@ -1,3 +1,6 @@
+# Alias
+###
+
 if cmd_exists rm ; then
   if cmd_exists find ; then
     alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'

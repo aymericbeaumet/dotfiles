@@ -1,6 +1,12 @@
-# Easy clipboard manage:
-#  - 0 parameter -> print its content
-#  - 1+ parameter(s) or data on standard input -> store content
+# Clipboard
+###
+
+# * The function concatenates the content of all the files passed as parameters
+#   (in their apparitions order) and then store it in the clipboard.
+# * If no parameter is given, try to read on standard input.
+# * If something is found on standard input, store it in the clipboard.
+# * If nothing is found on standard input, print the clipboard content.
+
 function clipboard()
 {
   content=''
@@ -18,7 +24,7 @@ function clipboard()
   fi
 
   # if data on standard input, use it
-  [ -n "$content" ] && (_update_clipboard "$content" ; return)
+  [ -n "$content" ] && { _update_clipboard "$content" ; return }
 
   # else print clipboard
   _print_clipboard

@@ -1,3 +1,6 @@
+# Prompt
+###
+
 # colors
 RED_COLOR=$'%{\033[31m%}'
 RESET_DISPLAY=$'%{\033[0m%}'

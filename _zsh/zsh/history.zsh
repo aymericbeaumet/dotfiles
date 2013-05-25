@@ -1,4 +1,5 @@
-# history
+# History
+###
 
 setopt APPEND_HISTORY
 setopt EXTENDED_HISTORY
