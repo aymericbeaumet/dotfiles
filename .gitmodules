@@ -6,20 +6,24 @@
 	url = git://github.com/tpope/vim-pathogen.git
 	ignore = dirty
 
-[submodule "_vim/vim/bundle/languages/csv"]
-	path = _vim/vim/bundle/languages/csv
+[submodule "_vim/vim/bundle/languages/vim-javascript"]
+	path = _vim/vim/bundle/languages/vim-javascript
+	url = git://github.com/pangloss/vim-javascript.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/languages/csv.vim"]
+	path = _vim/vim/bundle/languages/csv.vim
 	url = git://github.com/chrisbra/csv.vim.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/languages/git"]
-	path = _vim/vim/bundle/languages/git
+[submodule "_vim/vim/bundle/languages/vim-git"]
+	path = _vim/vim/bundle/languages/vim-git
 	url = git://github.com/tpope/vim-git.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/languages/html"]
-	path = _vim/vim/bundle/languages/html
+[submodule "_vim/vim/bundle/languages/indenthtml"]
+	path = _vim/vim/bundle/languages/indenthtml
 	url = git://github.com/vim-scripts/indenthtml.vim.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/languages/markdown"]
-	path = _vim/vim/bundle/languages/markdown
+[submodule "_vim/vim/bundle/languages/vim-markdown"]
+	path = _vim/vim/bundle/languages/vim-markdown
 	url = git://github.com/tpope/vim-markdown.git
 	ignore = dirty
 
@@ -30,10 +34,6 @@
 [submodule "_vim/vim/bundle/themes/mustang"]
 	path = _vim/vim/bundle/themes/mustang
 	url = git://github.com/croaker/mustang-vim.git
-	ignore = dirty
-[submodule "_vim/vim/bundle/themes/ir_black"]
-	path = _vim/vim/bundle/themes/ir_black
-	url = git://github.com/wesgibbs/vim-irblack.git
 	ignore = dirty
 
 [submodule "_vim/vim/bundle/tools/vim-easymotion"]
@@ -108,6 +108,10 @@
 	path = _vim/vim/bundle/tools/closetag
 	url = git://github.com/vim-scripts/closetag.vim.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/vim-sparkup"]
+	path = _vim/vim/bundle/tools/vim-sparkup
+	url = git://github.com/bingaman/vim-sparkup.git
+	ignore = dirty
 
 ###
 # Xcode
@@ -116,9 +120,3 @@
 	path = xcode/plugins/xvim
 	url = git://github.com/JugglerShu/XVim.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/tools/vim-sparkup"]
-	path = _vim/vim/bundle/tools/vim-sparkup
-	url = git://github.com/bingaman/vim-sparkup.git
-[submodule "_vim/vim/bundle/languages/vim-javascript"]
-	path = _vim/vim/bundle/languages/vim-javascript
-	url = git://github.com/pangloss/vim-javascript.git
