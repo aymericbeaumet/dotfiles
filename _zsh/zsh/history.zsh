@@ -18,4 +18,4 @@ setopt HIST_FIND_NO_DUPS
 
 export SAVEHIST=10000
 export HISTSIZE=10000
-export HISTFILE=~/.zshhistory
+export HISTFILE=~/.zsh_history
