@@ -36,9 +36,6 @@ alias -s gif=$VIEWER
 alias -s jpg=$VIEWER
 alias -s png=$VIEWER
 
-# bind some extension to be opened with $SHELL
-alias -s sh=$SHELL
-
 # bind some extension to be directly executed
 if cmd_exists php ; then
   alias -s php=`which php 2> /dev/null`
