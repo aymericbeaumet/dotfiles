@@ -28,9 +28,9 @@
   rss = reset --soft
   rsh = reset --hard
   rv = revert
-  sb = submodule
-  sba = submodule add
-  sbf = submodule foreach
+  sm = submodule
+  sma = submodule add
+  smf = submodule foreach
   sh = stash
   sha = stash apply
   shc = stash clear
