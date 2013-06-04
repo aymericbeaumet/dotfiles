@@ -20,5 +20,6 @@ _Note: your previous configuration files will be automatically backed up._
 ## Also
 
 You can also find here:
-- My Xcode plugins
 - My favorite fonts
+- My Sublime Text packages
+- My Xcode plugins and themes

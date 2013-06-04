@@ -114,9 +114,16 @@
 	ignore = dirty
 
 ###
+# Sublime Text
+
+[submodule "sublime_text/packages/vintageEx"]
+	path = sublime_text/packages/vintageEx
+	url = git://github.com/SublimeText/VintageEx.git
+	ignore = dirty
+
+###
 # Xcode
 
-[submodule "xcode/plugins/xvim"]
-	path = xcode/plugins/xvim
+[submodule "xcode/plugins/XVim"]
+	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
-	ignore = dirty
