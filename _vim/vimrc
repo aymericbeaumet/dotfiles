@@ -22,7 +22,7 @@ syntax enable
 filetype plugin indent on
 set t_Co=256            " enable 256 colors
 set background=dark
-colorscheme wombat256mod
+colorscheme mustang
 hi CursorLine cterm=bold
 
 " -------------------------------------------------------------------------- }}}
