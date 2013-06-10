@@ -1,7 +1,9 @@
 " clear all autocommands
 autocmd!
 
-" Pathogen ----------------------------------------------------------------- {{{
+
+
+" --- Pathogen ------------------------------------------------------------- {{{
 
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
@@ -16,7 +18,8 @@ execute pathogen#helptags()
 " -------------------------------------------------------------------------- }}}
 
 
-" File type / Syntax detection / Theme ------------------------------------- {{{
+
+" --- File type / Syntax detection / Theme --------------------------------- {{{
 
 syntax enable
 filetype plugin indent on
@@ -28,7 +31,8 @@ hi CursorLine cterm=bold
 " -------------------------------------------------------------------------- }}}
 
 
-" Autocommands ------------------------------------------------------------- {{{
+
+" --- Autocommands --------------------------------------------------------- {{{
 
 " disable auto comment
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -46,7 +50,8 @@ endif
 " -------------------------------------------------------------------------- }}}
 
 
-" Global options - --------------------------------------------------------- {{{
+
+" --- Global options ------------------------------------------------------- {{{
 
 set nocompatible        " break away from old vi compatibility
 set shell=zsh           " shell for :sh
@@ -65,7 +70,8 @@ set viminfo=                    " don't use or save viminfo files
 " -------------------------------------------------------------------------- }}}
 
 
-" User Interface ----------------------------------------------------------- {{{
+
+" --- User Interface ------------------------------------------------------- {{{
 
 set timeoutlen=250      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
@@ -89,7 +95,8 @@ set cursorline          " highlight cursor line
 " -------------------------------------------------------------------------- }}}
 
 
-" Text editing && Search behavior ------------------------------------------ {{{
+
+" --- Text editing && Search behavior -------------------------------------- {{{
 set backspace=2         " fix backspace (on some OS/term)
 set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set ignorecase          " ignore case when searching
@@ -109,14 +116,16 @@ set history=1000        " increase history size
 " -------------------------------------------------------------------------- }}}
 
 
-" Convention --------------------------------------------------------------- {{{
+
+" --- Convention ----------------------------------------------------------- {{{
 
 "match Error /\%81v.\+/  " 80 characters line convention
 
 " -------------------------------------------------------------------------  }}}
 
 
-" Indentation / Tabulations ------------------------------------------------ {{{
+
+" --- Indentation / Tabulations -------------------------------------------- {{{
 
 set autoindent          " auto-indentation (most of time override by plugins)
 set copyindent          " copy the previous indentation on autoindenting
@@ -129,7 +138,8 @@ set hidden              " when I close a tab, don't remove the buffer
 " -------------------------------------------------------------------------- }}}
 
 
-" Errors ------------------------------------------------------------------- {{{
+
+" --- Errors --------------------------------------------------------------- {{{
 
 " turn off error bells 
 set noerrorbells
@@ -140,7 +150,7 @@ set t_vb=
 
 
 
-" Binds -------------------------------------------------------------------- {{{
+" --- Binds ---------------------------------------------------------------- {{{
 
 " define leading key
 let mapleader = ','
@@ -194,7 +204,8 @@ vnoremap <silent> <leader>d "_d
 " -------------------------------------------------------------------------- }}}
 
 
-" Abbrev ------------------------------------------------------------------- {{{
+
+" --- Abbrev --------------------------------------------------------------- {{{
 
 " create/move/close tab
 cabbrev tn tabnew
@@ -207,7 +218,8 @@ cabbrev bq bdelete
 " -------------------------------------------------------------------------- }}}
 
 
-" Plugins extra-configuration ---------------------------------------------- {{{
+
+" --- Plugins extra-configuration ------------------------------------------ {{{
 
 " a.vim
 nnoremap <silent> <leader>a :A<cr>
