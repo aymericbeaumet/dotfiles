@@ -21,8 +21,8 @@ execute pathogen#helptags()
 syntax enable
 filetype plugin indent on
 set t_Co=256            " enable 256 colors
-colorscheme mustang
 set background=dark
+colorscheme wombat256mod
 hi CursorLine cterm=bold
 
 " -------------------------------------------------------------------------- }}}
@@ -168,9 +168,6 @@ cnoremap <C-a> <C-b>
 
 " easily search in command line history with `^R` (zsh-style)
 cnoremap <C-r> <esc>q:/
-
-" copy from the cursor to the end of line
-nnoremap Y y$
 
 " ^O to up command line (useful history search)
 cnoremap <C-o> <up>
