@@ -10,10 +10,6 @@
 	path = _vim/vim/bundle/languages/vim-javascript
 	url = git://github.com/pangloss/vim-javascript.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/languages/csv.vim"]
-	path = _vim/vim/bundle/languages/csv.vim
-	url = git://github.com/chrisbra/csv.vim.git
-	ignore = dirty
 [submodule "_vim/vim/bundle/languages/vim-git"]
 	path = _vim/vim/bundle/languages/vim-git
 	url = git://github.com/tpope/vim-git.git
@@ -80,10 +76,6 @@
 	path = _vim/vim/bundle/tools/vim-buffergator
 	url = git://github.com/jeetsukumaran/vim-buffergator.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/tools/a.vim"]
-	path = _vim/vim/bundle/tools/a.vim
-	url = git://github.com/vim-scripts/a.vim.git
-	ignore = dirty
 [submodule "_vim/vim/bundle/tools/tagbar"]
 	path = _vim/vim/bundle/tools/tagbar
 	url = git://github.com/majutsushi/tagbar.git
@@ -92,25 +84,17 @@
 	path = _vim/vim/bundle/tools/ctrlp.vim
 	url = git://github.com/kien/ctrlp.vim.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/tools/vim-transmit"]
-	path = _vim/vim/bundle/tools/vim-transmit
-	url = git://github.com/abeaumet/vim-transmit.git
-	ignore = dirty
-[submodule "_vim/vim/bundle/tools/vim-fugitive"]
-	path = _vim/vim/bundle/tools/vim-fugitive
-	url = git://github.com/tpope/vim-fugitive.git
-	ignore = dirty
 [submodule "_vim/vim/bundle/tools/vim-rooter"]
 	path = _vim/vim/bundle/tools/vim-rooter
 	url = git://github.com/airblade/vim-rooter.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/tools/closetag"]
-	path = _vim/vim/bundle/tools/closetag
-	url = git://github.com/vim-scripts/closetag.vim.git
-	ignore = dirty
 [submodule "_vim/vim/bundle/tools/vim-sparkup"]
 	path = _vim/vim/bundle/tools/vim-sparkup
 	url = git://github.com/bingaman/vim-sparkup.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/tools/numbers.vim"]
+	path = _vim/vim/bundle/tools/numbers.vim
+	url = git://github.com/myusuf3/numbers.vim.git
 	ignore = dirty
 
 ###
@@ -127,3 +111,12 @@
 [submodule "xcode/plugins/XVim"]
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
+[submodule "_vim/vim/bundle/tools/neocomplcache.vim"]
+	path = _vim/vim/bundle/tools/neocomplcache.vim
+	url = git://github.com/Shougo/neocomplcache.vim.git
+[submodule "_vim/vim/bundle/tools/supertab"]
+	path = _vim/vim/bundle/tools/supertab
+	url = git://github.com/ervandew/supertab.git
+[submodule "_vim/vim/bundle/tools/closetag.vim"]
+	path = _vim/vim/bundle/tools/closetag.vim
+	url = git://github.com/vim-scripts/closetag.vim.git

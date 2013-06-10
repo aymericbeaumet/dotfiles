@@ -21,8 +21,8 @@ execute pathogen#helptags()
 syntax enable
 filetype plugin indent on
 set t_Co=256            " enable 256 colors
-set background=dark
 colorscheme mustang
+set background=dark
 hi CursorLine cterm=bold
 
 " -------------------------------------------------------------------------- }}}
@@ -79,11 +79,10 @@ set nolist              " hide invisible characters
 set wrap                " split the line if it is too long
 set shortmess=atI       " disable vim welcome message and shorter messages
 set wildmenu            " better command line completion menu
-set wildmode=list:longest,full " `-> better
+set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz             " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
-set relativenumber      " show lines distance from the selected one
 set undolevels=1000     " use much levels of undo
 set cursorline          " highlight cursor line
 
@@ -167,10 +166,7 @@ nnoremap <silent> > <C-w>>
 " make `^A` move cursor to line beginning (in command line)
 cnoremap <C-a> <C-b>
 
-" fix `^R` bind
-nnoremap <C-r> :redo<cr>
-
-" easily search in command line history with `^R` (like Zsh)
+" easily search in command line history with `^R` (zsh-style)
 cnoremap <C-r> <esc>q:/
 
 " copy from the cursor to the end of line
@@ -237,6 +233,15 @@ let g:html_indent_style1 = "inc"
 
 " narrowregion
 noremap <silent> <leader>r :NarrowRegion<cr>
+
+" neocomplcache
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_smart_case = 1
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " nerdcommenter
 map <silent> <leader><leader> <leader>c<space>
