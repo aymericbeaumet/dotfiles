@@ -140,3 +140,6 @@
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/syntastic"]
+	path = _vim/vim/bundle/tools/syntastic
+	url = git://github.com/scrooloose/syntastic.git
