@@ -21,7 +21,6 @@ List custom binds/abbrev.
 - `,t` show [t]ags
 - `,w` easymotion (place marks)
 - `,ve` / `,vs` [e]dit and [s]ource [v]imrc
-- `<F2>` / `<F4`> for indentation, using two / four spaces
 
 ### Insert mode
 - `^e` expand html/xml tags

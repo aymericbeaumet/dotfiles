@@ -128,6 +128,10 @@
 	path = _vim/vim/bundle/tools/a.vim
 	url = git://github.com/vim-scripts/a.vim.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/vim-sleuth"]
+	path = _vim/vim/bundle/tools/vim-sleuth
+	url = git://github.com/tpope/vim-sleuth.git
+	ignore = dirty
 
 ###
 # Xcode

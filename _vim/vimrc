@@ -1,7 +1,6 @@
 " clear all autocommands
 autocmd!
 
-
 " {{{ Pathogen
 
 let s:vim_conf = expand('<sfile>:p')
@@ -16,7 +15,6 @@ execute pathogen#helptags()
 
 " }}}
 
-
 " {{{ File type / Syntax detection / Theme
 
 syntax enable
@@ -27,7 +25,6 @@ colorscheme mustang
 hi CursorLine cterm=bold
 
 " }}}
-
 
 " {{{ Autocommands
 
@@ -44,8 +41,7 @@ if ! has('gui_running')
   augroup END
 endif
 
-"}}}
-
+" }}}
 
 " {{{ Global options
 
@@ -64,7 +60,6 @@ set viminfo=            " don't use or save viminfo files
 set fileformats=unix,mac,dos    " support all three newline formats
 
 " }}}
-
 
 " {{{ User Interface
 
@@ -89,7 +84,6 @@ set wildignore+=.*.sw*,*~                   " ignore temporary files
 
 " }}}
 
-
 " {{{ Text editing && Search behavior
 set backspace=2         " fix backspace (on some OS/term)
 set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
@@ -109,13 +103,11 @@ set history=1000        " increase history size
 
 " }}}
 
-
 " {{{ Convention
 
 match Error /\%81v.\+/  " 80 characters line convention
 
 " }}}
-
 
 " {{{ Indentation / Tabulations
 
@@ -129,7 +121,6 @@ set hidden              " when I close a tab, don't remove the buffer
 
 " }}}
 
-
 " {{{ Errors
 
 " turn off error bells 
@@ -138,7 +129,6 @@ set novisualbell
 set t_vb=
 
 " }}}
-
 
 " {{{ Binds
 
@@ -187,12 +177,7 @@ vnoremap <tab> %
 nnoremap <silent> <leader>d "_d
 vnoremap <silent> <leader>d "_d
 
-" fast switch between two and four space tabs
-nmap <F2> <Esc>:set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2<CR>
-nmap <F4> <Esc>:set noexpandtab tabstop=4 softtabstop=4 shiftwidth=4<CR>
-
 " }}}
-
 
 " {{{ Abbrev
 
@@ -205,7 +190,6 @@ cabbrev tq tabclose
 cabbrev bq bdelete
 
 " }}}
-
 
 " {{{ Plugins extra-configuration
 
