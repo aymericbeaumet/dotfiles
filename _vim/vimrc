@@ -136,22 +136,22 @@ set t_vb=
 let mapleader = ','
 
 " easy switch between tabs
-nnoremap <Silent> <S-h> gT
-nnoremap <Silent> <S-l> gt
+nnoremap <silent> <S-h> gT
+nnoremap <silent> <S-l> gt
 
 " up and down are more logical with g
-nnoremap <Silent> j gj
-nnoremap <Silent> k gk
+nnoremap <silent> j gj
+nnoremap <silent> k gk
 
 " center on each search result
-nnoremap <Silent> n nzz
-nnoremap <Silent> <S-n> Nzz
+nnoremap <silent> n nzz
+nnoremap <silent> <S-n> Nzz
 
 " pan resizing
-nnoremap <Silent> _ <C-w>-
-nnoremap <Silent> + <C-w>+
-nnoremap <Silent> < <C-w><
-nnoremap <Silent> > <C-w>>
+nnoremap <silent> _ <C-w>-
+nnoremap <silent> + <C-w>+
+nnoremap <silent> < <C-w><
+nnoremap <silent> > <C-w>>
 
 " make `^a` move cursor to line beginning (in command line)
 cnoremap <C-a> <C-b>
@@ -163,8 +163,8 @@ cnoremap <C-r> <esc>q:/
 cnoremap <C-S-P> <up>
 
 " quickly edit/reload the vimrc file
-nnoremap <Silent> <Leader>ve :e $MYVIMRC<CR>
-nnoremap <Silent> <Leader>vs :source $MYVIMRC<CR>
+nnoremap <silent> <Leader>ve :e $MYVIMRC<CR>
+nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>
 
 " hide last search matches
 nnoremap <Leader><space> :nohlsearch<CR>
@@ -174,8 +174,8 @@ nnoremap <tab> %
 vnoremap <tab> %
 
 " use `,d` to delete a line without adding it to the yanked stack
-nnoremap <Silent> <Leader>d "_d
-vnoremap <Silent> <Leader>d "_d
+nnoremap <silent> <Leader>d "_d
+vnoremap <silent> <Leader>d "_d
 
 " }}}
 
@@ -194,13 +194,13 @@ cabbrev bq bdelete
 " {{{ Plugins extra-configuration
 
 " a.vim
-nnoremap <Silent> <Leader>a :A<CR>
+nnoremap <silent> <Leader>a :A<CR>
 
 " buffergattor
 let g:buffergator_suppress_keymaps = 1
 let g:buffergator_viewport_split_policy = "T"
 let g:buffergator_vsplit_size = 40
-nnoremap <Silent> <Leader>b :BuffergatorToggle<CR>
+nnoremap <silent> <Leader>b :BuffergatorToggle<CR>
 
 " CtrlP
 let g:ctrlp_map = '<Leader>p'
@@ -211,7 +211,7 @@ let g:ctrlp_switch_buffer = 0
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader>m'
-nmap <Silent> <Leader>w <Leader>mw
+nmap <silent> <Leader>w <Leader>mw
 
 " html
 let g:html_indent_inctags = "html,body,head,tbody"
@@ -219,7 +219,7 @@ let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
 " narrowregion
-noremap <Silent> <Leader>r :NarrowRegion<CR>
+noremap <silent> <Leader>r :NarrowRegion<CR>
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
@@ -231,13 +231,13 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " nerdcommenter
-map <Silent> <Leader><Leader> <Leader>c<space>
+map <silent> <Leader><Leader> <Leader>c<space>
 
 " nerdtree
 let NERDTreeShowHidden = 1  " show hidden files
 let NERDTreeWinSize = 40
 let NERDTreeMinimalUI = 1
-nnoremap <Silent> <Leader>e :NERDTreeTabsToggle<CR>
+nnoremap <silent> <Leader>e :NERDTreeTabsToggle<CR>
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1
@@ -250,6 +250,6 @@ set noshowmode " hide the duplicate mode in bottom status bar
 let g:tagbar_autofocus = 1
 let g:tagbar_show_visibility = 1 " show private/protected/public
 let g:tagbar_compact = 1
-nnoremap <Silent> <Leader>t :TagbarToggle<CR>
+nnoremap <silent> <Leader>t :TagbarToggle<CR>
 
 " }}}
