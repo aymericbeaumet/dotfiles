@@ -76,10 +76,6 @@
 	path = _vim/vim/bundle/tools/powerline
 	url = git://github.com/Lokaltog/powerline.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/tools/vim-buffergator"]
-	path = _vim/vim/bundle/tools/vim-buffergator
-	url = git://github.com/jeetsukumaran/vim-buffergator.git
-	ignore = dirty
 [submodule "_vim/vim/bundle/tools/tagbar"]
 	path = _vim/vim/bundle/tools/tagbar
 	url = git://github.com/majutsushi/tagbar.git
@@ -147,3 +143,6 @@
 [submodule "_vim/vim/bundle/tools/supertab"]
 	path = _vim/vim/bundle/tools/supertab
 	url = git://github.com/ervandew/supertab.git
+[submodule "_vim/vim/bundle/tools/LustyJuggler"]
+	path = _vim/vim/bundle/tools/LustyJuggler
+	url = git://github.com/vim-scripts/LustyJuggler.git

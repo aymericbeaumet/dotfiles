@@ -5,26 +5,29 @@ List custom binds/abbrev.
 ### Normal mode
 
 - `<tab>` move between matching brackets
-- `cs' cs" cs( cs{ cs[...` vim-surround (replace in ...)
+- `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
 - `H` `L` prev/next tab
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
 - `^N ^P ^X` vim-multiple-cursors
-- `, ` hide highlighted matches
+- `,<space>` hide highlighted matches
 - `,,` comment line
 - `,a` [a]lternate between .c and .h
-- `,b` list [b]uffers
 - `,d{move}` [d]elete current line without store it in the buffer
-- `,e` [e]xplore files
-- `,o` file fast-[o]pen
 - `,r` isolate [r]egion
 - `,t` show [t]ags
 - `,w` easymotion (place marks)
-- `,ve` / `,vs` [e]dit and [s]ource [v]imrc
+- `,ve` `,vs` [e]dit or [s]ource [v]imrc
+
+- `,e` [e]xplore files
+- `,f` [f]ile fast-open
+
+- `,b` [b]uffer fast-open
+- `,m` [m]enu of opened buffers
 
 ### Insert mode
-- `^e` expand html/xml tags
-- `^_` close html/xml tags
+- `^e` expand (x)html/xml
+- `^_` close (x)html/xml tags
 
 ## Abbrev memo
 

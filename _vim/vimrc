@@ -26,23 +26,6 @@ hi CursorLine cterm=bold
 
 " }}}
 
-" {{{ Autocommands
-
-" disable auto comment
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-
-" instant escape
-if ! has('gui_running')
-  set ttimeoutlen=10
-  augroup Fastescape
-    autocmd!
-    au InsertEnter * set timeoutlen=0
-    au InsertLeave * set timeoutlen=250
-  augroup END
-endif
-
-" }}}
-
 " {{{ Global options
 
 set nocompatible        " break away from old vi compatibility
@@ -63,7 +46,7 @@ set fileformats=unix,mac,dos    " support all three newline formats
 
 " {{{ User Interface
 
-set timeoutlen=250      " time to wait when a part of a maped sequence is typped
+set timeoutlen=350      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
 set nonumber            " don't show line number
 set cmdheight=1         " explicitly set the command line height
@@ -101,11 +84,18 @@ set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 
-" }}}
+" disable auto comment
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" {{{ Convention
-
-match Error /\%81v.\+/  " 80 characters line convention
+" instant escape
+if ! has('gui_running')
+  set ttimeoutlen=10
+  augroup Fastescape
+    autocmd!
+    au InsertEnter * set timeoutlen=0
+    au InsertLeave * set timeoutlen=350
+  augroup END
+endif
 
 " }}}
 
@@ -121,6 +111,12 @@ set hidden              " when I close a tab, don't remove the buffer
 
 " }}}
 
+" {{{ Convention
+
+match Error /\%81v./  " 80 characters line convention
+
+" }}}
+
 " {{{ Errors
 
 " turn off error bells 
@@ -131,9 +127,6 @@ set t_vb=
 " }}}
 
 " {{{ Binds
-
-" define leading key
-let mapleader = ','
 
 " easy switch between tabs
 nnoremap <silent> <S-h> gT
@@ -160,22 +153,28 @@ cnoremap <C-a> <C-b>
 cnoremap <C-r> <esc>q:/
 
 " ^P to up command line (useful history search)
-cnoremap <C-S-P> <up>
-
-" quickly edit/reload the vimrc file
-nnoremap <silent> <Leader>ve :e $MYVIMRC<CR>
-nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>
-
-" hide last search matches
-nnoremap <Leader><space> :nohlsearch<CR>
+cnoremap <C-S-p> <up>
 
 " move between matching brackets using tab
 nnoremap <tab> %
 vnoremap <tab> %
 
+" fix undesired behavior
+imap <C-R> <nop>
+
+" define leading key
+let mapleader = ','
+
+" quickly edit/reload the vimrc file
+nnoremap <silent> <leader>ve :e $MYVIMRC<CR>
+nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
+
+" hide last search matches
+nnoremap <silent> <leader><space> :nohlsearch<CR>
+
 " use `,d` to delete a line without adding it to the yanked stack
-nnoremap <silent> <Leader>d "_d
-vnoremap <silent> <Leader>d "_d
+nnoremap <silent> <leader>d "_d
+vnoremap <silent> <leader>d "_d
 
 " }}}
 
@@ -194,32 +193,33 @@ cabbrev bq bdelete
 " {{{ Plugins extra-configuration
 
 " a.vim
-nnoremap <silent> <Leader>a :A<CR>
-
-" buffergattor
-let g:buffergator_suppress_keymaps = 1
-let g:buffergator_viewport_split_policy = "T"
-let g:buffergator_split_size = 7
-nnoremap <silent> <Leader>b :BuffergatorToggle<CR>
+nnoremap <silent> <leader>a :A<CR>
 
 " CtrlP
-let g:ctrlp_map = '<Leader>p'
-let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc|wav|mp3|ogg|blend)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])|__init__\.py'
+let g:ctrlp_map = '<leader>f'
+let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])|__init__\.py'
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_dotfiles = 0
 let g:ctrlp_switch_buffer = 0
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_max_files = 1000
+let g:ctrlp_max_depth = 10
+nnoremap <silent> <leader>b :CtrlPBuffer<CR>
 
 " easymotion
-let g:EasyMotion_leader_key = '<Leader>m'
-nmap <silent> <Leader>w <Leader>mw
+let g:EasyMotion_leader_key = '<leader>y'
+nmap <silent> <leader>w <leader>yw
 
 " html
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
+" lusty juggler
+nmap <silent> <leader>m <leader>lj
+
 " narrowregion
-noremap <silent> <Leader>r :NarrowRegion<CR>
+noremap <silent> <leader>r :NarrowRegion<CR>
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
@@ -227,17 +227,16 @@ let g:neocomplcache_enable_smart_case = 1
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " nerdcommenter
-map <silent> <Leader><Leader> <Leader>c<space>
+map <silent> <leader><leader> <leader>c<space>
 
 " nerdtree
-let NERDTreeShowHidden = 1  " show hidden files
+let NERDTreeShowHidden = 1 " show hidden files
 let NERDTreeWinSize = 40
 let NERDTreeMinimalUI = 1
-nnoremap <silent> <Leader>e :NERDTreeTabsToggle<CR>
+nnoremap <silent> <leader>e :NERDTreeTabsToggle<CR>
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1
@@ -261,6 +260,6 @@ let g:syntastic_c_compiler_options = "-Wall -Wextra"
 let g:tagbar_autofocus = 1
 let g:tagbar_show_visibility = 1 " show private/protected/public
 let g:tagbar_compact = 1
-nnoremap <silent> <Leader>t :TagbarToggle<CR>
+nnoremap <silent> <leader>t :TagbarToggle<CR>
 
 " }}}
