@@ -113,7 +113,9 @@ set hidden              " when I close a tab, don't remove the buffer
 
 " {{{ Convention
 
-match Error /\%81v./  " 80 characters line convention
+" 80 characters line convention
+highlight OverLength cterm=underline
+match OverLength /\%81v.\+/
 
 " }}}
 
