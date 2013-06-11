@@ -173,11 +173,11 @@ cnoremap <C-r> <esc>q:/
 cnoremap <C-S-P> <up>
 
 " quickly edit/reload the vimrc file
-nnoremap <silent> <leader>ve :e $MYVIMRC<cr>
-nnoremap <silent> <leader>vs :source $MYVIMRC<cr>
+nnoremap <silent> <leader>ve :e $MYVIMRC<CR>
+nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
 
 " hide last search matches
-nnoremap <leader><space> :nohlsearch<cr>
+nnoremap <leader><space> :nohlsearch<CR>
 
 " move between matching brackets using tab
 nnoremap <tab> %
@@ -210,16 +210,16 @@ cabbrev bq bdelete
 " {{{ Plugins extra-configuration
 
 " a.vim
-nnoremap <silent> <leader>a :A<cr>
+nnoremap <silent> <leader>a :A<CR>
 
 " buffergattor
 let g:buffergator_suppress_keymaps = 1
 let g:buffergator_viewport_split_policy = "T"
 let g:buffergator_vsplit_size = 40
-nnoremap <silent> <leader>b :BuffergatorToggle<cr>
+nnoremap <silent> <leader>b :BuffergatorToggle<CR>
 
 " CtrlP
-nnoremap <silent> <leader>o :CtrlP<cr>
+nnoremap <silent> <leader>o :CtrlP<CR>
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader>m'
@@ -231,7 +231,7 @@ let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
 " narrowregion
-noremap <silent> <leader>r :NarrowRegion<cr>
+noremap <silent> <leader>r :NarrowRegion<CR>
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
@@ -249,7 +249,7 @@ map <silent> <leader><leader> <leader>c<space>
 let NERDTreeShowHidden = 1  " show hidden files
 let NERDTreeWinSize = 40
 let NERDTreeMinimalUI = 1
-nnoremap <silent> <leader>e :NERDTreeToggle<cr>
+nnoremap <silent> <leader>e :NERDTreeTabsToggle<CR>
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1
@@ -262,6 +262,6 @@ set noshowmode " hide the duplicate mode in bottom status bar
 let g:tagbar_autofocus = 1
 let g:tagbar_show_visibility = 1 " show private/protected/public
 let g:tagbar_compact = 1
-nnoremap <silent> <leader>t :TagbarToggle<cr>
+nnoremap <silent> <leader>t :TagbarToggle<CR>
 
 " }}}
