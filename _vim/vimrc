@@ -2,8 +2,7 @@
 autocmd!
 
 
-
-" --- Pathogen ------------------------------------------------------------- {{{
+" {{{ Pathogen
 
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
@@ -15,24 +14,22 @@ execute pathogen#infect(s:vim_dir . '/bundle/languages/{}')
 execute pathogen#infect(s:vim_dir . '/bundle/tools/{}')
 execute pathogen#helptags()
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
-
-" --- File type / Syntax detection / Theme --------------------------------- {{{
+" {{{ File type / Syntax detection / Theme
 
 syntax enable
 filetype plugin indent on
-set t_Co=256            " enable 256 colors
+set t_Co=256
 set background=dark
 colorscheme mustang
 hi CursorLine cterm=bold
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
-
-" --- Autocommands --------------------------------------------------------- {{{
+" {{{ Autocommands
 
 " disable auto comment
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -47,11 +44,10 @@ if ! has('gui_running')
   augroup END
 endif
 
-" -------------------------------------------------------------------------- }}}
+"}}}
 
 
-
-" --- Global options ------------------------------------------------------- {{{
+" {{{ Global options
 
 set nocompatible        " break away from old vi compatibility
 set shell=zsh           " shell for :sh
@@ -64,14 +60,13 @@ set nobackup            " no backup files
 set nowritebackup       " no backup file while editing
 set noswapfile          " no swap filewatch for file changes by other programss
 set modelines=0         " don't care about modeline
+set viminfo=            " don't use or save viminfo files
 set fileformats=unix,mac,dos    " support all three newline formats
-set viminfo=                    " don't use or save viminfo files
 
-" -------------------------------------------------------------------------- }}}
-
+" }}}
 
 
-" --- User Interface ------------------------------------------------------- {{{
+" {{{ User Interface
 
 set timeoutlen=250      " time to wait when a part of a maped sequence is typped
 set matchtime=3         " tenths of second to show the matching bracket
@@ -85,18 +80,17 @@ set nolist              " hide invisible characters
 set wrap                " split the line if it is too long
 set shortmess=atI       " disable vim welcome message and shorter messages
 set wildmenu            " better command line completion menu
+set undolevels=1000     " use much levels of undo
+set cursorline          " highlight cursor line
 set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz             " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
-set undolevels=1000     " use much levels of undo
-set cursorline          " highlight cursor line
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
-
-" --- Text editing && Search behavior -------------------------------------- {{{
+" {{{ Text editing && Search behavior
 set backspace=2         " fix backspace (on some OS/term)
 set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set ignorecase          " ignore case when searching
@@ -113,19 +107,17 @@ set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
+" {{{ Convention
 
-" --- Convention ----------------------------------------------------------- {{{
+match Error /\%81v.\+/  " 80 characters line convention
 
-"match Error /\%81v.\+/  " 80 characters line convention
-
-" -------------------------------------------------------------------------  }}}
-
+" }}}
 
 
-" --- Indentation / Tabulations -------------------------------------------- {{{
+" {{{ Indentation / Tabulations
 
 set autoindent          " auto-indentation (most of time override by plugins)
 set copyindent          " copy the previous indentation on autoindenting
@@ -135,22 +127,20 @@ set softtabstop=2       " n spaces when using <Tab>
 set tabstop=2           " n spaces when using <Tab>
 set hidden              " when I close a tab, don't remove the buffer
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
-
-" --- Errors --------------------------------------------------------------- {{{
+" {{{ Errors
 
 " turn off error bells 
 set noerrorbells
 set novisualbell
 set t_vb=
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
-
-" --- Binds ---------------------------------------------------------------- {{{
+" {{{ Binds
 
 " define leading key
 let mapleader = ','
@@ -173,14 +163,14 @@ nnoremap <silent> + <C-w>+
 nnoremap <silent> < <C-w><
 nnoremap <silent> > <C-w>>
 
-" make `^A` move cursor to line beginning (in command line)
+" make `^a` move cursor to line beginning (in command line)
 cnoremap <C-a> <C-b>
 
-" easily search in command line history with `^R` (zsh-style)
+" easily search in command line history with `^r` (zsh-style)
 cnoremap <C-r> <esc>q:/
 
-" ^O to up command line (useful history search)
-cnoremap <C-o> <up>
+" ^P to up command line (useful history search)
+cnoremap <C-S-P> <up>
 
 " quickly edit/reload the vimrc file
 nnoremap <silent> <leader>ve :e $MYVIMRC<cr>
@@ -193,19 +183,18 @@ nnoremap <leader><space> :nohlsearch<cr>
 nnoremap <tab> %
 vnoremap <tab> %
 
-" complete whole filenames/lines with a quicker shortcut key in insert mode
-inoremap <C-f> <C-x><C-f>
-inoremap <C-l> <C-x><C-l>
-
 " use `,d` to delete a line without adding it to the yanked stack
 nnoremap <silent> <leader>d "_d
 vnoremap <silent> <leader>d "_d
 
-" -------------------------------------------------------------------------- }}}
+" fast switch between two and four space tabs
+nmap <F2> <Esc>:set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2<CR>
+nmap <F4> <Esc>:set noexpandtab tabstop=4 softtabstop=4 shiftwidth=4<CR>
+
+" }}}
 
 
-
-" --- Abbrev --------------------------------------------------------------- {{{
+" {{{ Abbrev
 
 " create/move/close tab
 cabbrev tn tabnew
@@ -215,17 +204,18 @@ cabbrev tq tabclose
 " close buffer
 cabbrev bq bdelete
 
-" -------------------------------------------------------------------------- }}}
+" }}}
 
 
-
-" --- Plugins extra-configuration ------------------------------------------ {{{
+" {{{ Plugins extra-configuration
 
 " a.vim
 nnoremap <silent> <leader>a :A<cr>
 
 " buffergattor
 let g:buffergator_suppress_keymaps = 1
+let g:buffergator_viewport_split_policy = "T"
+let g:buffergator_vsplit_size = 40
 nnoremap <silent> <leader>b :BuffergatorToggle<cr>
 
 " CtrlP
@@ -256,16 +246,20 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 map <silent> <leader><leader> <leader>c<space>
 
 " nerdtree
-let NERDTreeShowFiles=1   " show files
-let NERDTreeShowHidden=1  " show hidden files
-let NERDTreeQuitOnOpen=1  " quit on opening files from the tree
+let NERDTreeShowHidden = 1  " show hidden files
+let NERDTreeWinSize = 40
 nnoremap <silent> <leader>e :NERDTreeToggle<cr>
+
+" php indent
+let g:PHP_vintage_case_default_indent = 1
 
 " powerline
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode " hide the duplicate mode in bottom status bar
 
 " tagbar
+let g:tagbar_autofocus = 1
+let g:tagbar_show_visibility = 1 " show private/protected/public
 nnoremap <silent> <leader>t :TagbarToggle<cr>
 
-" -------------------------------------------------------------------------- }}}
+" }}}

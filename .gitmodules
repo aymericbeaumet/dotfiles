@@ -96,13 +96,21 @@
 	path = _vim/vim/bundle/tools/numbers.vim
 	url = git://github.com/myusuf3/numbers.vim.git
 	ignore = dirty
-
-###
-# Sublime Text
-
-[submodule "sublime_text/packages/vintageEx"]
-	path = sublime_text/packages/vintageEx
-	url = git://github.com/SublimeText/VintageEx.git
+[submodule "_vim/vim/bundle/tools/neocomplcache.vim"]
+	path = _vim/vim/bundle/tools/neocomplcache.vim
+	url = git://github.com/Shougo/neocomplcache.vim.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/tools/closetag.vim"]
+	path = _vim/vim/bundle/tools/closetag.vim
+	url = git://github.com/vim-scripts/closetag.vim.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/tools/vim-abolish"]
+	path = _vim/vim/bundle/tools/vim-abolish
+	url = git://github.com/tpope/vim-abolish.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/tools/vim-fugitive"]
+	path = _vim/vim/bundle/tools/vim-fugitive
+	url = git://github.com/tpope/vim-fugitive.git
 	ignore = dirty
 
 ###
@@ -111,12 +119,7 @@
 [submodule "xcode/plugins/XVim"]
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
-[submodule "_vim/vim/bundle/tools/neocomplcache.vim"]
-	path = _vim/vim/bundle/tools/neocomplcache.vim
-	url = git://github.com/Shougo/neocomplcache.vim.git
-[submodule "_vim/vim/bundle/tools/supertab"]
-	path = _vim/vim/bundle/tools/supertab
-	url = git://github.com/ervandew/supertab.git
-[submodule "_vim/vim/bundle/tools/closetag.vim"]
-	path = _vim/vim/bundle/tools/closetag.vim
-	url = git://github.com/vim-scripts/closetag.vim.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/languages/PHP-Indenting-for-VIm"]
+	path = _vim/vim/bundle/languages/PHP-Indenting-for-VIm
+	url = git://github.com/2072/PHP-Indenting-for-VIm.git
