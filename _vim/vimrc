@@ -21,7 +21,7 @@ syntax enable
 filetype plugin indent on
 set t_Co=256
 set background=dark
-colorscheme mustang
+colorscheme wombat256mod
 hi CursorLine cterm=bold
 
 " }}}
@@ -245,6 +245,17 @@ let g:PHP_vintage_case_default_indent = 1
 " powerline
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode " hide the duplicate mode in bottom status bar
+
+" supertab
+let g:SuperTabDefaultCompletionType = "<c-n>"
+let g:SuperTabContextDefaultCompletionType = "<c-n>"
+
+" syntastic
+let g:syntastic_check_on_open = 1
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_loc_list_height=7
+let g:syntastic_c_compiler_options = "-Wall -Wextra"
 
 " tagbar
 let g:tagbar_autofocus = 1

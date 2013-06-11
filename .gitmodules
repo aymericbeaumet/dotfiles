@@ -144,3 +144,6 @@
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/supertab"]
+	path = _vim/vim/bundle/tools/supertab
+	url = git://github.com/ervandew/supertab.git
