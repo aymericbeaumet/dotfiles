@@ -120,6 +120,14 @@
 	path = _vim/vim/bundle/tools/vim-nerdtree-tabs
 	url = git://github.com/jistr/vim-nerdtree-tabs.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/ultisnips"]
+	path = _vim/vim/bundle/tools/ultisnips
+	url = git://github.com/SirVer/ultisnips.git
+	ignore = dirty
+[submodule "_vim/vim/bundle/tools/a.vim"]
+	path = _vim/vim/bundle/tools/a.vim
+	url = git://github.com/vim-scripts/a.vim.git
+	ignore = dirty
 
 ###
 # Xcode

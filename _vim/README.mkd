@@ -12,6 +12,7 @@ List custom binds/abbrev.
 - `^N ^P ^X` vim-multiple-cursors
 - `, ` hide highlighted matches
 - `,,` comment line
+- `,a` [a]lternate between .c and .h
 - `,b` list [b]uffers
 - `,d{move}` [d]elete current line without store it in the buffer
 - `,e` [e]xplore files
