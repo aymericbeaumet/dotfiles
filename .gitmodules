@@ -132,6 +132,10 @@
 	path = _vim/vim/bundle/tools/vim-sleuth
 	url = git://github.com/tpope/vim-sleuth.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/syntastic"]
+	path = _vim/vim/bundle/tools/syntastic
+	url = git://github.com/scrooloose/syntastic.git
+	ignore = dirty
 
 ###
 # Xcode
@@ -140,6 +144,3 @@
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
 	ignore = dirty
-[submodule "_vim/vim/bundle/tools/syntastic"]
-	path = _vim/vim/bundle/tools/syntastic
-	url = git://github.com/scrooloose/syntastic.git

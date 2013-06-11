@@ -199,7 +199,7 @@ nnoremap <silent> <Leader>a :A<CR>
 " buffergattor
 let g:buffergator_suppress_keymaps = 1
 let g:buffergator_viewport_split_policy = "T"
-let g:buffergator_vsplit_size = 40
+let g:buffergator_split_size = 7
 nnoremap <silent> <Leader>b :BuffergatorToggle<CR>
 
 " CtrlP
