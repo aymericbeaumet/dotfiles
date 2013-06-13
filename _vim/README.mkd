@@ -17,15 +17,13 @@ Custom binds/abbrev.
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
 - `,<space>` hide highlighted search matches
+- `,r` isolate [r]egion
 
 - `,s` perform a single [s]yntax check
 - `,S` toggle automatic [s]yntax check
 
 - `,e` [e]xplore files
 - `,f` [f]ile fast-open
-
-- `,nr` isolate [r]egion
-- `,nw` isolate [w]indow
 
 - `,b` [b]uffer fast-open
 - `,l` [l]ist all the buffers

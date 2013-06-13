@@ -205,9 +205,8 @@ nmap <silent> <leader>m <leader>lj
 
 " narrowregion
 let g:nrrw_rgn_nohl = 1
-nmap <silent> <leader>nr :NarrowRegion<CR>
-vmap <silent> <leader>nr :NarrowRegion<CR>
-noremap <silent> <leader>nw :NarrowWindow<CR>
+nnoremap <leader>r :NarrowRegion<CR>
+vnoremap <leader>r :NarrowRegion<CR>
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
