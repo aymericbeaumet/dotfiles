@@ -111,14 +111,6 @@ set hidden              " when I close a tab, don't remove the buffer
 
 " }}}
 
-" {{{ Convention
-
-" 80 characters line convention
-highlight OverLength cterm=underline
-match OverLength /\%81v.\+/
-
-" }}}
-
 " {{{ Errors
 
 " turn off error bells 
@@ -142,7 +134,7 @@ nnoremap <silent> k gk
 nnoremap <silent> n nzz
 nnoremap <silent> <S-n> Nzz
 
-" pan resizing
+" fast pan resizing
 nnoremap <silent> _ <C-w>-
 nnoremap <silent> + <C-w>+
 nnoremap <silent> < <C-w><
@@ -154,15 +146,12 @@ cnoremap <C-a> <C-b>
 " easily search in command line history with `^r` (zsh-style)
 cnoremap <C-r> <esc>q:/
 
-" ^P to up command line (useful history search)
+" ^P to search in command line history
 cnoremap <C-S-p> <up>
 
 " move between matching brackets using tab
 nnoremap <tab> %
 vnoremap <tab> %
-
-" fix undesired behavior
-imap <C-R> <nop>
 
 " define leading key
 let mapleader = ','
@@ -177,6 +166,9 @@ nnoremap <silent> <leader><space> :nohlsearch<CR>
 " use `,d` to delete a line without adding it to the yanked stack
 nnoremap <silent> <leader>d "_d
 vnoremap <silent> <leader>d "_d
+
+" fast access to buffers list
+nnoremap <silent> <leader>l :ls<CR>
 
 " }}}
 

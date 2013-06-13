@@ -5,21 +5,21 @@ Custom binds/abbrev.
 ### Normal mode
 
 - `<tab>` move between matching brackets
+- `,d{move}` [d]elete current line without storing it in the buffer
 - `,w` easymotion (place marks)
-
+- `^N ^P ^X` vim-multiple-cursors
+- `,,` comment line
 - `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
+- `,<space>` hide highlighted search matches
+- `,r` isolate [r]egion
+
+- `,ve` `,vs` [e]dit or [s]ource [v]imrc
+- `,t` show [t]ags
 - `H` `L` prev/next tab
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
-- `^N ^P ^X` vim-multiple-cursors
-- `,<space>` hide highlighted search matches
-- `,,` comment line
-- `,a` [a]lternate between .c and .h
-- `,d{move}` [d]elete current line without store it in the buffer
-- `,r` isolate [r]egion
-- `,ve` `,vs` [e]dit or [s]ource [v]imrc
-- `,t` show [t]ags
 
+- `,a` [a]lternate between .c and .h
 - `,s` perform a single [s]yntax check
 - `,S` toggle automatic [s]yntax check
 
@@ -27,6 +27,7 @@ Custom binds/abbrev.
 - `,f` [f]ile fast-open
 
 - `,b` [b]uffer fast-open
+- `,l` [l]ist all the buffers
 - `,m` [m]enu of opened buffers
 
 ### Insert mode
