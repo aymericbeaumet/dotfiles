@@ -149,10 +149,6 @@ cnoremap <C-r> <esc>q:/
 " ^P to search in command line history
 cnoremap <C-S-p> <up>
 
-" move between matching brackets using tab
-nnoremap <tab> %
-vnoremap <tab> %
-
 " define leading key
 let mapleader = ','
 
