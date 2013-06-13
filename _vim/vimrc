@@ -8,8 +8,8 @@ let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
 runtime pathogen/autoload/pathogen.vim
 
-execute pathogen#infect(s:vim_dir . '/bundle/themes/{}')
 execute pathogen#infect(s:vim_dir . '/bundle/languages/{}')
+execute pathogen#infect(s:vim_dir . '/bundle/themes/{}')
 execute pathogen#infect(s:vim_dir . '/bundle/tools/{}')
 execute pathogen#helptags()
 
@@ -182,14 +182,10 @@ cabbrev bq bdelete
 
 " {{{ Plugins extra-configuration
 
-" a.vim
-nnoremap <silent> <leader>a :A<CR>
-
 " CtrlP
 let g:ctrlp_map = '<leader>f'
 let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])|__init__\.py'
 let g:ctrlp_working_path_mode = 0
-let g:ctrlp_dotfiles = 0
 let g:ctrlp_switch_buffer = 0
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_max_files = 1000
@@ -197,8 +193,7 @@ let g:ctrlp_max_depth = 10
 nnoremap <silent> <leader>b :CtrlPBuffer<CR>
 
 " easymotion
-let g:EasyMotion_leader_key = '<leader>y'
-nmap <silent> <leader>w <leader>yw
+let g:EasyMotion_leader_key = '<leader>w'
 
 " html
 let g:html_indent_inctags = "html,body,head,tbody"
@@ -209,7 +204,10 @@ let g:html_indent_style1 = "inc"
 nmap <silent> <leader>m <leader>lj
 
 " narrowregion
-noremap <silent> <leader>r :NarrowRegion<CR>
+let g:nrrw_rgn_nohl = 1
+nmap <silent> <leader>nr :NarrowRegion<CR>
+vmap <silent> <leader>nr :NarrowRegion<CR>
+noremap <silent> <leader>nw :NarrowWindow<CR>
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
@@ -218,9 +216,6 @@ autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" nerdcommenter
-map <silent> <leader><leader> <leader>c<space>
 
 " nerdtree
 let NERDTreeShowHidden = 1 " show hidden files
@@ -235,18 +230,22 @@ let g:PHP_vintage_case_default_indent = 1
 let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode " hide the duplicate mode in bottom status bar
 
-" supertab
-let g:SuperTabDefaultCompletionType = "<c-n>"
-let g:SuperTabContextDefaultCompletionType = "<c-n>"
-
 " syntastic
 let g:syntastic_mode_map = { 'mode': 'passive' }
-let g:syntastic_check_on_wq=0
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
 let g:syntastic_c_compiler_options = "-Wall -Wextra"
 nnoremap <silent> <leader>s :SyntasticCheck<CR>
 nnoremap <silent> <leader>S :SyntasticToggleMode<CR>
+
+" tabular
+nnoremap <silent> <leader>a: :Tabularize /:<CR>
+vnoremap <silent> <leader>a: :Tabularize /:<CR>
+nnoremap <silent> <leader>a\, :Tabularize /,<CR>
+vnoremap <silent> <leader>a\, :Tabularize /,<CR>
+nnoremap <silent> <leader>a\| :Tabularize /\|<CR>
+vnoremap <silent> <leader>a\| :Tabularize /\|<CR>
 
 " tagbar
 let g:tagbar_autofocus = 1

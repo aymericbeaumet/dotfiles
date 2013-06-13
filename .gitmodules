@@ -144,3 +144,6 @@
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
 	ignore = dirty
+[submodule "_vim/vim/bundle/tools/tabular"]
+	path = _vim/vim/bundle/tools/tabular
+	url = git://github.com/godlygeek/tabular.git
