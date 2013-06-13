@@ -166,6 +166,9 @@ vnoremap <silent> <leader>d "_d
 " fast access to buffers list
 nnoremap <silent> <leader>l :ls<CR>
 
+" copy from the cursor to the end of line using Y
+nnoremap <silent> Y y$
+
 " }}}
 
 " {{{ Abbrev
