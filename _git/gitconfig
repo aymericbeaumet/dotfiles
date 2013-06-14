@@ -5,12 +5,14 @@
 [alias]
   ; fast access
   a = add
+  aa = add -A
   br = branch
   cf = cat-file
   ci = commit
   cia = commit --amend
   cl = clone
   co = checkout
+  cob = checkout -b
   df = diff
   dfc = diff --cached
   fe = fetch
