@@ -94,7 +94,7 @@ for i in "${files2install[@]}" ; do
   if [ -r "$install_script" ] ; then
     echo "    Loading custom installation script: \"$install_script\""
     echo '    <<<'
-    sh "$install_script"
+    bash "$install_script"
     echo '    >>>'
   fi
 done

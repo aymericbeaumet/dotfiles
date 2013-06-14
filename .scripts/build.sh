@@ -14,7 +14,7 @@ git submodule update --init --recursive
 for build_script in "$(find . -mindepth 2 -maxdepth 2 -name '.build.sh')" ; do
   if [ -r "$build_script" ] ; then
     echo '    <<<'
-    sh "$build_script"
+    bash "$build_script"
     echo '    >>>'
   fi
 done

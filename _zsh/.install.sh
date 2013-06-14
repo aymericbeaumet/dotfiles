@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script will be sourced during installation
 
-if cmd_exists chsh ; then
+if which chsh &>/dev/null ; then
   echo -n 'Do you want to set your default shell to zsh [y/N]? '
   answer=''
   while [ "$answer" != 'n' ] && [ "$answer" != 'no' ] ; do
