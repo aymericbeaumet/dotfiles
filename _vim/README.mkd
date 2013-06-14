@@ -1,12 +1,20 @@
-Custom binds/abbrev.
+# Vim default stuff
 
-## Binds memo
+- `"<reg>yy` yank in the given reg
+- `"<reg>p` paste the given reg
+- reg `0` is the default register / reg `+` contains the system clipboard
 
-### Normal mode
+- `:ls` list all the buffers
+- `:reg` list all the registers and their content
+
+
+# Customized stuff
+
+## Normal mode
 
 - `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
 - `,a{key}` align code on {key} (pipe, comma, colon are supported by now)
-- `,d{move}` [d]elete current line without storing it in the buffer
+- `,d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
 - `,w` easymotion leader key (see `:help easymotion`)
 - `,c<space>` comment line
 - `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
@@ -26,15 +34,14 @@ Custom binds/abbrev.
 - `,f` [f]ile fast-open
 
 - `,b` [b]uffer fast-open
-- `,l` [l]ist all the buffers
 - `,m` [m]enu of opened buffers
 
-### Insert mode
+## Insert mode
 
 - `^e` expand (x)html/xml
 - `^_` close (x)html/xml tags
 
-## Abbrev memo
+## Command line mode
 
 - `:A` alternate between .c and .h
 

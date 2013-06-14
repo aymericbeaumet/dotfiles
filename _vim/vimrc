@@ -181,15 +181,6 @@ nnoremap <silent> + <C-w>+
 nnoremap <silent> < <C-w><
 nnoremap <silent> > <C-w>>
 
-" make `^a` move cursor to line beginning (in command line)
-cnoremap <C-a> <C-b>
-
-" easily search in command line history with `^r` (zsh-style)
-cnoremap <C-r> <esc>q:/
-
-" ^P to search in command line history
-cnoremap <C-S-p> <up>
-
 " define leading key
 let mapleader = ','
 
@@ -200,12 +191,11 @@ nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
 " hide last search matches
 nnoremap <silent> <leader><space> :nohlsearch<CR>
 
-" use `,d` to delete a line without adding it to the yanked stack
-nnoremap <silent> <leader>d "_d
-vnoremap <silent> <leader>d "_d
-
-" fast access to buffers list
-nnoremap <silent> <leader>l :ls<CR>
+" use `,d`  `,D` `,x` `,X` to delete without altering the yanked stack
+noremap <silent> <leader>d "_d
+noremap <silent> <leader>D "_D
+noremap <silent> <leader>x "_x
+noremap <silent> <leader>X "_X
 
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
