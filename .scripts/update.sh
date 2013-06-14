@@ -9,6 +9,6 @@ cd "$(dirname "$0")/.."
 git pull origin master
 
 # Update submodules (init them if needed)
-git submodule update --init
+git submodule update --init --recursive
 
 exit 0

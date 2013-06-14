@@ -14,7 +14,7 @@ current_path="$(pwd)"
 current_user="$(whoami)"
 
 # Get the configuration files to install (directories prefixed by an '_')
-files2install=(`find . -mindepth 1 -maxdepth 1 -name '_*' -type d \
+files2install=(`find . -maxdepth 1 -name '_*' -type d \
   -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'`)
 
 # return 0 if $1 exists (as an alias or executable file in $PATH)
@@ -91,7 +91,7 @@ for i in "${files2install[@]}" ; do
   done
 
   # Each file starting with a dot in the directory will be sourced
-  for script in `find "$current_path/_$i" -mindepth 1 -maxdepth 1 -name '.*' \
+  for script in `find "$current_path/_$i" -maxdepth 1 -type f -name '.*' ! -name '.git*' \
     | sort` ; do
     echo "    Loading custom installation script: \"$script\""
     echo '    <<<'

@@ -1,13 +1,12 @@
 ###
 # Vim
-[submodule "_vim/vim/bundle/vundle"]
-	path = _vim/vim/bundle/vundle
-	url = git://github.com/gmarik/vundle.git
+[submodule "_vim"]
+	path = _vim
+	url = git://github.com/abeaumet/dotvim.git
 	ignore = dirty
 
 ###
 # Xcode
-
 [submodule "xcode/plugins/XVim"]
 	path = xcode/plugins/XVim
 	url = git://github.com/JugglerShu/XVim.git
