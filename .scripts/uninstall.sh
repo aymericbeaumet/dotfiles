@@ -6,20 +6,21 @@ cd "$(dirname $0)/.."
 # Source configuration
 source .scripts/config
 
-files=(`find $INSTALL_DIR -maxdepth 1 -name '.*' -type l | sort`)
+files=("$(find "$INSTALL_DIR" -maxdepth 1 -name '.*' ! -name ".*.$BACKUP_EXT" -type l | sort)")
 
-dotfiles_path=`pwd`
+dotfiles_path="$(pwd)"
 
-for i in ${files[@]} ; do
-  if [[ `readlink $i` =~ $dotfiles_path ]] && [ -e $i ]; then
+for file in ${files[@]} ; do
+  if [[ "$(readlink "$file")" =~ "$dotfiles_path" ]] && [ -e "$file" ]; then
     # If a backup file exists, restore it
-    if [ -f $i.$BACKUP_EXT ] ; then
-      mv -vf $i.$BACKUP_EXT $i &>/dev/null && \
-      echo "Restoring \"$i.$BACKUP_EXT\""
+    if [ -e "$file.$BACKUP_EXT" ] ; then
+      rm -rf "$file" &>/dev/null
+      mv -vf "$file.$BACKUP_EXT"  "$file" &>/dev/null && \
+      echo "Restoring \"$file.$BACKUP_EXT\" over \"$file\""
     # Else just remove
     else
-      rm -vf $i &>/dev/null && \
-      echo "Removing \"$i\""
+      rm -vf $file &>/dev/null && \
+      echo "Removing \"$file\""
     fi
   fi
 done
