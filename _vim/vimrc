@@ -1,17 +1,59 @@
 " clear all autocommands
 autocmd!
-
-" {{{ Pathogen
-
+" break away from old vi compatibility
+set nocompatible
+" found vim config file and config dir
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
-runtime pathogen/autoload/pathogen.vim
+" {{{ Vundle
 
-execute pathogen#infect(s:vim_dir . '/bundle/languages/{}')
-execute pathogen#infect(s:vim_dir . '/bundle/themes/{}')
-execute pathogen#infect(s:vim_dir . '/bundle/tools/{}')
-execute pathogen#helptags()
+filetype off " required by Vundle
+
+let &runtimepath .= ',' . s:vim_dir . '/bundle/vundle'
+call vundle#rc()
+
+" Load Vundle first
+Bundle 'gmarik/vundle'
+
+" Languages plugins
+Bundle '2072/PHP-Indenting-for-VIm'
+Bundle 'indenthtml.vim'
+Bundle 'pangloss/vim-javascript'
+Bundle 'tpope/vim-git'
+Bundle 'tpope/vim-markdown'
+
+" Themes plugins
+Bundle 'croaker/mustang-vim'
+Bundle 'wombat256.vim'
+
+" Tools plugins
+Bundle 'Lokaltog/powerline'
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'LustyJuggler'
+Bundle 'Shougo/neocomplcache.vim'
+Bundle 'SirVer/ultisnips'
+Bundle 'a.vim'
+Bundle 'airblade/vim-rooter'
+Bundle 'bingaman/vim-sparkup'
+Bundle 'chrisbra/NrrwRgn'
+Bundle 'closetag.vim'
+Bundle 'godlygeek/tabular'
+Bundle 'jistr/vim-nerdtree-tabs'
+Bundle 'kien/ctrlp.vim'
+Bundle 'majutsushi/tagbar'
+Bundle 'myusuf3/numbers.vim'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'scrooloose/nerdtree'
+Bundle 'scrooloose/syntastic'
+Bundle 'terryma/vim-multiple-cursors'
+Bundle 'tpope/vim-abolish'
+Bundle 'tpope/vim-eunuch'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-sleuth'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-unimpaired'
 
 " }}}
 
@@ -28,7 +70,6 @@ hi CursorLine cterm=bold
 
 " {{{ Global options
 
-set nocompatible        " break away from old vi compatibility
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
 set autowrite           " automatically save before :next and :make
@@ -229,7 +270,6 @@ nnoremap <silent> <leader>e :NERDTreeTabsToggle<CR>
 let g:PHP_vintage_case_default_indent = 1
 
 " powerline
-let &runtimepath .= ',' . s:vim_dir . '/bundle/tools/powerline/powerline/bindings/vim'
 set noshowmode " hide the duplicate mode in bottom status bar
 
 " syntastic
