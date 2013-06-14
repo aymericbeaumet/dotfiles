@@ -90,14 +90,13 @@ for i in "${files2install[@]}" ; do
       echo "    \"$file_from\" -> \"$file_toward\""
   done
 
-  # Each file starting with a dot in the directory will be sourced
-  for script in `find "$current_path/_$i" -maxdepth 1 -type f -name '.*' ! -name '.git*' \
-    | sort` ; do
-    echo "    Loading custom installation script: \"$script\""
+  install_script="$current_path/_$i/.install.sh";
+  if [ -r "$install_script" ] ; then
+    echo "    Loading custom installation script: \"$install_script\""
     echo '    <<<'
-    . "$script"
+    . "$install_script"
     echo '    >>>'
-  done
+  fi
 done
 
 exit 0

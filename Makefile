@@ -2,9 +2,9 @@
 SCRIPTS_DIR=$(dir $(lastword $(MAKEFILE_LIST)))/.scripts
 
 all:
-	@echo 'Updating dotfiles...'
-	@$(SCRIPTS_DIR)/update.sh
-	@echo 'dotfiles successfully updated!'
+	@echo 'Building dotfiles...'
+	@$(SCRIPTS_DIR)/build.sh
+	@echo 'dotfiles successfully built!'
 
 install:
 	@echo 'Installing dotfiles...'
