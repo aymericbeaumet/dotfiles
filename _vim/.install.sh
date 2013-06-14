@@ -1,4 +1,6 @@
 #!/bin/sh
 # This script will be sourced during installation
 
-vim +BundleInstall +qall 2>/dev/null
+echo 'Installing vim bundles'
+
+vim +BundleInstall +qall
