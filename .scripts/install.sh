@@ -18,17 +18,9 @@ files2install=(`find . -maxdepth 1 -name '_*' -type d \
   -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'`)
 
 # return 0 if $1 exists (as an alias or executable file in $PATH)
-function cmd_exists()
-{
-  return $([ $# -ne 0 ] && which $1 &>/dev/null);
-}
-
 cmd_exists()
 {
-  if [ "$#" -eq '0' ] || ! which "$1" &>/dev/null ; then
-    return 1
-  fi
-  return 0
+  return $([ $# -ne 0 ] && which $1 &>/dev/null);
 }
 
 do_backup()
@@ -63,10 +55,6 @@ while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
 done
 
 
-echo 'Checking dependencies...'
-git submodule init
-
-
 # Installing configuration files
 for i in "${files2install[@]}" ; do
   ## if the directory starts with '__', it will not be considered as a command
@@ -78,8 +66,10 @@ for i in "${files2install[@]}" ; do
   echo "Installing $i stuff..."
 
   for j in $(ls "_$i/" | sort) ; do
-    # if the file extension is '.md' or '.mkd', just skip it
-    if [[ "$j" =~ ^.+.mk*d$ ]] ; then
+    # if the file extension is '.md' or '.mkd'
+    # or if hidden files
+    # just skip it
+    if [[ "$j" =~ ^.+.mk*d$ ]] || [[ "$j" =~ ^\. ]] ; then
       continue
     fi
 

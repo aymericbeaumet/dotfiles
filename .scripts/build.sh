@@ -13,6 +13,7 @@ git submodule update --init --recursive
 
 for build_script in "$(find . -mindepth 2 -maxdepth 2 -name '.build.sh')" ; do
   if [ -r "$build_script" ] ; then
+    echo "    Loading custom built script: \"$build_script\""
     echo '    <<<'
     bash "$build_script"
     echo '    >>>'

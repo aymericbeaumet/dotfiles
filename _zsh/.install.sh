@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # This script will be sourced during installation
 
 if which chsh &>/dev/null ; then
