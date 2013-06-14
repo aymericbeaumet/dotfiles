@@ -63,7 +63,7 @@ syntax enable
 filetype plugin indent on
 set t_Co=256
 set background=dark
-colorscheme wombat256mod
+silent! colorscheme wombat256mod
 hi CursorLine cterm=bold
 
 " }}}
