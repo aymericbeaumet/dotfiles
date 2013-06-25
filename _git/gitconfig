@@ -6,6 +6,7 @@
   ; fast access
   a = add
   aa = add -A
+  ap = add --patch
   br = branch
   cf = cat-file
   ci = commit
