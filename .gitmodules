@@ -3,7 +3,6 @@
 [submodule "_vim"]
 	path = _vim
 	url = git://github.com/abeaumet/dotvim.git
-	ignore = dirty
 [submodule "_zsh"]
 	path = _zsh
 	url = git://github.com/abeaumet/dotzsh.git
