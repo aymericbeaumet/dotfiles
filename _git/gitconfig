@@ -10,12 +10,14 @@
   cf = cat-file
   ci = commit
   cia = commit --amend
+  cim = commit -m
   cl = clone
   co = checkout
   cob = checkout -b
   df = diff
   dfc = diff --cached
   fe = fetch
+  fep = fetch -p
   l = log
   me = merge
   pl = pull
