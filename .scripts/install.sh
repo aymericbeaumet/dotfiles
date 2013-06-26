@@ -13,9 +13,8 @@ source '.scripts/config'
 current_path="$(pwd)"
 current_user="$(whoami)"
 
-# Get the configuration files to install (directories prefixed by an '_')
-files2install=(`find . -maxdepth 1 -name '_*' -type d \
-  -exec echo {} \; | sort | sed 's#./_\(.*\)#\1#g'`)
+# Get the configuration files to install (all the directories except ones prefixed by an '_')
+files2install=("$(find . -maxdepth 1 ! -name '.*' ! -name '_*' -type d | sed 's#\./\(.*\)#\1#' | sort)")
 
 # return 0 if $1 exists (as an alias or executable file in $PATH)
 cmd_exists()
@@ -29,17 +28,16 @@ do_backup()
     return 1
   fi
   if [ -f "$1" ] || [ -d "$1" ] ; then
-    rm -rf "$1.$BACKUP_EXT" &>/dev/null || return $?
-    mv -f "$1" "$1.$BACKUP_EXT" &>/dev/null || return $?
+    rm -rf "$1.$BACKUP_EXT" &>/dev/null
+    mv -f "$1" "$1.$BACKUP_EXT" &>/dev/null
   fi
   return 0
 }
 
-
 # warning
 echo "This script will install the following configuration files:"
+for i in ${files2install[@]} ; do echo "- $i" ; done
 echo '(a backup will automatically be done of your current files)'
-for i in "${files2install[@]}" ; do echo "- $i" ; done
 echo -n 'Do you wish to continue [Y/n]? '
 answer=''
 while [ "$answer" != 'y' ] && [ "$answer" != 'yes' ] ; do
@@ -56,7 +54,7 @@ done
 
 
 # Installing configuration files
-for i in "${files2install[@]}" ; do
+for i in ${files2install[@]} ; do
   if ! cmd_exists "$i" ; then
     echo "Skipping $i stuff... (not found on the system)"
     continue
@@ -64,7 +62,7 @@ for i in "${files2install[@]}" ; do
 
   echo "Installing $i stuff..."
 
-  for j in $(ls "_$i/" | sort) ; do
+  for j in $(ls "$i/" | sort) ; do
     # if the file extension is '.md' or '.mkd'
     # or if hidden files
     # just skip it
@@ -72,14 +70,14 @@ for i in "${files2install[@]}" ; do
       continue
     fi
 
-    file_from="$current_path/_$i/$j"
+    file_from="$current_path/$i/$j"
     file_toward="$INSTALL_DIR/.$j"
     do_backup "$file_toward" &&
       ln -sf "$file_from" "$file_toward" &>/dev/null &&
       echo "    \"$file_from\" -> \"$file_toward\""
   done
 
-  install_script="$current_path/_$i/.install.sh";
+  install_script="$current_path/$i/.install.sh";
   if [ -r "$install_script" ] ; then
     echo "    Loading custom installation script: \"$install_script\""
     echo '    <<<'

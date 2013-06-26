@@ -1,0 +1,59 @@
+_Memo_
+
+# Vim default stuff
+
+- `"<reg>yy` yank in the given register
+- `"<reg>p` paste the given register
+- register `0` is the default register
+- register `+` is the system clipboard
+- `:reg` to list registers and their contents
+- `:ls` to list opened buffers
+
+# Customized stuff
+
+## Normal mode
+
+- `^e` easy window resizing
+
+- `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
+- `,a{key}` align code on {key} (pipe, comma, colon are supported by now)
+- `,d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
+- `,w` easymotion leader key (see `:help easymotion`)
+- `,c<space>` comment line/selection
+- `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
+
+- `H` `L` prev/next tab
+- `_` `+` reduce/increase pane height
+- `<` `>` reduce/increase pane width
+- `,<space>` hide highlighted search matches
+- `,i` [i]solate region
+
+- `,s` perform a single [s]yntax check
+- `,S` toggle automatic [s]yntax check
+
+- `,t` show [t]ags
+
+- `,e` [e]xplore files
+- `,o` [o]pen file (using CtrlP)
+
+- `,bg` [g]o to a recent [b]uffer
+- `,bo` [o]pen [b]uffer
+
+- `,ve` [e]dit [v]imrc
+- `,vs` [s]ource [v]imrc
+
+## Insert mode
+
+- `^e` expand (x)html/xml
+- `^_` close (x)html/xml tags
+
+## Command line mode
+
+- `:A` alternate between .c and .h
+
+- `:Tab <regex>` align lines matching the given regex
+
+- `:tn` create a new tab
+- `:tm` move the current tab
+- `:tq` quit the current tab
+- `:bq` quit the current buffer

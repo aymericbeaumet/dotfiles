@@ -17,7 +17,7 @@ for file in ${files[@]} ; do
       rm -rf "$file" &>/dev/null
       mv -vf "$file.$BACKUP_EXT"  "$file" &>/dev/null && \
       echo "Restoring \"$file.$BACKUP_EXT\" over \"$file\""
-    # Else just remove
+    # Else just remove it
     else
       rm -vf $file &>/dev/null && \
       echo "Removing \"$file\""
