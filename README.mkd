@@ -10,7 +10,7 @@ The following configuration files for the utils below are present in this repo:
 
 You can use `make` to easily install the above configuration files.
 
-    git clone git://github.com/abeaumet/dotfiles.git ~/.dotfiles
+    git clone https://github.com/abeaumet/dotfiles.git ~/.dotfiles
     cd ~/.dotfiles
     make
     make install
