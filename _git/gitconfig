@@ -1,9 +1,12 @@
-# Include external dependencies
-[include]
-  path = ~/.gituser # User configuration file (name, email, etc...)
+; `man git-config` is your friend
+
+[advice]
+  detachedHead = false
+  resolveConflict = false
+  statusHints = false
 
 [alias]
-  ; fast access
+  ; fast access aliases
   a = add
   br = branch
   cf = cat-file
@@ -43,51 +46,62 @@
   t = tag
 
   ; usefull aliases
-
+  gitconfig = "!cat ~/.gitconfig"
+  alias = "!git config -l | grep alias | cut -c 7- | sort"
   forget = update-index --assume-unchanged
   unforget = update-index --no-assume-unchanged
-
-  alias = "!git config -l | grep alias | cut -c 7- | sort"
-  gitconfig = "!cat ~/.gitconfig"
-
-  find = "!git ls-files | grep -i"
-  grep = grep -EI
-
   totrash = clean -ndx
   trash = clean -ffdx
-
+  find = "!git ls-files | grep -i"
   tree = log --graph --abbrev-commit --decorate --date=relative --all \
     --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) \
     %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
   who = shortlog -sne
 
-[core]
-  excludesfile = ~/.cvsignore
-  pager = less
-
-[man]
-  viewer = less
-
-[apply]
-  whitespace = nowarn
+[branch]
+  autosetuprebase = always
 
 [color]
   branch = auto
   diff = auto
+  grep = auto
   interactive = auto
+  pager = true
+  showbranch = auto
   status = auto
   ui = auto
-  pager = true
+
+[core]
+  excludesfile = ~/.gitignore
+  pager = less
+  whitespace = trailing-space
+
+[diff]
+  tool = vimdiff
+
+[grep]
+  lineNumber = true
+  patternType = extended
+
+[man]
+  viewer = less
 
 [mergetool]
   keepbackup = false
   keeptemporaries = false
+  prompt = false
 
-[branch]
-  autosetuprebase = always
+[push]
+  default = current
 
-[help]
-  autocorrect = 10
+[rebase]
+  stat = true
 
-[advice]
-  statusHints = false
+[status]
+  relativePaths = false
+  showUntrackedFiles = all
+
+[user]
+  name = Aymeric Beaumet
+  email = aymeric@beaumet.me
+  editor = vim

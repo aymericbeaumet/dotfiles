@@ -57,8 +57,7 @@ done
 
 # Installing configuration files
 for i in "${files2install[@]}" ; do
-  ## if the directory starts with '__', it will not be considered as a command
-  if ! cmd_exists "$i" && ! [[ "$i" =~ ^_.+$ ]] ; then
+  if ! cmd_exists "$i" ; then
     echo "Skipping $i stuff... (not found on the system)"
     continue
   fi
