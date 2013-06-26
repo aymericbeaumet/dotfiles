@@ -5,20 +5,16 @@
 [alias]
   ; fast access
   a = add
-  aa = add -A
-  ap = add --patch
   br = branch
   cf = cat-file
   ci = commit
   cia = commit --amend
-  cim = commit -m
   cl = clone
   co = checkout
-  cob = checkout -b
   df = diff
   dfc = diff --cached
   fe = fetch
-  fep = fetch -p
+  feo = fetch origin
   l = log
   me = merge
   pl = pull
@@ -47,6 +43,7 @@
   t = tag
 
   ; usefull aliases
+
   forget = update-index --assume-unchanged
   unforget = update-index --no-assume-unchanged
 
@@ -54,7 +51,7 @@
   gitconfig = "!cat ~/.gitconfig"
 
   find = "!git ls-files | grep -i"
-  grep = grep -Ii
+  grep = grep -EI
 
   totrash = clean -ndx
   trash = clean -ffdx
