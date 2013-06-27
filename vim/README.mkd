@@ -21,6 +21,9 @@ _Memo_
 - `,w` easymotion leader key (see `:help easymotion`)
 - `,c<space>` comment line/selection
 - `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
+- `S` split the current line
+- `M` search man page
+- `Y` copy to the end of line
 
 - `H` `L` prev/next tab
 - `_` `+` reduce/increase pane height
@@ -44,6 +47,7 @@ _Memo_
 
 ## Insert mode
 
+- `jj` leave insert mode
 - `^e` expand (x)html
 - `^_` close (x)html/xml tags
 

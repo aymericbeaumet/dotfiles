@@ -91,22 +91,20 @@ set fileformats=unix,mac,dos    " support all three newline formats
 
 set backup                       " enable backup files
 set backupdir=~/.vim/tmp/backup/
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
 
 set undofile                     " enable undo files
 set undolevels=1000              " number of undo level
 set undoreload=10000             " number of lines to save for undo
 set undodir=~/.vim/tmp/undo/
-
-set swapfile                     " enable swap files
-set directory=~/.vim/tmp/swap/
-
-" Make those folders automatically if they don't already exist.
 if !isdirectory(expand(&undodir))
     call mkdir(expand(&undodir), "p")
 endif
-if !isdirectory(expand(&backupdir))
-    call mkdir(expand(&backupdir), "p")
-endif
+
+set swapfile                     " enable swap files
+set directory=~/.vim/tmp/swap/
 if !isdirectory(expand(&directory))
     call mkdir(expand(&directory), "p")
 endif
@@ -212,9 +210,6 @@ noremap <silent> <leader>X "_X
 
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
-
-" map <Space> to / (search)
-nnoremap <silent> <space> /
 
 " leave insert mode using `jj`
 inoremap <silent> jj <esc>
