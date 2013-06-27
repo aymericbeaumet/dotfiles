@@ -28,6 +28,7 @@
   rba = rebase --abort
   rbc = rebase --continue
   re = remote
+  rmc = rm --cached
   rs = reset
   rss = reset --soft
   rsh = reset --hard
@@ -44,12 +45,12 @@
   st = status
   sw = show
   t = tag
+  uia = update-index --assume-unchanged
+  uin = update-index --no-assume-unchanged
 
   ; usefull aliases
   gitconfig = "!cat ~/.gitconfig"
   alias = "!git config -l | grep alias | cut -c 7- | sort"
-  forget = update-index --assume-unchanged
-  unforget = update-index --no-assume-unchanged
   totrash = clean -ndx
   trash = clean -ffdx
   find = "!git ls-files | grep -i"
