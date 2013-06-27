@@ -16,7 +16,3 @@ You can use `make` to easily install the above configuration files, like so:
     make install
 
 _Note: your previous configuration files will be automatically backed up._
-
-## Also
-
-You will also find my favorite fonts here.
