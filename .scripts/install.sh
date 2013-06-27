@@ -13,8 +13,8 @@ source '.scripts/config'
 current_path="$(pwd)"
 current_user="$(whoami)"
 
-# Get the configuration files to install (all the directories except ones prefixed by an '_')
-files2install=("$(find . -maxdepth 1 ! -name '.*' ! -name '_*' -type d | sed 's#\./\(.*\)#\1#' | sort)")
+# Get the configuration files to install
+files2install=("$(find . -maxdepth 1 ! -name '.*' -type d | sed 's#\./\(.*\)#\1#' | sort)")
 
 # return 0 if $1 exists (as an alias or executable file in $PATH)
 cmd_exists()
