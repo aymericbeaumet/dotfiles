@@ -71,6 +71,8 @@ set t_Co=256
 set background=dark
 silent! colorscheme wombat256mod
 hi CursorLine cterm=bold
+set synmaxcol=800       " don't try to highlight lines longer than 800 characters
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$' " hight VCS conflict markers
 
 " }}}
 
@@ -82,12 +84,27 @@ set autowrite           " automatically save before :next and :make
 set laststatus=2        " status line always on
 set encoding=utf-8      " ensure proper encoding
 set ttyfast             " we have a fast terminal
-set nobackup            " no backup files
 set nowritebackup       " no backup file while editing
 set noswapfile          " no swap filewatch for file changes by other programss
 set modelines=0         " don't care about modeline
 set viminfo=            " don't use or save viminfo files
 set fileformats=unix,mac,dos    " support all three newline formats
+
+set backup              " enable backup files
+set undodir=~/.vim/tmp/undo/     " undo files
+set backupdir=~/.vim/tmp/backup/ " backups
+set directory=~/.vim/tmp/swap/   " swap files
+
+" Make those folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
 
 " }}}
 
@@ -135,22 +152,6 @@ set history=1000        " increase history size
 " disable auto comment
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" instant escape
-if ! has('gui_running')
-  set ttimeoutlen=10
-  augroup Fastescape
-    autocmd!
-    au InsertEnter * set timeoutlen=0
-    au InsertLeave * set timeoutlen=350
-  augroup END
-endif
-
-" return to last edit position when opening files
-autocmd BufReadPost *
-      \ if line("'\"") > 0 && line("'\"") <= line("$") |
-      \   exe "normal! g`\"" |
-      \ endif
-
 " }}}
 
 " {{{ Indentation / Tabulations
@@ -188,12 +189,6 @@ nnoremap <silent> k gk
 nnoremap <silent> n nzz
 nnoremap <silent> <S-n> Nzz
 
-" fast pan resizing
-nnoremap <silent> _ <C-w>-
-nnoremap <silent> + <C-w>+
-nnoremap <silent> < <C-w><
-nnoremap <silent> > <C-w>>
-
 " define leading key
 let g:mapleader = ','
 let mapleader = ','
@@ -217,11 +212,25 @@ nnoremap <silent> Y y$
 " map <Space> to / (search)
 nnoremap <silent> <space> /
 
-" smart way to move between panes
-nnoremap <silent> <C-j> <C-S-w>j
-nnoremap <silent> <C-k> <C-S-w>k
-nnoremap <silent> <C-h> <C-S-w>h
-nnoremap <silent> <C-l> <C-S-w>l
+" leave insert mode using `jj`
+inoremap <silent> jj <esc>
+
+" fuck you, help key.
+noremap <F1> <nop>
+inoremap <F1> <nop>
+
+" man key on M
+nnoremap <silent> M K
+
+" keep the cursor in place while joining lines
+nnoremap J mzJ`z
+
+" split line
+nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
+
+" use ^a and ^e to move in command line
+cnoremap <c-a> <home>
+cnoremap <c-e> <end>
 
 " }}}
 
@@ -285,7 +294,7 @@ let g:PHP_vintage_case_default_indent = 1
 set noshowmode " hide the duplicate mode in bottom status bar
 
 " syntastic
-let    g:syntastic_mode_map = { 'mode': 'passive' }
+let g:syntastic_mode_map = { 'mode': 'passive' }
 let g:syntastic_check_on_wq = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
