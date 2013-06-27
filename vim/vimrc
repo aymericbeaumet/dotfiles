@@ -44,7 +44,7 @@ Bundle 'chrisbra/NrrwRgn'
 Bundle 'closetag.vim'
 Bundle 'ervandew/supertab'
 Bundle 'godlygeek/tabular'
-Bundle 'jimsei/winresizer.git'
+Bundle 'jimsei/winresizer'
 Bundle 'jistr/vim-nerdtree-tabs'
 Bundle 'kien/ctrlp.vim'
 Bundle 'majutsushi/tagbar'
@@ -214,9 +214,8 @@ noremap <silent> <leader>X "_X
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
 
-" map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+" map <Space> to / (search)
 nnoremap <silent> <space> /
-nnoremap <silent> <C-space> ?
 
 " smart way to move between panes
 nnoremap <silent> <C-j> <C-S-w>j
@@ -263,8 +262,7 @@ nmap <silent> <leader>bg <leader>lj
 
 " narrowregion
 let g:nrrw_rgn_nohl = 1
-noremap <leader>i :NarrowRegion<CR>
-noremap <leader>i :NarrowRegion<CR>
+noremap <leader>r :NarrowRegion<CR>
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
@@ -287,7 +285,7 @@ let g:PHP_vintage_case_default_indent = 1
 set noshowmode " hide the duplicate mode in bottom status bar
 
 " syntastic
-let g:syntastic_mode_map = { 'mode': 'passive' }
+let    g:syntastic_mode_map = { 'mode': 'passive' }
 let g:syntastic_check_on_wq = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -296,8 +294,8 @@ nnoremap <silent> <leader>s :SyntasticCheck<CR>
 nnoremap <silent> <leader>S :SyntasticToggleMode<CR>
 
 " tabular
-nnoremap <silent> <leader>a :Tabularize
-vnoremap <silent> <leader>a :Tabularize
+nnoremap <silent> <leader>a :Tabularize /
+vnoremap <silent> <leader>a :Tabularize /
 
 " tagbar
 let g:tagbar_autoclose = 1
