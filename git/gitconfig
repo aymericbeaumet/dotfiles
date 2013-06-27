@@ -42,6 +42,7 @@
   shl = stash list
   shp = stash pop
   shs = stash save
+  shsk = stash save --keep-index
   st = status
   sw = show
   t = tag
