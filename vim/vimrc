@@ -88,6 +88,8 @@ set modelines=0         " don't care about modeline
 set viminfo=            " don't use or save viminfo files
 set fileformats=unix,mac,dos    " support all three newline formats
 
+set noswapfile          " disable swap files
+
 set backup                       " enable backup files
 set backupdir=~/.vim/tmp/backup//
 if !isdirectory(expand(&backupdir))
@@ -100,12 +102,6 @@ set undoreload=10000             " number of lines to save for undo
 set undodir=~/.vim/tmp/undo//
 if !isdirectory(expand(&undodir))
   silent! call mkdir(expand(&undodir), "p")
-endif
-
-set swapfile                     " enable swap files
-set directory=~/.vim/tmp/swap//
-if !isdirectory(expand(&directory))
-  silent! call mkdir(expand(&directory), "p")
 endif
 
 " }}}
