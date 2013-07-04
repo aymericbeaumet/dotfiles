@@ -16,14 +16,15 @@ _Memo_
 - `^e` easy window resizing
 
 - `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
-- `,a{key}` align code on {key} (pipe, comma, colon are supported by now)
+- `,a{key}<CR>` align code on {key}
 - `,d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
 - `,w` easymotion leader key (see `:help easymotion`)
 - `,c<space>` comment line/selection
 - `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
-- `S` split the current line
+- `K` split the current line
 - `M` search man page
 - `Y` copy to the end of line
+- `<space>` to search
 
 - `H` `L` prev/next tab
 - `_` `+` reduce/increase pane height
@@ -39,8 +40,9 @@ _Memo_
 - `,e` [e]xplore files
 - `,o` [o]pen file (using CtrlP)
 
-- `,bg` [g]o to a recent [b]uffer
+- `,be` [e]xplore the buffers
 - `,bo` [o]pen [b]uffer
+- `,bO` [O]pen recents [b]uffer
 
 - `,ve` [e]dit [v]imrc
 - `,vs` [s]ource [v]imrc
@@ -61,3 +63,5 @@ _Memo_
 - `:tm` move the current tab
 - `:tq` quit the current tab
 - `:bq` quit the current buffer
+
+- `^r` search in command line history
