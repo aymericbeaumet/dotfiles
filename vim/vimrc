@@ -163,7 +163,8 @@ set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 
 " format option stuff (see :help fo-table)
-autocmd FileType * setlocal fo=crj
+autocmd FileType * set fo=cr
+autocmd FileType * silent! set fo+=j
 
 " Highlight trailing whitespaces
 highlight TrailingWhitespace ctermbg=red
