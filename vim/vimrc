@@ -345,6 +345,6 @@ nnoremap <silent> <Leader>a :Tabularize /
 vnoremap <silent> <Leader>a :Tabularize /
 
 " winresizer
-let g:winresizer_keycode_finish = 27
+let g:winresizer_start_key = '<C-w><C-w>'
 
 " }}}
