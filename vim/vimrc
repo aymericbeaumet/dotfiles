@@ -37,6 +37,7 @@ Bundle 'Lokaltog/vim-easymotion'
 Bundle 'LustyJuggler'
 Bundle 'Shougo/neocomplcache.vim'
 Bundle 'SirVer/ultisnips'
+Bundle 'Townk/vim-autoclose'
 Bundle 'a.vim'
 Bundle 'airblade/vim-rooter'
 Bundle 'chrisbra/NrrwRgn'
@@ -210,6 +211,9 @@ nnoremap <silent> <S-l> gt
 
 " up and down are more logical with g
 nnoremap <silent> j gj
+vnoremap <silent> j gj
+nnoremap <silent> k gk
+vnoremap <silent> k gk
 nnoremap <silent> k gk
 
 " center on each search result
@@ -242,11 +246,6 @@ nnoremap <silent> Y y$
 " leave insert mode using `kj`
 inoremap <silent> kj <Esc>
 
-" disable annoying keys
-noremap <silent> <F1> <Nop>
-inoremap <silent> <F1> <Nop>
-noremap <silent> Q <Nop>
-
 " man key on M
 nnoremap <silent> M K
 
@@ -263,13 +262,23 @@ cnoremap <silent> <C-a> <C-b>
 nnoremap <silent> go o<Esc>
 nnoremap <silent> gO O<Esc>
 
-" disable useless keys in insert mode
+" disable useless/annoying keys
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
 inoremap <Up> <Nop>
 inoremap <Down> <Nop>
 inoremap <Home> <Nop>
 inoremap <End> <Nop>
+inoremap <Esc> <Nop>
+noremap <silent> <F1> <Nop>
+inoremap <silent> <F1> <Nop>
+noremap <silent> Q <Nop>
+
+" invert `;` and `:` binds
+nnoremap ; :
+vnoremap ; :
+nnoremap : ;
+vnoremap : ;
 
 " }}}
 
@@ -345,7 +354,9 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 let g:PHP_vintage_case_default_indent = 1
 
 " powerline
-set noshowmode " hide the duplicate mode in bottom status bar
+if exists('g:powerline_loaded')
+  set noshowmode " hide the duplicate mode in bottom status bar
+endif
 
 " sparkup
 let g:sparkupMappingInsertModeOnly = 1
