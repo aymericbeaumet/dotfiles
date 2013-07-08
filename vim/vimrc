@@ -243,8 +243,9 @@ vnoremap <silent> <Leader>X "_X
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
 
-" leave insert mode using `kj`
-inoremap <silent> kj <Esc>
+" leave insert/command mode using `kj`
+inoremap <silent> kj <C-c>
+cnoremap <silent> kj <C-c>
 
 " man key on M
 nnoremap <silent> M K
