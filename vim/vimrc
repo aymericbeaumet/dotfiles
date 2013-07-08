@@ -39,15 +39,14 @@ Bundle 'Shougo/neocomplcache.vim'
 Bundle 'SirVer/ultisnips'
 Bundle 'a.vim'
 Bundle 'airblade/vim-rooter'
-Bundle 'tristen/vim-sparkup'
 Bundle 'chrisbra/NrrwRgn'
 Bundle 'closetag.vim'
 Bundle 'ervandew/supertab'
 Bundle 'godlygeek/tabular'
 Bundle 'jeetsukumaran/vim-buffergator'
 Bundle 'jimsei/winresizer'
-Bundle 'jistr/vim-nerdtree-tabs'
 Bundle 'kien/ctrlp.vim'
+Bundle 'majutsushi/tagbar'
 Bundle 'myusuf3/numbers.vim'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'scrooloose/nerdtree'
@@ -60,6 +59,9 @@ Bundle 'tpope/vim-sleuth'
 Bundle 'tpope/vim-speeddating'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-unimpaired'
+Bundle 'tristen/vim-sparkup'
+Bundle 'xolox/vim-easytags'
+Bundle 'xolox/vim-misc'
 
 " }}}
 
@@ -98,19 +100,20 @@ set laststatus=2        " status line always on
 set encoding=utf-8      " ensure proper encoding
 set ttyfast             " we have a fast terminal
 set modelines=0         " don't care about modeline
-set fileformats=unix,mac,dos    " support all three newline formats
+set fileformats=unix,mac,dos " support all three newline formats
+set tags=./.tags;,~/.vimtags " define tags file path
 
 set noswapfile          " disable swap files
 
-set backup                       " enable backup files
+set backup              " enable backup files
 set backupdir=~/.vim/tmp/backup//
 if !isdirectory(expand(&backupdir))
   silent! call mkdir(expand(&backupdir), "p")
 endif
 
-set undofile                     " enable undo files
-set undolevels=1000              " number of undo level
-set undoreload=10000             " number of lines to save for undo
+set undofile            " enable undo files
+set undolevels=1000     " number of undo level
+set undoreload=10000    " number of lines to save for undo
 set undodir=~/.vim/tmp/undo//
 if !isdirectory(expand(&undodir))
   silent! call mkdir(expand(&undodir), "p")
@@ -214,7 +217,6 @@ nnoremap <silent> n nzz
 nnoremap <silent> <S-n> Nzz
 
 " define leading key
-let g:mapleader = ','
 let mapleader = ','
 
 " quickly edit/reload the vimrc file
@@ -237,8 +239,8 @@ vnoremap <silent> <Leader>X "_X
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
 
-" leave insert mode using `jj`
-inoremap <silent> jj <Esc>
+" leave insert mode using `kj`
+inoremap <silent> kj <Esc>
 
 " disable annoying keys
 noremap <silent> <F1> <Nop>
@@ -248,19 +250,24 @@ noremap <silent> Q <Nop>
 " man key on M
 nnoremap <silent> M K
 
-" split line with K
-nnoremap <silent> K i<CR><Esc>^mygk:silent! s/\v +$//<CR>:noh<CR>`y
-
 " keep the cursor in place while joining lines
-nnoremap <silent> J mzJ`z
+nnoremap <silent> J myJ`y
+
+" split line with K
+nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:noh<CR>`z
 
 " use ^a and ^e to move in command line
-cnoremap <silent> <C-a> <Home>
-cnoremap <silent> <C-e> <End>
+cnoremap <silent> <C-a> <C-b>
 
 " insert blank lines without going into insert mode
 nnoremap <silent> go o<Esc>
 nnoremap <silent> gO O<Esc>
+
+" disable arrow keys in insert mode
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
+inoremap <Up> <Nop>
+inoremap <Down> <Nop>
 
 " }}}
 
@@ -296,6 +303,11 @@ nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 " easymotion
 let g:EasyMotion_leader_key = '<Leader>w'
 
+" easytags
+let g:easytags_auto_update = 0
+let g:easytags_autorecurse = 0
+nnoremap <silent> <Leader>tu :UpdateTags! -R getcwd()<CR>
+
 " html
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
@@ -308,6 +320,13 @@ nmap <silent> <Leader>bO <Leader>lj
 let g:nrrw_rgn_nohl = 1
 noremap <Leader>r :NarrowRegion<CR>
 
+" nerdtree
+let NERDTreeShowHidden = 1 " show hidden files
+let NERDTreeQuitOnOpen = 1
+let NERDTreeWinSize = 40
+let NERDTreeMinimalUI = 1
+nnoremap <silent> <Leader>e :NERDTreeToggle<CR>
+
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
@@ -315,12 +334,6 @@ autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" nerdtree
-let NERDTreeShowHidden = 1 " show hidden files
-let NERDTreeWinSize = 40
-let NERDTreeMinimalUI = 1
-nnoremap <silent> <Leader>e :NERDTreeTabsToggle<CR>
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1
@@ -343,6 +356,14 @@ nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
 " tabular
 nnoremap <silent> <Leader>a :Tabularize /
 vnoremap <silent> <Leader>a :Tabularize /
+
+" tagbar
+let g:tagbar_autofocus = 1
+let g:tagbar_autoclose = 1
+let g:tagbar_show_visibility = 1
+let g:tagbar_compact = 1
+let g:tagbar_width = 40
+nnoremap <silent> <Leader>te :TagbarToggle<CR>
 
 " winresizer
 let g:winresizer_keycode_finish = 27
