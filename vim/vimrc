@@ -221,7 +221,7 @@ let mapleader = ','
 
 " quickly edit/reload the vimrc file
 nnoremap <silent> <Leader>ve :e $MYVIMRC<CR>
-nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>
+nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>:nohlsearch<CR>
 
 " hide last search matches
 nnoremap <silent> <Leader><space> :nohlsearch<CR>
@@ -254,7 +254,7 @@ nnoremap <silent> M K
 nnoremap <silent> J myJ`y
 
 " split line with K
-nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:noh<CR>`z
+nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
 " use ^a and ^e to move in command line
 cnoremap <silent> <C-a> <C-b>
@@ -263,11 +263,13 @@ cnoremap <silent> <C-a> <C-b>
 nnoremap <silent> go o<Esc>
 nnoremap <silent> gO O<Esc>
 
-" disable arrow keys in insert mode
+" disable useless keys in insert mode
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
 inoremap <Up> <Nop>
 inoremap <Down> <Nop>
+inoremap <Home> <Nop>
+inoremap <End> <Nop>
 
 " }}}
 
