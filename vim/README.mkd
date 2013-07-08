@@ -9,7 +9,6 @@ _Memo_
 - register `0` is the default register
 - register `+` is the system clipboard
 - `]p` paste and auto-indent
-- `:` and `;` binds are inverted
 
 ## Insert mode
 

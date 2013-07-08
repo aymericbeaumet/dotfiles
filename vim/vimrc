@@ -275,12 +275,6 @@ noremap <silent> <F1> <Nop>
 inoremap <silent> <F1> <Nop>
 noremap <silent> Q <Nop>
 
-" invert `;` and `:` binds
-nnoremap ; :
-vnoremap ; :
-nnoremap : ;
-vnoremap : ;
-
 " }}}
 
 " {{{ Abbrev
