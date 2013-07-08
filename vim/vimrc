@@ -316,7 +316,11 @@ let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
 " lusty juggler
-nmap <silent> <Leader>bO <Leader>lj
+silent! nunmap <Leader>lj
+nnoremap <silent> <Leader>bO :LustyJuggler<CR>
+
+" multiple cursors
+vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
 
 " narrowregion
 let g:nrrw_rgn_nohl = 1
