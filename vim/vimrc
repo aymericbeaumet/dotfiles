@@ -6,7 +6,7 @@ set nocompatible
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
-" {{{ Vundle
+" {{{ NeoBundle
 
 let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
 if (exists("g:bundle_dir"))
@@ -31,51 +31,37 @@ NeoBundle 'wombat256.vim'
 
 " Tools plugins
 NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-NeoBundle 'Lokaltog/vim-easymotion'
-NeoBundle 'LustyJuggler'
-NeoBundle 'Shougo/neocomplcache.vim'
-NeoBundle 'SirVer/ultisnips'
-NeoBundle 'Townk/vim-autoclose'
-NeoBundle 'a.vim'
-NeoBundle 'airblade/vim-rooter'
-NeoBundle 'chrisbra/NrrwRgn'
-NeoBundle 'closetag.vim'
-NeoBundle 'ervandew/supertab'
-NeoBundle 'godlygeek/tabular'
-NeoBundle 'jeetsukumaran/vim-buffergator'
-NeoBundle 'jimsei/winresizer'
-NeoBundle 'kien/ctrlp.vim'
-NeoBundle 'majutsushi/tagbar'
 NeoBundle 'myusuf3/numbers.vim'
-NeoBundle 'scrooloose/nerdcommenter'
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'scrooloose/syntastic'
-NeoBundle 'terryma/vim-multiple-cursors'
-NeoBundle 'tpope/vim-abolish'
-NeoBundle 'tpope/vim-eunuch'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-sleuth'
-NeoBundle 'tpope/vim-speeddating'
-NeoBundle 'tpope/vim-surround'
-NeoBundle 'tpope/vim-unimpaired'
-NeoBundle 'tristen/vim-sparkup'
-NeoBundle 'xolox/vim-easytags'
-NeoBundle 'xolox/vim-misc'
+NeoBundle 'scrooloose/nerdcommenter' " Bugged in lazy mode
+NeoBundleLazy 'godlygeek/tabular'
+NeoBundleLazy 'Lokaltog/vim-easymotion'
+NeoBundleLazy 'LustyJuggler'
+NeoBundleLazy 'Shougo/neocomplcache.vim'
+NeoBundleLazy 'SirVer/ultisnips'
+NeoBundleLazy 'Townk/vim-autoclose'
+NeoBundleLazy 'a.vim'
+NeoBundleLazy 'airblade/vim-rooter'
+NeoBundleLazy 'chrisbra/NrrwRgn'
+NeoBundleLazy 'closetag.vim'
+NeoBundleLazy 'jeetsukumaran/vim-buffergator'
+NeoBundleLazy 'jimsei/winresizer'
+NeoBundleLazy 'kien/ctrlp.vim'
+NeoBundleLazy 'majutsushi/tagbar'
+NeoBundleLazy 'scrooloose/nerdtree'
+NeoBundleLazy 'scrooloose/syntastic'
+NeoBundleLazy 'terryma/vim-multiple-cursors'
+NeoBundleLazy 'tpope/vim-abolish'
+NeoBundleLazy 'tpope/vim-eunuch'
+NeoBundleLazy 'tpope/vim-fugitive'
+NeoBundleLazy 'tpope/vim-sleuth'
+NeoBundleLazy 'tpope/vim-surround'
+NeoBundleLazy 'tpope/vim-unimpaired'
+NeoBundleLazy 'tristen/vim-sparkup'
+NeoBundleLazy 'xolox/vim-easytags'
+NeoBundleLazy 'xolox/vim-misc'
 
-NeoBundleCheck
-
-" }}}
-
-" {{{ Functions
-
-" http://stackoverflow.com/a/1618401/1071486
-" Clean all the trailing whitespaces in the current buffer
-function! <SID>StripTrailingWhitespaces()
-  let l = line(".")
-  let c = col(".")
-  %s/\s\+$//e
-  call cursor(l, c)
-endfun
+" Defer some plugins loading to speed up vim initial loading
+autocmd BufEnter * if !exists("g:neobundle_defer") | NeoBundleSource | NeoBundleCheck | let g:neobundle_defer = 1 | endif
 
 " }}}
 
@@ -89,6 +75,19 @@ silent! colorscheme wombat256mod
 hi CursorLine cterm=bold
 set synmaxcol=800       " don't try to highlight long lines
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$' " highlight VCS conflict markers
+
+" }}}
+
+" {{{ Functions
+
+" http://stackoverflow.com/a/1618401/1071486
+" Clean all the trailing whitespaces in the current buffer
+function! <SID>StripTrailingWhitespaces()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
+endfun
 
 " }}}
 
