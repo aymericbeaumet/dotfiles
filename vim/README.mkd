@@ -62,11 +62,13 @@ _Memo_
 
 ## Insert mode
 
-- `kj` leave insert mode
+- `jj` leave insert mode
 - `^e` expand (x)html
 - `^_` close (x)html/xml tags
 
 ## Command line mode
+
+- `jj` leave command line mode
 
 - `:A` alternate between .c and .h
 

@@ -31,10 +31,9 @@ NeoBundle 'wombat256.vim'
 
 " Tools plugins
 NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+NeoBundle 'SirVer/ultisnips' " Bugged in lazy mode
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'scrooloose/nerdcommenter' " Bugged in lazy mode
-NeoBundle 'SirVer/ultisnips' " Bugged in lazy mode
-NeoBundleLazy 'godlygeek/tabular'
 NeoBundleLazy 'Lokaltog/vim-easymotion'
 NeoBundleLazy 'LustyJuggler'
 NeoBundleLazy 'Shougo/neocomplcache.vim'
@@ -43,6 +42,7 @@ NeoBundleLazy 'a.vim'
 NeoBundleLazy 'airblade/vim-rooter'
 NeoBundleLazy 'chrisbra/NrrwRgn'
 NeoBundleLazy 'closetag.vim'
+NeoBundleLazy 'godlygeek/tabular'
 NeoBundleLazy 'jeetsukumaran/vim-buffergator'
 NeoBundleLazy 'jimsei/winresizer'
 NeoBundleLazy 'kien/ctrlp.vim'
@@ -267,6 +267,10 @@ inoremap <End> <Nop>
 noremap <silent> <F1> <Nop>
 inoremap <silent> <F1> <Nop>
 noremap <silent> Q <Nop>
+
+" also bind `jj` to leave insert/command mode
+inoremap <silent> jj <C-c>
+cnoremap <silent> jj <C-c>
 
 " }}}
 
