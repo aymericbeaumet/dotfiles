@@ -6,7 +6,7 @@ ABSPATH=$(cd "$(dirname "$0")"; pwd)
 echo 'Installing vim bundles'
 
 vim \
---cmd "let &rtp .= ',' . '$ABSPATH/vim/bundle/neobundle'" \
+--cmd "let &rtp .= ',' . '$ABSPATH/vim/bundle/neobundle.vim'" \
 --cmd "let g:bundle_dir = '$ABSPATH/vim/bundle'" \
 -u "$ABSPATH/vimrc" \
-+BundleInstall +qall
++NeoBundleInstall +qall
