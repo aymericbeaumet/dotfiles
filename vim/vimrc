@@ -8,61 +8,61 @@ let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
 " {{{ Vundle
 
-filetype off " required by Vundle
-
-let &runtimepath .= ',' . s:vim_dir . '/bundle/vundle'
-if (exists("g:vundle_install_dir"))
-  call vundle#rc(g:vundle_install_dir)
+let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
+if (exists("g:bundle_dir"))
+  call neobundle#rc(g:bundle_dir)
 else
-  call vundle#rc()
+  call neobundle#rc()
 endif
 
 " Load Vundle first
-Bundle 'gmarik/vundle'
+NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Languages plugins
-Bundle '2072/PHP-Indenting-for-VIm'
-Bundle 'indenthtml.vim'
-Bundle 'pangloss/vim-javascript'
-Bundle 'tpope/vim-git'
-Bundle 'tpope/vim-markdown'
+NeoBundle '2072/PHP-Indenting-for-VIm'
+NeoBundle 'indenthtml.vim'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'tpope/vim-git'
+NeoBundle 'tpope/vim-markdown'
 
 " Themes plugins
-Bundle 'croaker/mustang-vim'
-Bundle 'wombat256.vim'
+NeoBundle 'croaker/mustang-vim'
+NeoBundle 'wombat256.vim'
 
 " Tools plugins
-Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'LustyJuggler'
-Bundle 'Shougo/neocomplcache.vim'
-Bundle 'SirVer/ultisnips'
-Bundle 'Townk/vim-autoclose'
-Bundle 'a.vim'
-Bundle 'airblade/vim-rooter'
-Bundle 'chrisbra/NrrwRgn'
-Bundle 'closetag.vim'
-Bundle 'ervandew/supertab'
-Bundle 'godlygeek/tabular'
-Bundle 'jeetsukumaran/vim-buffergator'
-Bundle 'jimsei/winresizer'
-Bundle 'kien/ctrlp.vim'
-Bundle 'majutsushi/tagbar'
-Bundle 'myusuf3/numbers.vim'
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'scrooloose/nerdtree'
-Bundle 'scrooloose/syntastic'
-Bundle 'terryma/vim-multiple-cursors'
-Bundle 'tpope/vim-abolish'
-Bundle 'tpope/vim-eunuch'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-sleuth'
-Bundle 'tpope/vim-speeddating'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'tristen/vim-sparkup'
-Bundle 'xolox/vim-easytags'
-Bundle 'xolox/vim-misc'
+NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+NeoBundle 'Lokaltog/vim-easymotion'
+NeoBundle 'LustyJuggler'
+NeoBundle 'Shougo/neocomplcache.vim'
+NeoBundle 'SirVer/ultisnips'
+NeoBundle 'Townk/vim-autoclose'
+NeoBundle 'a.vim'
+NeoBundle 'airblade/vim-rooter'
+NeoBundle 'chrisbra/NrrwRgn'
+NeoBundle 'closetag.vim'
+NeoBundle 'ervandew/supertab'
+NeoBundle 'godlygeek/tabular'
+NeoBundle 'jeetsukumaran/vim-buffergator'
+NeoBundle 'jimsei/winresizer'
+NeoBundle 'kien/ctrlp.vim'
+NeoBundle 'majutsushi/tagbar'
+NeoBundle 'myusuf3/numbers.vim'
+NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'terryma/vim-multiple-cursors'
+NeoBundle 'tpope/vim-abolish'
+NeoBundle 'tpope/vim-eunuch'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-sleuth'
+NeoBundle 'tpope/vim-speeddating'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-unimpaired'
+NeoBundle 'tristen/vim-sparkup'
+NeoBundle 'xolox/vim-easytags'
+NeoBundle 'xolox/vim-misc'
+
+NeoBundleCheck
 
 " }}}
 
