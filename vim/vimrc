@@ -214,7 +214,6 @@ nnoremap <silent> j gj
 vnoremap <silent> j gj
 nnoremap <silent> k gk
 vnoremap <silent> k gk
-nnoremap <silent> k gk
 
 " center on each search result
 nnoremap <silent> n nzz
@@ -243,10 +242,6 @@ vnoremap <silent> <Leader>X "_X
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
 
-" leave insert/command mode using `kj`
-inoremap <silent> kj <C-c>
-cnoremap <silent> kj <C-c>
-
 " man key on M
 nnoremap <silent> M K
 
@@ -270,7 +265,6 @@ inoremap <Up> <Nop>
 inoremap <Down> <Nop>
 inoremap <Home> <Nop>
 inoremap <End> <Nop>
-inoremap <Esc> <Nop>
 noremap <silent> <F1> <Nop>
 inoremap <silent> <F1> <Nop>
 noremap <silent> Q <Nop>
