@@ -285,6 +285,10 @@ cabbrev bq bdelete
 
 " }}}
 
+" {{{ Language specific configuration
+autocmd FileType php setlocal iskeyword -= $
+" }}}
+
 " {{{ Plugins extra-configuration
 
 " buffergator
@@ -339,6 +343,7 @@ nnoremap <silent> <Leader>e :NERDTreeToggle<CR>
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_auto_completion_start_length = 3
+let g:neocomplcache_max_list = 20
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
