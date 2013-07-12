@@ -286,7 +286,10 @@ cabbrev bq bdelete
 " }}}
 
 " {{{ Language specific configuration
+
+" PHP
 autocmd FileType php setlocal iskeyword -= $
+
 " }}}
 
 " {{{ Plugins extra-configuration
