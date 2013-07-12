@@ -310,6 +310,8 @@ let g:easytags_auto_update = 0
 let g:easytags_autorecurse = 0
 nnoremap <silent> <Leader>tu :UpdateTags! -R getcwd()<CR>
 
+" jscomplete
+
 " html
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
@@ -336,10 +338,12 @@ nnoremap <silent> <Leader>e :NERDTreeToggle<CR>
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+let g:neocomplcache_auto_completion_start_length = 3
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1
