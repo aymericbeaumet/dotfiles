@@ -21,7 +21,6 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Languages plugins
 NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'indenthtml.vim'
-NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'tpope/vim-git'
 NeoBundle 'tpope/vim-markdown'
 
