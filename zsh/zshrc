@@ -5,3 +5,6 @@
 for i in `find ~/.zsh/ -maxdepth 1 -name '*.zsh' -type f | sort` ; do
   source $i
 done
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
