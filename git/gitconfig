@@ -29,6 +29,8 @@
   rba = rebase --abort
   rbc = rebase --continue
   re = remote
+  rea = remote add
+  rer = remote rm
   rmc = rm --cached
   rs = reset
   rss = reset --soft
