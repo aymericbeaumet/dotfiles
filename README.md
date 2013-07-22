@@ -10,7 +10,7 @@ Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one too! Here you
 
 ## Installation
 
-Simply clone the project and run `make && make install`.
+Simply clone the project, then run `make && make install`:
 
     git clone https://github.com/abeaumet/dotfiles.git ~/.dotfiles
     cd ~/.dotfiles
