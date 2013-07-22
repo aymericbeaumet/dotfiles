@@ -37,7 +37,6 @@ NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'LustyJuggler'
 NeoBundle 'Shougo/neocomplcache.vim'
-NeoBundle 'Townk/vim-autoclose'
 NeoBundle 'a.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
@@ -270,6 +269,10 @@ noremap <silent> Q <Nop>
 " also bind `jj` to leave insert/command mode
 inoremap <silent> jj <C-c>
 cnoremap <silent> jj <C-c>
+
+" classic insert mode binds
+inoremap <silent> <C-a> <C-o>^
+inoremap <silent> <C-k> <C-o>d$
 
 " }}}
 
