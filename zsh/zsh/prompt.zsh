@@ -16,13 +16,13 @@ if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
   ZSH_THEME_GIT_PROMPT_PREFIX="("
   ZSH_THEME_GIT_PROMPT_SUFFIX=")"
   ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
-  ZSH_THEME_GIT_PROMPT_BRANCH="$fg[yellow]"
-  ZSH_THEME_GIT_PROMPT_STAGED="$fg[green]±"
-  ZSH_THEME_GIT_PROMPT_CONFLICTS="$fg[orange]☠"
-  ZSH_THEME_GIT_PROMPT_CHANGED="$fg[red]≠"
+  ZSH_THEME_GIT_PROMPT_BRANCH="${fg[yellow]}"
+  ZSH_THEME_GIT_PROMPT_STAGED="${fg[green]}±"
+  ZSH_THEME_GIT_PROMPT_CONFLICTS="${fg[orange]}☠"
+  ZSH_THEME_GIT_PROMPT_CHANGED="${fg[red]}≠"
   ZSH_THEME_GIT_PROMPT_REMOTE=""
   ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
-  ZSH_THEME_GIT_PROMPT_CLEAN="$fg[green]✓"
+  ZSH_THEME_GIT_PROMPT_CLEAN="${fg[green]}✓"
 fi
 
 # set content
