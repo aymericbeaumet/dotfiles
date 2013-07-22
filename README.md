@@ -1,6 +1,6 @@
 ### What's happening here?
 
-Are you a big fan of _git_, _vim_, _tmux_ or _zsh_? I am one too! Here you can find my dotfiles for these programs, feel free to use them :)
+Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one too! Here you can find my dotfiles for these programs, feel free to use or copy part of them :)
 
 ## Overview
 
