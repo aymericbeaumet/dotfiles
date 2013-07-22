@@ -3,4 +3,4 @@
 	url = git://github.com/Shougo/neobundle.vim
 [submodule "zsh/zsh/bundle/zsh-git-prompt"]
 	path = zsh/zsh/bundle/zsh-git-prompt
-	url = git://github.com/olivierverdier/zsh-git-prompt.git
+	url = git//github.com/abeaumet/zsh-git-prompt.git
