@@ -1,6 +1,6 @@
 ### What's happening here?
 
-Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one! Here you can find my dotfiles for these programs, feel free to use them :)
+Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one! Here you can find my configuration files for these programs, feel free to use them :)
 
 ## Overview
 
