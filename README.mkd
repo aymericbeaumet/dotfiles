@@ -1,4 +1,4 @@
-### What's here?
+### What's happening here?
 
 Are you a big fan of _git_, _vim_, _tmux_ or _zsh_? I am one too! Here you can find my dotfiles for these program, feel free to take them :)
 
