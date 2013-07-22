@@ -1,18 +1,19 @@
-## What's here?
+### What's here?
 
-The following configuration files for the utils below are present in this repo:
-- Git
-- Tmux
-- Vim
-- Zsh
+Are you a big fan of _git_, _vim_, _tmux_ or _zsh_? I am one too! Here you can find my dotfiles for these program, feel free to take them :)
 
-## Installation
+### Overview
 
-You can use `make` to easily install the above configuration files, like so:
+![overview](http://beaumet.me/dotfiles/images/overview.png)
+
+> Above a zsh prompt showing background processes, last execution return code, current path, current git branch and git repository status.
+
+### Installation
+
+Simply clone the project and run `make && make install`.
 
     git clone https://github.com/abeaumet/dotfiles.git ~/.dotfiles
     cd ~/.dotfiles
-    make
-    make install
+    make && make install
 
-_Note: your previous configuration files will be automatically backed up._
+Don't worry about your previous configuration files, they are automatically backed up! Simply type `make uninstall` to get them back.
