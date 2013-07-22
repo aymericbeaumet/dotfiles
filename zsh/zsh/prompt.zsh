@@ -1,10 +1,6 @@
 # Prompt
 ###
 
-# Load colors
-autoload -U colors
-colors
-
 # Git prompt
 if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
   source ~/.zsh/bundle/zsh-git-prompt/zshrc.sh
