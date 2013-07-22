@@ -6,8 +6,8 @@ autoload -U colors && colors
 # Preload colors specific colors
 COLOR_RESET=$'%{\033[0m%}'
 COLOR_BLUE=$'%{\033[38;05;75m%}'
-COLOR_GREEN=$'%{\033[38;05;76m%}'
-COLOR_LIGHT_GREEN=$'%{\033[38;05;46m%}'
+COLOR_GREEN=$'%{\033[38;05;34m%}'
+COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
 COLOR_YELLOW=$'%{\033[38;05;3m%}'
 COLOR_RED=$'%{\033[38;05;1m%}'
 COLOR_ORANGE=$'%{\033[38;05;202m%}'
@@ -46,14 +46,12 @@ function set_prompt()
   else
     PROMPT="%(0?..[$COLOR_BLUE%j$COLOR_RESET&:?$COLOR_BLUE%?$COLOR_RESET] )"
   fi
-  PROMPT="${PROMPT}[$COLOR_BLUE%25<...<%~%<<$COLOR_RESET]${git_prompt:+ $git_prompt} %(!.#.$) "
+  PROMPT="${PROMPT}$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt} %(!.#.$) "
 
   # right prompt
   RPROMPT=''
   if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
     RPROMPT="${RPROMPT:+$RPROMPT }{^$COLOR_BLUE$SHLVL$COLOR_RESET}"
   fi
-  if [ -n "$SSH_CLIENT" ] ; then
-    RPROMPT="${RPROMPT:+$RPROMPT }[%n$COLOR_BLUE@$COLOR_RESET%M]"
-  fi
+  RPROMPT="${RPROMPT:+$RPROMPT }[%n$COLOR_BLUE@$COLOR_RESET%M]"
 }
