@@ -30,9 +30,9 @@ function set_prompt()
 {
   # left prompt
   if [ -n "$(jobs)" ] ; then
-    PROMPT="[${fg_bold[cyan]}%j${reset_color}&:?${fg_bold[cyan]}%?${reset_color}] "
+    PROMPT="[${fg_bold[green]}%j${reset_color}&:?${fg_bold[green]}%?${reset_color}] "
   else
-    PROMPT="%(0?..[${fg_bold[cyan]}%j${reset_color}&:?${fg_bold[cyan]}%?${reset_color}] )"
+    PROMPT="%(0?..[${fg_bold[green]}%j${reset_color}&:?${fg_bold[green]}%?${reset_color}] )"
   fi
   git_prompt="$(git_super_status)"
   PROMPT="${PROMPT}[${fg[cyan]}%25<...<%~%<<$reset_color]${git_prompt:+ $git_prompt} %(!.#.$) "
@@ -45,5 +45,4 @@ function set_prompt()
   if [ -n "$SSH_CLIENT" ] ; then
     RPROMPT="${RPROMPT:+$RPROMPT }[%n${fg[cyan]}@$reset_color%M]"
   fi
-  RPROMPT=''
 }
