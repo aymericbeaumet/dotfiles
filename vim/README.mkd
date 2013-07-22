@@ -51,7 +51,6 @@ _Memo_
 - `,o` [o]pen file (using CtrlP)
 
 - `,te` [e]xplore [t]ags
-- `,tu` manually [u]pdate [t]ags
 
 - `,be` [e]xplore the buffers
 - `,bo` [o]pen [b]uffer
