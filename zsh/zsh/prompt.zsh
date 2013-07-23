@@ -1,9 +1,7 @@
 # Prompt
 ###
 
-autoload -U colors && colors
-
-# Preload colors specific colors
+# Preload specific colors
 COLOR_RESET=$'%{\033[0m%}'
 COLOR_BLUE=$'%{\033[38;05;75m%}'
 COLOR_GREEN=$'%{\033[38;05;34m%}'
@@ -41,17 +39,14 @@ function set_prompt()
 
   # left prompt
   PROMPT=''
-  if [ -n "$(jobs)" ] ; then
-    PROMPT="[$COLOR_BLUE%j$COLOR_RESET&:?$COLOR_BLUE%?$COLOR_RESET] "
-  else
-    PROMPT="%(0?..[$COLOR_BLUE%j$COLOR_RESET&:?$COLOR_BLUE%?$COLOR_RESET] )"
-  fi
-  PROMPT="${PROMPT}$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt} %(!.#.$) "
+  PROMPT="${PROMPT:+$PROMPT }[$COLOR_BLUE%j$COLOR_RESET&|?$COLOR_BLUE%?$COLOR_RESET]"
+  PROMPT="${PROMPT:+$PROMPT }$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt}"
+  PROMPT="${PROMPT:+$PROMPT }%(!.#.$) "
 
   # right prompt
   RPROMPT=''
-  if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
-    RPROMPT="${RPROMPT:+$RPROMPT }{^$COLOR_BLUE$SHLVL$COLOR_RESET}"
-  fi
   RPROMPT="${RPROMPT:+$RPROMPT }[%n$COLOR_BLUE@$COLOR_RESET%M]"
+  if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
+    RPROMPT="${RPROMPT:+$RPROMPT }{^$COLOR_BLUE%L$COLOR_RESET}"
+  fi
 }
