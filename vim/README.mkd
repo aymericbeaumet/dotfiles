@@ -7,10 +7,11 @@ _Memo_
 - `"<reg>yy` yank in the given register
 - `"<reg>p` paste the given register
 - register `0` is the default register
-- register `+` is the system clipboard
+- register `+` is the system clipboard register
 - `]p` paste and auto-indent
 - `zt`, `zz`, `zb` keep the cursor on its current position but scroll the view (Top, Middle or Bottom)
 - `#`, `*` previous and next occurrence of a word
+- `ZZ` `ZQ` exit and save / exit without saving
 
 ## Insert mode
 
@@ -63,15 +64,27 @@ _Memo_
 - `,vs` [s]ource [v]imrc
 
 - `^_` expand (x)html
-- `^b` match the next empty (x)html balise
+- `^b` match the next empty (x)html tag
 
-- `]n` and `[n` to access the previous/next conflict marker
+- `]n` and `[n` to jump the previous/next conflict marker
+
+- `^h ^j ^k ^l` change pane
+
+- `^_` expand to (x)html
+- `^f` find the next empty (x)html tag
 
 ## Insert mode
 
 - `jj` leave insert mode
-- `^_` expand (x)html
-- `^b` match the next empty (x)html balise
+- `^_` expand to (x)html
+- `^f` find the next empty (x)html tag
+- `II` go to start of line
+- `AA` go to end of line
+- `CC` replace to the end of line
+- `OO` insert one line above and move the cursor on it
+- `^o^o` insert one line below and move the cursor on it
+
+- `^h ^j ^k ^l` exit insert mode and change pane
 
 ## Command line mode
 
@@ -86,8 +99,6 @@ _Memo_
 - `:tq` quit the current tab
 - `:bq` quit the current buffer
 
-- `^r` search in command line history
-
 ## Visual mode
 
-- `S<xml balise>` open and close the given balise before and after the selected text
+- `S<xml tag>` open and close the given tag around the selected area

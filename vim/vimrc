@@ -125,7 +125,7 @@ if !isdirectory(expand(&undodir))
   silent! call mkdir(expand(&undodir), "p")
 endif
 
-set spellfile=~/.vim/spellfile.en.utf-8.add " enable spell file
+set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
 
 " }}}
 
@@ -170,7 +170,7 @@ set foldmethod=manual   " ensure that foldmethod is manual
 set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
-set selection=inclusive " cursor is not in selection
+set selection=inclusive " cursor is in selection
 set gdefault            " default substitute g flag
 
 " spell checker
@@ -269,7 +269,7 @@ nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 " use ^a and ^e to move in command line
 cnoremap <silent> <C-a> <C-b>
 
-" insert blank lines without going into insert mode
+" insert blank lines without entering insert mode
 nnoremap <silent> go o<Esc>
 nnoremap <silent> gO O<Esc>
 
@@ -277,7 +277,6 @@ nnoremap <silent> gO O<Esc>
 map <silent> <F1> <Nop>
 imap <silent> <F1> <Nop>
 map <silent> Q <Nop>
-imap <silent> <Esc> <Nop>
 
 " also bind `jj` to leave insert/command mode
 inoremap <silent> jj <C-c>
@@ -290,11 +289,15 @@ inoremap <silent> CC <C-o>C
 inoremap <silent> OO <C-o>O
 inoremap <silent> <C-o><C-o> <C-o>o
 
-" Panes
+" Panes move
 noremap <silent> <C-h> <C-W>h
 noremap <silent> <C-j> <C-W>j
 noremap <silent> <C-k> <C-W>k
 noremap <silent> <C-l> <C-W>l
+inoremap <silent> <C-h> <Esc><C-W>h
+inoremap <silent> <C-j> <Esc><C-W>j
+inoremap <silent> <C-k> <Esc><C-W>k
+inoremap <silent> <C-l> <Esc><C-W>l
 
 " }}}
 
@@ -312,6 +315,13 @@ cabbrev bq bdelete
 
 " {{{ Language specific configuration
 
+" C/C++/Ruby
+" Keep 2/2/2 default indentation
+
+" Git commit
+autocmd FileType gitcommit
+  \ | setlocal spell
+
 " JavaScript
 autocmd FileType javascript
   \ | setlocal shiftwidth=4
@@ -320,7 +330,8 @@ autocmd FileType javascript
 
 " Markdown
 autocmd FileType markdown
-  \ | setlocal spell autoindent formatoptions=tcroqn2
+  \ | setlocal spell
+  \ | setlocal formatoptions=tcroqn2 comments=n:>
   \ | highlight SpellBad cterm=underline
   \ | highlight SpellCap cterm=underline
   \ | highlight SpellLocal cterm=underline
@@ -339,12 +350,6 @@ autocmd FileType python
   \ | setlocal shiftwidth=4
   \ | setlocal softtabstop=4
   \ | setlocal tabstop=4
-
-" Ruby
-autocmd FileType ruby
-  \ | setlocal shiftwidth=2
-  \ | setlocal softtabstop=2
-  \ | setlocal tabstop=2
 
 " }}}
 
@@ -435,7 +440,7 @@ autocmd Syntax * RainbowParenthesesLoadBraces
 
 " sparkup
 let g:sparkupExecuteMapping = '<C-_>'
-let g:sparkupNextMapping = '<C-b>'
+let g:sparkupNextMapping = '<C-f>'
 
 " syntastic
 let g:syntastic_mode_map = { 'mode': 'passive' }
