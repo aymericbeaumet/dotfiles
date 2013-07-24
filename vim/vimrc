@@ -23,25 +23,28 @@ NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'indenthtml.vim'
 NeoBundle 'tpope/vim-git'
 NeoBundle 'tpope/vim-markdown'
+NeoBundle 'othree/xml.vim'
 
 " Themes plugins
+"NeoBundle 'wombat256.vim'
 NeoBundle 'croaker/mustang-vim'
-NeoBundle 'wombat256.vim'
 
 " Tools plugins
+"NeoBundle 'Shougo/neocomplcache.vim'
+"NeoBundle 'tpope/vim-repeat'
 NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'LustyJuggler'
-NeoBundle 'Shougo/neocomplcache.vim'
+NeoBundle 'Shougo/vimproc'
 NeoBundle 'SirVer/ultisnips'
 NeoBundle 'a.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
-NeoBundle 'closetag.vim'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'jeetsukumaran/vim-buffergator'
 NeoBundle 'jimsei/winresizer'
 NeoBundle 'kien/ctrlp.vim'
+NeoBundle 'kien/rainbow_parentheses.vim'
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'scrooloose/nerdcommenter'
@@ -51,7 +54,6 @@ NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'tpope/vim-abolish'
 NeoBundle 'tpope/vim-eunuch'
 NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-sleuth'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tristen/vim-sparkup'
@@ -66,10 +68,9 @@ syntax enable
 filetype plugin indent on
 set t_Co=256
 set background=dark
-silent! colorscheme wombat256mod
+silent! colorscheme mustang
 hi CursorLine cterm=bold
-set synmaxcol=800       " don't try to highlight long lines
-match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$' " highlight VCS conflict markers
+set synmaxcol=200       " don't try to highlight long lines
 
 " }}}
 
@@ -89,6 +90,11 @@ function! StripTrailingWhitespaces()
     call cursor(l, c)
 endfunction
 
+" Return 1 if the vimrc configuration has already been loaded else return 0
+function! VimrcHasBeenLoaded()
+  return exists("g:vimrc_already_loaded")
+endfunction
+
 " }}}
 
 " {{{ Global options
@@ -102,7 +108,7 @@ set ttyfast             " we have a fast terminal
 set modelines=0         " don't care about modeline
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=./.tags;,~/.vimtags " define tags file path
-
+set cryptmethod="blowfish" " define strong crypt method
 set noswapfile          " disable swap files
 
 set backup              " enable backup files
@@ -118,6 +124,8 @@ set undodir=~/.vim/tmp/undo//
 if !isdirectory(expand(&undodir))
   silent! call mkdir(expand(&undodir), "p")
 endif
+
+set spellfile=~/.vim/spellfile.en.utf-8.add " enable spell file
 
 " }}}
 
@@ -141,8 +149,6 @@ set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz             " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
-set splitright          " flip the default split directions to sane ones
-set splitbelow
 set tabpagemax=20       " allow lots of tabs
 
 " }}}
@@ -154,23 +160,32 @@ set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
 set incsearch           " show matches as soon as posseble
-set hlsearch            " highlight last search matches
+if !VimrcHasBeenLoaded() | set hlsearch | endif " highlight last search matches
 set wrapscan            " searches wrap around the end of the file
 set diffopt=filler,iwhite " ignore all whitespace and sync
 set showmatch           " show the matching bracket when inserting
-set completeopt=menu,longest,preview " more complete autocompletion
+set completeopt=menuone,preview " more complete autocompletion
 set nostartofline       " leave my cursor position alone!
 set foldmethod=manual   " ensure that foldmethod is manual
 set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
+set selection=inclusive " cursor is not in selection
+set gdefault            " default substitute g flag
+
+" spell checker
+set spelllang=en        " configure spell language
+highlight clear SpellBad
+highlight clear SpellCap
+highlight clear SpellLocal
+highlight clear SpellRare
 
 " format option stuff (see :help fo-table)
-autocmd FileType * set fo=cr
-autocmd FileType * silent! set fo+=j
+set fo=cro
+silent! set fo+=j
 
 " Highlight trailing whitespaces
-highlight TrailingWhitespace ctermbg=red
+highlight TrailingWhitespace ctermbg=darkyellow
 match TrailingWhitespace /\s\+$/
 
 " clean trailing whitespaces on file saving
@@ -185,7 +200,8 @@ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm
 
 set autoindent          " auto-indentation (most of time override by plugins)
 set copyindent          " copy the previous indentation on autoindenting
-set expandtab           " insert `shiftwidth` spaces when using <Tab>
+set smarttab            " insert shiftwidth spaces instead of tabs
+set expandtab           " replace tabs by spaces
 set shiftwidth=2        " n spaces when using <Tab>
 set softtabstop=2       " n spaces when using <Tab>
 set tabstop=2           " n spaces when using <Tab>
@@ -223,10 +239,10 @@ let mapleader = ','
 
 " quickly edit/reload the vimrc file
 nnoremap <silent> <Leader>ve :e $MYVIMRC<CR>
-nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>:nohlsearch<CR>
+nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>
 
 " hide last search matches
-nnoremap <silent> <Leader><space> :nohlsearch<CR>
+nnoremap <silent> <space> :nohlsearch<CR>
 
 " use `,d`  `,D` `,x` `,X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
@@ -257,24 +273,28 @@ cnoremap <silent> <C-a> <C-b>
 nnoremap <silent> go o<Esc>
 nnoremap <silent> gO O<Esc>
 
-" disable useless/annoying keys
-inoremap <Left> <Nop>
-inoremap <Right> <Nop>
-inoremap <Up> <Nop>
-inoremap <Down> <Nop>
-inoremap <Home> <Nop>
-inoremap <End> <Nop>
-noremap <silent> <F1> <Nop>
-inoremap <silent> <F1> <Nop>
-noremap <silent> Q <Nop>
+" disable annoying keys
+map <silent> <F1> <Nop>
+imap <silent> <F1> <Nop>
+map <silent> Q <Nop>
+imap <silent> <Esc> <Nop>
 
 " also bind `jj` to leave insert/command mode
 inoremap <silent> jj <C-c>
 cnoremap <silent> jj <C-c>
 
-" classic insert mode binds
-inoremap <silent> <C-a> <C-o>^
-inoremap <silent> <C-k> <C-o>d$
+" useful insert mode binds
+inoremap <silent> AA <C-o>A
+inoremap <silent> II <C-o>I
+inoremap <silent> CC <C-o>C
+inoremap <silent> OO <C-o>O
+inoremap <silent> <C-o><C-o> <C-o>o
+
+" Panes
+noremap <silent> <C-h> <C-W>h
+noremap <silent> <C-j> <C-W>j
+noremap <silent> <C-k> <C-W>k
+noremap <silent> <C-l> <C-W>l
 
 " }}}
 
@@ -292,8 +312,39 @@ cabbrev bq bdelete
 
 " {{{ Language specific configuration
 
+" JavaScript
+autocmd FileType javascript
+  \ | setlocal shiftwidth=4
+  \ | setlocal softtabstop=4
+  \ | setlocal tabstop=4
+
+" Markdown
+autocmd FileType markdown
+  \ | setlocal spell autoindent formatoptions=tcroqn2
+  \ | highlight SpellBad cterm=underline
+  \ | highlight SpellCap cterm=underline
+  \ | highlight SpellLocal cterm=underline
+  \ | highlight SpellRare cterm=underline
+  \ | RainbowParenthesesToggle
+
 " PHP
-autocmd FileType php setlocal iskeyword-=$
+autocmd FileType php
+  \ | setlocal iskeyword-=$
+  \ | setlocal shiftwidth=4
+  \ | setlocal softtabstop=4
+  \ | setlocal tabstop=4
+
+" Python
+autocmd FileType python
+  \ | setlocal shiftwidth=4
+  \ | setlocal softtabstop=4
+  \ | setlocal tabstop=4
+
+" Ruby
+autocmd FileType ruby
+  \ | setlocal shiftwidth=2
+  \ | setlocal softtabstop=2
+  \ | setlocal tabstop=2
 
 " }}}
 
@@ -306,12 +357,13 @@ nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 
 " CtrlP
 let g:ctrlp_map = '<Leader>o'
-let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])|__init__\.py'
+let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])'
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_switch_buffer = 0
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_max_files = 1000
 let g:ctrlp_max_depth = 10
+let g:ctrlp_clear_cache_on_exit = 0
 nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
@@ -357,12 +409,33 @@ autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
 let g:PHP_vintage_case_default_indent = 1
 
 " powerline
-if exists('g:powerline_loaded')
-  set noshowmode " hide the duplicate mode in bottom status bar
-endif
+set noshowmode " hide the duplicate mode in bottom status bar
+
+" rainbow parenthesis
+let g:rbpt_colorpairs = [
+      \ ['brown',       'RoyalBlue3'],
+      \ ['darkgray',    'DarkOrchid3'],
+      \ ['darkgreen',   'firebrick3'],
+      \ ['darkcyan',    'RoyalBlue3'],
+      \ ['darkred',     'SeaGreen3'],
+      \ ['darkmagenta', 'DarkOrchid3'],
+      \ ['brown',       'firebrick3'],
+      \ ['darkmagenta', 'DarkOrchid3'],
+      \ ['darkgreen',   'RoyalBlue3'],
+      \ ['darkcyan',    'SeaGreen3'],
+      \ ['darkred',     'DarkOrchid3'],
+      \ ['red',         'firebrick3'],
+\ ]
+let g:rbpt_max = 12
+let g:rbpt_loadcmd_toggle = 0
+autocmd VimEnter * RainbowParenthesesToggle
+autocmd Syntax * RainbowParenthesesLoadRound
+autocmd Syntax * RainbowParenthesesLoadSquare
+autocmd Syntax * RainbowParenthesesLoadBraces
 
 " sparkup
-let g:sparkupMappingInsertModeOnly = 1
+let g:sparkupExecuteMapping = '<C-_>'
+let g:sparkupNextMapping = '<C-b>'
 
 " syntastic
 let g:syntastic_mode_map = { 'mode': 'passive' }
@@ -390,3 +463,7 @@ nnoremap <silent> <Leader>te :TagbarToggle<CR>
 let g:winresizer_start_key = '<C-w><C-w>'
 
 " }}}
+
+
+" Useful to avoid double annoying commands execution
+let g:vimrc_already_loaded = 1

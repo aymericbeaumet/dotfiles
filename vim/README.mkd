@@ -9,6 +9,8 @@ _Memo_
 - register `0` is the default register
 - register `+` is the system clipboard
 - `]p` paste and auto-indent
+- `zt`, `zz`, `zb` keep the cursor on its current position but scroll the view (Top, Middle or Bottom)
+- `#`, `*` previous and next occurrence of a word
 
 ## Insert mode
 
@@ -25,10 +27,10 @@ _Memo_
 
 ## Normal mode
 
-- `^e` easy window resizing
+- `^w^w` easy window resizing
 
 - `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
-- `,a{key}<CR>` align code on {key}
+- `,a{string}<CR>` align code on {string}
 - `,d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
 - `,w` easymotion leader key (see `:help easymotion`)
 - `,c<space>` comment line/selection
@@ -37,11 +39,12 @@ _Memo_
 - `M` search man
 - `Y` copy to the end of line
 - `<space>` to search
+- `^h ^j ^k ^l` easy move between panes
 
-- `H` `L` prev/next tab
+- `H` `L` previous/next tab
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
-- `,<space>` hide highlighted search matches
+- `<space>` hide highlighted search matches
 - `,r` [i]solate region
 
 - `,s` perform a single [s]yntax check
@@ -59,11 +62,16 @@ _Memo_
 - `,ve` [e]dit [v]imrc
 - `,vs` [s]ource [v]imrc
 
+- `^_` expand (x)html
+- `^b` match the next empty (x)html balise
+
+- `]n` and `[n` to access the previous/next conflict marker
+
 ## Insert mode
 
 - `jj` leave insert mode
-- `^e` expand (x)html
-- `^_` close (x)html/xml tags
+- `^_` expand (x)html
+- `^b` match the next empty (x)html balise
 
 ## Command line mode
 
