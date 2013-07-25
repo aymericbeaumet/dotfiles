@@ -185,7 +185,8 @@ highlight clear SpellLocal
 highlight clear SpellRare
 
 " format option stuff (see :help fo-table)
-set fo=croj
+set fo=cro
+silent! set fo+=j " not compatible with all vim versions
 
 " Highlight trailing whitespaces
 highlight TrailingWhitespace ctermbg=darkyellow
