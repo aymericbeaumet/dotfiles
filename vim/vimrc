@@ -78,11 +78,6 @@ set synmaxcol=200       " don't try to highlight long lines
 
 " {{{ Functions
 
-" Return 1 if the vimrc configuration has already been loaded else return 0
-function! Vimrc()
-  return exists("g:vimrc_already_loaded") && g:vimrc_already_loaded != 0
-endfunction
-
 " https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
 " Clean all the trailing whitespaces in the current buffer
 function! StripTrailingWhitespaces()
@@ -158,7 +153,6 @@ set tabpagemax=20       " allow lots of tabs
 " {{{ Text editing && Search behavior
 
 set backspace=2         " fix backspace (on some OS/term)
-set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
 set incsearch           " show matches as soon as posseble
@@ -173,9 +167,7 @@ set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
 set gdefault            " default substitute g flag
-if !Vimrc()
-  set hlsearch " highlight last search matches
-endif
+autocmd VimEnter * set hlsearch " highlight last search matches
 
 " spell checker
 set spelllang=en        " configure spell language
@@ -481,7 +473,7 @@ let g:syntastic_check_on_wq = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_c_compiler_options = "-Wall -Wextra"
-let g:syntastic_cpp_checkers = ['cpplint']
+let g:syntastic_cpp_checkers = [ 'cpplint' ]
 nnoremap <silent> <Leader>s :SyntasticCheck<CR>
 nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
 
@@ -501,7 +493,3 @@ nnoremap <silent> <Leader>te :TagbarToggle<CR>
 let g:winresizer_start_key = '<C-w><C-w>'
 
 " }}}
-
-
-" Useful to avoid double annoying commands execution
-let g:vimrc_already_loaded = 1
