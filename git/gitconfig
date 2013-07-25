@@ -23,8 +23,10 @@
   me = merge
   pl = pull
   plo = pull origin
+  plom = pull origin master
   ps = push
   pso = push origin
+  psom = push origin master
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
