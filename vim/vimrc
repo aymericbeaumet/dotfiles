@@ -26,15 +26,16 @@ NeoBundle 'tpope/vim-markdown'
 NeoBundle 'othree/xml.vim'
 
 " Themes plugins
-"NeoBundle 'wombat256.vim'
-NeoBundle 'croaker/mustang-vim'
+NeoBundle 'croaker/mustang-vim' "mustang
+NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', { 'name': 'ir_black.vim', 'script_type': 'colors' } "ir_black
+NeoBundle 'wombat256.vim' "wombat256mod
 
 " Tools plugins
-"NeoBundle 'Shougo/neocomplcache.vim'
 "NeoBundle 'tpope/vim-repeat'
 NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'LustyJuggler'
+NeoBundle 'Shougo/neocomplcache.vim'
 NeoBundle 'Shougo/vimproc'
 NeoBundle 'SirVer/ultisnips'
 NeoBundle 'a.vim'
@@ -47,6 +48,7 @@ NeoBundle 'kien/ctrlp.vim'
 NeoBundle 'kien/rainbow_parentheses.vim'
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'myusuf3/numbers.vim'
+NeoBundle 'nelstrom/vim-visual-star-search'
 NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
@@ -68,7 +70,7 @@ syntax enable
 filetype plugin indent on
 set t_Co=256
 set background=dark
-silent! colorscheme mustang
+silent! colorscheme wombat256mod
 hi CursorLine cterm=bold
 set synmaxcol=200       " don't try to highlight long lines
 
@@ -76,23 +78,23 @@ set synmaxcol=200       " don't try to highlight long lines
 
 " {{{ Functions
 
+" Return 1 if the vimrc configuration has already been loaded else return 0
+function! Vimrc()
+  return exists("g:vimrc_already_loaded") && g:vimrc_already_loaded != 0
+endfunction
+
 " https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
 " Clean all the trailing whitespaces in the current buffer
 function! StripTrailingWhitespaces()
-    " Preparation: save last search, and cursor position.
-    let _s=@/
-    let l = line(".")
-    let c = col(".")
-    " Do the business:
-    %s/\s\+$//e
-    " Clean up: restore previous search history, and cursor position
-    let @/=_s
-    call cursor(l, c)
-endfunction
-
-" Return 1 if the vimrc configuration has already been loaded else return 0
-function! VimrcHasBeenLoaded()
-  return exists("g:vimrc_already_loaded")
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  %s/\s\+$//e
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
 endfunction
 
 " }}}
@@ -160,7 +162,6 @@ set cpoptions=ces$      " make the 'cw' and like commands put a $ at the end
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
 set incsearch           " show matches as soon as posseble
-if !VimrcHasBeenLoaded() | set hlsearch | endif " highlight last search matches
 set wrapscan            " searches wrap around the end of the file
 set diffopt=filler,iwhite " ignore all whitespace and sync
 set showmatch           " show the matching bracket when inserting
@@ -172,6 +173,9 @@ set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
 set gdefault            " default substitute g flag
+if !Vimrc()
+  set hlsearch " highlight last search matches
+endif
 
 " spell checker
 set spelllang=en        " configure spell language
@@ -181,8 +185,7 @@ highlight clear SpellLocal
 highlight clear SpellRare
 
 " format option stuff (see :help fo-table)
-set fo=cro
-silent! set fo+=j
+set fo=croj
 
 " Highlight trailing whitespaces
 highlight TrailingWhitespace ctermbg=darkyellow
@@ -318,38 +321,68 @@ cabbrev bq bdelete
 " C/C++/Ruby
 " Keep 2/2/2 default indentation
 
+" CSS
+autocmd FileType css call LoadCSSConfiguration()
+function! LoadCSSConfiguration()
+  setlocal omnifunc=csscomplete#CompleteCSS
+endfunction
+
 " Git commit
-autocmd FileType gitcommit
-  \ | setlocal spell
+autocmd FileType gitcommit call LoadGitConfiguration()
+function! LoadGitConfiguration()
+  setlocal spell
+endfunction
 
 " JavaScript
-autocmd FileType javascript
-  \ | setlocal shiftwidth=4
-  \ | setlocal softtabstop=4
-  \ | setlocal tabstop=4
+autocmd FileType javascript call LoadJavaScriptConfiguration()
+function! LoadJavaScriptConfiguration()
+  setlocal omnifunc=javascriptcomplete#CompleteJS
+  setlocal shiftwidth=4
+  setlocal softtabstop=4
+  setlocal tabstop=4
+endfunction
+
+" HTML
+autocmd FileType html call LoadHTMLConfiguration()
+function! LoadHTMLConfiguration()
+  setlocal omnifunc=htmlcomplete#CompleteTags
+endfunction
 
 " Markdown
-autocmd FileType markdown
-  \ | setlocal spell
-  \ | setlocal formatoptions=tcroqn2 comments=n:>
-  \ | highlight SpellBad cterm=underline
-  \ | highlight SpellCap cterm=underline
-  \ | highlight SpellLocal cterm=underline
-  \ | highlight SpellRare cterm=underline
-  \ | RainbowParenthesesToggle
+autocmd FileType markdown call LoadMarkdownConfiguration()
+function! LoadMarkdownConfiguration()
+  setlocal omnifunc=htmlcomplete#CompleteTags
+  setlocal formatoptions=tcroqn2 comments=n:>
+  setlocal spell
+  highlight SpellBad cterm=underline
+  highlight SpellCap cterm=underline
+  highlight SpellLocal cterm=underline
+  highlight SpellRare cterm=underline
+endfunction
 
 " PHP
-autocmd FileType php
-  \ | setlocal iskeyword-=$
-  \ | setlocal shiftwidth=4
-  \ | setlocal softtabstop=4
-  \ | setlocal tabstop=4
+autocmd FileType php call LoadPHPConfiguration()
+function! LoadPHPConfiguration()
+  setlocal omnifunc=phpcomplete#CompletePHP
+  setlocal iskeyword-=$
+  setlocal shiftwidth=4
+  setlocal softtabstop=4
+  setlocal tabstop=4
+endfunction
 
 " Python
-autocmd FileType python
-  \ | setlocal shiftwidth=4
-  \ | setlocal softtabstop=4
-  \ | setlocal tabstop=4
+autocmd FileType python call LoadPythonConfiguration()
+function! LoadPythonConfiguration()
+  setlocal shiftwidth=4
+  setlocal softtabstop=4
+  setlocal tabstop=4
+endfunction
+
+" XML
+autocmd FileType xml call LoadXMLConfiguration()
+function! LoadXMLConfiguration()
+  setlocal omnifunc=xmlcomplete#CompleteTags
+endfunction
 
 " }}}
 
@@ -382,7 +415,6 @@ let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
 " lusty juggler
-silent! nunmap <Leader>lj
 nnoremap <silent> <Leader>bO :LustyJuggler<CR>
 
 " multiple cursors
@@ -390,7 +422,7 @@ vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
 
 " narrowregion
 let g:nrrw_rgn_nohl = 1
-noremap <Leader>r :NarrowRegion<CR>
+noremap <silent> <Leader>r :NarrowRegion<CR>
 
 " nerdtree
 let NERDTreeShowHidden = 1 " show hidden files
@@ -404,11 +436,8 @@ let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_auto_completion_start_length = 3
 let g:neocomplcache_max_list = 20
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
+"inoremap <silent> <expr> <C-y> neocomplcache#close_popup()
+"inoremap <silent> <expr> <C-e> neocomplcache#cancel_popup()
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1
@@ -417,23 +446,26 @@ let g:PHP_vintage_case_default_indent = 1
 set noshowmode " hide the duplicate mode in bottom status bar
 
 " rainbow parenthesis
-let g:rbpt_colorpairs = [
-      \ ['brown',       'RoyalBlue3'],
-      \ ['darkgray',    'DarkOrchid3'],
-      \ ['darkgreen',   'firebrick3'],
-      \ ['darkcyan',    'RoyalBlue3'],
-      \ ['darkred',     'SeaGreen3'],
-      \ ['darkmagenta', 'DarkOrchid3'],
-      \ ['brown',       'firebrick3'],
-      \ ['darkmagenta', 'DarkOrchid3'],
-      \ ['darkgreen',   'RoyalBlue3'],
-      \ ['darkcyan',    'SeaGreen3'],
-      \ ['darkred',     'DarkOrchid3'],
-      \ ['red',         'firebrick3'],
-\ ]
-let g:rbpt_max = 12
-let g:rbpt_loadcmd_toggle = 0
-autocmd VimEnter * RainbowParenthesesToggle
+autocmd VimEnter * call LoadRainbowParenthesisConfiguration()
+function! LoadRainbowParenthesisConfiguration()
+  let g:rbpt_colorpairs = [
+        \ ['brown',       'RoyalBlue3'],
+        \ ['darkgray',    'DarkOrchid3'],
+        \ ['darkgreen',   'firebrick3'],
+        \ ['darkcyan',    'RoyalBlue3'],
+        \ ['darkred',     'SeaGreen3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['brown',       'firebrick3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['darkgreen',   'RoyalBlue3'],
+        \ ['darkcyan',    'SeaGreen3'],
+        \ ['darkred',     'DarkOrchid3'],
+        \ ['red',         'firebrick3'],
+        \ ]
+  let g:rbpt_max = 12
+  let g:rbpt_loadcmd_toggle = 0
+  RainbowParenthesesToggle
+endfunction
 autocmd Syntax * RainbowParenthesesLoadRound
 autocmd Syntax * RainbowParenthesesLoadSquare
 autocmd Syntax * RainbowParenthesesLoadBraces

@@ -12,6 +12,7 @@ _Memo_
 - `zt`, `zz`, `zb` keep the cursor on its current position but scroll the view (Top, Middle or Bottom)
 - `#`, `*` previous and next occurrence of a word
 - `ZZ` `ZQ` exit and save / exit without saving
+- `gv` select the last selection
 
 ## Insert mode
 
