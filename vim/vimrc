@@ -31,7 +31,6 @@ NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', { 'name': 'ir_
 NeoBundle 'wombat256.vim' "wombat256mod
 
 " Tools plugins
-"NeoBundle 'tpope/vim-repeat'
 NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'LustyJuggler'
@@ -56,6 +55,7 @@ NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'tpope/vim-abolish'
 NeoBundle 'tpope/vim-eunuch'
 NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-repeat'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tristen/vim-sparkup'
