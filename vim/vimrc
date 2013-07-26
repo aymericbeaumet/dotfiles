@@ -196,9 +196,9 @@ set autoindent          " auto-indentation (most of time override by plugins)
 set copyindent          " copy the previous indentation on autoindenting
 set smarttab            " insert shiftwidth spaces instead of tabs
 set expandtab           " replace tabs by spaces
-set shiftwidth=2        " n spaces when using <Tab>
-set softtabstop=2       " n spaces when using <Tab>
-set tabstop=2           " n spaces when using <Tab>
+autocmd VimEnter * set shiftwidth=2  " n spaces when using <Tab>
+autocmd VimEnter * set softtabstop=2 " n spaces when using <Tab>
+autocmd VimEnter * set tabstop=2     " n spaces when using <Tab>
 set hidden              " when a tab is closed, don't remove the buffer
 
 " }}}
