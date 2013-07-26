@@ -4,12 +4,12 @@
 # Preload specific colors
 COLOR_RESET=$'%{\033[0m%}'
 COLOR_BLUE=$'%{\033[38;05;75m%}'
+COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
 COLOR_GREEN=$'%{\033[38;05;34m%}'
 COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
 COLOR_YELLOW=$'%{\033[38;05;3m%}'
 COLOR_RED=$'%{\033[38;05;1m%}'
 COLOR_ORANGE=$'%{\033[38;05;202m%}'
-COLOR_VIOLET=$'%{\033[38;05;125m%}'
 
 # Git prompt
 if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
@@ -39,7 +39,7 @@ function set_prompt()
 
   # left prompt
   PROMPT=''
-  PROMPT="${PROMPT:+$PROMPT }[$COLOR_BLUE%j$COLOR_RESET&|?$COLOR_BLUE%?$COLOR_RESET]"
+  PROMPT="${PROMPT:+$PROMPT }[$COLOR_SMOOTH_GREEN%j$COLOR_RESET&|?$COLOR_SMOOTH_GREEN%?$COLOR_RESET]"
   PROMPT="${PROMPT:+$PROMPT }$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt}"
   PROMPT="${PROMPT:+$PROMPT }%(!.#.$) "
 
