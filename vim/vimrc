@@ -43,7 +43,6 @@ NeoBundle 'godlygeek/tabular'
 NeoBundle 'jeetsukumaran/vim-buffergator'
 NeoBundle 'jimsei/winresizer'
 NeoBundle 'kien/ctrlp.vim'
-NeoBundle 'kien/rainbow_parentheses.vim'
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'nelstrom/vim-visual-star-search'
@@ -419,31 +418,6 @@ let g:PHP_vintage_case_default_indent = 1 " change indentation method
 " powerline
 set noshowmode " hide the duplicate mode in bottom status bar
 
-" rainbow parenthesis
-autocmd VimEnter * call LoadRainbowParenthesisConfiguration()
-function! LoadRainbowParenthesisConfiguration()
-  let g:rbpt_colorpairs = [
-        \ ['brown',       'RoyalBlue3'],
-        \ ['darkgray',    'DarkOrchid3'],
-        \ ['darkgreen',   'firebrick3'],
-        \ ['darkcyan',    'RoyalBlue3'],
-        \ ['darkred',     'SeaGreen3'],
-        \ ['darkmagenta', 'DarkOrchid3'],
-        \ ['brown',       'firebrick3'],
-        \ ['darkmagenta', 'DarkOrchid3'],
-        \ ['darkgreen',   'RoyalBlue3'],
-        \ ['darkcyan',    'SeaGreen3'],
-        \ ['darkred',     'DarkOrchid3'],
-        \ ['red',         'firebrick3'],
-        \ ]
-  let g:rbpt_max = 12
-  let g:rbpt_loadcmd_toggle = 0
-  RainbowParenthesesToggle
-endfunction
-autocmd Syntax * RainbowParenthesesLoadRound
-autocmd Syntax * RainbowParenthesesLoadSquare
-autocmd Syntax * RainbowParenthesesLoadBraces
-
 " sparkup
 let g:sparkupExecuteMapping = '<C-_>'
 let g:sparkupNextMapping = '<C-F>'
@@ -469,6 +443,9 @@ let g:tagbar_show_visibility = 1 " show public/private/protected
 let g:tagbar_compact = 1 " hide superfluous stuff
 let g:tagbar_width = 40 " set tagbar width
 nnoremap <silent> <Leader>te :TagbarToggle<CR>
+
+" xml
+let makeElementSuf = ''
 
 " winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
