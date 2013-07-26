@@ -23,7 +23,6 @@ NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'indenthtml.vim'
 NeoBundle 'tpope/vim-git'
 NeoBundle 'tpope/vim-markdown'
-NeoBundle 'othree/xml.vim'
 
 " Themes plugins
 NeoBundle 'croaker/mustang-vim' "mustang
@@ -443,9 +442,6 @@ let g:tagbar_show_visibility = 1 " show public/private/protected
 let g:tagbar_compact = 1 " hide superfluous stuff
 let g:tagbar_width = 40 " set tagbar width
 nnoremap <silent> <Leader>te :TagbarToggle<CR>
-
-" xml
-let makeElementSuf = ''
 
 " winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
