@@ -4,9 +4,24 @@ Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one! Here you can
 
 ## Overview
 
+### Zsh
+
 ![overview](http://beaumet.me/dotfiles/images/overview.png)
 
-> Above a zsh prompt showing background processes, last execution return code, current path, current git branch and git repository status.
+This prompt shows (from the left to the right):
+
+- In the left prompt:
+
+  * the number of process in background
+  * the return code of the last command
+  * the path
+  * the git branch and the repository status (if in a git repository)
+
+- In the right prompt:
+
+  * the username
+  * the hostname
+  * the shell level (if greather than 1)
 
 ## Installation
 
