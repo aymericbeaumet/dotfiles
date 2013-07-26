@@ -229,7 +229,7 @@ nnoremap <silent> n nzz
 nnoremap <silent> <S-N> Nzz
 
 " define leading key
-let mapleader = ','
+let mapleader = '\'
 
 " quickly edit/reload the vimrc file
 nnoremap <silent> <Leader>ve :e $MYVIMRC<CR>

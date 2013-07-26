@@ -35,10 +35,10 @@ _Memo_
 - `^w^w` easy window resizing
 
 - `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
-- `,a{string}<CR>` align code on {string}
-- `,d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
-- `,w` easymotion leader key (see `:help easymotion`)
-- `,c<space>` comment line/selection
+- `\a{string}<CR>` align code on {string}
+- `\d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
+- `\w` easymotion leader key (see `:help easymotion`)
+- `\c<space>` comment line/selection
 - `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
 - `K` split the current line
 - `M` search man
@@ -50,21 +50,21 @@ _Memo_
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
 - `<space>` hide highlighted search matches
-- `,r` [i]solate region
+- `\r` [i]solate region
 
-- `,s` perform a single [s]yntax check
-- `,S` toggle automatic [s]yntax check
+- `\s` perform a single [s]yntax check
+- `\S` toggle automatic [s]yntax check
 
-- `,fe` [e]xplore [f]iles
-- `,fo` [o]pen [f]ile (using CtrlP)
+- `\fe` [e]xplore [f]iles
+- `\fo` [o]pen [f]ile (using CtrlP)
 
-- `,te` [e]xplore [t]ags
+- `\te` [e]xplore [t]ags
 
-- `,be` [e]xplore the buffers
-- `,bo` [o]pen [b]uffer
+- `\be` [e]xplore the buffers
+- `\bo` [o]pen [b]uffer
 
-- `,ve` [e]dit [v]imrc
-- `,vs` [s]ource [v]imrc
+- `\ve` [e]dit [v]imrc
+- `\vs` [s]ource [v]imrc
 
 - `]n` and `[n` to jump the previous/next conflict marker
 
