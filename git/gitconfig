@@ -42,6 +42,8 @@
   sm = submodule
   sma = submodule add
   smf = submodule foreach
+  smu = submodule update
+  smui = submodule update --init
   sh = stash
   sha = stash apply
   shc = stash clear

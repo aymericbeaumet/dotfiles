@@ -1,7 +1,342 @@
-################################################################################
-# Files are splitted for clarity (into ~/.zsh/*.zsh)
-################################################################################
+##########
+# System #
+##########
 
-for i in `find ~/.zsh/ -maxdepth 1 -name '*.zsh' -type f | sort` ; do
-  source $i
-done
+# return 0 if $1 exists (as an alias or executable file in $PATH)
+function cmd_exists()
+{
+  return $([ $# -ne 0 ] && which $1 &>/dev/null);
+}
+
+# write 'unknown', only defined if uname(1) is not in $PATH
+if ! cmd_exists uname ; then
+  function uname()
+  {
+    echo unknown
+  }
+fi
+
+# return 0 if the os is linux
+function is_linux()
+{
+  return $([ `uname -s` = Linux ]);
+}
+
+# return 0 if the os is macosx
+function is_macosx()
+{
+  return $([ `uname -s` = Darwin ]);
+}
+
+# return 0 if the os is bsd
+function is_bsd()
+{
+  return $([[ `uname -s` =~ .*bsd.* ]]);
+}
+
+
+#########
+# Hooks #
+#########
+
+# Before each prompt
+precmd_functions=(
+  # Refresh the prompt
+  set_prompt
+)
+
+
+################
+# Autocomplete #
+################
+
+autoload -U compinit
+compinit
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=36=31'
+zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*:default' menu 'select=0'
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+setopt COMPLETE_ALIASES		# autocomplete on aliases
+setopt COMPLETE_IN_WORD
+
+
+#########
+# Alias #
+#########
+
+alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
+
+unalias vim &>/dev/null
+alias vi=vim
+alias v=vim
+compdef vi=vim
+compdef v=vim
+
+# bind some extension to be opened with $EDITOR
+alias -s c=$EDITOR
+alias -s cpp=$EDITOR
+alias -s h=$EDITOR
+alias -s hh=$EDITOR
+alias -s hpp=$EDITOR
+alias -s html=$EDITOR
+alias -s css=$EDITOR
+
+# bind some extension to be opened with $PAGER
+alias -s txt=$PAGER
+
+# bind some extension to be opened with $VIEWER
+alias -s bmp=$VIEWER
+alias -s gif=$VIEWER
+alias -s jpg=$VIEWER
+alias -s png=$VIEWER
+
+# bind some extension to be directly executed
+alias -s php=`which php 2> /dev/null`
+alias -s php3=`which php 2> /dev/null`
+alias -s php4=`which php 2> /dev/null`
+alias -s php5=`which php 2> /dev/null`
+alias -s py=`which python 2> /dev/null`
+alias -s pl=`which perl 2> /dev/null`
+alias -s ml=`which ocaml 2> /dev/null`
+
+# classic aliases
+alias grep='grep --color=auto'
+alias cp='cp -v'
+alias mv='mv -v'
+alias rm='rm -v'
+alias mkdir='mkdir -v'
+is_linux && alias rmdir='rmdir -v'
+alias j='jobs'
+compdef j=jobs
+alias m=man
+compdef m=man
+
+alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
+alias -g L=' | less'
+alias -g H=' | head'
+alias -g T=' | tail'
+alias -g N=' &>/dev/null'
+
+alias g=git
+compdef g=git
+
+
+###########
+# Binding #
+###########
+
+# Useful in a term (but vim rox)
+set -o emacs
+
+bindkey '^[OH'		beginning-of-line		#HOME
+bindkey '^[OF'		end-of-line			#END
+bindkey '^[[6~'		history-search-forward		#PAGE DOWN
+bindkey '^[[5~'		history-search-backward		#PAGE UP
+bindkey '^[[2~'		overwrite-mode			#INSERT
+bindkey '^[[1;5D'	backward-word			#CTRL <-
+bindkey '^[[1;5C'	forward-word			#CTRL ->
+bindkey '^[[3~'		delete-char			#DELETE
+
+
+###############
+# Environment #
+###############
+
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
+export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null \
+  || echo $EDITOR`
+export USE_EDITOR=$EDITOR
+export VISUAL=$EDITOR
+export VIEWER=`which eog 2>/dev/null || echo $VIEWER`
+export PAGER=`which less 2>/dev/null || which more 2>/dev/null \
+  || which cat 2>/dev/null || echo $PAGER`
+export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null || echo $SHELL`
+
+
+###########
+# History #
+###########
+
+setopt APPEND_HISTORY
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_IGNORE_SPACE
+setopt HIST_NO_STORE
+setopt HIST_VERIFY
+setopt EXTENDED_HISTORY
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
+
+export SAVEHIST=10000
+export HISTSIZE=10000
+export HISTFILE=~/.zsh_history
+
+
+######
+# ls #
+######
+
+if cmd_exists ls ; then
+  SPECIFIC_LS_OPTIONS=''
+  if is_linux ; then
+    SPECIFIC_LS_OPTIONS=--color=auto
+  elif is_bsd || is_macosx ; then
+    SPECIFIC_LS_OPTIONS=-G
+  else
+    unalias ls &>/dev/null
+  fi
+  alias ls="ls -p -F $SPECIFIC_LS_OPTIONS"
+  alias ll='ls -hl'
+  compdef ll=ls
+  alias l='ll'
+  compdef l=ls
+  alias la='ll -A' # list .* files (but not . and ..)
+  compdef la=ls
+
+  # good ls colors (even on OSX)
+  unset LS_COLORS
+  unset LSCOLORS
+  if is_macosx || is_bsd ; then
+    export CLICOLOR=1
+    export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
+  else
+    export CLICOLOR=0
+  fi
+fi
+
+
+###########
+# Options #
+###########
+
+setopt AUTO_CD			            # change directory without cd
+setopt ALIASES			            # expand aliases
+setopt SHORT_LOOPS		          # allow short forms (if, for, functions...)
+setopt AUTO_CONTINUE		        # background process stay alive on shell exit
+setopt RC_EXPAND_PARAM          # expand on all the param array
+setopt NUMERIC_GLOB_SORT
+unsetopt CORRECT_ALL		        # don't auto-correct
+unsetopt EXTENDED_GLOB          # avoid bad completions
+unsetopt LIST_AMBIGUOUS
+unsetopt RM_STAR_WAIT           # don't wait after `rm *`
+
+# Automatic URL escaping
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
+
+# No beep
+unsetopt BEEP			# no beep
+unsetopt HIST_BEEP		# no beep
+unsetopt LIST_BEEP		# no beep
+
+
+##########
+# Prompt #
+##########
+
+# Preload specific colors
+COLOR_RESET=$'%{\033[0m%}'
+COLOR_BLUE=$'%{\033[38;05;75m%}'
+COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
+COLOR_GREEN=$'%{\033[38;05;34m%}'
+COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
+COLOR_YELLOW=$'%{\033[38;05;3m%}'
+COLOR_RED=$'%{\033[38;05;1m%}'
+COLOR_ORANGE=$'%{\033[38;05;202m%}'
+
+# Git prompt
+if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
+  source ~/.zsh/bundle/zsh-git-prompt/zshrc.sh
+
+  # Set install directory
+  export __GIT_PROMPT_DIR=~/.zsh/bundle/zsh-git-prompt
+
+  # Change defaults values
+  ZSH_THEME_GIT_PROMPT_PREFIX="("
+  ZSH_THEME_GIT_PROMPT_SUFFIX=")"
+  ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
+  ZSH_THEME_GIT_PROMPT_BRANCH="${COLOR_YELLOW}"
+  ZSH_THEME_GIT_PROMPT_STAGED="${COLOR_GREEN}±"
+  ZSH_THEME_GIT_PROMPT_CONFLICTS="${COLOR_ORANGE}×"
+  ZSH_THEME_GIT_PROMPT_CHANGED="${COLOR_RED}≠"
+  ZSH_THEME_GIT_PROMPT_REMOTE=""
+  ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
+  ZSH_THEME_GIT_PROMPT_CLEAN="${COLOR_LIGHT_GREEN}✓"
+fi
+
+# set content
+function set_prompt()
+{
+  # get git prompt
+  git_prompt="$(git_super_status)"
+
+  # left prompt
+  PROMPT=''
+  PROMPT="${PROMPT:+$PROMPT }[$COLOR_SMOOTH_GREEN%j$COLOR_RESET&|?$COLOR_SMOOTH_GREEN%?$COLOR_RESET]"
+  PROMPT="${PROMPT:+$PROMPT }$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt}"
+  PROMPT="${PROMPT:+$PROMPT }%(!.#.$) "
+
+  # right prompt
+  RPROMPT=''
+  RPROMPT="${RPROMPT:+$RPROMPT }[%n$COLOR_BLUE@$COLOR_RESET%M]"
+  if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
+    RPROMPT="${RPROMPT:+$RPROMPT }{^$COLOR_BLUE%L$COLOR_RESET}"
+  fi
+}
+
+
+########
+# Sudo #
+########
+
+insert_sudo () { zle beginning-of-line; zle -U "sudo " }
+zle -N insert-sudo insert_sudo
+bindkey "^[s" insert-sudo
+
+
+############
+# Terminal #
+############
+
+# set the tab name
+function tabname {
+  printf "\e]1;${1:-default}\a"
+}
+
+# set the window name
+function winname {
+  printf "\e]2;$1\a"
+}
+
+str=`whoami`@`hostname`
+
+tabname $str
+winname $str
+
+
+########
+# Tmux #
+########
+
+if [ -n "$TMUX" ] ; then
+  export TERM=screen-256color
+else
+  export TERM=xterm-256color
+fi
+
+# one session at once
+alias tmux="tmux attach || tmux new"
