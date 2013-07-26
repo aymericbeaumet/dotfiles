@@ -23,7 +23,7 @@
   me = merge
   pl = pull
   plo = pull origin
-  plo = pull origin master
+  plom = pull origin master
   ps = push
   pso = push origin
   psom = push origin master
