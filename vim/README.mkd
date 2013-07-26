@@ -66,9 +66,6 @@ _Memo_
 - `,ve` [e]dit [v]imrc
 - `,vs` [s]ource [v]imrc
 
-- `^_` expand (x)html
-- `^b` match the next empty (x)html tag
-
 - `]n` and `[n` to jump the previous/next conflict marker
 
 - `^h ^j ^k ^l` change pane

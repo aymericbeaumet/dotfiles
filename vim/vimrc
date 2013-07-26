@@ -10,12 +10,12 @@ let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
 let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
 if (exists("g:bundle_dir"))
-  call neobundle#rc(g:bundle_dir)
+  call neobundle#rc(g:bundle_dir) " load NeoBundle
 else
-  call neobundle#rc()
+  call neobundle#rc() " load NeoBundle
 endif
 
-" Load Vundle first
+" Load NeoBundle plugin first
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Languages plugins
@@ -47,6 +47,7 @@ NeoBundle 'kien/rainbow_parentheses.vim'
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'nelstrom/vim-visual-star-search'
+NeoBundle 'othree/html5.vim'
 NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
@@ -59,7 +60,7 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tristen/vim-sparkup'
 
-NeoBundleCheck " check installations
+NeoBundleCheck " check installation
 
 " }}}
 
@@ -71,7 +72,7 @@ set t_Co=256
 set background=dark
 silent! colorscheme wombat256mod
 hi CursorLine cterm=bold
-set synmaxcol=200       " don't try to highlight long lines
+set synmaxcol=400       " don't try to highlight long lines
 
 " }}}
 
@@ -98,9 +99,9 @@ endfunction
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
 set autowrite           " automatically save before :next and :make
-set laststatus=2        " status line always on
+set laststatus=2        " always display status line
 set encoding=utf-8      " ensure proper encoding
-set ttyfast             " we have a fast terminal
+set ttyfast             " welcome to the 20th century guys
 set modelines=0         " don't care about modeline
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=./.tags;,~/.vimtags " define tags file path
@@ -108,7 +109,7 @@ set cryptmethod="blowfish" " define strong crypt method
 set noswapfile          " disable swap files
 
 set backup              " enable backup files
-set backupdir=~/.vim/tmp/backup//
+set backupdir=~/.vim/tmp/backup// " backup files directory
 if !isdirectory(expand(&backupdir))
   silent! call mkdir(expand(&backupdir), "p")
 endif
@@ -116,7 +117,7 @@ endif
 set undofile            " enable undo files
 set undolevels=1000     " number of undo level
 set undoreload=10000    " number of lines to save for undo
-set undodir=~/.vim/tmp/undo//
+set undodir=~/.vim/tmp/undo// " undo files directory
 if !isdirectory(expand(&undodir))
   silent! call mkdir(expand(&undodir), "p")
 endif
@@ -127,19 +128,19 @@ set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
 
 " {{{ User Interface
 
-set timeoutlen=300      " time to wait when a part of a maped sequence is typped
+set timeoutlen=400      " time to wait when a part of a maped sequence is typped
 set ttimeoutlen=0       " instant insert mode exit
 set matchtime=3         " tenths of second to show the matching bracket
 set cmdheight=1         " explicitly set the command line height
 set showcmd             " show (partial) command in the last line of the screen
-set scrolloff=8         " keep at least 5 lines after the cusor when scrolling
+set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
 set sidescrolloff=10    " (same as above for side scrolling)
 set lazyredraw          " only redraw when needed
 set nolist              " hide invisible characters
 set wrap                " split the line if it is too long
-set shortmess=aoOsI     " disable vim welcome message and shorter messages
-set wildmenu            " better command line completion menu
+set shortmess=aoOsI     " disable vim welcome message / enable shorter messages
 set cursorline          " highlight cursor line
+set wildmenu            " better command line completion menu
 set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz             " ignore compressed files
@@ -153,7 +154,7 @@ set tabpagemax=20       " allow lots of tabs
 set backspace=2         " fix backspace (on some OS/term)
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
-set incsearch           " show matches as soon as posseble
+set incsearch           " show matches as soon as possible
 set wrapscan            " searches wrap around the end of the file
 set diffopt=filler,iwhite " ignore all whitespace and sync
 set showmatch           " show the matching bracket when inserting
@@ -226,7 +227,7 @@ vnoremap <silent> k gk
 
 " center on each search result
 nnoremap <silent> n nzz
-nnoremap <silent> <S-n> Nzz
+nnoremap <silent> <S-N> Nzz
 
 " define leading key
 let mapleader = ','
@@ -279,9 +280,6 @@ cnoremap <silent> jj <C-C>
 " useful insert mode binds
 inoremap <silent> AA <C-O>A
 inoremap <silent> II <C-O>I
-inoremap <silent> CC <C-O>C
-inoremap <silent> OO <C-O>O
-inoremap <silent> <C-O><C-O> <C-o>o
 
 " Panes move
 noremap <silent> <C-H> <C-W>h
@@ -292,15 +290,6 @@ inoremap <silent> <C-H> <Esc><C-W>h
 inoremap <silent> <C-J> <Esc><C-W>j
 inoremap <silent> <C-K> <Esc><C-W>k
 inoremap <silent> <C-L> <Esc><C-W>l
-" forgot bad habits
-nnoremap <silent> <C-W>h <Nop>
-nnoremap <silent> <C-W>j <Nop>
-nnoremap <silent> <C-W>k <Nop>
-nnoremap <silent> <C-W>l <Nop>
-
-" }}}
-
-" {{{ Abbrev
 
 " create/move/close tab
 cabbrev tn tabnew
@@ -385,55 +374,47 @@ endfunction
 " {{{ Plugins extra-configuration
 
 " buffergator
-let g:buffergator_suppress_keymaps = 1
-let g:buffergator_viewport_split_policy = 'B'
+let g:buffergator_suppress_keymaps = 1 " delete default keymaps
+let g:buffergator_viewport_split_policy = 'B' " split on the bottom of the screen
 nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 
 " CtrlP
 let g:ctrlp_map = '<Leader>fo'
-let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])'
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_switch_buffer = 0
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_max_files = 1000
-let g:ctrlp_max_depth = 10
-let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])' " this files will be ignored in completion
+let g:ctrlp_switch_buffer = 'e' " if the file exists in a buffer in the current tab, jump to it
+let g:ctrlp_working_path_mode = 'ra' " the nearest ancestor containing a SCM configuration file (.git, ...)
+let g:ctrlp_max_files = 1000 " avoid lag if launched in a top directory (~ for example)
+let g:ctrlp_max_depth = 10 " same as above
+let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
 nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader>w'
 
-" jscomplete
-
-" html
-let g:html_indent_inctags = "html,body,head,tbody"
-let g:html_indent_script1 = "inc"
-let g:html_indent_style1 = "inc"
-
 " multiple cursors
 vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
 
 " narrowregion
-let g:nrrw_rgn_nohl = 1
+let g:nrrw_rgn_nohl = 1 " disable highlighting in the main window while isolating code
 noremap <silent> <Leader>r :NarrowRegion<CR>
 
 " nerdtree
 let NERDTreeShowHidden = 1 " show hidden files
-let NERDTreeQuitOnOpen = 1
-let NERDTreeWinSize = 40
-let NERDTreeMinimalUI = 1
+let NERDTreeQuitOnOpen = 1 " close tree when opening a file
+let NERDTreeWinSize = 40 " tree width
+let NERDTreeMinimalUI = 1 " hide superfluous stuff
 nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
 
 " neocomplcache
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_auto_completion_start_length = 3
-let g:neocomplcache_max_list = 20
+let g:neocomplcache_enable_at_startup = 1 " start completion on vim startup
+let g:neocomplcache_enable_smart_case = 1 " same as vim `smartcase`
+let g:neocomplcache_auto_completion_start_length = 3 " do not autocomplete word shorter than 3 characters
+let g:neocomplcache_max_list = 20 " max propositons
 inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
 
 " php indent
-let g:PHP_vintage_case_default_indent = 1
+let g:PHP_vintage_case_default_indent = 1 " change indentation method
 
 " powerline
 set noshowmode " hide the duplicate mode in bottom status bar
@@ -468,10 +449,10 @@ let g:sparkupExecuteMapping = '<C-_>'
 let g:sparkupNextMapping = '<C-F>'
 
 " syntastic
-let g:syntastic_mode_map = { 'mode': 'passive' }
-let g:syntastic_check_on_wq = 0
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+let g:syntastic_mode_map = { 'mode': 'passive' } " passive
+let g:syntastic_check_on_wq = 0 " disable on save
+let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
+let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
 let g:syntastic_c_compiler_options = "-Wall -Wextra"
 let g:syntastic_cpp_checkers = [ 'cpplint' ]
 nnoremap <silent> <Leader>s :SyntasticCheck<CR>
@@ -482,11 +463,11 @@ nnoremap <silent> <Leader>a :Tabularize /
 vnoremap <silent> <Leader>a :Tabularize /
 
 " tagbar
-let g:tagbar_autofocus = 1
-let g:tagbar_autoclose = 1
-let g:tagbar_show_visibility = 1
-let g:tagbar_compact = 1
-let g:tagbar_width = 40
+let g:tagbar_autofocus = 1 " focus tagbar opened
+let g:tagbar_autoclose = 1 " close tagbar when opening a tag
+let g:tagbar_show_visibility = 1 " show public/private/protected
+let g:tagbar_compact = 1 " hide superfluous stuff
+let g:tagbar_width = 40 " set tagbar width
 nnoremap <silent> <Leader>te :TagbarToggle<CR>
 
 " winresizer
