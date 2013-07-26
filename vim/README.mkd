@@ -13,6 +13,9 @@ _Memo_
 - `#`, `*` previous and next occurrence of a word
 - `ZZ` `ZQ` exit and save / exit without saving
 - `gv` select the last selection
+- `vip` select a paragraph
+- `viw` select a word
+- `` ` ` `` jump to the latest position (without the space)
 
 ## Insert mode
 
@@ -52,14 +55,13 @@ _Memo_
 - `,s` perform a single [s]yntax check
 - `,S` toggle automatic [s]yntax check
 
-- `,e` [e]xplore files
-- `,o` [o]pen file (using CtrlP)
+- `,fe` [e]xplore [f]iles
+- `,fo` [o]pen [f]ile (using CtrlP)
 
 - `,te` [e]xplore [t]ags
 
 - `,be` [e]xplore the buffers
 - `,bo` [o]pen [b]uffer
-- `,bO` [O]pen recents [b]uffer
 
 - `,ve` [e]dit [v]imrc
 - `,vs` [s]ource [v]imrc
