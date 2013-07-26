@@ -23,7 +23,7 @@
   me = merge
   pl = pull
   plo = pull origin
-  plom = pull origin master
+  plo = pull origin master
   ps = push
   pso = push origin
   psom = push origin master
@@ -32,6 +32,7 @@
   rbc = rebase --continue
   re = remote
   rea = remote add
+  reu = remote update
   rer = remote rm
   rmc = rm --cached
   rs = reset
