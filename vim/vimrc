@@ -329,6 +329,7 @@ endfunction
 autocmd FileType html call LoadHTMLConfiguration()
 function! LoadHTMLConfiguration()
   setlocal omnifunc=htmlcomplete#CompleteTags
+  setlocal iskeyword+=-
 endfunction
 
 " Markdown
@@ -388,6 +389,11 @@ nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader>w'
+
+" html
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
+let g:html_indent_inctags = "html,body,head,tbody"
 
 " multiple cursors
 vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
