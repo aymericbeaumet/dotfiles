@@ -1,10 +1,5 @@
 ; `man git-config` is your friend
 
-[advice]
-  detachedHead = false
-  resolveConflict = false
-  statusHints = false
-
 [alias]
   ; fast access aliases
   a = add
@@ -87,7 +82,7 @@
 [core]
   excludesfile = ~/.gitignore
   pager = less
-  whitespace = trailing-space
+  whitespace = space-before-tab,trailing-space
 
 [diff]
   tool = vimdiff
@@ -105,7 +100,7 @@
   prompt = false
 
 [push]
-  default = current
+  default = upstream
 
 [rebase]
   stat = true
