@@ -296,12 +296,6 @@ cabbrev tq tabclose
 " close buffer
 cabbrev bq bdelete
 
-" exit insert mode and move between panes
-inoremap <silent> <C-W>h <Esc><C-W>h
-inoremap <silent> <C-W>j <Esc><C-W>j
-inoremap <silent> <C-W>k <Esc><C-W>k
-inoremap <silent> <C-W>l <Esc><C-W>l
-
 " }}}
 
 " {{{ Language specific configuration
