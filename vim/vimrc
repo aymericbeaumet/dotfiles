@@ -21,6 +21,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Languages plugins
 NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'indenthtml.vim'
+NeoBundle 'phpcomplete.vim'
 NeoBundle 'tpope/vim-git'
 NeoBundle 'tpope/vim-markdown'
 
@@ -416,6 +417,7 @@ let g:neocomplcache_auto_completion_start_length = 3 " do not autocomplete word 
 let g:neocomplcache_max_list = 20 " max propositons
 inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
+inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
 
 " php indent
 let g:PHP_vintage_case_default_indent = 1 " change indentation method
