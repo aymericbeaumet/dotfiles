@@ -1,7 +1,7 @@
-" clear all autocommands
-autocmd!
 " break away from old vi compatibility
 set nocompatible
+" clear all autocommands
+autocmd!
 " found vim config file and config dir
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
@@ -22,6 +22,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'indenthtml.vim'
 NeoBundle 'phpcomplete.vim'
+NeoBundle 'suan/vim-instant-markdown'
 NeoBundle 'tpope/vim-git'
 NeoBundle 'tpope/vim-markdown'
 
@@ -35,7 +36,6 @@ NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Shougo/neocomplcache.vim'
 NeoBundle 'Shougo/vimproc'
-NeoBundle 'SirVer/ultisnips'
 NeoBundle 'a.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
@@ -302,43 +302,45 @@ cabbrev bq bdelete
 
 " {{{ Language specific configuration
 
-" C/C++/Ruby
-" Keep 2/2/2 default indentation
+autocmd FileType c,cpp call LoadCConfiguration()
+function! LoadCConfiguration()
+  set omnifunc=ccomplete#Complete
+endfunction
 
 " CSS
 autocmd FileType css call LoadCSSConfiguration()
 function! LoadCSSConfiguration()
-  setlocal omnifunc=csscomplete#CompleteCSS
+  setl omnifunc=csscomplete#CompleteCSS
 endfunction
 
 " Git commit
 autocmd FileType gitcommit call LoadGitConfiguration()
 function! LoadGitConfiguration()
-  setlocal spell
+  setl spell
 endfunction
 
 " JavaScript
 autocmd FileType javascript call LoadJavaScriptConfiguration()
 function! LoadJavaScriptConfiguration()
-  setlocal omnifunc=javascriptcomplete#CompleteJS
-  setlocal shiftwidth=4
-  setlocal softtabstop=4
-  setlocal tabstop=4
+  setl omnifunc=javascriptcomplete#CompleteJS
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
 endfunction
 
 " HTML
 autocmd FileType html call LoadHTMLConfiguration()
 function! LoadHTMLConfiguration()
-  setlocal omnifunc=htmlcomplete#CompleteTags
-  setlocal iskeyword+=-
+  setl omnifunc=htmlcomplete#CompleteTags
+  setl iskeyword+=-
 endfunction
 
 " Markdown
 autocmd FileType markdown call LoadMarkdownConfiguration()
 function! LoadMarkdownConfiguration()
-  setlocal omnifunc=htmlcomplete#CompleteTags
-  setlocal formatoptions=tcroqn2 comments=n:>
-  setlocal spell
+  setl omnifunc=htmlcomplete#CompleteTags
+  setl formatoptions=tcroqn2 comments=n:>
+  setl spell
   highlight SpellBad cterm=underline
   highlight SpellCap cterm=underline
   highlight SpellLocal cterm=underline
@@ -348,25 +350,26 @@ endfunction
 " PHP
 autocmd FileType php call LoadPHPConfiguration()
 function! LoadPHPConfiguration()
-  setlocal omnifunc=phpcomplete#CompletePHP
-  setlocal iskeyword-=$
-  setlocal shiftwidth=4
-  setlocal softtabstop=4
-  setlocal tabstop=4
+  setl omnifunc=phpcomplete#CompletePHP
+  setl iskeyword-=$
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
 endfunction
 
 " Python
 autocmd FileType python call LoadPythonConfiguration()
 function! LoadPythonConfiguration()
-  setlocal shiftwidth=4
-  setlocal softtabstop=4
-  setlocal tabstop=4
+  setl omnifunc=pythoncomplete#Complete
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
 endfunction
 
 " XML
 autocmd FileType xml call LoadXMLConfiguration()
 function! LoadXMLConfiguration()
-  setlocal omnifunc=xmlcomplete#CompleteTags
+  setl omnifunc=xmlcomplete#CompleteTags
 endfunction
 
 " }}}

@@ -16,6 +16,11 @@ _Memo_
 - `vip` select a paragraph
 - `viw` select a word
 - `` ` ` `` jump to the latest position (without the space)
+- `ga` print the ascii value of the character under the cursor
+- `@@` execute last macro
+- `zg` add a word to the dictionary
+- `zw` remove a word from the dictionary
+- `z=` show spell proposition(s) from dictionary
 
 ## Insert mode
 
@@ -34,7 +39,7 @@ _Memo_
 
 - `^w^w` easy window resizing
 
-- `cs' cs" cs( cs{ cs[` vim-surround (replace inside the given delimiter)
+- `cs' cs" cs( cs{ cs[` vim-surround (replace the given delimiter)
 - `\a{string}<CR>` align code on {string}
 - `\d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
 - `\w` easymotion leader key (see `:help easymotion`)
