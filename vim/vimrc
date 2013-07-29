@@ -439,8 +439,8 @@ let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
 let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
 let g:syntastic_c_compiler_options = "-Wall -Wextra"
 let g:syntastic_cpp_checkers = [ 'cpplint' ]
-nnoremap <silent> <Leader>s :SyntasticCheck<CR>
-nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
+nnoremap <silent> <Leader>c :SyntasticCheck<CR>
+nnoremap <silent> <Leader>C :SyntasticToggleMode<CR>
 
 " tabular
 nnoremap <silent> <Leader>a :Tabularize /

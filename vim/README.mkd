@@ -57,8 +57,8 @@ _Memo_
 - `<space>` hide highlighted search matches
 - `\r` [i]solate region
 
-- `\s` perform a single [s]yntax check
-- `\S` toggle automatic [s]yntax check
+- `\c` perform a single syntax [c]heck
+- `\C` toggle automatic syntax [c]heck
 
 - `\fe` [e]xplore [f]iles
 - `\fo` [o]pen [f]ile (using CtrlP)
