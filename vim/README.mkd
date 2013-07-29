@@ -73,8 +73,6 @@ _Memo_
 
 - `]n` and `[n` to jump the previous/next conflict marker
 
-- `^h ^j ^k ^l` change pane
-
 - `^_` expand to (x)html
 - `^f` find the next empty (x)html tag
 
@@ -83,13 +81,14 @@ _Memo_
 - `jj` leave insert mode
 - `^_` expand to (x)html
 - `^f` find the next empty (x)html tag
+
 - `II` go to start of line
 - `AA` go to end of line
 - `CC` replace to the end of line
 - `OO` insert one line above and move the cursor on it
 - `^o^o` insert one line below and move the cursor on it
 
-- `^h ^j ^k ^l` exit insert mode and change pane
+- `^Wh ^Wj ^Wk ^Wl` exit insert mode and change pane
 
 ## Command line mode
 
@@ -103,6 +102,8 @@ _Memo_
 - `:tm` move the current tab
 - `:tq` quit the current tab
 - `:bq` quit the current buffer
+
+- `:Ack` search in the project using **Ack**
 
 ## Visual mode
 

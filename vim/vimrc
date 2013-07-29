@@ -18,24 +18,28 @@ endif
 " Load NeoBundle plugin first
 NeoBundleFetch 'Shougo/neobundle.vim'
 
-" Languages plugins
-NeoBundle '2072/PHP-Indenting-for-VIm'
-NeoBundle 'indenthtml.vim'
-NeoBundle 'phpcomplete.vim'
-NeoBundle 'suan/vim-instant-markdown'
-NeoBundle 'tpope/vim-git'
-NeoBundle 'tpope/vim-markdown'
-
 " Themes plugins
 NeoBundle 'croaker/mustang-vim' "mustang
 NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', { 'name': 'ir_black.vim', 'script_type': 'colors' } "ir_black
 NeoBundle 'wombat256.vim' "wombat256mod
 
+" Languages plugins
+NeoBundle '2072/PHP-Indenting-for-VIm'
+NeoBundle 'elzr/vim-json'
+NeoBundle 'indenthtml.vim'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'phpcomplete.vim'
+NeoBundle 'suan/vim-instant-markdown'
+NeoBundle 'tpope/vim-git'
+NeoBundle 'tpope/vim-markdown'
+
 " Tools plugins
 NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Shougo/neocomplcache.vim'
+NeoBundle 'Shougo/neosnippet.vim'
 NeoBundle 'Shougo/vimproc'
+NeoBundle 'Shougo/vimshell.vim'
 NeoBundle 'a.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
@@ -44,6 +48,7 @@ NeoBundle 'jeetsukumaran/vim-buffergator'
 NeoBundle 'jimsei/winresizer'
 NeoBundle 'kien/ctrlp.vim'
 NeoBundle 'majutsushi/tagbar'
+NeoBundle 'mileszs/ack.vim'
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'nelstrom/vim-visual-star-search'
 NeoBundle 'othree/html5.vim'
@@ -277,18 +282,11 @@ inoremap <silent> jj <C-C>
 cnoremap <silent> jj <C-C>
 
 " useful insert mode binds
-inoremap <silent> AA <C-O>A
 inoremap <silent> II <C-O>I
-
-" Panes move
-noremap <silent> <C-H> <C-W>h
-noremap <silent> <C-J> <C-W>j
-noremap <silent> <C-K> <C-W>k
-noremap <silent> <C-L> <C-W>l
-inoremap <silent> <C-H> <Esc><C-W>h
-inoremap <silent> <C-J> <Esc><C-W>j
-inoremap <silent> <C-K> <Esc><C-W>k
-inoremap <silent> <C-L> <Esc><C-W>l
+inoremap <silent> AA <C-O>A
+inoremap <silent> CC <C-O>C
+inoremap <silent> OO <C-O>O
+inoremap <silent> <C-O><C-O> <C-O>o
 
 " create/move/close tab
 cabbrev tn tabnew
@@ -297,6 +295,12 @@ cabbrev tq tabclose
 
 " close buffer
 cabbrev bq bdelete
+
+" exit insert mode and move between panes
+inoremap <silent> <C-W>h <Esc><C-W>h
+inoremap <silent> <C-W>j <Esc><C-W>j
+inoremap <silent> <C-W>k <Esc><C-W>k
+inoremap <silent> <C-W>l <Esc><C-W>l
 
 " }}}
 
