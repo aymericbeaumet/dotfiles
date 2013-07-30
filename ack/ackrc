@@ -1,6 +1,5 @@
 # force color
 --color
-
 # enable smart case search (vim style)
 --smart-case
 # follow symbolic links
