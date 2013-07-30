@@ -42,6 +42,7 @@
   sh = stash
   sha = stash apply
   shc = stash clear
+  shd = stash drop
   shl = stash list
   shp = stash pop
   shs = stash save
@@ -100,7 +101,7 @@
   prompt = false
 
 [push]
-  default = upstream
+  default = current
 
 [rebase]
   stat = true
