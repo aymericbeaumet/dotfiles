@@ -50,8 +50,7 @@ precmd_functions=(
 # Autocomplete #
 ################
 
-autoload -U compinit
-compinit
+autoload -U compinit && compinit
 
 zstyle ':completion:*' menu select
 zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o'
@@ -65,15 +64,12 @@ zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
-setopt COMPLETE_ALIASES		# autocomplete on aliases
-setopt COMPLETE_IN_WORD
-
 
 #########
 # Alias #
 #########
 
-alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm {} \;'
+alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm -f {} \;'
 
 unalias vim &>/dev/null
 alias vi=vim
@@ -84,14 +80,27 @@ compdef v=vim
 # bind some extension to be opened with $EDITOR
 alias -s c=$EDITOR
 alias -s cpp=$EDITOR
+alias -s css=$EDITOR
 alias -s h=$EDITOR
 alias -s hh=$EDITOR
 alias -s hpp=$EDITOR
 alias -s html=$EDITOR
-alias -s css=$EDITOR
+alias -s js=$EDITOR
+alias -s xhtml=$EDITOR
+alias -s txt=$EDITOR
+alias -s md=$EDITOR
+alias -s mkd=$EDITOR
+alias -s markdown=$EDITOR
 
-# bind some extension to be opened with $PAGER
-alias -s txt=$PAGER
+# bind some extension to be directly executed
+alias -s ml=`which ocaml 2> /dev/null`
+alias -s php3=`which php 2> /dev/null`
+alias -s php4=`which php 2> /dev/null`
+alias -s php5=`which php 2> /dev/null`
+alias -s php=`which php 2> /dev/null`
+alias -s pl=`which perl 2> /dev/null`
+alias -s py=`which python 2> /dev/null`
+alias -s rb=`which ruby 2> /dev/null`
 
 # bind some extension to be opened with $VIEWER
 alias -s bmp=$VIEWER
@@ -99,26 +108,16 @@ alias -s gif=$VIEWER
 alias -s jpg=$VIEWER
 alias -s png=$VIEWER
 
-# bind some extension to be directly executed
-alias -s php=`which php 2> /dev/null`
-alias -s php3=`which php 2> /dev/null`
-alias -s php4=`which php 2> /dev/null`
-alias -s php5=`which php 2> /dev/null`
-alias -s py=`which python 2> /dev/null`
-alias -s pl=`which perl 2> /dev/null`
-alias -s ml=`which ocaml 2> /dev/null`
-
-# classic aliases
+# common aliases
 alias grep='grep --color=auto'
 alias cp='cp -v'
 alias mv='mv -v'
 alias rm='rm -v'
 alias mkdir='mkdir -v'
 is_linux && alias rmdir='rmdir -v'
-alias j='jobs'
-compdef j=jobs
-alias m=man
-compdef m=man
+alias j='jobs' ; compdef j=jobs
+alias m=man ; compdef m=man
+alias g=git ; compdef g=git
 
 alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
 alias -g L=' | less'
@@ -126,25 +125,22 @@ alias -g H=' | head'
 alias -g T=' | tail'
 alias -g N=' &>/dev/null'
 
-alias g=git
-compdef g=git
-
 
 ###########
 # Binding #
 ###########
 
-# Useful in a term (but vim rox)
+# Useful in a term (but vim rules)
 set -o emacs
 
-bindkey '^[OH'		beginning-of-line		#HOME
-bindkey '^[OF'		end-of-line			#END
-bindkey '^[[6~'		history-search-forward		#PAGE DOWN
-bindkey '^[[5~'		history-search-backward		#PAGE UP
-bindkey '^[[2~'		overwrite-mode			#INSERT
-bindkey '^[[1;5D'	backward-word			#CTRL <-
-bindkey '^[[1;5C'	forward-word			#CTRL ->
-bindkey '^[[3~'		delete-char			#DELETE
+bindkey '^[OH'		beginning-of-line       # HOME
+bindkey '^[OF'		end-of-line             # END
+bindkey '^[[6~'		history-search-forward  # PAGE DOWN
+bindkey '^[[5~'		history-search-backward # PAGE UP
+bindkey '^[[2~'		overwrite-mode          # INSERT
+bindkey '^[[1;5D'	backward-word           # CTRL <-
+bindkey '^[[1;5C'	forward-word            # CTRL ->
+bindkey '^[[3~'		delete-char             # DELETE
 
 
 ###############
@@ -152,34 +148,12 @@ bindkey '^[[3~'		delete-char			#DELETE
 ###############
 
 export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
-export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null \
-  || echo $EDITOR`
+export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null || echo $EDITOR`
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
-export VIEWER=`which eog 2>/dev/null || echo $VIEWER`
-export PAGER=`which less 2>/dev/null || which more 2>/dev/null \
-  || which cat 2>/dev/null || echo $PAGER`
+export VIEWER=`which open 2>/dev/null || which eog 2>/dev/null || echo $VIEWER`
+export PAGER=`which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER`
 export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null || echo $SHELL`
-
-
-###########
-# History #
-###########
-
-setopt APPEND_HISTORY
-setopt EXTENDED_HISTORY
-setopt INC_APPEND_HISTORY
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_REDUCE_BLANKS
-setopt HIST_IGNORE_SPACE
-setopt HIST_NO_STORE
-setopt HIST_VERIFY
-setopt EXTENDED_HISTORY
-setopt HIST_SAVE_NO_DUPS
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_FIND_NO_DUPS
 
 export SAVEHIST=10000
 export HISTSIZE=10000
@@ -223,25 +197,57 @@ fi
 # Options #
 ###########
 
+# Directory
 setopt AUTO_CD			            # change directory without cd
-setopt ALIASES			            # expand aliases
-setopt SHORT_LOOPS		          # allow short forms (if, for, functions...)
-setopt AUTO_CONTINUE		        # background process stay alive on shell exit
-setopt RC_EXPAND_PARAM          # expand on all the param array
-setopt NUMERIC_GLOB_SORT
-unsetopt CORRECT_ALL		        # don't auto-correct
+setopt CDABLE_VARS              # autocd in ~ directory if the folder isn't found in the current directory
+setopt PUSHD_IGNORE_DUPS        # don't push dup to cd history
+
+# Completion
+setopt AUTO_REMOVE_SLASH        # autoremove slash when not needed
 unsetopt EXTENDED_GLOB          # avoid bad completions
-unsetopt LIST_AMBIGUOUS
-unsetopt RM_STAR_WAIT           # don't wait after `rm *`
+setopt COMPLETE_ALIASES		      # autocomplete on aliases
+setopt COMPLETE_IN_WORD         # move cursor to the end of the completed word
+
+# History
+setopt APPEND_HISTORY           # allow multiple parallel zsh sessions in history
+setopt EXTENDED_HISTORY         # more information in history (beginning time, elpased time and command)
+setopt HIST_IGNORE_DUPS         # avoid duplicate command lines in history
+setopt HIST_REDUCE_BLANKS       # remove superfluous blanks from history
+setopt HIST_IGNORE_SPACE        # do not store a command in history if it begins with a space
+setopt HIST_NO_STORE            # do not store the `history` command
+setopt HIST_FIND_NO_DUPS        # do not display dups when searching using ^R
+setopt HIST_NO_FUNCTIONS        # remove function definition from history
 
 # Automatic URL escaping
-autoload -Uz url-quote-magic
-zle -N self-insert url-quote-magic
+autoload -Uz url-quote-magic && zle -N self-insert url-quote-magic
 
 # No beep
-unsetopt BEEP			# no beep
-unsetopt HIST_BEEP		# no beep
-unsetopt LIST_BEEP		# no beep
+unsetopt BEEP			              # no beep
+unsetopt HIST_BEEP		          # no beep
+unsetopt LIST_BEEP		          # no beep
+
+# Input/Output
+setopt ALIASES			            # expand aliases
+setopt CORRECT                  # auto correct command
+unsetopt CORRECT_ALL		        # do not auto correct all command line
+setopt MAIL_WARNING             # warn for new mail
+setopt RC_QUOTES                # allow '' to type a single quoted string
+unsetopt RM_STAR_WAIT           # don't wait after `rm *`
+setopt SUN_KEYBOARD_HACK        # remove the last trailing backquote (if error)
+
+# Job Control
+setopt AUTO_CONTINUE		        # background process stay alive on shell exit
+setopt CHECK_JOBS               # warn about background jobs before shell exit
+
+# Prompt
+setopt TRANSIENT_RPROMPT        # remove right prompt after accepting a command line
+
+# Scripts and Functions
+setopt C_BASES                  # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
+setopt C_PRECEDENCES            # alter operators precedence to be more C-like
+
+# Expansion and Globbing
+setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx='a b c'
 
 
 ##########
