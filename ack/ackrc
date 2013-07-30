@@ -1,0 +1,12 @@
+# force color
+--color
+
+# enable smart case search (vim style)
+--smart-case
+# follow symbolic links
+--follow
+
+# add custom types support
+--type-set=json=.json
+--type-set=markdown=.markdown,.mdown,.mkdn,.md,.mkd,.mdwn,.mdtxt,.mdtext
+--type-set=csv=.csv
