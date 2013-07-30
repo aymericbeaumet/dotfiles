@@ -148,7 +148,7 @@ set cursorline          " highlight cursor line
 set wildmenu            " better command line completion menu
 set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
-set wildignore+=*.zip,*.gz,*.xz,*,*.tar     " ignore compressed files
+set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
 set tabpagemax=20       " allow lots of tabs
 
