@@ -25,8 +25,7 @@ NeoBundle 'wombat256.vim' "wombat256mod
 
 " Languages plugins
 NeoBundle '2072/PHP-Indenting-for-VIm'
-NeoBundle 'elzr/vim-json'
-NeoBundle 'indenthtml.vim'
+NeoBundle 'othree/html5.vim'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'phpcomplete.vim'
 NeoBundle 'suan/vim-instant-markdown'
@@ -38,20 +37,21 @@ NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Shougo/neocomplcache.vim'
 NeoBundle 'Shougo/neosnippet.vim'
-NeoBundle 'Shougo/vimproc'
-NeoBundle 'Shougo/vimshell.vim'
+NeoBundle 'Shougo/vimproc', {'build': {'mac': 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
+NeoBundle 'VisIncr'
 NeoBundle 'a.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
+NeoBundle 'closetag.vim'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'jeetsukumaran/vim-buffergator'
 NeoBundle 'jimsei/winresizer'
 NeoBundle 'kien/ctrlp.vim'
 NeoBundle 'majutsushi/tagbar'
+NeoBundle 'matchit.zip'
 NeoBundle 'mileszs/ack.vim'
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'nelstrom/vim-visual-star-search'
-NeoBundle 'othree/html5.vim'
 NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
@@ -60,6 +60,7 @@ NeoBundle 'tpope/vim-abolish'
 NeoBundle 'tpope/vim-eunuch'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-repeat'
+NeoBundle 'tpope/vim-speeddating'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tristen/vim-sparkup'
@@ -132,8 +133,8 @@ set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
 
 " {{{ User Interface
 
-set timeoutlen=400      " time to wait when a part of a maped sequence is typped
-set ttimeoutlen=0       " instant insert mode exit
+set timeoutlen=500      " time to wait when a part of a maped sequence is typped
+set ttimeoutlen=0       " instant insert mode exit using escape
 set matchtime=3         " tenths of second to show the matching bracket
 set cmdheight=1         " explicitly set the command line height
 set showcmd             " show (partial) command in the last line of the screen
@@ -147,7 +148,7 @@ set cursorline          " highlight cursor line
 set wildmenu            " better command line completion menu
 set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
-set wildignore+=*.zip,*.gz,*.xz             " ignore compressed files
+set wildignore+=*.zip,*.gz,*.xz,*,*.tar     " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
 set tabpagemax=20       " allow lots of tabs
 
@@ -160,7 +161,7 @@ set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
 set incsearch           " show matches as soon as possible
 set wrapscan            " searches wrap around the end of the file
-set diffopt=filler,iwhite " ignore all whitespace and sync
+set diffopt=filler,iwhite " ignore all whitespace and sync while differentiates
 set showmatch           " show the matching bracket when inserting
 set completeopt=menuone,preview " more complete autocompletion
 set nostartofline       " leave my cursor position alone!
@@ -171,6 +172,8 @@ set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
 set gdefault            " default substitute g flag
 autocmd VimEnter * set hlsearch " highlight last search matches
+autocmd InsertEnter * :setlocal nohlsearch " disable search highlighting in insert mode
+autocmd InsertLeave * :setlocal hlsearch
 
 " spell checker
 set spelllang=en        " configure spell language
@@ -204,7 +207,7 @@ set expandtab           " replace tabs by spaces
 autocmd VimEnter * set shiftwidth=2  " n spaces when using <Tab>
 autocmd VimEnter * set softtabstop=2 " n spaces when using <Tab>
 autocmd VimEnter * set tabstop=2     " n spaces when using <Tab>
-set hidden              " when a tab is closed, don't remove the buffer
+set hidden              " when a tab is closed, do not delete the buffer
 
 " }}}
 
@@ -220,8 +223,8 @@ set t_vb=
 " {{{ Binds
 
 " easy switch between tabs
-nnoremap <silent> <S-h> gT
-nnoremap <silent> <S-l> gt
+nnoremap <silent> <S-H> gT
+nnoremap <silent> <S-L> gt
 
 " up and down are more logical with g
 nnoremap <silent> j gj
@@ -241,7 +244,7 @@ nnoremap <silent> <Leader>ve :e $MYVIMRC<CR>
 nnoremap <silent> <Leader>vs :source $MYVIMRC<CR>
 
 " hide last search matches
-nnoremap <silent> <space> :nohlsearch<CR>
+nnoremap <silent> <Space> :nohlsearch<CR>
 
 " use `,d`  `,D` `,x` `,X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
@@ -265,9 +268,6 @@ nnoremap <silent> J myJ`y
 " split line with K
 nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
-" use ^a and ^e to move in command line
-cnoremap <silent> <C-A> <C-B>
-
 " insert blank lines without entering insert mode
 nnoremap <silent> go o<Esc>
 nnoremap <silent> gO O<Esc>
@@ -279,7 +279,6 @@ map <silent> Q <Nop>
 
 " also bind `jj` to leave insert/command mode
 inoremap <silent> jj <C-C>
-cnoremap <silent> jj <C-C>
 
 " useful insert mode binds
 inoremap <silent> II <C-O>I
@@ -287,14 +286,14 @@ inoremap <silent> AA <C-O>A
 inoremap <silent> CC <C-O>C
 inoremap <silent> OO <C-O>O
 inoremap <silent> <C-O><C-O> <C-O>o
+inoremap <silent> JJ <C-O>J
 
-" create/move/close tab
-cabbrev tn tabnew
-cabbrev tm tabmove
-cabbrev tq tabclose
+" buffer
+nnoremap <silent> <leader>bq :bdelete<CR>
 
-" close buffer
-cabbrev bq bdelete
+" tab
+nnoremap <silent> <leader>tc :tabnew<CR>
+nnoremap <silent> <leader>tq :tabclose<CR>
 
 " }}}
 
@@ -309,12 +308,17 @@ endfunction
 autocmd FileType css call LoadCSSConfiguration()
 function! LoadCSSConfiguration()
   setl omnifunc=csscomplete#CompleteCSS
+  setl iskeyword+=-
 endfunction
 
 " Git commit
-autocmd FileType gitcommit call LoadGitConfiguration()
-function! LoadGitConfiguration()
+autocmd FileType gitcommit call LoadGitCommitConfiguration()
+function! LoadGitCommitConfiguration()
   setl spell
+  highlight SpellBad cterm=underline
+  highlight SpellCap cterm=underline
+  highlight SpellLocal cterm=underline
+  highlight SpellRare cterm=underline
 endfunction
 
 " JavaScript
@@ -350,6 +354,7 @@ autocmd FileType php call LoadPHPConfiguration()
 function! LoadPHPConfiguration()
   setl omnifunc=phpcomplete#CompletePHP
   setl iskeyword-=$
+  setl iskeyword+=:
   setl shiftwidth=4
   setl softtabstop=4
   setl tabstop=4
@@ -390,12 +395,7 @@ let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
 nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
-let g:EasyMotion_leader_key = '<Leader>w'
-
-" html
-let g:html_indent_script1 = "inc"
-let g:html_indent_style1 = "inc"
-let g:html_indent_inctags = "html,body,head,tbody"
+let g:EasyMotion_leader_key = '<Leader><Leader>'
 
 " multiple cursors
 vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
@@ -414,8 +414,8 @@ nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1 " start completion on vim startup
 let g:neocomplcache_enable_smart_case = 1 " same as vim `smartcase`
-let g:neocomplcache_auto_completion_start_length = 3 " do not autocomplete word shorter than 3 characters
-let g:neocomplcache_max_list = 20 " max propositons
+let g:neocomplcache_auto_completion_start_length = 2 " do not autocomplete word shorter than 2 characters
+let g:neocomplcache_max_list = 20 " max number of suggestions
 inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
@@ -427,7 +427,7 @@ let g:PHP_vintage_case_default_indent = 1 " change indentation method
 set noshowmode " hide the duplicate mode in bottom status bar
 
 " sparkup
-let g:sparkupExecuteMapping = '<C-_>'
+let g:sparkupExecuteMapping = '<C-H>'
 let g:sparkupNextMapping = '<C-F>'
 
 " syntastic

@@ -21,6 +21,7 @@ _Memo_
 - `zg` add a word to the dictionary
 - `zw` remove a word from the dictionary
 - `z=` show spell proposition(s) from dictionary
+- `]s` and `[s` jump to the previous/next spell error
 
 ## Insert mode
 
@@ -30,8 +31,9 @@ _Memo_
 
 ## Command line mode
 
-- `:reg` to list registers and their contents
-- `:ls` to list opened buffers
+- `:reg` list registers and their contents
+- `:ls` list opened buffers
+- `:chdir` change the working directory
 
 # Customized stuff
 
@@ -42,68 +44,72 @@ _Memo_
 - `cs' cs" cs( cs{ cs[` vim-surround (replace the given delimiter)
 - `\a{string}<CR>` align code on {string}
 - `\d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
-- `\w` easymotion leader key (see `:help easymotion`)
+- `\\` easymotion leader key (see `:help easymotion`)
 - `\c<space>` comment line/selection
 - `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
 - `K` split the current line
 - `M` search man
 - `Y` copy to the end of line
-- `<space>` to search
-- `^h ^j ^k ^l` easy move between panes
 
 - `H` `L` previous/next tab
 - `_` `+` reduce/increase pane height
 - `<` `>` reduce/increase pane width
 - `<space>` hide highlighted search matches
-- `\r` [i]solate region
+- `\r` isolate [r]egion
 
-- `\c` perform a single syntax [c]heck
-- `\C` toggle automatic syntax [c]heck
+- `\c` syntax [c]heck
+- `\C` automatic syntax [c]heck
 
-- `\fe` [e]xplore [f]iles
-- `\fo` [o]pen [f]ile (using CtrlP)
+- `\fe` [f]ile: [e]xplore
+- `\fo` [f]ile: [o]pen
 
-- `\te` [e]xplore [t]ags
+- `\te` [t]ags: [e]xplore
 
-- `\be` [e]xplore the buffers
-- `\bo` [o]pen [b]uffer
+- `\be` [b]buffer: [e]xplore
+- `\bo` [b]buffer: [o]pen
 
-- `\ve` [e]dit [v]imrc
-- `\vs` [s]ource [v]imrc
+- `\ve` [v]imrc: [e]dit
+- `\vs` [v]imrc: [s]ource
 
-- `]n` and `[n` to jump the previous/next conflict marker
+- `]n` and `[n` jump to the previous/next conflict marker
 
-- `^_` expand to (x)html
-- `^f` find the next empty (x)html tag
+- `^h` expand to html
+- `^f` find the next empty html tag
+- `^_` close html tag
+
+- `crs` convert to `snake_case`
+- `crm` convert to `MixedCase`
+- `crc` convert to `camelCase`
+- `cru` convert to `UPPER_CASE`
+
+- `[<space>` add one line above the cursor (don't move the cursor)
+- `[<space>` add one line below the cursor (don't move the cursor)
+- `gO` add one line above the cursor (move the cursor)
+- `go` add one line below the cursor (move the cursor)
+
+- `\bq` [b]uffer: [q]uit
+- `\tn` [t]ab: [n]ew
+- `\tq` [t]ab: [q]uit
 
 ## Insert mode
 
 - `jj` leave insert mode
-- `^_` expand to (x)html
-- `^f` find the next empty (x)html tag
+- `^h` expand to html
+- `^f` find the next empty html tag
+- `^_` close html tag
 
 - `II` go to start of line
 - `AA` go to end of line
 - `CC` replace to the end of line
 - `OO` insert one line above and move the cursor on it
 - `^o^o` insert one line below and move the cursor on it
-
-- `^Wh ^Wj ^Wk ^Wl` exit insert mode and change pane
+- `JJ` join the current line with the line below (keep the cursor in place)
 
 ## Command line mode
 
-- `jj` leave command line mode
-
-- `:A` alternate between .c and .h
-
+- `:A` alternate between .c/.h, .cpp/.hpp, etc...
 - `:Tab /<regex>` align lines matching the given regex
-
-- `:tn` create a new tab
-- `:tm` move the current tab
-- `:tq` quit the current tab
-- `:bq` quit the current buffer
-
-- `:Ack` search in the project using **Ack**
+- `:Ack` search from the working directory using **Ack**
 
 ## Visual mode
 
