@@ -201,7 +201,6 @@ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "norm
 " {{{ Indentation / Tabulations
 
 set autoindent          " auto-indentation (most of time override by plugins)
-set copyindent          " copy the previous indentation on autoindenting
 set smarttab            " insert shiftwidth spaces instead of tabs
 set expandtab           " replace tabs by spaces
 autocmd VimEnter * set shiftwidth=2  " n spaces when using <Tab>
