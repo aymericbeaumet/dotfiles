@@ -119,6 +119,7 @@ alias j='jobs' ; compdef j=jobs
 alias m=man ; compdef m=man
 alias g=git ; compdef g=git
 
+alias -g A=' | awk'
 alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
 alias -g L=' | less'
 alias -g H=' | head'
