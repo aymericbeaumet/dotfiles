@@ -28,7 +28,6 @@ NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'othree/html5.vim'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'phpcomplete.vim'
-NeoBundle 'suan/vim-instant-markdown'
 NeoBundle 'tpope/vim-git'
 NeoBundle 'tpope/vim-markdown'
 
@@ -380,7 +379,7 @@ endfunction
 
 " buffergator
 let g:buffergator_suppress_keymaps = 1 " delete default keymaps
-let g:buffergator_viewport_split_policy = 'B' " split on the bottom of the screen
+let g:buffergator_viewport_split_policy = 'L' " split on the bottom of the screen
 nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 
 " CtrlP
@@ -419,10 +418,13 @@ let NERDTreeMinimalUI = 1 " hide superfluous stuff
 nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
 
 " neocomplcache
-let g:neocomplcache_enable_at_startup = 1 " start completion on vim startup
-let g:neocomplcache_enable_smart_case = 1 " same as vim `smartcase`
-let g:neocomplcache_auto_completion_start_length = 2 " do not autocomplete word shorter than 2 characters
-let g:neocomplcache_max_list = 20 " max number of suggestions
+let g:acp_enableAtStartup = 0 " Disable AutoComplPop.
+let g:neocomplcache_enable_at_startup = 1 " Use neocomplcache.
+let g:neocomplcache_enable_smart_case = 1 " Use smartcase.
+if !exists('g:neocomplcache_omni_patterns') | let g:neocomplcache_omni_patterns = {} | endif
+let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
@@ -457,7 +459,12 @@ let g:tagbar_autoclose = 1 " close tagbar when opening a tag
 let g:tagbar_show_visibility = 1 " show public/private/protected
 let g:tagbar_compact = 1 " hide superfluous stuff
 let g:tagbar_width = 40 " set tagbar width
+let g:tagbar_left = 1 " set tagbar pane onthe left side
 nnoremap <silent> <Leader>te :TagbarToggle<CR>
+
+" vim shell
+autocmd FileType vimshell call vimshell#altercmd#define('g', 'git')
+nnoremap <Leader>s :VimShell<CR>
 
 " winresizer
 let g:winresizer_start_key = '<C-W><C-W>'

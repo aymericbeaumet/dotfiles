@@ -68,6 +68,8 @@ _Memo_
 - `\be` [b]buffer: [e]xplore
 - `\bo` [b]buffer: [o]pen
 
+- `\ue` [u]ndo: [e]xplore
+
 - `\ve` [v]imrc: [e]dit
 - `\vs` [v]imrc: [s]ource
 
