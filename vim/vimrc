@@ -38,12 +38,12 @@ NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Shougo/neocomplcache.vim'
 NeoBundle 'Shougo/neosnippet.vim'
 NeoBundle 'Shougo/vimproc', {'build': {'mac': 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
-NeoBundle 'VisIncr'
 NeoBundle 'a.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
 NeoBundle 'closetag.vim'
 NeoBundle 'godlygeek/tabular'
+NeoBundle 'https://bitbucket.org/sjl/gundo.vim'
 NeoBundle 'jeetsukumaran/vim-buffergator'
 NeoBundle 'jimsei/winresizer'
 NeoBundle 'kien/ctrlp.vim'
@@ -395,6 +395,14 @@ nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader><Leader>'
+
+" gundo
+let g:gundo_width = 40 " gundo pane width
+let g:gundo_preview_height = 40 " preview height
+let g:gundo_preview_bottom = 1 " preview on file bottom (not in pane)
+let g:gundo_help = 0 " disable help in gundo pane
+let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
+nnoremap <Leader>ue :GundoToggle<CR>
 
 " multiple cursors
 vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
