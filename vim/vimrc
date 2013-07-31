@@ -63,6 +63,8 @@ NeoBundle 'tpope/vim-speeddating'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tristen/vim-sparkup'
+NeoBundle 'xolox/vim-easytags'
+NeoBundle 'xolox/vim-misc'
 
 NeoBundleCheck " check installation
 
@@ -76,7 +78,6 @@ set t_Co=256
 set background=dark
 silent! colorscheme wombat256mod
 hi CursorLine cterm=bold
-set synmaxcol=400       " don't try to highlight long lines
 
 " }}}
 
@@ -108,7 +109,7 @@ set encoding=utf-8      " ensure proper encoding
 set ttyfast             " welcome to the 20th century guys
 set modelines=0         " don't care about modeline
 set fileformats=unix,mac,dos " support all three newline formats
-set tags=./.tags;,~/.vimtags " define tags file path
+set tags=tags;/         " define tags file path
 set cryptmethod="blowfish" " define strong crypt method
 set noswapfile          " disable swap files
 
@@ -394,6 +395,12 @@ nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader><Leader>'
+
+" easytag
+"let g:easytags_by_filetype = 1 " separate tag files for each languages (https://github.com/xolox/vim-easytags/issues/60)
+let g:easytags_include_members = 1 " more complete tag files for C++ and Java
+let g:easytags_resolve_links = 1 " follow symlinks
+let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
 
 " gundo
 let g:gundo_width = 40 " gundo pane width
