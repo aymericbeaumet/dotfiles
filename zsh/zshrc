@@ -172,6 +172,10 @@ bindkey '^[[1;5C'	forward-word                        # Ctrl ->
 bindkey '^[[3~'		delete-char                         # Delete
 
 bindkey '^R' history-incremental-search-backward      # Backward search
+bindkey '^N' history-search-forward
+bindkey '^P' history-search-backward
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
 
 
 ###############
