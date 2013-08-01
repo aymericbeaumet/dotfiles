@@ -254,7 +254,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
 " Themes "
 """"""""""
 
-" Only one of the following theme will be loaded (using `NeoBundleSource`)
+" Only one of the following themes will be loaded (using `NeoBundleSource`)
 
 NeoBundleLazy 'croaker/mustang-vim'
 let bundle = neobundle#get('mustang-vim')
