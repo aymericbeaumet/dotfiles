@@ -38,6 +38,7 @@ NeoBundle 'Shougo/neocomplcache.vim'
 NeoBundle 'Shougo/neosnippet.vim'
 NeoBundle 'Shougo/vimproc', {'build': {'mac': 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
 NeoBundle 'a.vim'
+NeoBundle 'abeaumet/ack.vim'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'chrisbra/NrrwRgn'
 NeoBundle 'closetag.vim'
@@ -48,7 +49,6 @@ NeoBundle 'jimsei/winresizer'
 NeoBundle 'kien/ctrlp.vim'
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'matchit.zip'
-NeoBundle 'mileszs/ack.vim'
 NeoBundle 'myusuf3/numbers.vim'
 NeoBundle 'nelstrom/vim-visual-star-search'
 NeoBundle 'scrooloose/nerdcommenter'
@@ -374,9 +374,23 @@ function! LoadXMLConfiguration()
   setl omnifunc=xmlcomplete#CompleteTags
 endfunction
 
+" text files
+autocmd FileType text call LoadMarkdownConfiguration()
+function! LoadMarkdownConfiguration()
+  setl formatoptions=tcroqn2
+  setl spell
+  highlight SpellBad cterm=underline
+  highlight SpellCap cterm=underline
+  highlight SpellLocal cterm=underline
+  highlight SpellRare cterm=underline
+endfunction
+
 " }}}
 
 " {{{ Plugins extra-configuration
+
+" ack.vim
+let g:ack_autoclose = 1 " automatically closing the quickfix window
 
 " buffergator
 let g:buffergator_suppress_keymaps = 1 " delete default keymaps
@@ -385,12 +399,16 @@ nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 
 " CtrlP
 let g:ctrlp_map = '<Leader>fo'
-let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])' " this files will be ignored in completion
-let g:ctrlp_switch_buffer = 'e' " if the file exists in a buffer in the current tab, jump to it
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ } " will be ignored in completion (the `wildignore` option is considered before these pattenrs)
+let g:ctrlp_switch_buffer = 't' " if the file exists in a buffer in the current tab, jump to it
 let g:ctrlp_working_path_mode = 'ra' " the nearest ancestor containing a SCM configuration file (.git, ...)
 let g:ctrlp_max_files = 1000 " avoid lag if launched in a top directory (~ for example)
 let g:ctrlp_max_depth = 10 " same as above
 let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
+let g:ctrlp_show_hidden = 1 " search for hidden files
+let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
 nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 " easymotion
@@ -468,10 +486,6 @@ let g:tagbar_compact = 1 " hide superfluous stuff
 let g:tagbar_width = 40 " set tagbar width
 let g:tagbar_left = 1 " set tagbar pane onthe left side
 nnoremap <silent> <Leader>te :TagbarToggle<CR>
-
-" vim shell
-autocmd FileType vimshell call vimshell#altercmd#define('g', 'git')
-nnoremap <Leader>s :VimShell<CR>
 
 " winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
