@@ -1,12 +1,14 @@
 " break away from old vi compatibility
 set nocompatible
 " clear all autocommands
-autocmd!
+au!
 " found vim config file and config dir
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
-" {{{ NeoBundle
+
+
+" {{{ NeoBundle -----------------------------------------------*vimrc-neobundle*
 
 let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
 if (exists("g:bundle_dir"))
@@ -14,63 +16,150 @@ if (exists("g:bundle_dir"))
 else
   call neobundle#rc() " load NeoBundle
 endif
+let g:neobundle#types#git#default_protocol = 'https' " define downloading protocol
 
-" Load NeoBundle plugin first
-NeoBundleFetch 'Shougo/neobundle.vim'
 
-" Themes plugins
-NeoBundle 'croaker/mustang-vim' "mustang
-NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', { 'name': 'ir_black.vim', 'script_type': 'colors' } "ir_black
-NeoBundle 'wombat256.vim' "wombat256mod
+"""""""""""""""""""""""""""""""
+" Load NeoBundle plugin first "
+"""""""""""""""""""""""""""""""
 
-" Languages plugins
-NeoBundle '2072/PHP-Indenting-for-VIm'
-NeoBundle 'othree/html5.vim'
+NeoBundleFetch 'Shougo/neobundle.vim', {
+      \ 'depends': [
+          \ [
+              \ 'Shougo/vimproc.vim', {
+                  \ 'build': {
+                      \ 'unix': 'make-fmake_unix.mak',
+                      \ 'mac': 'make-fmake_mac.mak',
+                  \ }
+              \ }
+          \ ]
+      \ ]
+  \ }
+
+
+""""""""""""""""""
+" Themes plugins "
+""""""""""""""""""
+
+"mustang
+NeoBundle 'croaker/mustang-vim'
+
+"ir_black
+NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', {
+      \ 'name': 'ir_black.vim',
+      \ 'script_type': 'colors',
+  \ }
+
+"wombat256mod
+NeoBundle 'wombat256.vim'
+
+
+"""""""""""""""""""""
+" Languages plugins "
+"""""""""""""""""""""
+
+NeoBundleLazy '2072/PHP-Indenting-for-VIm' " php only
+
+NeoBundleLazy 'othree/html5.vim'           " html only
+
+NeoBundleLazy 'phpcomplete.vim'            " php only
+
 NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'phpcomplete.vim'
+
 NeoBundle 'tpope/vim-git'
+
 NeoBundle 'tpope/vim-markdown'
 
-" Tools plugins
-NeoBundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-NeoBundle 'Lokaltog/vim-easymotion'
-NeoBundle 'Shougo/neocomplcache.vim'
-NeoBundle 'Shougo/neosnippet.vim'
-NeoBundle 'Shougo/vimproc', {'build': {'mac': 'make -f make_mac.mak', 'unix' : 'make -f make_unix.mak'}}
-NeoBundle 'a.vim'
-NeoBundle 'abeaumet/ack.vim'
-NeoBundle 'airblade/vim-rooter'
-NeoBundle 'chrisbra/NrrwRgn'
-NeoBundle 'closetag.vim'
-NeoBundle 'godlygeek/tabular'
-NeoBundle 'https://bitbucket.org/sjl/gundo.vim'
-NeoBundle 'jeetsukumaran/vim-buffergator'
-NeoBundle 'jimsei/winresizer'
-NeoBundle 'kien/ctrlp.vim'
-NeoBundle 'majutsushi/tagbar'
-NeoBundle 'matchit.zip'
-NeoBundle 'myusuf3/numbers.vim'
-NeoBundle 'nelstrom/vim-visual-star-search'
-NeoBundle 'scrooloose/nerdcommenter'
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'scrooloose/syntastic'
-NeoBundle 'terryma/vim-multiple-cursors'
-NeoBundle 'tpope/vim-abolish'
-NeoBundle 'tpope/vim-eunuch'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-repeat'
-NeoBundle 'tpope/vim-speeddating'
-NeoBundle 'tpope/vim-surround'
-NeoBundle 'tpope/vim-unimpaired'
-NeoBundle 'tristen/vim-sparkup'
-NeoBundle 'xolox/vim-easytags'
-NeoBundle 'xolox/vim-misc'
 
-NeoBundleCheck " check installation
+"""""""""""""""""
+" Tools plugins "
+"""""""""""""""""
+
+NeoBundleLazy 'a.vim'               " c/cpp only
+
+NeoBundleLazy 'closetag.vim'        " xml/html only
+
+NeoBundleLazy 'mattn/zencoding-vim' " xml/html only
+
+NeoBundle 'Lokaltog/powerline', {
+      \ 'rtp': 'powerline/bindings/vim/'
+  \ }
+
+NeoBundle 'Lokaltog/vim-easymotion'
+
+NeoBundle 'SirVer/ultisnips'
+
+NeoBundle 'Valloric/YouCompleteMe', {
+      \ 'build': {
+          \ 'unix': './install.sh --clang-completer',
+          \ 'mac': './install.sh --clang-completer',
+      \ },
+      \ 'vim_version': '7.3.584',
+  \ }
+
+NeoBundle 'abeaumet/ack.vim'
+
+NeoBundle 'airblade/vim-rooter'
+
+NeoBundle 'chrisbra/NrrwRgn'
+
+NeoBundle 'godlygeek/tabular'
+
+NeoBundle 'https://bitbucket.org/sjl/gundo.vim'
+
+NeoBundle 'jeetsukumaran/vim-buffergator'
+
+NeoBundle 'jimsei/winresizer'
+
+NeoBundle 'kien/ctrlp.vim'
+
+NeoBundle 'majutsushi/tagbar'
+
+NeoBundle 'matchit.zip'
+
+NeoBundle 'myusuf3/numbers.vim'
+
+NeoBundle 'nelstrom/vim-visual-star-search'
+
+NeoBundle 'scrooloose/nerdcommenter'
+
+NeoBundle 'scrooloose/nerdtree'
+
+NeoBundle 'scrooloose/syntastic'
+
+NeoBundle 'terryma/vim-multiple-cursors'
+
+NeoBundle 'tpope/vim-abolish'
+
+NeoBundle 'tpope/vim-eunuch'
+
+NeoBundle 'tpope/vim-fugitive'
+
+NeoBundle 'tpope/vim-repeat'
+
+NeoBundle 'tpope/vim-speeddating'
+
+NeoBundle 'tpope/vim-surround'
+
+NeoBundle 'tpope/vim-unimpaired'
+
+NeoBundle 'xolox/vim-easytags', {
+      \ 'depends': [
+          \ 'xolox/vim-misc'
+      \ ]
+  \ }
+
+""""""""""""""""""""""
+" Check installation "
+""""""""""""""""""""""
+
+NeoBundleCheck
 
 " }}}
 
-" {{{ File type / Syntax detection / Theme
+
+
+" {{{ File type / Syntax detection / Theme ---------------------*vimrc-filetype*
 
 syntax enable
 filetype plugin indent on
@@ -81,7 +170,9 @@ hi CursorLine cterm=bold
 
 " }}}
 
-" {{{ Functions
+
+
+" {{{ Functions -----------------------------------------------*vimrc-functions*
 
 " https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
 " Clean all the trailing whitespaces in the current buffer
@@ -99,7 +190,9 @@ endfunction
 
 " }}}
 
-" {{{ Global options
+
+
+" {{{ Global options --------------------------------------------*vimrc-options*
 
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
@@ -115,23 +208,21 @@ set noswapfile          " disable swap files
 
 set backup              " enable backup files
 set backupdir=~/.vim/tmp/backup// " backup files directory
-if !isdirectory(expand(&backupdir))
-  silent! call mkdir(expand(&backupdir), "p")
-endif
+au VimEnter * if !isdirectory(expand(&backupdir)) | silent! call mkdir(expand(&backupdir), "p") | endif
 
 set undofile            " enable undo files
 set undolevels=1000     " number of undo level
 set undoreload=10000    " number of lines to save for undo
 set undodir=~/.vim/tmp/undo// " undo files directory
-if !isdirectory(expand(&undodir))
-  silent! call mkdir(expand(&undodir), "p")
-endif
+au VimEnter * if !isdirectory(expand(&undodir)) | silent! call mkdir(expand(&undodir), "p") | endif
 
 set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
 
 " }}}
 
-" {{{ User Interface
+
+
+" {{{ User Interface -------------------------------------------------*vimrc-ui*
 
 set timeoutlen=500      " time to wait when a part of a maped sequence is typped
 set ttimeoutlen=0       " instant insert mode exit using escape
@@ -154,7 +245,9 @@ set tabpagemax=20       " allow lots of tabs
 
 " }}}
 
-" {{{ Text editing && Search behavior
+
+
+" {{{ Text editing && Search behavior ----------------------------*vimrc-search*
 
 set backspace=2         " fix backspace (on some OS/term)
 set ignorecase          " ignore case when searching
@@ -171,9 +264,9 @@ set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
 set gdefault            " default substitute g flag
-autocmd VimEnter * set hlsearch " highlight last search matches
-autocmd InsertEnter * :setlocal nohlsearch " disable search highlighting in insert mode
-autocmd InsertLeave * :setlocal hlsearch
+au VimEnter * set hlsearch " highlight last search matches
+au InsertEnter * :setlocal nohlsearch " disable search highlighting in insert mode
+au InsertLeave * :setlocal hlsearch
 
 " spell checker
 set spelllang=en        " configure spell language
@@ -191,26 +284,30 @@ highlight TrailingWhitespace ctermbg=darkyellow
 match TrailingWhitespace /\s\+$/
 
 " clean trailing whitespaces on file saving
-autocmd BufWritePre * :call StripTrailingWhitespaces()
+au BufWritePre * :call StripTrailingWhitespaces()
 
 " remember last position in file
-autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
 " }}}
 
-" {{{ Indentation / Tabulations
+
+
+" {{{ Indentation / Tabulations ------------------------------*vimrc-indent-tab*
 
 set autoindent          " auto-indentation (most of time override by plugins)
 set smarttab            " insert shiftwidth spaces instead of tabs
 set expandtab           " replace tabs by spaces
-autocmd VimEnter * set shiftwidth=2  " n spaces when using <Tab>
-autocmd VimEnter * set softtabstop=2 " n spaces when using <Tab>
-autocmd VimEnter * set tabstop=2     " n spaces when using <Tab>
+au VimEnter * set shiftwidth=2  " n spaces when using <Tab>
+au VimEnter * set softtabstop=2 " n spaces when using <Tab>
+au VimEnter * set tabstop=2     " n spaces when using <Tab>
 set hidden              " when a tab is closed, do not delete the buffer
 
 " }}}
 
-" {{{ Errors
+
+
+" {{{ Errors -----------------------------------------------------*vimrc-errors*
 
 " turn off error bells
 set noerrorbells
@@ -219,7 +316,9 @@ set t_vb=
 
 " }}}
 
-" {{{ Binds
+
+
+" {{{ Binds -------------------------------------------------------*vimrc-binds*
 
 " easy switch between tabs
 nnoremap <silent> <S-H> gT
@@ -268,8 +367,8 @@ nnoremap <silent> J myJ`y
 nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
 " insert blank lines without entering insert mode
-nnoremap <silent> go o<Esc>
-nnoremap <silent> gO O<Esc>
+nnoremap <silent> go o<C-U><Esc>
+nnoremap <silent> gO O<C-U><Esc>
 
 " disable annoying keys
 map <silent> <F1> <Nop>
@@ -296,22 +395,25 @@ nnoremap <silent> <leader>tq :tabclose<CR>
 
 " }}}
 
-" {{{ Language specific configuration
 
-autocmd FileType c,cpp call LoadCConfiguration()
+
+" {{{ Language specific configuration -------------------------*vimrc-languages*
+
+au FileType c,cpp call LoadCConfiguration()
 function! LoadCConfiguration()
+  NeoBundleSource 'a.vim'
   set omnifunc=ccomplete#Complete
 endfunction
 
 " CSS
-autocmd FileType css call LoadCSSConfiguration()
+au FileType css call LoadCSSConfiguration()
 function! LoadCSSConfiguration()
   setl omnifunc=csscomplete#CompleteCSS
   setl iskeyword+=-
 endfunction
 
 " Git commit
-autocmd FileType gitcommit call LoadGitCommitConfiguration()
+au FileType gitcommit call LoadGitCommitConfiguration()
 function! LoadGitCommitConfiguration()
   setl spell
   highlight SpellBad cterm=underline
@@ -321,7 +423,7 @@ function! LoadGitCommitConfiguration()
 endfunction
 
 " JavaScript
-autocmd FileType javascript call LoadJavaScriptConfiguration()
+au FileType javascript call LoadJavaScriptConfiguration()
 function! LoadJavaScriptConfiguration()
   setl omnifunc=javascriptcomplete#CompleteJS
   setl shiftwidth=4
@@ -330,14 +432,17 @@ function! LoadJavaScriptConfiguration()
 endfunction
 
 " HTML
-autocmd FileType html call LoadHTMLConfiguration()
+au FileType html call LoadHTMLConfiguration()
 function! LoadHTMLConfiguration()
+  NeoBundleSource 'closetag.vim'
+  NeoBundleSource 'html5.vim'
+  NeoBundleSource 'zencoding-vim'
   setl omnifunc=htmlcomplete#CompleteTags
   setl iskeyword+=-
 endfunction
 
 " Markdown
-autocmd FileType markdown call LoadMarkdownConfiguration()
+au FileType markdown call LoadMarkdownConfiguration()
 function! LoadMarkdownConfiguration()
   setl omnifunc=htmlcomplete#CompleteTags
   setl formatoptions=tcroqn2 comments=n:>
@@ -349,8 +454,10 @@ function! LoadMarkdownConfiguration()
 endfunction
 
 " PHP
-autocmd FileType php call LoadPHPConfiguration()
+au FileType php call LoadPHPConfiguration()
 function! LoadPHPConfiguration()
+  NeoBundleSource 'PHP-Indenting-for-VIm'
+  NeoBundleSource 'phpcomplete.vim'
   setl omnifunc=phpcomplete#CompletePHP
   setl iskeyword-=$
   setl iskeyword+=:
@@ -360,7 +467,7 @@ function! LoadPHPConfiguration()
 endfunction
 
 " Python
-autocmd FileType python call LoadPythonConfiguration()
+au FileType python call LoadPythonConfiguration()
 function! LoadPythonConfiguration()
   setl omnifunc=pythoncomplete#Complete
   setl shiftwidth=4
@@ -369,13 +476,15 @@ function! LoadPythonConfiguration()
 endfunction
 
 " XML
-autocmd FileType xml call LoadXMLConfiguration()
+au FileType xml call LoadXMLConfiguration()
 function! LoadXMLConfiguration()
+  NeoBundleSource 'closetag.vim'
+  NeoBundleSource 'zencoding-vim'
   setl omnifunc=xmlcomplete#CompleteTags
 endfunction
 
 " text files
-autocmd FileType text call LoadMarkdownConfiguration()
+au FileType text call LoadMarkdownConfiguration()
 function! LoadMarkdownConfiguration()
   setl formatoptions=tcroqn2
   setl spell
@@ -387,7 +496,9 @@ endfunction
 
 " }}}
 
-" {{{ Plugins extra-configuration
+
+
+" {{{ Plugins extra-configuration -----------------------*vimrc-plugins-options*
 
 " ack.vim
 let g:ack_autoclose = 1 " automatically closing the quickfix window
@@ -400,7 +511,7 @@ nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 " CtrlP
 let g:ctrlp_map = '<Leader>fo'
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+      \ 'dir':  '\v[\/]\.(git|hg|svn)$'
   \ } " will be ignored in completion (the `wildignore` option is considered before these pattenrs)
 let g:ctrlp_switch_buffer = 't' " if the file exists in a buffer in the current tab, jump to it
 let g:ctrlp_working_path_mode = 'ra' " the nearest ancestor containing a SCM configuration file (.git, ...)
@@ -442,35 +553,23 @@ let NERDTreeWinSize = 40 " tree width
 let NERDTreeMinimalUI = 1 " hide superfluous stuff
 nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
 
-" neocomplcache
-let g:acp_enableAtStartup = 0 " Disable AutoComplPop.
-let g:neocomplcache_enable_at_startup = 1 " Use neocomplcache.
-let g:neocomplcache_enable_smart_case = 1 " Use smartcase.
-if !exists('g:neocomplcache_omni_patterns') | let g:neocomplcache_omni_patterns = {} | endif
-let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
-inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
-inoremap <expr> <CR> pumvisible() ? "\<C-Y>\<CR>" : "\<CR>"
-
 " php indent
 let g:PHP_vintage_case_default_indent = 1 " change indentation method
 
 " powerline
 set noshowmode " hide the duplicate mode in bottom status bar
 
-" sparkup
-let g:sparkupExecuteMapping = '<C-H>'
-let g:sparkupNextMapping = '<C-F>'
-
 " syntastic
-let g:syntastic_mode_map = { 'mode': 'passive' } " passive
+let g:syntastic_mode_map = {
+      \ 'mode': 'passive'
+  \ }
 let g:syntastic_check_on_wq = 0 " disable on save
 let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
 let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
 let g:syntastic_c_compiler_options = "-Wall -Wextra"
-let g:syntastic_cpp_checkers = [ 'cpplint' ]
+let g:syntastic_cpp_checkers = [
+      \ 'cpplint'
+  \ ]
 nnoremap <silent> <Leader>c :SyntasticCheck<CR>
 nnoremap <silent> <Leader>C :SyntasticToggleMode<CR>
 
@@ -489,5 +588,9 @@ nnoremap <silent> <Leader>te :TagbarToggle<CR>
 
 " winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
+
+" zencoding
+let g:user_zen_leader_key = '<C-E>'
+let g:user_zen_mode='a' " enable all function in all mode
 
 " }}}

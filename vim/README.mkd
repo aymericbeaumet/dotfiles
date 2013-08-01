@@ -18,7 +18,7 @@ _Memo_
 - `` ` ` `` jump to the latest position (without the space)
 - `ga` print the ascii value of the character under the cursor
 - `@@` execute last macro
-- `zg` add a word to the dictionary
+- `zg` add a correct word to the dictionary
 - `zw` remove a word from the dictionary
 - `z=` show spell proposition(s) from dictionary
 - `]s` and `[s` jump to the previous/next spell error
@@ -41,54 +41,36 @@ _Memo_
 
 - `^w^w` easy window resizing
 
-- `cs' cs" cs( cs{ cs[` vim-surround (replace the given delimiter)
 - `\a{string}<CR>` align code on {string}
 - `\d{move}` [d]elete without storing it in the buffer (works with `d`, `D`, `x`, `X`)
-- `\\` easymotion leader key (see `:help easymotion`)
+- `\\w` easymotion leader key (see `:help easymotion`)
 - `\c<space>` comment line/selection
 - `^N ^P ^X` multiple cursors (see `:help multiple-cursors`)
 - `K` split the current line
 - `M` search man
 - `Y` copy to the end of line
-
 - `H` `L` previous/next tab
-- `_` `+` reduce/increase pane height
-- `<` `>` reduce/increase pane width
 - `<space>` hide highlighted search matches
 - `\r` isolate [r]egion
-
 - `\c` syntax [c]heck
 - `\C` automatic syntax [c]heck
-
 - `\fe` [f]ile: [e]xplore
 - `\fo` [f]ile: [o]pen
-
 - `\te` [t]ags: [e]xplore
-
 - `\be` [b]buffer: [e]xplore
 - `\bo` [b]buffer: [o]pen
-
 - `\ue` [u]ndo: [e]xplore
-
 - `\ve` [v]imrc: [e]dit
 - `\vs` [v]imrc: [s]ource
-
 - `]n` and `[n` jump to the previous/next conflict marker
-
-- `^h` expand to html
-- `^f` find the next empty html tag
-- `^_` close html tag
-
 - `crs` convert to `snake_case`
 - `crm` convert to `MixedCase`
 - `crc` convert to `camelCase`
 - `cru` convert to `UPPER_CASE`
-
 - `[<space>` add one line above the cursor (don't move the cursor)
 - `[<space>` add one line below the cursor (don't move the cursor)
 - `gO` add one line above the cursor (move the cursor)
 - `go` add one line below the cursor (move the cursor)
-
 - `\bq` [b]uffer: [q]uit
 - `\tn` [t]ab: [n]ew
 - `\tq` [t]ab: [q]uit
@@ -96,9 +78,6 @@ _Memo_
 ## Insert mode
 
 - `jj` leave insert mode
-- `^h` expand to html
-- `^f` find the next empty html tag
-- `^_` close html tag
 
 - `II` go to start of line
 - `AA` go to end of line
@@ -115,4 +94,8 @@ _Memo_
 
 ## Visual mode
 
-- `S<xml tag>` open and close the given tag around the selected area
+- `S<delimiter>` write delimiter around the selected area
+
+## All mode
+
+- `^e` ZenCoding leader key (:help zencoding)
