@@ -1,14 +1,15 @@
 " break away from old vi compatibility
 set nocompatible
 " clear all autocommands
-au!
+autocmd!
+
+
+
+" {{{ NeoBundle ---------------------------------------------- *vimrc-neobundle*
+
 " found vim config file and config dir
 let s:vim_conf = expand('<sfile>:p')
 let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
-
-
-
-" {{{ NeoBundle -----------------------------------------------*vimrc-neobundle*
 
 let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
 if (exists("g:bundle_dir"))
@@ -159,10 +160,17 @@ NeoBundleCheck
 
 
 
-" {{{ File type / Syntax detection / Theme ---------------------*vimrc-filetype*
+" {{{ File type / Syntax detection / Theme -------------------- *vimrc-filetype*
 
 syntax enable
 filetype plugin indent on
+
+" }}}
+
+
+
+" {{{ Theme ------------------------------------------------------ *vimrc-theme*
+
 set t_Co=256
 set background=dark
 silent! colorscheme wombat256mod
@@ -171,8 +179,7 @@ hi CursorLine cterm=bold
 " }}}
 
 
-
-" {{{ Functions -----------------------------------------------*vimrc-functions*
+" {{{ Functions ---------------------------------------------- *vimrc-functions*
 
 " https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
 " Clean all the trailing whitespaces in the current buffer
@@ -192,7 +199,7 @@ endfunction
 
 
 
-" {{{ Global options --------------------------------------------*vimrc-options*
+" {{{ Global options ------------------------------------------- *vimrc-options*
 
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
@@ -222,7 +229,7 @@ set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
 
 
 
-" {{{ User Interface -------------------------------------------------*vimrc-ui*
+" {{{ User Interface ------------------------------------------------ *vimrc-ui*
 
 set timeoutlen=500      " time to wait when a part of a maped sequence is typped
 set ttimeoutlen=0       " instant insert mode exit using escape
@@ -247,7 +254,7 @@ set tabpagemax=20       " allow lots of tabs
 
 
 
-" {{{ Text editing && Search behavior ----------------------------*vimrc-search*
+" {{{ Text editing && Search behavior --------------------------- *vimrc-search*
 
 set backspace=2         " fix backspace (on some OS/term)
 set ignorecase          " ignore case when searching
@@ -293,7 +300,7 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'
 
 
 
-" {{{ Indentation / Tabulations ------------------------------*vimrc-indent-tab*
+" {{{ Indentation / Tabulations ----------------------------- *vimrc-indent-tab*
 
 set autoindent          " auto-indentation (most of time override by plugins)
 set smarttab            " insert shiftwidth spaces instead of tabs
@@ -307,7 +314,7 @@ set hidden              " when a tab is closed, do not delete the buffer
 
 
 
-" {{{ Errors -----------------------------------------------------*vimrc-errors*
+" {{{ Errors ---------------------------------------------------- *vimrc-errors*
 
 " turn off error bells
 set noerrorbells
@@ -318,7 +325,7 @@ set t_vb=
 
 
 
-" {{{ Binds -------------------------------------------------------*vimrc-binds*
+" {{{ Binds ------------------------------------------------------ *vimrc-binds*
 
 " easy switch between tabs
 nnoremap <silent> <S-H> gT
@@ -397,7 +404,7 @@ nnoremap <silent> <leader>tq :tabclose<CR>
 
 
 
-" {{{ Language specific configuration -------------------------*vimrc-languages*
+" {{{ Language specific configuration ------------------------ *vimrc-languages*
 
 au FileType c,cpp call LoadCConfiguration()
 function! LoadCConfiguration()
@@ -498,7 +505,7 @@ endfunction
 
 
 
-" {{{ Plugins extra-configuration -----------------------*vimrc-plugins-options*
+" {{{ Plugins extra-configuration ---------------------- *vimrc-plugins-options*
 
 " ack.vim
 let g:ack_autoclose = 1 " automatically closing the quickfix window
