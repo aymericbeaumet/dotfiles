@@ -46,23 +46,51 @@ precmd_functions=(
 )
 
 
+##########
+# Colors #
+##########
+
+COLOR_RESET=$'%{\033[0m%}'
+
+COLOR_BOLD=$'%{\033[1m%}'
+COLOR_UNDERLINE=$'%{\033[4m%}'
+COLOR_INVERSE=$'%{\033[7m%}'
+
+COLOR_BLUE=$'%{\033[38;05;75m%}'
+COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
+COLOR_GREEN=$'%{\033[38;05;34m%}'
+COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
+COLOR_YELLOW=$'%{\033[38;05;3m%}'
+COLOR_RED=$'%{\033[38;05;1m%}'
+COLOR_ORANGE=$'%{\033[38;05;202m%}'
+
+
 ################
 # Autocomplete #
 ################
 
+# enable advanced completion
 autoload -U compinit && compinit
 
-zstyle ':completion:*' menu select
-zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o'
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=36=31'
-zstyle ':completion::complete:*' use-cache 1
+# cache
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path ~/.zshcache
+
 zstyle ':completion:*' verbose yes
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':completion:*:default' menu 'select=0'
-zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' menu select # enable arrow-key drive interface
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case-insensitive completion
+zstyle ':completion:*:warnings' format "${COLOR_RED}${COLOR_BOLD}%d${COLOR_RESET} not found" # change the warning message when no results were found
+
+zstyle ':completion:*:*:*:*:processes' menu yes select
+zstyle ':completion:*:*:*:*:processes' force-list always
+
+zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o' # ignore compiled files on vim completion
+
+setopt AUTO_REMOVE_SLASH        # autoremove slash when not needed
+setopt AUTO_PARAM_SLASH         # automatically append a slash after a directory
+unsetopt EXTENDED_GLOB          # avoid bad completions
+setopt COMPLETE_ALIASES		      # autocomplete on aliases
+setopt COMPLETE_IN_WORD         # complete word even if the cursor is not after the last character
 
 
 #########
@@ -131,17 +159,19 @@ alias -g N=' &>/dev/null'
 # Binding #
 ###########
 
-# Useful in a term (but vim rules)
-set -o emacs
+# Vim binds!
+bindkey -v
 
-bindkey '^[OH'		beginning-of-line       # HOME
-bindkey '^[OF'		end-of-line             # END
-bindkey '^[[6~'		history-search-forward  # PAGE DOWN
-bindkey '^[[5~'		history-search-backward # PAGE UP
-bindkey '^[[2~'		overwrite-mode          # INSERT
-bindkey '^[[1;5D'	backward-word           # CTRL <-
-bindkey '^[[1;5C'	forward-word            # CTRL ->
-bindkey '^[[3~'		delete-char             # DELETE
+bindkey '^[OH'		beginning-of-line                   # Home
+bindkey '^[OF'		end-of-line                         # End
+bindkey '^[[6~'		history-search-forward              # Page down
+bindkey '^[[5~'		history-search-backward             # Page up
+bindkey '^[[2~'		overwrite-mode                      # Insert
+bindkey '^[[1;5D'	backward-word                       # Ctrl <-
+bindkey '^[[1;5C'	forward-word                        # Ctrl ->
+bindkey '^[[3~'		delete-char                         # Delete
+
+bindkey '^R' history-incremental-search-backward      # Backward search
 
 
 ###############
@@ -156,9 +186,23 @@ export VIEWER=`which open 2>/dev/null || which eog 2>/dev/null || echo $VIEWER`
 export PAGER=`which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER`
 export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null || echo $SHELL`
 
+
+###########
+# History #
+###########
+
 export SAVEHIST=10000
 export HISTSIZE=10000
 export HISTFILE=~/.zsh_history
+
+setopt APPEND_HISTORY           # allow multiple parallel zsh sessions in history
+setopt EXTENDED_HISTORY         # more information in history (beginning time, elpased time and command)
+setopt HIST_IGNORE_DUPS         # avoid duplicate command lines in history
+setopt HIST_REDUCE_BLANKS       # remove superfluous blanks from history
+setopt HIST_IGNORE_SPACE        # do not store a command in history if it begins with a space
+setopt HIST_NO_STORE            # do not store the `history` command
+setopt HIST_FIND_NO_DUPS        # do not display dups when searching using ^R
+setopt HIST_NO_FUNCTIONS        # remove function definition from history
 
 
 ######
@@ -203,22 +247,6 @@ setopt AUTO_CD			            # change directory without cd
 setopt CDABLE_VARS              # autocd in ~ directory if the folder isn't found in the current directory
 setopt PUSHD_IGNORE_DUPS        # don't push dup to cd history
 
-# Completion
-setopt AUTO_REMOVE_SLASH        # autoremove slash when not needed
-unsetopt EXTENDED_GLOB          # avoid bad completions
-setopt COMPLETE_ALIASES		      # autocomplete on aliases
-setopt COMPLETE_IN_WORD         # move cursor to the end of the completed word
-
-# History
-setopt APPEND_HISTORY           # allow multiple parallel zsh sessions in history
-setopt EXTENDED_HISTORY         # more information in history (beginning time, elpased time and command)
-setopt HIST_IGNORE_DUPS         # avoid duplicate command lines in history
-setopt HIST_REDUCE_BLANKS       # remove superfluous blanks from history
-setopt HIST_IGNORE_SPACE        # do not store a command in history if it begins with a space
-setopt HIST_NO_STORE            # do not store the `history` command
-setopt HIST_FIND_NO_DUPS        # do not display dups when searching using ^R
-setopt HIST_NO_FUNCTIONS        # remove function definition from history
-
 # Automatic URL escaping
 autoload -Uz url-quote-magic && zle -N self-insert url-quote-magic
 
@@ -234,14 +262,10 @@ unsetopt CORRECT_ALL		        # do not auto correct all command line
 setopt MAIL_WARNING             # warn for new mail
 setopt RC_QUOTES                # allow '' to type a single quoted string
 unsetopt RM_STAR_WAIT           # don't wait after `rm *`
-setopt SUN_KEYBOARD_HACK        # remove the last trailing backquote (if error)
 
 # Job Control
 setopt AUTO_CONTINUE		        # background process stay alive on shell exit
 setopt CHECK_JOBS               # warn about background jobs before shell exit
-
-# Prompt
-setopt TRANSIENT_RPROMPT        # remove right prompt after accepting a command line
 
 # Scripts and Functions
 setopt C_BASES                  # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
@@ -255,15 +279,7 @@ setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar
 # Prompt #
 ##########
 
-# Preload specific colors
-COLOR_RESET=$'%{\033[0m%}'
-COLOR_BLUE=$'%{\033[38;05;75m%}'
-COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
-COLOR_GREEN=$'%{\033[38;05;34m%}'
-COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
-COLOR_YELLOW=$'%{\033[38;05;3m%}'
-COLOR_RED=$'%{\033[38;05;1m%}'
-COLOR_ORANGE=$'%{\033[38;05;202m%}'
+setopt TRANSIENT_RPROMPT        # remove right prompt after accepting a command line
 
 # Git prompt
 if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
