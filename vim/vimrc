@@ -5,175 +5,14 @@ autocmd!
 
 
 
-" {{{ NeoBundle ---------------------------------------------- *vimrc-neobundle*
-
-" found vim config file and config dir
-let s:vim_conf = expand('<sfile>:p')
-let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
-
-let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
-if (exists("g:bundle_dir"))
-  call neobundle#rc(g:bundle_dir) " load NeoBundle
-else
-  call neobundle#rc() " load NeoBundle
-endif
-let g:neobundle#types#git#default_protocol = 'https' " define downloading protocol
-
-
-"""""""""""""""""""""""""""""""
-" Load NeoBundle plugin first "
-"""""""""""""""""""""""""""""""
-
-NeoBundleFetch 'Shougo/neobundle.vim', {
-      \ 'depends': [
-          \ [
-              \ 'Shougo/vimproc.vim', {
-                  \ 'build': {
-                      \ 'unix': 'make-fmake_unix.mak',
-                      \ 'mac': 'make-fmake_mac.mak',
-                  \ }
-              \ }
-          \ ]
-      \ ]
-  \ }
-
-
-""""""""""""""""""
-" Themes plugins "
-""""""""""""""""""
-
-"mustang
-NeoBundle 'croaker/mustang-vim'
-
-"ir_black
-NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', {
-      \ 'name': 'ir_black.vim',
-      \ 'script_type': 'colors',
-  \ }
-
-"wombat256mod
-NeoBundle 'wombat256.vim'
-
-
-"""""""""""""""""""""
-" Languages plugins "
-"""""""""""""""""""""
-
-NeoBundleLazy '2072/PHP-Indenting-for-VIm' " php only
-
-NeoBundleLazy 'othree/html5.vim'           " html only
-
-NeoBundleLazy 'phpcomplete.vim'            " php only
-
-NeoBundle 'pangloss/vim-javascript'
-
-NeoBundle 'tpope/vim-git'
-
-NeoBundle 'tpope/vim-markdown'
-
-
-"""""""""""""""""
-" Tools plugins "
-"""""""""""""""""
-
-NeoBundleLazy 'a.vim'               " c/cpp only
-
-NeoBundleLazy 'closetag.vim'        " xml/html only
-
-NeoBundleLazy 'mattn/zencoding-vim' " xml/html only
-
-NeoBundle 'Lokaltog/powerline', {
-      \ 'rtp': 'powerline/bindings/vim/'
-  \ }
-
-NeoBundle 'Lokaltog/vim-easymotion'
-
-NeoBundle 'SirVer/ultisnips'
-
-NeoBundle 'Valloric/YouCompleteMe', {
-      \ 'build': {
-          \ 'unix': './install.sh --clang-completer',
-          \ 'mac': './install.sh --clang-completer',
-      \ },
-      \ 'vim_version': '7.3.584',
-  \ }
-
-NeoBundle 'abeaumet/ack.vim'
-
-NeoBundle 'airblade/vim-rooter'
-
-NeoBundle 'chrisbra/NrrwRgn'
-
-NeoBundle 'godlygeek/tabular'
-
-NeoBundle 'https://bitbucket.org/sjl/gundo.vim'
-
-NeoBundle 'jeetsukumaran/vim-buffergator'
-
-NeoBundle 'jimsei/winresizer'
-
-NeoBundle 'kien/ctrlp.vim'
-
-NeoBundle 'majutsushi/tagbar'
-
-NeoBundle 'matchit.zip'
-
-NeoBundle 'myusuf3/numbers.vim'
-
-NeoBundle 'nelstrom/vim-visual-star-search'
-
-NeoBundle 'scrooloose/nerdcommenter'
-
-NeoBundle 'scrooloose/nerdtree'
-
-NeoBundle 'scrooloose/syntastic'
-
-NeoBundle 'terryma/vim-multiple-cursors'
-
-NeoBundle 'tpope/vim-abolish'
-
-NeoBundle 'tpope/vim-eunuch'
-
-NeoBundle 'tpope/vim-fugitive'
-
-NeoBundle 'tpope/vim-repeat'
-
-NeoBundle 'tpope/vim-speeddating'
-
-NeoBundle 'tpope/vim-surround'
-
-NeoBundle 'tpope/vim-unimpaired'
-
-NeoBundle 'xolox/vim-easytags', {
-      \ 'depends': [
-          \ 'xolox/vim-misc'
-      \ ]
-  \ }
-
-""""""""""""""""""""""
-" Check installation "
-""""""""""""""""""""""
-
-NeoBundleCheck
-
-" }}}
-
-
-
 " {{{ File type / Syntax detection / Theme -------------------- *vimrc-filetype*
 
 syntax enable
 filetype plugin indent on
 
-" }}}
-
-
-
-" {{{ Theme ------------------------------------------------------ *vimrc-theme*
-
 set t_Co=256
 set background=dark
-silent! colorscheme wombat256mod
+colorscheme wombat256mod
 hi CursorLine cterm=bold
 
 " }}}
@@ -204,13 +43,13 @@ endfunction
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
 set autowrite           " automatically save before :next and :make
-set laststatus=2        " always display status line
 set encoding=utf-8      " ensure proper encoding
-set ttyfast             " welcome to the 20th century guys
+set ttyfast             " we have a fast terminal
 set modelines=0         " don't care about modeline
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=tags;/         " define tags file path
 set cryptmethod="blowfish" " define strong crypt method
+
 set noswapfile          " disable swap files
 
 set backup              " enable backup files
@@ -223,8 +62,6 @@ set undoreload=10000    " number of lines to save for undo
 set undodir=~/.vim/tmp/undo// " undo files directory
 au VimEnter * if !isdirectory(expand(&undodir)) | silent! call mkdir(expand(&undodir), "p") | endif
 
-set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
-
 " }}}
 
 
@@ -236,11 +73,7 @@ set ttimeoutlen=0       " instant insert mode exit using escape
 set matchtime=3         " tenths of second to show the matching bracket
 set cmdheight=1         " explicitly set the command line height
 set showcmd             " show (partial) command in the last line of the screen
-set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
-set sidescrolloff=10    " (same as above for side scrolling)
 set lazyredraw          " only redraw when needed
-set nolist              " hide invisible characters
-set wrap                " split the line if it is too long
 set shortmess=aoOsI     " disable vim welcome message / enable shorter messages
 set cursorline          " highlight cursor line
 set wildmenu            " better command line completion menu
@@ -249,20 +82,32 @@ set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
 set tabpagemax=20       " allow lots of tabs
+set hidden              " when a tab is closed, do not delete the buffer
+set laststatus=2        " always display status line
 
 " }}}
 
 
 
-" {{{ Text editing && Search behavior --------------------------- *vimrc-search*
+" {{{ Search & Replace behavior --------------------------------- *vimrc-search*
 
-set backspace=2         " fix backspace (on some OS/term)
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
 set incsearch           " show matches as soon as possible
 set wrapscan            " searches wrap around the end of the file
-set diffopt=filler,iwhite " ignore all whitespace and sync while differentiates
 set showmatch           " show the matching bracket when inserting
+set gdefault            " default substitute g flag
+au VimEnter * set hlsearch " highlight last search matches
+au InsertEnter * :setlocal nohlsearch " disable search highlighting in insert mode
+au InsertLeave * :setlocal hlsearch " ... ands re-enable when leaving
+
+" }}}
+
+
+
+" {{{ Text editing ---------------------------------------------- *vimrc-search*
+
+set backspace=2         " fix backspace (on some OS/term)
 set completeopt=menuone,preview " more complete autocompletion
 set nostartofline       " leave my cursor position alone!
 set foldmethod=manual   " ensure that foldmethod is manual
@@ -270,13 +115,14 @@ set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
-set gdefault            " default substitute g flag
-au VimEnter * set hlsearch " highlight last search matches
-au InsertEnter * :setlocal nohlsearch " disable search highlighting in insert mode
-au InsertLeave * :setlocal hlsearch
+set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
+set sidescrolloff=10    " (same as above for side scrolling)
+set nolist              " hide invisible characters
+set wrap                " split the line if it is too long
 
 " spell checker
 set spelllang=en        " configure spell language
+set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
 highlight clear SpellBad
 highlight clear SpellCap
 highlight clear SpellLocal
@@ -291,7 +137,7 @@ highlight TrailingWhitespace ctermbg=darkyellow
 match TrailingWhitespace /\s\+$/
 
 " clean trailing whitespaces on file saving
-au BufWritePre * :call StripTrailingWhitespaces()
+"au BufWritePre * :call StripTrailingWhitespaces()
 
 " remember last position in file
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
@@ -308,7 +154,6 @@ set expandtab           " replace tabs by spaces
 au VimEnter * set shiftwidth=2  " n spaces when using <Tab>
 au VimEnter * set softtabstop=2 " n spaces when using <Tab>
 au VimEnter * set tabstop=2     " n spaces when using <Tab>
-set hidden              " when a tab is closed, do not delete the buffer
 
 " }}}
 
@@ -374,8 +219,8 @@ nnoremap <silent> J myJ`y
 nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
 " insert blank lines without entering insert mode
-nnoremap <silent> go o<C-U><Esc>
-nnoremap <silent> gO O<C-U><Esc>
+nnoremap <silent> go o<Esc>d$
+nnoremap <silent> gO O<Esc>d$
 
 " disable annoying keys
 map <silent> <F1> <Nop>
@@ -505,7 +350,154 @@ endfunction
 
 
 
-" {{{ Plugins extra-configuration ---------------------- *vimrc-plugins-options*
+" {{{ NeoBundle ---------------------------------------------- *vimrc-neobundle*
+
+" found vim config file and config dir
+let s:vim_conf = expand('<sfile>:p')
+let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
+
+let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
+if (exists("g:bundle_dir"))
+  call neobundle#rc(g:bundle_dir) " load NeoBundle
+else
+  call neobundle#rc() " load NeoBundle
+endif
+let g:neobundle#types#git#default_protocol = 'https' " define downloading protocol
+
+
+"""""""""""""""""""""""""""""""
+" Load NeoBundle plugin first "
+"""""""""""""""""""""""""""""""
+
+NeoBundleFetch 'Shougo/neobundle.vim', {
+      \ 'depends': [
+          \ [
+              \ 'Shougo/vimproc.vim', {
+                  \ 'build': {
+                      \ 'unix': 'make-fmake_unix.mak',
+                      \ 'mac': 'make-fmake_mac.mak',
+                  \ }
+              \ }
+          \ ]
+      \ ]
+  \ }
+
+
+""""""""""""""""""
+" Themes plugins "
+""""""""""""""""""
+
+NeoBundle 'croaker/mustang-vim'
+
+NeoBundle 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', {
+      \ 'name': 'ir_black.vim',
+      \ 'script_type': 'colors',
+  \ }
+
+NeoBundle 'wombat256.vim'
+
+
+" Languages plugins
+
+NeoBundleLazy '2072/PHP-Indenting-for-VIm' " php only
+
+NeoBundleLazy 'othree/html5.vim'           " html only
+
+NeoBundleLazy 'phpcomplete.vim'            " php only
+
+NeoBundle 'pangloss/vim-javascript'
+
+NeoBundle 'tpope/vim-git'
+
+NeoBundle 'tpope/vim-markdown'
+
+
+" Tools plugins
+
+NeoBundleLazy 'a.vim'               " c/cpp only
+
+NeoBundleLazy 'closetag.vim'        " xml/html only
+
+NeoBundleLazy 'mattn/zencoding-vim' " xml/html only
+
+NeoBundle 'Lokaltog/powerline', {
+      \ 'rtp': 'powerline/bindings/vim/'
+  \ }
+
+NeoBundle 'Lokaltog/vim-easymotion'
+
+NeoBundle 'SirVer/ultisnips'
+
+NeoBundle 'Valloric/YouCompleteMe', {
+      \ 'build': {
+          \ 'unix': './install.sh --clang-completer',
+          \ 'mac': './install.sh --clang-completer',
+      \ },
+      \ 'vim_version': '7.3.584',
+  \ }
+
+NeoBundle 'abeaumet/ack.vim'
+
+NeoBundle 'airblade/vim-rooter'
+
+NeoBundle 'chrisbra/NrrwRgn'
+
+NeoBundle 'godlygeek/tabular'
+
+NeoBundle 'https://bitbucket.org/sjl/gundo.vim'
+
+NeoBundle 'jeetsukumaran/vim-buffergator'
+
+NeoBundle 'jimsei/winresizer'
+
+NeoBundle 'kien/ctrlp.vim'
+
+NeoBundle 'majutsushi/tagbar'
+
+NeoBundle 'matchit.zip'
+
+NeoBundle 'myusuf3/numbers.vim'
+
+NeoBundle 'nelstrom/vim-visual-star-search'
+
+NeoBundle 'scrooloose/nerdcommenter'
+
+NeoBundle 'scrooloose/nerdtree'
+
+NeoBundle 'scrooloose/syntastic'
+
+NeoBundle 'terryma/vim-multiple-cursors'
+
+NeoBundle 'tpope/vim-abolish'
+
+NeoBundle 'tpope/vim-eunuch'
+
+NeoBundle 'tpope/vim-fugitive'
+
+NeoBundle 'tpope/vim-repeat'
+
+NeoBundle 'tpope/vim-speeddating'
+
+NeoBundle 'tpope/vim-surround'
+
+NeoBundle 'tpope/vim-unimpaired'
+
+NeoBundle 'xolox/vim-easytags', {
+      \ 'depends': [
+          \ 'xolox/vim-misc'
+      \ ]
+  \ }
+
+
+" Check installation
+
+NeoBundleCheck
+
+" }}}
+
+
+
+" {{{ Plugins extra-configuration ---------------- *vimrc-plugins-configuration*
 
 " ack.vim
 let g:ack_autoclose = 1 " automatically closing the quickfix window
