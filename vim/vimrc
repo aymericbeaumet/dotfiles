@@ -1,26 +1,30 @@
 " Author: Aymeric Beaumet <aymeric@beaumet.me>
 " Github: @abeaumet/dotfiles
 "
-"
-" *vimrc-options*        Global options
-" *vimrc-ui*             User Interface
-" *vimrc-search*         Search & Replace behavior
-" *vimrc-edition*        Text editing
-" *vimrc-indent-tab*     Indentation / Tabulations
-" *vimrc-errors*         Errors
-" *vimrc-binds*          Binds
-" *vimrc-languages*      Languages specific configuration
-" *vimrc-plugins*        Plugins
-" *vimrc-filetype*       File type / Syntax detection
-" *vimrc-helpers*        Helpers
+" *vimrc-options*                Global options
+" *vimrc-ui*                     User Interface
+" *vimrc-search*                 Search & Replace behavior
+" *vimrc-edition*                Text editing
+" *vimrc-indent-tab*             Indentation / Tabulations
+" *vimrc-errors*                 Errors
+" *vimrc-binds*                  Binds
+" *vimrc-languages*              Languages specific configuration
+" *vimrc-plugins*                Plugins
+"   *vimrc-plugins-neobundle*      NeoBundle initialization
+"   *vimrc-plugins-themes*         Themes plugins
+"   *vimrc-plugins-languages*      Languages specific plugins
+"   *vimrc-plugins-tools*          Tools plugins
+" *vimrc-filetype*               File type / Syntax detection
+" *vimrc-helpers*                Helpers
 "
 
-" Avoid double file sourcing (this cause problems with some lazy plugin loading)
+
+" Avoid twice sourcing (this cause problems with some lazy loading plugins)
 if exists('g:vimrc_loaded') | finish | endif | let g:vimrc_loaded = 1
 
 
 
-" {{{ Global options ------------------------------------------- *vimrc-options*
+" {{{ Global options                                             *vimrc-options*
 
 " break away from old vi compatibility
 set nocompatible
@@ -55,7 +59,7 @@ au VimEnter * if !isdirectory(expand(&undodir)) | silent! call mkdir(expand(&und
 
 
 
-" {{{ User Interface ------------------------------------------------ *vimrc-ui*
+" {{{ User Interface                                                  *vimrc-ui*
 
 set timeoutlen=500      " time to wait when a part of a maped sequence is typped
 set ttimeoutlen=0       " instant insert mode exit using escape
@@ -82,7 +86,7 @@ autocmd VimEnter * NeoBundleSource wombat256.vim " choose theme
 
 
 
-" {{{ Search & Replace behavior --------------------------------- *vimrc-search*
+" {{{ Search & Replace behavior                                   *vimrc-search*
 
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
@@ -98,7 +102,7 @@ au InsertLeave * :setlocal hlsearch " ... ands re-enable when leaving
 
 
 
-" {{{ Text editing --------------------------------------------- *vimrc-edition*
+" {{{ Text editing                                               *vimrc-edition*
 
 set backspace=2         " fix backspace (on some OS/term)
 set nostartofline       " leave my cursor position alone!
@@ -135,7 +139,7 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'
 
 
 
-" {{{ Indentation / Tabulations ----------------------------- *vimrc-indent-tab*
+" {{{ Indentation / Tabulations                               *vimrc-indent-tab*
 
 set autoindent          " auto-indentation
 set smarttab            " insert shiftwidth spaces instead of tabs
@@ -148,7 +152,7 @@ au VimEnter * set tabstop=2     " n spaces when using <Tab>
 
 
 
-" {{{ Errors ---------------------------------------------------- *vimrc-errors*
+" {{{ Errors                                                      *vimrc-errors*
 
 " turn off error bells
 set noerrorbells
@@ -159,7 +163,7 @@ set t_vb=
 
 
 
-" {{{ Binds ------------------------------------------------------ *vimrc-binds*
+" {{{ Binds                                                        *vimrc-binds*
 
 " easy navigation between tabs
 nnoremap <silent> <S-H> gT
@@ -239,7 +243,7 @@ nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
 
 
 
-" {{{ Languages specific configuration ----------------------- *vimrc-languages*
+" {{{ Languages specific configuration                         *vimrc-languages*
 
 au FileType c,cpp call LoadCConfiguration()
 function! LoadCConfiguration()
@@ -343,7 +347,7 @@ endfunction
 
 
 
-" {{{ Plugins -------------------------------------------------- *vimrc-plugins*
+" {{{ Plugins                                                    *vimrc-plugins*
 
 " found vim config file and config dir
 let s:vim_conf = expand('<sfile>:p')
@@ -357,7 +361,7 @@ else
 endif
 
 
-""""""""""""""""""""""""
+""""""""""""""""""""""""                               *vimrc-plugins-neobundle*
 " Load NeoBundle first "
 """"""""""""""""""""""""
 
@@ -375,7 +379,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
   \ }
 
 
-""""""""""
+""""""""""                                                *vimrc-plugins-themes*
 " Themes "
 """"""""""
 
@@ -403,9 +407,49 @@ function! bundle.hooks.on_post_source(bundle)
 endfunction
 
 
-"""""""""""""
+"""""""""""""                                          *vimrc-plugins-languages*
 " Languages "
 """""""""""""
+
+" CSS
+
+NeoBundleLazy 'Better-CSS-Syntax-for-Vim', {
+  \     'autoload': {
+  \         'filetype': ['css']
+  \     }
+  \ }
+
+NeoBundleLazy 'ap/vim-css-color', {
+  \     'autoload': {
+  \         'filetype': ['css', 'html']
+  \     }
+  \ }
+
+" Git
+
+NeoBundle 'tpope/vim-git'
+
+" HTML
+
+NeoBundleLazy 'othree/html5.vim', {
+  \     'autoload': {
+  \         'filetypes': ['html', 'markdown']
+  \     }
+  \ }
+
+" Javascript
+
+NeoBundleLazy 'pangloss/vim-javascript', {
+  \     'autoload': {
+  \         'filetypes': ['javascript']
+  \     }
+  \ }
+
+" Markdown
+
+NeoBundle 'tpope/vim-markdown'
+
+" PHP
 
 NeoBundleLazy '2072/PHP-Indenting-for-VIm', {
   \     'autoload': {
@@ -417,30 +461,14 @@ function! bundle.hooks.on_source(bundle)
   let g:PHP_vintage_case_default_indent = 1 " change indentation
 endfunction
 
-NeoBundleLazy 'othree/html5.vim', {
-  \     'autoload': {
-  \         'filetypes': ['html', 'markdown']
-  \     }
-  \ }
-
 NeoBundleLazy 'phpcomplete.vim', {
   \     'autoload': {
   \         'filetypes': ['php']
   \     }
   \ }
 
-NeoBundleLazy 'pangloss/vim-javascript', {
-  \     'autoload': {
-  \         'filetypes': ['javascript']
-  \     }
-  \ }
 
-NeoBundle 'tpope/vim-git'
-
-NeoBundle 'tpope/vim-markdown'
-
-
-"""""""""
+"""""""""                                                *vimrc-plugins-tools*
 " Tools "
 """""""""
 
@@ -635,8 +663,10 @@ function! bundle.hooks.on_source(bundle)
   let g:easytags_include_members = 1 " more complete tag files for C++ and Java
   let g:easytags_resolve_links = 1 " follow symlinks
   let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
+  let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
 endfunction
 
+NeoBundle 'Raimondi/delimitMate'
 
 " Check installation
 NeoBundleCheck
@@ -645,7 +675,7 @@ NeoBundleCheck
 
 
 
-" {{{ File type / Syntax detection ---------------------------- *vimrc-filetype*
+" {{{ File type / Syntax detection                              *vimrc-filetype*
 
 syntax enable
 filetype plugin indent on
@@ -654,7 +684,7 @@ filetype plugin indent on
 
 
 
-" {{{ Helpers -------------------------------------------------- *vimrc-helpers*
+" {{{ Helpers                                                    *vimrc-helpers*
 
 " https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
 " Clean all the trailing whitespaces in the current buffer
@@ -673,4 +703,6 @@ endfunction
 " }}}
 
 
+
+" Useful modeline to browse the file using '*' and '#' on *vimrc-markers*
 " vim: isk+=- isk+=*
