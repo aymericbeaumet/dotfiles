@@ -241,14 +241,6 @@ nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
 
 " {{{ Languages specific configuration ----------------------- *vimrc-languages*
 
-
-" Each language configuration follows the steps below (none is mandatory):
-"
-"   1. Set omnifunc
-"   2. Set indentation
-"   3. Set other options
-
-
 au FileType c,cpp call LoadCConfiguration()
 function! LoadCConfiguration()
   setl omnifunc=ccomplete#Complete
@@ -313,7 +305,6 @@ function! LoadPHPConfiguration()
   setl softtabstop=4
   setl tabstop=4
   setl iskeyword-=$
-  setl iskeyword+=:
 endfunction
 
 " Python
@@ -325,12 +316,6 @@ function! LoadPythonConfiguration()
   setl tabstop=4
 endfunction
 
-" XML
-au FileType xml call LoadXMLConfiguration()
-function! LoadXMLConfiguration()
-  setl omnifunc=xmlcomplete#CompleteTags
-endfunction
-
 " Text
 au FileType text call LoadTextConfiguration()
 function! LoadTextConfiguration()
@@ -340,6 +325,18 @@ function! LoadTextConfiguration()
   highlight SpellCap cterm=underline
   highlight SpellLocal cterm=underline
   highlight SpellRare cterm=underline
+endfunction
+
+" Vim help
+au FileType help call LoadVimHelpConfiguration()
+function! LoadVimHelpConfiguration()
+  setl nospell
+endfunction
+
+" XML
+au FileType xml call LoadXMLConfiguration()
+function! LoadXMLConfiguration()
+  setl omnifunc=xmlcomplete#CompleteTags
 endfunction
 
 " }}}
@@ -358,7 +355,6 @@ if (exists("g:bundle_dir"))
 else
   call neobundle#rc() " load NeoBundle
 endif
-let g:neobundle#types#git#default_protocol = 'https' " define downloading protocol
 
 
 """"""""""""""""""""""""
@@ -405,6 +401,7 @@ let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
   colorscheme wombat256mod
 endfunction
+
 
 """""""""""""
 " Languages "
@@ -522,8 +519,8 @@ NeoBundle 'bitbucket:sjl/gundo.vim'
 let bundle = neobundle#get('gundo.vim')
 function! bundle.hooks.on_source(bundle)
   let g:gundo_width = 40 " gundo pane width
-  let g:gundo_preview_height = 40 " preview height
-  let g:gundo_preview_bottom = 1 " preview on file bottom (not in pane)
+  let g:gundo_preview_height = 20 " preview height
+  let g:gundo_preview_bottom = 1 " preview on file bottom (not under the left pane)
   let g:gundo_help = 0 " disable help in gundo pane
   let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
   nnoremap <Leader>ue :GundoToggle<CR>
@@ -580,17 +577,13 @@ NeoBundle 'nelstrom/vim-visual-star-search'
 
 NeoBundle 'scrooloose/nerdcommenter'
 
-NeoBundleLazy 'scrooloose/nerdtree', {
-  \     'autoload': {
-  \         'explorer': 1
-  \     }
-  \ }
+NeoBundle 'scrooloose/nerdtree'
 let bundle = neobundle#get('nerdtree')
 function! bundle.hooks.on_source(bundle)
-  let NERDTreeShowHidden = 1 " show hidden files
-  let NERDTreeQuitOnOpen = 1 " close tree when opening a file
-  let NERDTreeWinSize = 40 " tree width
-  let NERDTreeMinimalUI = 1 " hide superfluous stuff
+  let g:NERDTreeShowHidden = 1 " show hidden files
+  let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
+  let g:NERDTreeWinSize = 40 " tree width
+  let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
   nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
 endfunction
 
