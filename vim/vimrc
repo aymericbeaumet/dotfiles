@@ -1,5 +1,19 @@
 " Author: Aymeric Beaumet <aymeric@beaumet.me>
-" Github: @abeaumet
+" Github: @abeaumet/dotfiles
+
+" Fast navigation
+
+" *vimrc-options*    Global options 
+" *vimrc-ui*         User Interface 
+" *vimrc-search*     Search & Replace behavior 
+" *vimrc-edition*    Text editing 
+" *vimrc-indent-tab* Indentation / Tabulations 
+" *vimrc-errors*     Errors 
+" *vimrc-binds*      Binds 
+" *vimrc-languages*  Languages specific configuration 
+" *vimrc-plugins*    Plugins 
+" *vimrc-filetype*   File type / Syntax detection 
+" *vimrc-helpers*    Helpers 
 
 
 
@@ -15,7 +29,8 @@ set autoread            " watch for file changes by other programs
 set autowrite           " automatically save before :next and :make
 set encoding=utf-8      " ensure proper encoding
 set ttyfast             " we have a fast terminal
-set modelines=0         " don't care about modeline
+set modeline            " enable modelines
+set modelines=3         " consider the first/last three lines
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=tags;/         " define tags file path
 set cryptmethod="blowfish" " define strong crypt method
@@ -94,7 +109,7 @@ set nolist              " hide invisible characters
 
 " spell checker
 set spelllang=en        " configure spell language
-set spellfile=~/.vim/spell/en.utf-8.add " enable spell file
+set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
 highlight clear SpellBad
 highlight clear SpellCap
 highlight clear SpellLocal
@@ -154,6 +169,8 @@ vnoremap <silent> k gk
 " center on search result
 nnoremap <silent> n nzz
 nnoremap <silent> <S-N> Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
 
 " define leading key
 let mapleader = '\'
@@ -212,6 +229,122 @@ nnoremap <silent> <leader>tq :tabclose<CR>
 
 " clean trailing whitespaces
 nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
+
+" }}}
+
+
+
+" {{{ Languages specific configuration ----------------------- *vimrc-languages*
+
+
+" Each language configuration follows the steps below (none is mandatory):
+"
+"   1. Set omnifunc
+"   2. Set indentation
+"   3. Set other options
+"   4. Load lazy plugins
+
+
+au FileType c,cpp call LoadCConfiguration()
+function! LoadCConfiguration()
+  setl omnifunc=ccomplete#Complete
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
+  NeoBundleSource a.vim
+endfunction
+
+" CSS
+au FileType css call LoadCSSConfiguration()
+function! LoadCSSConfiguration()
+  setl omnifunc=csscomplete#CompleteCSS
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
+  setl iskeyword+=-
+endfunction
+
+" Git commit
+au FileType gitcommit call LoadGitCommitConfiguration()
+function! LoadGitCommitConfiguration()
+  setl spell
+  highlight SpellBad cterm=underline
+  highlight SpellCap cterm=underline
+  highlight SpellLocal cterm=underline
+  highlight SpellRare cterm=underline
+endfunction
+
+" JavaScript
+au FileType javascript call LoadJavaScriptConfiguration()
+function! LoadJavaScriptConfiguration()
+  setl omnifunc=javascriptcomplete#CompleteJS
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
+endfunction
+
+" HTML
+au FileType html call LoadHTMLConfiguration()
+function! LoadHTMLConfiguration()
+  setl omnifunc=htmlcomplete#CompleteTags
+  setl iskeyword+=-
+  NeoBundleSource closetag.vim
+  NeoBundleSource html5.vim
+  NeoBundleSource zencoding-vim
+endfunction
+
+" Markdown
+au FileType markdown call LoadMarkdownConfiguration()
+function! LoadMarkdownConfiguration()
+  setl omnifunc=htmlcomplete#CompleteTags
+  setl formatoptions=tcroqn2 comments=n:>
+  setl spell
+  highlight SpellBad cterm=underline
+  highlight SpellCap cterm=underline
+  highlight SpellLocal cterm=underline
+  highlight SpellRare cterm=underline
+endfunction
+
+" PHP
+au FileType php call LoadPHPConfiguration()
+function! LoadPHPConfiguration()
+  setl omnifunc=phpcomplete#CompletePHP
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
+  setl iskeyword-=$
+  setl iskeyword+=:
+  NeoBundleSource PHP-Indenting-for-VIm
+  NeoBundleSource phpcomplete.vim
+endfunction
+
+" Python
+au FileType python call LoadPythonConfiguration()
+function! LoadPythonConfiguration()
+  setl omnifunc=pythoncomplete#Complete
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
+endfunction
+
+" XML
+au FileType xml call LoadXMLConfiguration()
+function! LoadXMLConfiguration()
+  setl omnifunc=xmlcomplete#CompleteTags
+  NeoBundleSource closetag.vim
+  NeoBundleSource zencoding-vim
+endfunction
+
+" Text
+au FileType text call LoadTextConfiguration()
+function! LoadTextConfiguration()
+  setl formatoptions=tcroqn2
+  setl spell
+  highlight SpellBad cterm=underline
+  highlight SpellCap cterm=underline
+  highlight SpellLocal cterm=underline
+  highlight SpellRare cterm=underline
+endfunction
 
 " }}}
 
@@ -496,122 +629,6 @@ endif
 
 
 
-" {{{ Languages specific configuration ----------------------- *vimrc-languages*
-
-
-" Each language configuration follows the steps below (none is mandatory):
-"
-"   1. Set omnifunc
-"   2. Set indentation
-"   3. Set other options
-"   4. Load lazy plugins
-
-
-au FileType c,cpp call LoadCConfiguration()
-function! LoadCConfiguration()
-  setl omnifunc=ccomplete#Complete
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-  NeoBundleSource a.vim
-endfunction
-
-" CSS
-au FileType css call LoadCSSConfiguration()
-function! LoadCSSConfiguration()
-  setl omnifunc=csscomplete#CompleteCSS
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-  setl iskeyword+=-
-endfunction
-
-" Git commit
-au FileType gitcommit call LoadGitCommitConfiguration()
-function! LoadGitCommitConfiguration()
-  setl spell
-  highlight SpellBad cterm=underline
-  highlight SpellCap cterm=underline
-  highlight SpellLocal cterm=underline
-  highlight SpellRare cterm=underline
-endfunction
-
-" JavaScript
-au FileType javascript call LoadJavaScriptConfiguration()
-function! LoadJavaScriptConfiguration()
-  setl omnifunc=javascriptcomplete#CompleteJS
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-endfunction
-
-" HTML
-au FileType html call LoadHTMLConfiguration()
-function! LoadHTMLConfiguration()
-  setl omnifunc=htmlcomplete#CompleteTags
-  setl iskeyword+=-
-  NeoBundleSource closetag.vim
-  NeoBundleSource html5.vim
-  NeoBundleSource zencoding-vim
-endfunction
-
-" Markdown
-au FileType markdown call LoadMarkdownConfiguration()
-function! LoadMarkdownConfiguration()
-  setl omnifunc=htmlcomplete#CompleteTags
-  setl formatoptions=tcroqn2 comments=n:>
-  setl spell
-  highlight SpellBad cterm=underline
-  highlight SpellCap cterm=underline
-  highlight SpellLocal cterm=underline
-  highlight SpellRare cterm=underline
-endfunction
-
-" PHP
-au FileType php call LoadPHPConfiguration()
-function! LoadPHPConfiguration()
-  setl omnifunc=phpcomplete#CompletePHP
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-  setl iskeyword-=$
-  setl iskeyword+=:
-  NeoBundleSource PHP-Indenting-for-VIm
-  NeoBundleSource phpcomplete.vim
-endfunction
-
-" Python
-au FileType python call LoadPythonConfiguration()
-function! LoadPythonConfiguration()
-  setl omnifunc=pythoncomplete#Complete
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-endfunction
-
-" XML
-au FileType xml call LoadXMLConfiguration()
-function! LoadXMLConfiguration()
-  setl omnifunc=xmlcomplete#CompleteTags
-  NeoBundleSource closetag.vim
-  NeoBundleSource zencoding-vim
-endfunction
-
-" Text
-au FileType text call LoadTextConfiguration()
-function! LoadTextConfiguration()
-  setl formatoptions=tcroqn2
-  setl spell
-  highlight SpellBad cterm=underline
-  highlight SpellCap cterm=underline
-  highlight SpellLocal cterm=underline
-  highlight SpellRare cterm=underline
-endfunction
-
-" }}}
-
-
-
 " {{{ File type / Syntax detection ---------------------------- *vimrc-filetype*
 
 syntax enable
@@ -638,3 +655,7 @@ function! StripTrailingWhitespaces()
 endfunction
 
 " }}}
+
+
+
+" vim: isk+=- isk+=*
