@@ -159,8 +159,7 @@ alias -g N=' &>/dev/null'
 # Binding #
 ###########
 
-# Vim binds!
-bindkey -v
+bindkey -e
 
 bindkey '^[OH'		beginning-of-line                   # Home
 bindkey '^[OF'		end-of-line                         # End
@@ -170,12 +169,6 @@ bindkey '^[[2~'		overwrite-mode                      # Insert
 bindkey '^[[1;5D'	backward-word                       # Ctrl <-
 bindkey '^[[1;5C'	forward-word                        # Ctrl ->
 bindkey '^[[3~'		delete-char                         # Delete
-
-bindkey '^R' history-incremental-search-backward      # Backward search
-bindkey '^N' history-search-forward
-bindkey '^P' history-search-backward
-bindkey '^A' beginning-of-line
-bindkey '^E' end-of-line
 
 
 ###############
