@@ -1,0 +1,84 @@
+# Define
+
+snippet def "#define"
+#define ${1}
+endsnippet
+
+snippet ifndef "#ifndef ... #define ... #endif" b
+#ifndef ${1/([A-Za-z0-9_]+).*/$1/}
+#  define ${1:SYMBOL} ${2:value}
+#endif
+endsnippet
+
+snippet guard "Include header once only guard"
+#ifndef ${1:`!p
+if not snip.c:
+	import random, string
+	name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
+	rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
+	snip.rv = ('%s_%s' % (name,rand)).upper()
+else:
+    snip.rv = snip.c`}
+#define $1
+
+${0}
+
+#endif /* !$1 */
+endsnippet
+
+# Include
+
+snippet inc "#include local header" b
+#include "${1:`!p snip.rv = snip.basename + '.h'`}"
+endsnippet
+
+snippet incs "#include system header (Inc)"
+#include <${1:.h}>
+endsnippet
+
+# Control flow
+
+snippet if "if"
+if (${1:/* condition */})
+{
+    ${2:// code...}
+}
+endsnippet
+
+snippet elif "else if"
+else if (${1:/* condition */})
+{
+    ${2:// code...}
+}
+endsnippet
+
+snippet else "else"
+else
+{
+    ${2:// code...}
+}
+endsnippet
+
+snippet while "while loop"
+while(${1:/* condition */})
+{
+    ${1:// code...}
+}
+endsnippet
+
+snippet for "for loop"
+for (${2:i} = 0; $2 < ${1:count}; ${3:++$2})
+{
+    ${1:// code...}
+}
+endsnippet
+
+# Various
+
+snippet main "main"
+int main(int argc, char **argv)
+{
+    ${VISUAL}${0:${VISUAL/(.*)/(?1::\/* code *\/)/}}
+    return 0;
+}
+endsnippet
