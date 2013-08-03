@@ -82,6 +82,10 @@ set background=dark     " dark background
 hi CursorLine cterm=bold " highlight cursor line
 autocmd VimEnter * NeoBundleSource wombat256.vim " choose theme
 
+set relativenumber      " relative numerotation by default
+autocmd InsertEnter * set norelativenumber number " classic numerotation in insert mode
+autocmd InsertLeave * set nonumber relativenumber " revert to relative when leaving insert mode
+
 " }}}
 
 
@@ -502,7 +506,11 @@ let bundle = neobundle#get('vim-easymotion')
 let g:EasyMotion_leader_key = '<Leader><Leader>'
 
 NeoBundle 'SirVer/ultisnips'
-let g:UltiSnipsSnippetDirectories = ['snippets']
+let g:UltiSnipsSnippetDirectories = ['snippet'] " Change snippet directory (use only my snippets)
+let g:UltiSnipsDontReverseSearchPath = 1 " Traverse runtimepath in standard order
+let g:UltiSnipsExpandTrigger = '<Tab>'
+let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 
 NeoBundle 'Valloric/YouCompleteMe', {
   \     'build': {
@@ -573,16 +581,6 @@ let g:tagbar_left = 1 " set tagbar pane on the left side
 nnoremap <silent> <Leader>te :TagbarToggle<CR>
 
 NeoBundle 'matchit.zip'
-
-NeoBundle 'myusuf3/numbers.vim'
-let bundle = neobundle#get('numbers.vim')
-function! bundle.hooks.on_post_source(bundle)
-  " This is an ugly hack, really. It's aiming to fix a plugin bug in recent vim
-  " versions
-  set norelativenumber number
-  call SetNumbers()
-  call SetRelative()
-endfunction
 
 NeoBundle 'nelstrom/vim-visual-star-search'
 
