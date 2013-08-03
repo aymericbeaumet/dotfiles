@@ -118,11 +118,11 @@ set nolist              " hide invisible characters
 " spell checker
 set spelllang=en        " configure spell language
 set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
-set nospell
 highlight clear SpellBad
 highlight clear SpellCap
 highlight clear SpellLocal
 highlight clear SpellRare
+set nospell " Disable space language globally
 
 " format option stuff (see :help fo-table)
 set fo=cro
@@ -222,11 +222,11 @@ map <silent> Q <Nop>
 inoremap <silent> jj <C-C>
 
 " useful insert mode binds
-inoremap <silent> II <C-O>I
-inoremap <silent> AA <C-O>A
-inoremap <silent> CC <C-O>C
-inoremap <silent> OO <C-O>O
-inoremap <silent> <C-O><C-O> <C-O>o
+inoremap <silent> II <C-O>0
+inoremap <silent> AA <C-O>$
+inoremap <silent> CC <C-O>d$
+inoremap <silent> OO <Esc>O
+inoremap <silent> <C-O><C-O> <Esc>o
 inoremap <silent> JJ <C-O>J
 
 " buffer
@@ -236,7 +236,7 @@ nnoremap <silent> <leader>bq :bdelete<CR>
 nnoremap <silent> <leader>tc :tabnew<CR>
 nnoremap <silent> <leader>tq :tabclose<CR>
 
-" clean trailing whitespaces
+" delete whitespaces
 nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
 
 " }}}
@@ -456,10 +456,7 @@ NeoBundleLazy '2072/PHP-Indenting-for-VIm', {
   \         'filetypes': ['php']
   \     }
   \ }
-let bundle = neobundle#get('PHP-Indenting-for-VIm')
-function! bundle.hooks.on_source(bundle)
-  let g:PHP_vintage_case_default_indent = 1 " change indentation
-endfunction
+let g:PHP_vintage_case_default_indent = 1 " change indentation
 
 NeoBundleLazy 'phpcomplete.vim', {
   \     'autoload': {
@@ -489,27 +486,23 @@ NeoBundleLazy 'mattn/zencoding-vim', {
   \         'filetypes': ['html', 'xml']
   \     }
   \ }
-let bundle = neobundle#get('zencoding-vim')
-function! bundle.hooks.on_source(bundle)
-  let g:user_zen_leader_key = '<C-E>'
-  let g:user_zen_mode = 'a' " enable all function in all mode
-endfunction
+let g:user_zen_leader_key = '<C-E>'
+let g:user_zen_mode = 'a' " enable all function in all mode
 
 NeoBundle 'Lokaltog/powerline', {
   \     'rtp': 'powerline/bindings/vim/'
   \ }
 let bundle = neobundle#get('powerline')
-function! bundle.hooks.on_source(bundle)
+function! bundle.hooks.on_post_source(bundle)
   set noshowmode " hide the duplicate mode in bottom status bar
 endfunction
 
 NeoBundle 'Lokaltog/vim-easymotion'
 let bundle = neobundle#get('vim-easymotion')
-function! bundle.hooks.on_source(bundle)
-  let g:EasyMotion_leader_key = '<Leader><Leader>'
-endfunction
+let g:EasyMotion_leader_key = '<Leader><Leader>'
 
 NeoBundle 'SirVer/ultisnips'
+let g:UltiSnipsSnippetDirectories = ['snippets']
 
 NeoBundle 'Valloric/YouCompleteMe', {
   \     'build': {
@@ -518,99 +511,74 @@ NeoBundle 'Valloric/YouCompleteMe', {
   \     },
   \     'vim_version': '7.3.584',
   \ }
-let bundle = neobundle#get('YouCompleteMe')
-function! bundle.hooks.on_source(bundle)
-  let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
-  let g:ycm_add_preview_to_completeopt = 1 " add preview to completion popup
-  let g:ycm_autoclose_preview_window_after_completion = 0 " close preview after a completion
-  let g:ycm_cache_omnifunc = 1 " disable omnifunc cache
-endfunction
-
+let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
+let g:ycm_add_preview_to_completeopt = 1 " add preview to completion popup
+let g:ycm_autoclose_preview_window_after_completion = 0 " close preview after a completion
+let g:ycm_cache_omnifunc = 1 " disable omnifunc cache
+let g:ycm_key_list_select_completion = ['<C-N>'] " change bind to go down
+let g:ycm_key_list_previous_completion = ['<C-P>'] " change bind to go up
 
 NeoBundle 'abeaumet/ack.vim', {
   \     'external_commands': 'ack'
   \ }
-let bundle = neobundle#get('ack.vim')
-function! bundle.hooks.on_source(bundle)
-  let g:ack_autoclose = 1 " automatically closing the quickfix window
-endfunction
+let g:ack_autoclose = 1 " automatically closing the quickfix window
 
 NeoBundle 'airblade/vim-rooter'
 
 NeoBundle 'chrisbra/NrrwRgn'
-let bundle = neobundle#get('NrrwRgn')
-function! bundle.hooks.on_source(bundle)
-  let g:nrrw_rgn_nohl = 1 " disable highlighting in the main window while isolating code
-  noremap <silent> <Leader>r :NarrowRegion<CR>
-endfunction
+let g:nrrw_rgn_nohl = 1 " disable highlighting in the main window while isolating code
+noremap <silent> <Leader>r :NarrowRegion<CR>
 
 NeoBundle 'godlygeek/tabular'
-let bundle = neobundle#get('tabular')
-function! bundle.hooks.on_source(bundle)
-  nnoremap <silent> <Leader>a :Tabularize /
-  vnoremap <silent> <Leader>a :Tabularize /
-endfunction
+nnoremap <silent> <Leader>a :Tabularize /
+vnoremap <silent> <Leader>a :Tabularize /
 
 NeoBundle 'bitbucket:sjl/gundo.vim'
-let bundle = neobundle#get('gundo.vim')
-function! bundle.hooks.on_source(bundle)
-  let g:gundo_width = 40 " gundo pane width
-  let g:gundo_preview_height = 20 " preview height
-  let g:gundo_preview_bottom = 1 " preview on file bottom (not under the left pane)
-  let g:gundo_help = 0 " disable help in gundo pane
-  let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
-  nnoremap <Leader>ue :GundoToggle<CR>
-endfunction
+let g:gundo_width = 40 " gundo pane width
+let g:gundo_preview_height = 20 " preview height
+let g:gundo_preview_bottom = 1 " preview on file bottom (not under the left pane)
+let g:gundo_help = 0 " disable help in gundo pane
+let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
+nnoremap <Leader>ue :GundoToggle<CR>
 
 NeoBundle 'jeetsukumaran/vim-buffergator'
-let bundle = neobundle#get('vim-buffergator')
-function! bundle.hooks.on_source(bundle)
-  let g:buffergator_suppress_keymaps = 1 " delete default keymaps
-  let g:buffergator_viewport_split_policy = 'L' " split on the bottom of the screen
-  nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
-endfunction
+let g:buffergator_suppress_keymaps = 1 " delete default keymaps
+let g:buffergator_viewport_split_policy = 'L' " split on the bottom of the screen
+nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 
 NeoBundle 'jimsei/winresizer'
-let bundle = neobundle#get('winresizer')
-function! bundle.hooks.on_source(bundle)
-  let g:winresizer_start_key = '<C-W><C-W>'
-endfunction
+let g:winresizer_start_key = '<C-W><C-W>'
 
 NeoBundle 'kien/ctrlp.vim'
-let bundle = neobundle#get('ctrlp.vim')
-function! bundle.hooks.on_source(bundle)
-  let g:ctrlp_map = '<Leader>fo'
-  let g:ctrlp_custom_ignore = {
-    \     'dir':  '\v[\/]\.(git|hg|svn)$'
-    \ } " will be ignored in completion (the `wildignore` option is considered before these patterns)
-  let g:ctrlp_switch_buffer = 't' " if the file exists in a buffer in the current tab, jump to it
-  let g:ctrlp_working_path_mode = 'ra' " the nearest ancestor containing a SCM configuration file (.git, ...)
-  let g:ctrlp_max_files = 1000 " avoid lag if launched in a top directory (~ for example)
-  let g:ctrlp_max_depth = 10 " same as above
-  let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
-  let g:ctrlp_show_hidden = 1 " search for hidden files
-  let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
-  nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
-endfunction
+let g:ctrlp_map = '<Leader>fo'
+let g:ctrlp_custom_ignore = {
+  \     'dir':  '\v[\/]\.(git|hg|svn)$'
+  \ } " will be ignored in completion (the `wildignore` option is considered before these patterns)
+let g:ctrlp_switch_buffer = 't' " if the file exists in a buffer in the current tab, jump to it
+let g:ctrlp_working_path_mode = 'ra' " the nearest ancestor containing a SCM configuration file (.git, ...)
+let g:ctrlp_max_files = 1000 " avoid lag if launched in a top directory (~ for example)
+let g:ctrlp_max_depth = 10 " same as above
+let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
+let g:ctrlp_show_hidden = 1 " search for hidden files
+let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
+nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
 
 NeoBundle 'majutsushi/tagbar'
-let bundle = neobundle#get('tagbar')
-function! bundle.hooks.on_source(bundle)
-  let g:tagbar_autofocus = 1 " focus tagbar when opened
-  let g:tagbar_autoclose = 1 " close tagbar when opening a tag
-  let g:tagbar_show_visibility = 1 " show public/private/protected
-  let g:tagbar_compact = 1 " hide superfluous stuff
-  let g:tagbar_width = 40 " set tagbar width
-  let g:tagbar_left = 1 " set tagbar pane on the left side
-  nnoremap <silent> <Leader>te :TagbarToggle<CR>
-endfunction
+let g:tagbar_autofocus = 1 " focus tagbar when opened
+let g:tagbar_autoclose = 1 " close tagbar when opening a tag
+let g:tagbar_show_visibility = 1 " show public/private/protected
+let g:tagbar_compact = 1 " hide superfluous stuff
+let g:tagbar_width = 40 " set tagbar width
+let g:tagbar_left = 1 " set tagbar pane on the left side
+nnoremap <silent> <Leader>te :TagbarToggle<CR>
 
 NeoBundle 'matchit.zip'
 
 NeoBundle 'myusuf3/numbers.vim'
 let bundle = neobundle#get('numbers.vim')
 function! bundle.hooks.on_post_source(bundle)
-  " This is an ugly hack, really
+  " This is an ugly hack, really. It's aiming to fix a plugin bug in recent vim
+  " versions
   set norelativenumber number
   call SetNumbers()
   call SetRelative()
@@ -621,37 +589,28 @@ NeoBundle 'nelstrom/vim-visual-star-search'
 NeoBundle 'scrooloose/nerdcommenter'
 
 NeoBundle 'scrooloose/nerdtree'
-let bundle = neobundle#get('nerdtree')
-function! bundle.hooks.on_source(bundle)
-  let g:NERDTreeShowHidden = 1 " show hidden files
-  let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
-  let g:NERDTreeWinSize = 40 " tree width
-  let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
-  nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
-endfunction
+let g:NERDTreeShowHidden = 1 " show hidden files
+let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
+let g:NERDTreeWinSize = 40 " tree width
+let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
+nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
 
 NeoBundle 'scrooloose/syntastic'
-let bundle = neobundle#get('syntastic')
-function! bundle.hooks.on_source(bundle)
-  let g:syntastic_mode_map = {
-    \     'mode': 'passive'
-    \ }
-  let g:syntastic_check_on_wq = 0 " disable on save
-  let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
-  let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
-  let g:syntastic_c_compiler_options = "-Wall -Wextra"
-  let g:syntastic_cpp_checkers = [
-    \     'cpplint'
-    \ ]
-  nnoremap <silent> <Leader>s :SyntasticCheck<CR>
-  nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
-endfunction
+let g:syntastic_mode_map = {
+  \     'mode': 'passive'
+  \ }
+let g:syntastic_check_on_wq = 0 " disable on save
+let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
+let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
+let g:syntastic_c_compiler_options = "-Wall -Wextra"
+let g:syntastic_cpp_checkers = [
+  \     'cpplint'
+  \ ]
+nnoremap <silent> <Leader>s :SyntasticCheck<CR>
+nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
 
 NeoBundle 'terryma/vim-multiple-cursors'
-let bundle = neobundle#get('vim-multiple-cursors')
-function! bundle.hooks.on_source(bundle)
-  vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
-endfunction
+vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
 
 NeoBundle 'tpope/vim-abolish'
 
@@ -673,13 +632,11 @@ NeoBundle 'xolox/vim-easytags', {
   \     ]
   \ }
 let bundle = neobundle#get('vim-easytags')
-function! bundle.hooks.on_source(bundle)
-  "let g:easytags_by_filetype = 1 " separate tag files for each languages (https://github.com/xolox/vim-easytags/issues/60)
-  let g:easytags_include_members = 1 " more complete tag files for C++ and Java
-  let g:easytags_resolve_links = 1 " follow symlinks
-  let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
-  let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
-endfunction
+"let g:easytags_by_filetype = 1 " separate tag files for each languages (https://github.com/xolox/vim-easytags/issues/60)
+let g:easytags_include_members = 1 " more complete tag files for C++ and Java
+let g:easytags_resolve_links = 1 " follow symlinks
+let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
+let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
 
 NeoBundle 'Raimondi/delimitMate'
 
