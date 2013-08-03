@@ -478,9 +478,9 @@ NeoBundleLazy 'a.vim', {
   \     }
   \ }
 
-NeoBundleLazy 'closetag.vim', {
+NeoBundleLazy 'HTML-AutoCloseTag', {
   \     'autoload': {
-  \         'filetypes': ['html', 'xml']
+  \         'filetypes': ['html', 'markdown', 'xml']
   \     }
   \ }
 
@@ -518,6 +518,14 @@ NeoBundle 'Valloric/YouCompleteMe', {
   \     },
   \     'vim_version': '7.3.584',
   \ }
+let bundle = neobundle#get('YouCompleteMe')
+function! bundle.hooks.on_source(bundle)
+  let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
+  let g:ycm_add_preview_to_completeopt = 1 " add preview to completion popup
+  let g:ycm_autoclose_preview_window_after_completion = 0 " close preview after a completion
+  let g:ycm_cache_omnifunc = 1 " disable omnifunc cache
+endfunction
+
 
 NeoBundle 'abeaumet/ack.vim', {
   \     'external_commands': 'ack'
@@ -600,6 +608,13 @@ endfunction
 NeoBundle 'matchit.zip'
 
 NeoBundle 'myusuf3/numbers.vim'
+let bundle = neobundle#get('numbers.vim')
+function! bundle.hooks.on_post_source(bundle)
+  " This is an ugly hack, really
+  set norelativenumber number
+  call SetNumbers()
+  call SetRelative()
+endfunction
 
 NeoBundle 'nelstrom/vim-visual-star-search'
 
@@ -628,8 +643,8 @@ function! bundle.hooks.on_source(bundle)
   let g:syntastic_cpp_checkers = [
     \     'cpplint'
     \ ]
-  nnoremap <silent> <Leader>c :SyntasticCheck<CR>
-  nnoremap <silent> <Leader>C :SyntasticToggleMode<CR>
+  nnoremap <silent> <Leader>s :SyntasticCheck<CR>
+  nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
 endfunction
 
 NeoBundle 'terryma/vim-multiple-cursors'
@@ -667,6 +682,7 @@ function! bundle.hooks.on_source(bundle)
 endfunction
 
 NeoBundle 'Raimondi/delimitMate'
+
 
 " Check installation
 NeoBundleCheck
