@@ -1,22 +1,22 @@
 # Define
 
-snippet def "#define"
-#define ${1}
+snippet def "#define" !b
+#define ${1:SYMBOL} ${2:value}
 endsnippet
 
-snippet ifndef "#ifndef ... #define ... #endif" b
+snippet defi "#define only #ifndef" !b
 #ifndef ${1/([A-Za-z0-9_]+).*/$1/}
-#  define ${1:SYMBOL} ${2:value}
+#	define ${1:SYMBOL} ${2:value}
 #endif
 endsnippet
 
-snippet guard "Include header once only guard"
+snippet gua "Guard: include header only once" !b
 #ifndef ${1:`!p
 if not snip.c:
-	import random, string
-	name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
-	rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
-	snip.rv = ('%s_%s' % (name,rand)).upper()
+    import random, string
+    name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
+    rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
+    snip.rv = ('%s_%s' % (name,rand)).upper()
 else:
     snip.rv = snip.c`}
 #define $1
@@ -28,57 +28,76 @@ endsnippet
 
 # Include
 
-snippet inc "#include local header" b
+snippet inc "#include local header" !b
 #include "${1:`!p snip.rv = snip.basename + '.h'`}"
 endsnippet
 
-snippet incs "#include system header (Inc)"
+snippet sinc "#include system heade" !b
 #include <${1:.h}>
 endsnippet
 
 # Control flow
 
-snippet if "if"
-if (${1:/* condition */})
+snippet if "if" !b
+if (${1:CONDITION})
 {
-    ${2:// code...}
+	${2:// code...}
 }
+$0
 endsnippet
 
-snippet elif "else if"
-else if (${1:/* condition */})
-{
-    ${2:// code...}
-}
+snippet sif "short if" !b
+if (${1:CONDITION})
+	${2:// code...}
+$0
 endsnippet
 
-snippet else "else"
+snippet elif "else if" !b
+else if (${1:CONDITION})
+{
+	${2:// code...}
+}
+$0
+endsnippet
+
+snippet selif "short else if" !b
+else if (${1:CONDITION})
+	${2:// code...}
+$0
+endsnippet
+
+snippet else "else" !b
 else
 {
-    ${2:// code...}
+	${0:// code...}
 }
 endsnippet
 
-snippet while "while loop"
-while(${1:/* condition */})
+snippet selse "short else" !b
+else
+	${0:// code...}
+endsnippet
+
+snippet while "while loop" !b
+while (${1:CONDITION})
 {
-    ${1:// code...}
+	${0:// code...}
 }
 endsnippet
 
-snippet for "for loop"
-for (${2:i} = 0; $2 < ${1:count}; ${3:++$2})
+snippet for "for loop" !b
+for (${1:i} = 0; $1 < ${2:COUNT}; $1${3:++})
 {
-    ${1:// code...}
+	${0:// code...}
 }
 endsnippet
 
 # Various
 
-snippet main "main"
+snippet main "main" !b
 int main(int argc, char **argv)
 {
-    ${VISUAL}${0:${VISUAL/(.*)/(?1::\/* code *\/)/}}
-    return 0;
+	${VISUAL}${0:${VISUAL/(.*)/(?1::\/* code *\/)/}}
+	return 0;
 }
 endsnippet
