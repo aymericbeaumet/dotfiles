@@ -1,12 +1,12 @@
 # Define
 
 snippet def "#define" !b
-#define ${1:SYMBOL} ${2:value}
+#define ${1:SYMBOL} ${2}
 endsnippet
 
 snippet defi "#define only #ifndef" !b
 #ifndef ${1/([A-Za-z0-9_]+).*/$1/}
-#	define ${1:SYMBOL} ${2:value}
+#	define ${1:SYMBOL} ${2}
 #endif
 endsnippet
 

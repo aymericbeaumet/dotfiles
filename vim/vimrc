@@ -214,8 +214,8 @@ nnoremap <silent> J myJ`y
 nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
 " insert blank lines without entering insert mode
-nnoremap <silent> go o<Esc>0D
-nnoremap <silent> gO O<Esc>0D
+nnoremap <silent> go o<esc>0"_d
+nnoremap <silent> go o<esc>0"_d
 
 " disable annoying keys
 map <silent> <F1> <Nop>
@@ -228,9 +228,9 @@ inoremap <silent> jj <C-C>
 " useful insert mode binds
 inoremap <silent> II <C-O>0
 inoremap <silent> AA <C-O>$
-inoremap <silent> CC <C-O>d$
-inoremap <silent> OO <Esc>O
-inoremap <silent> <C-O><C-O> <Esc>o
+inoremap <silent> CC <C-O>"_d$
+inoremap <silent> OO <C-C>O
+inoremap <silent> <C-O><C-O> <C-C>o
 inoremap <silent> JJ <C-O>J
 
 " buffer
@@ -242,6 +242,9 @@ nnoremap <silent> <leader>tq :tabclose<CR>
 
 " delete whitespaces
 nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
+
+" replace with buffer in visual mode
+vnoremap r "_dP
 
 " }}}
 
