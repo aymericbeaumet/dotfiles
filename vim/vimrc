@@ -1,26 +1,21 @@
 " Author: Aymeric Beaumet <aymeric@beaumet.me>
 " Github: @abeaumet/dotfiles
-"
-" *vimrc-options*                Global options
-" *vimrc-ui*                     User Interface
-" *vimrc-search*                 Search & Replace behavior
-" *vimrc-edition*                Text editing
-" *vimrc-indent-tab*             Indentation / Tabulations
-" *vimrc-errors*                 Errors
-" *vimrc-binds*                  Binds
-" *vimrc-languages*              Languages specific configuration
-" *vimrc-plugins*                Plugins
-"   *vimrc-plugins-neobundle*      NeoBundle initialization
-"   *vimrc-plugins-themes*         Themes plugins
-"   *vimrc-plugins-languages*      Languages specific plugins
-"   *vimrc-plugins-tools*          Tools plugins
-" *vimrc-filetype*               File type / Syntax detection
-" *vimrc-helpers*                Helpers
-"
-
-
-" Avoid twice sourcing (this cause problems with some lazy loading plugins)
-if exists('g:vimrc_loaded') | finish | endif | let g:vimrc_loaded = 1
+" Content:
+"   *vimrc-options*                      Global options
+"   *vimrc-ui*                           User Interface
+"   *vimrc-search*                       Search & Replace behavior
+"   *vimrc-edition*                      Text editing
+"   *vimrc-indent-tab*                   Indentation / Tabulations
+"   *vimrc-errors*                       Errors
+"   *vimrc-binds*                        Binds
+"   *vimrc-languages*                    Languages specific configuration
+"   *vimrc-plugins*                      Plugins
+"     *vimrc-plugins-neobundle*            NeoBundle initialization
+"     *vimrc-plugins-themes*               Themes plugins
+"     *vimrc-plugins-languages*            Languages specific plugins
+"     *vimrc-plugins-tools*                Tools plugins
+"   *vimrc-filetype*                     File type / Syntax detection
+"   *vimrc-helpers*                      Helpers
 
 
 
@@ -29,7 +24,7 @@ if exists('g:vimrc_loaded') | finish | endif | let g:vimrc_loaded = 1
 " break away from old vi compatibility
 set nocompatible
 
-" clear all autocommands
+" clear previous autocmd
 autocmd!
 
 set shell=zsh           " shell for :sh
@@ -41,19 +36,20 @@ set modeline            " enable modelines
 set modelines=3         " consider the first/last three lines
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=tags;/         " define tags file path
-set cryptmethod="blowfish" " define strong crypt method
 
 set noswapfile          " disable swap files
 
 set backup              " enable backup files
 set backupdir=~/.vim/tmp/backup// " backup files directory
-au VimEnter * if !isdirectory(expand(&backupdir)) | silent! call mkdir(expand(&backupdir), "p") | endif
+au VimEnter * if !isdirectory(expand(&backupdir)) |
+  \ silent! call mkdir(expand(&backupdir), "p") | endif
 
 set undofile            " enable undo files
 set undolevels=1000     " number of undo level
 set undoreload=10000    " number of lines to save for undo
 set undodir=~/.vim/tmp/undo// " undo files directory
-au VimEnter * if !isdirectory(expand(&undodir)) | silent! call mkdir(expand(&undodir), "p") | endif
+au VimEnter * if !isdirectory(expand(&undodir)) |
+  \ silent! call mkdir(expand(&undodir), "p") | endif
 
 " }}}
 
@@ -74,19 +70,18 @@ set wildmode=list:longest,list,full " `-> better
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
-set tabpagemax=20       " allow lots of tabs
+set tabpagemax=100      " allow lots of tabs
 set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
-set background=dark     " dark background
 hi CursorLine cterm=bold " highlight cursor line
-autocmd VimEnter * NeoBundleSource wombat256.vim " choose theme
+au VimEnter * NeoBundleSource wombat256.vim " choose theme
 
 set relativenumber      " relative line numerotation by default
-autocmd InsertEnter * set norelativenumber number " classic line numerotation in insert mode
-autocmd InsertLeave * set nonumber relativenumber " revert to relative when leaving insert mode
+au InsertEnter * set norelativenumber number " classic in insert mode
+au InsertLeave * set nonumber relativenumber " relative out of insert mode
 
-" }}}
+  " }}}
 
 
 
@@ -99,8 +94,9 @@ set wrapscan            " searches wrap around the end of the file
 set showmatch           " show the matching bracket when inserting
 set gdefault            " default substitute g flag
 au VimEnter * set hlsearch " highlight last search matches
-au InsertEnter * :setlocal nohlsearch " disable search highlighting in insert mode
-au InsertLeave * :setlocal hlsearch " ... ands re-enable when leaving
+
+au InsertEnter * setlocal nohlsearch " disable search highlighting in insert mode
+au InsertLeave * setlocal hlsearch " ... ands re-enable when leaving
 
 " }}}
 
@@ -112,32 +108,29 @@ set backspace=2         " fix backspace (on some OS/term)
 set nostartofline       " leave my cursor position alone!
 set foldmethod=manual   " ensure that foldmethod is manual
 set virtualedit=block   " allow the cursor to go in to 'invalid' places
-set wrap linebreak textwidth=0 " disable autowrap
 set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
 set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
 set sidescrolloff=10    " (same as above about columns during side scrolling)
 set nolist              " hide invisible characters
+set textwidth=80        " 80 characters line
 
 " spell checker
 set spelllang=en        " configure spell language
 set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
-highlight clear SpellBad
-highlight clear SpellCap
-highlight clear SpellLocal
-highlight clear SpellRare
-set nospell " Disable space language globally
+set nospell             " Disable spell language globally
 
 " format option stuff (see :help fo-table)
 set fo=cro
 silent! set fo+=j " not compatible with all vim versions
 
 " Highlight trailing whitespaces
-highlight TrailingWhitespace ctermbg=darkyellow
+hi TrailingWhitespace ctermbg=darkyellow
 match TrailingWhitespace /\s\+$/
 
 " remember last position in file
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
+  \ exe "normal g'\"" | endif
 
 " }}}
 
@@ -148,9 +141,9 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'
 set autoindent          " auto-indentation
 set smarttab            " insert shiftwidth spaces instead of tabs
 set expandtab           " replace tabs by spaces
-au VimEnter * set shiftwidth=2  " n spaces when using <Tab>
-au VimEnter * set softtabstop=2 " n spaces when using <Tab>
-au VimEnter * set tabstop=2     " n spaces when using <Tab>
+set shiftwidth=2  " n spaces when using <Tab>
+set softtabstop=2 " n spaces when using <Tab>
+set tabstop=2     " n spaces when using <Tab>
 
 " }}}
 
@@ -191,7 +184,7 @@ let mapleader = '\'
 " hide last search matches
 nnoremap <silent> <Space> :nohlsearch<CR>
 
-" use `,d`  `,D` `,x` `,X` to delete without altering the yanked stack
+" use `\d`  `\D` `\x` `\X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
@@ -213,22 +206,24 @@ nnoremap <silent> J myJ`y
 " split line with K
 nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
-" insert blank lines without entering insert mode
-nnoremap <silent> go o<esc>0"_d
-nnoremap <silent> go o<esc>0"_d
+" insert blank lines without entering insert mode (do not alter any register)
+nnoremap <silent> gO O<esc>0"_D
+nnoremap <silent> go o<esc>0"_D
 
 " disable annoying keys
-map <silent> <F1> <Nop>
-imap <silent> <F1> <Nop>
-map <silent> Q <Nop>
+noremap <silent> <F1> <Nop>
+inoremap <silent> <F1> <Nop>
+noremap <silent> Q <Nop>
+noremap <silent> ZZ <Nop>
 
-" bind `jj` to leave insert mode
+" bind `jj` to leave insert/op/command mode
 inoremap <silent> jj <C-C>
+cnoremap <silent> jj <C-C>
 
 " useful insert mode binds
 inoremap <silent> II <C-O>0
 inoremap <silent> AA <C-O>$
-inoremap <silent> CC <C-O>"_d$
+inoremap <silent> CC <C-O>"_D
 inoremap <silent> OO <C-C>O
 inoremap <silent> <C-O><C-O> <C-C>o
 inoremap <silent> JJ <C-O>J
@@ -243,7 +238,7 @@ nnoremap <silent> <leader>tq :tabclose<CR>
 " delete whitespaces
 nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
 
-" replace with buffer in visual mode
+" replace visual selection with buffer
 vnoremap r "_dP
 
 " }}}
@@ -273,11 +268,7 @@ endfunction
 " Git commit
 au FileType gitcommit call LoadGitCommitConfiguration()
 function! LoadGitCommitConfiguration()
-  setl spell
-  highlight SpellBad cterm=underline
-  highlight SpellCap cterm=underline
-  highlight SpellLocal cterm=underline
-  highlight SpellRare cterm=underline
+  call UnderlineSpellErrors()
 endfunction
 
 " JavaScript
@@ -301,11 +292,7 @@ au FileType markdown call LoadMarkdownConfiguration()
 function! LoadMarkdownConfiguration()
   setl omnifunc=htmlcomplete#CompleteTags
   setl formatoptions=tcroqn2 comments=n:>
-  setl spell
-  highlight SpellBad cterm=underline
-  highlight SpellCap cterm=underline
-  highlight SpellLocal cterm=underline
-  highlight SpellRare cterm=underline
+  call UnderlineSpellErrors()
 endfunction
 
 " PHP
@@ -331,11 +318,7 @@ endfunction
 au FileType text call LoadTextConfiguration()
 function! LoadTextConfiguration()
   setl formatoptions=tcroqn2
-  setl spell
-  highlight SpellBad cterm=underline
-  highlight SpellCap cterm=underline
-  highlight SpellLocal cterm=underline
-  highlight SpellRare cterm=underline
+  call UnderlineSpellErrors()
 endfunction
 
 " Vim help
@@ -395,6 +378,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
 NeoBundleLazy 'Mustang2'
 let bundle = neobundle#get('Mustang2')
 function! bundle.hooks.on_post_source(bundle)
+  set background=dark
   colorscheme mustang
 endfunction
 
@@ -404,12 +388,14 @@ NeoBundleLazy 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', {
   \ }
 let bundle = neobundle#get('ir_black.vim')
 function! bundle.hooks.on_post_source(bundle)
+  set background=dark
   colorscheme irblack
 endfunction
 
 NeoBundleLazy 'wombat256.vim'
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
+  set background=dark
   colorscheme wombat256mod
 endfunction
 
@@ -517,8 +503,8 @@ let bundle = neobundle#get('vim-easymotion')
 let g:EasyMotion_leader_key = '<Leader><Leader>'
 
 NeoBundle 'SirVer/ultisnips'
-let g:UltiSnipsSnippetDirectories = ['snippet'] " Change snippet directory (use only my snippets)
-let g:UltiSnipsDontReverseSearchPath = 1 " Traverse runtimepath in standard order
+let g:UltiSnipsSnippetDirectories = ['snippet'] " Use only my snippets
+let g:UltiSnipsDontReverseSearchPath = 1 " Browse runtimepath in standard order
 let g:UltiSnipsExpandTrigger = '<Tab>'
 let g:UltiSnipsJumpForwardTrigger = '<Tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
@@ -532,7 +518,7 @@ NeoBundle 'Valloric/YouCompleteMe', {
   \ }
 let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
 let g:ycm_add_preview_to_completeopt = 1 " add preview to completion popup
-let g:ycm_autoclose_preview_window_after_completion = 0 " close preview after a completion
+let g:ycm_autoclose_preview_window_after_completion = 0 " close completion
 let g:ycm_cache_omnifunc = 1 " disable omnifunc cache
 let g:ycm_key_list_select_completion = ['<C-N>'] " change bind to go down
 let g:ycm_key_list_previous_completion = ['<C-P>'] " change bind to go up
@@ -545,7 +531,7 @@ let g:ack_autoclose = 1 " automatically closing the quickfix window
 NeoBundle 'airblade/vim-rooter'
 
 NeoBundle 'chrisbra/NrrwRgn'
-let g:nrrw_rgn_nohl = 1 " disable highlighting in the main window while isolating code
+let g:nrrw_rgn_nohl = 1 " disable highlighting while isolating code
 noremap <silent> <Leader>r :NarrowRegion<CR>
 
 NeoBundle 'godlygeek/tabular'
@@ -555,14 +541,14 @@ vnoremap <silent> <Leader>a :Tabularize /
 NeoBundle 'bitbucket:sjl/gundo.vim'
 let g:gundo_width = 40 " gundo pane width
 let g:gundo_preview_height = 20 " preview height
-let g:gundo_preview_bottom = 1 " preview on file bottom (not under the left pane)
+let g:gundo_preview_bottom = 1 " preview on bottom of file
 let g:gundo_help = 0 " disable help in gundo pane
 let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
 nnoremap <Leader>ue :GundoToggle<CR>
 
 NeoBundle 'jeetsukumaran/vim-buffergator'
 let g:buffergator_suppress_keymaps = 1 " delete default keymaps
-let g:buffergator_viewport_split_policy = 'L' " split on the bottom of the screen
+let g:buffergator_viewport_split_policy = 'L' " split on the left of the screen
 nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
 
 NeoBundle 'jimsei/winresizer'
@@ -572,15 +558,14 @@ NeoBundle 'kien/ctrlp.vim'
 let g:ctrlp_map = '<Leader>fo'
 let g:ctrlp_custom_ignore = {
   \     'dir':  '\v[\/]\.(git|hg|svn)$'
-  \ } " will be ignored in completion (the `wildignore` option is considered before these patterns)
-let g:ctrlp_switch_buffer = 't' " if the file exists in a buffer in the current tab, jump to it
-let g:ctrlp_working_path_mode = 'ra' " the nearest ancestor containing a SCM configuration file (.git, ...)
-let g:ctrlp_max_files = 1000 " avoid lag if launched in a top directory (~ for example)
+  \ } " will be ignored in completion (`wildignore` is applied first)
+let g:ctrlp_working_path_mode = 'ra' " search root is the nearest SCM
+let g:ctrlp_max_files = 1000 " avoid lag if launched in a high level directory
 let g:ctrlp_max_depth = 10 " same as above
 let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
 let g:ctrlp_show_hidden = 1 " search for hidden files
 let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
-let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files -co'] " use .git to faster search
+let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files -co'] " .git faster
 let g:ctrlp_switch_buffer = 'et' " switch to any buffer in any tab
 nnoremap <silent> <Leader>fr :CtrlPMRU<CR>
 nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
@@ -643,17 +628,17 @@ NeoBundle 'xolox/vim-easytags', {
   \         'xolox/vim-misc'
   \     ]
   \ }
-let bundle = neobundle#get('vim-easytags')
-"let g:easytags_by_filetype = 1 " separate tag files for each languages (https://github.com/xolox/vim-easytags/issues/60)
+"let g:easytags_by_filetype = 1 " separate tag files for each languages
 let g:easytags_include_members = 1 " more complete tag files for C++ and Java
 let g:easytags_resolve_links = 1 " follow symlinks
 let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
 let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
 
 NeoBundle 'Raimondi/delimitMate'
+au FileType php let b:delimitMate_matchpairs = "(:),[:],{:},':',\":\""
 
 
-" Check installation
+" Install bundles, generate/check documentation
 NeoBundleCheck
 
 " }}}
@@ -685,9 +670,25 @@ function! StripTrailingWhitespaces()
   call cursor(l, c)
 endfunction
 
+" Enable spell checker && Underline spell errors
+function! UnderlineSpellErrors()
+  hi clear SpellBad
+  hi clear SpellCap
+  hi clear SpellLocal
+  hi clear SpellRare
+  hi SpellBad cterm=underline
+  hi SpellCap cterm=underline
+  hi SpellLocal cterm=underline
+  hi SpellRare cterm=underline
+  setl spell
+endfunction
+
 " }}}
 
 
 
-" Useful modeline to browse the file using '*' and '#' on *vimrc-markers*
+" Forbid ~/.vimrc alteration by autocmd, shell or write commands
+set secure
+
+" Modeline to browse the file using '*' and '#' on *vimrc-markers*
 " vim: isk+=- isk+=*

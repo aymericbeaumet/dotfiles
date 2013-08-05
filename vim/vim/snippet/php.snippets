@@ -1,103 +1,158 @@
 # Define
 
 snippet def "define" !b
-define('${0}');
+define('${1}');
 endsnippet
 
 # Include
 
 snippet inc "include a file" !b
-include '${0}'
+include '${1}'
 endsnippet
 
 snippet oinc "include a file once" !b
-include_once '${0}'
+include_once '${1}'
 endsnippet
 
 # Control flow
 
 snippet if "if" !b
-if (${1:/* condition */})
+if (${1:CONDITION})
 {
-    ${2:// code...}
+	${2:// code...}
 }
 $0
 endsnippet
 
 snippet sif "short if" !b
 if (${1:CONDITION})
-	${0:// code...}
+	${2:// code...}
+$0
 endsnippet
 
-snippet elif "elseif" !b
+snippet ei "elseif" !b
 elseif (${1:/* condition */})
 {
-    ${2:// code...}
+	${2:// code...}
 }
 $0
 endsnippet
 
-snippet selif "short else if" !b
+snippet sei "short else if" !b
 elseif (${1:CONDITION})
 	${2:// code...}
 $0
 endsnippet
 
-snippet else "else" !b
+snippet el "else" !b
 else
 {
-    ${0:// code...}
+	${2:// code...}
 }
 endsnippet
 
-snippet selse "short else" !b
+snippet sel "short else" !b
 else
-	${0:// code...}
+	${2:// code...}
 endsnippet
 
-snippet while "while loop" !b
+snippet wh "while loop" !b
 while (${1:CONDITION})
 {
-    ${0:// code...}
+	${2:// code...}
 }
 endsnippet
 
-snippet for "for loop" !b
+snippet swh "short while loop" !b
+while (${1:CONDITION})
+	${2:// code...}
+endsnippet
+
+snippet fo "for loop" !b
 for ($${1:i} = 0; $$1 < ${2:COUNT}; $$1${3:++})
 {
-    ${0:// code...}
+	${2:// code...}
 }
 endsnippet
 
-snippet fore "foreach loop" !b
-foreach ($1 as $value)
+snippet sfo "short for loop" !b
+for ($${1:i} = 0; $$1 < ${2:COUNT}; $$1${3:++})
+	${2:// code...}
+endsnippet
+
+snippet fh "foreach loop" !b
+foreach ($1 as ${2:$value})
 {
-	${0:// code...}
+	${3:// code...}
 }
 endsnippet
 
-snippet forek "foreach loop" !b
-foreach (${1:CONTENT} as $key => $value)
+snippet sfh "short foreach loop" !b
+foreach ($1 as ${2:$value})
+	${3:// code...}
+endsnippet
+
+snippet fk "foreach loop with key" !b
+foreach (${1:CONTENT} as ${2:$key} => ${3:$value})
 {
-	${0:// code...}
+	${2:// code...}
 }
+endsnippet
+
+snippet sfk "foreach loop with key" !b
+foreach (${1:CONTENT} as ${2:$key} => ${3:$value})
+	${2:// code...}
+endsnippet
+
+snippet sw "switch" !b
+switch (${1:VARIABLE})
+{
+	${2:// code...}
+}
+endsnippet
+
+snippet ca "switch case" !b
+case ${1:CONDITION}:
+	${2:// code...}
+	${3:break;}
+$0
+endsnippet
+
+snippet de "switch default" !b
+default:
+	${2:// code...}
+	${3:break;}
 endsnippet
 
 # POO
 
-snippet class "Class template" !b
-class ${1:CLASSNAME}
+snippet cl "Class template" !b
+class ${1:`!p snip.rv = snip.basename`} ${2}
 {
-	${0}
+	${3}
 }
 endsnippet
 
 # Various
 
-snippet debug "print a variable and exit 42" !b
+snippet com "Comment" !b
+// ${1}
+endsnippet
+
+snippet debug "print a variable" !b
 echo '<pre>';
-var_dump($0);
+var_dump(${0});
 echo '</pre>';
+endsnippet
+
+snippet xdebug "print a variable and exit 42" !b
+echo '<pre>';
+var_dump(${0});
+echo '</pre>';
+exit(42);
+endsnippet
+
+snippet ei "Exit" !b
 exit(42);
 endsnippet
 
