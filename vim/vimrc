@@ -19,13 +19,16 @@
 
 
 
-" {{{ Global options                                             *vimrc-options*
 
 " break away from old vi compatibility
 set nocompatible
 
 " clear previous autocmd
 autocmd!
+
+
+
+" {{{ Global options                                             *vimrc-options*
 
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
@@ -121,8 +124,8 @@ set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
 set nospell             " Disable spell language globally
 
 " format option stuff (see :help fo-table)
-set fo=cro
-silent! set fo+=j " not compatible with all vim versions
+set formatoptions=cro
+silent! set formatoptions+=j " not compatible with all vim versions
 
 " Highlight trailing whitespaces
 hi TrailingWhitespace ctermbg=darkyellow
@@ -171,12 +174,6 @@ nnoremap <silent> j gj
 vnoremap <silent> j gj
 nnoremap <silent> k gk
 vnoremap <silent> k gk
-
-" center on search result
-nnoremap <silent> n nzz
-nnoremap <silent> <S-N> Nzz
-nnoremap <silent> * *zz
-nnoremap <silent> # #zz
 
 " define leading key
 let mapleader = '\'
@@ -613,7 +610,14 @@ NeoBundle 'tpope/vim-abolish'
 
 NeoBundle 'tpope/vim-eunuch'
 
-NeoBundle 'tpope/vim-fugitive', { 'external_commands': 'git' }
+NeoBundle 'tpope/vim-fugitive', {
+  \     'external_commands': 'git'
+  \ }
+let bundle = neobundle#get('vim-fugitive')
+function! bundle.hooks.on_post_source(bundle)
+  " Ensure that the buffers do not pollute the buffer list
+  autocmd BufReadPost fugitive://* setl bufhidden=delete
+endfunction
 
 NeoBundle 'tpope/vim-repeat'
 
@@ -636,6 +640,15 @@ let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
 
 NeoBundle 'Raimondi/delimitMate'
 au FileType php let b:delimitMate_matchpairs = "(:),[:],{:},':',\":\""
+
+NeoBundle 'abeaumet/IndexedSearch'
+let g:indexed_search_center_on_result = 1 " center on search results
+
+NeoBundleLazy 'gregsexton/MatchTag', {
+  \     'autoload': {
+  \         'filetypes': ['html', 'xml']
+  \     }
+  \ }
 
 
 " Install bundles, generate/check documentation
@@ -686,9 +699,6 @@ endfunction
 " }}}
 
 
-
-" Forbid ~/.vimrc alteration by autocmd, shell or write commands
-set secure
 
 " Modeline to browse the file using '*' and '#' on *vimrc-markers*
 " vim: isk+=- isk+=*

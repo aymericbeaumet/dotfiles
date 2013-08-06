@@ -1,17 +1,17 @@
 # Define
 
 snippet def "define" !b
-define('${1}');
+define('$1');
 endsnippet
 
 # Include
 
 snippet inc "include a file" !b
-include '${1}'
+include '$1'
 endsnippet
 
 snippet oinc "include a file once" !b
-include_once '${1}'
+include_once '$1'
 endsnippet
 
 # Control flow
@@ -19,109 +19,109 @@ endsnippet
 snippet if "if" !b
 if (${1:CONDITION})
 {
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 }
 $0
 endsnippet
 
 snippet sif "short if" !b
 if (${1:CONDITION})
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 $0
 endsnippet
 
 snippet ei "elseif" !b
 elseif (${1:/* condition */})
 {
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 }
 $0
 endsnippet
 
 snippet sei "short else if" !b
 elseif (${1:CONDITION})
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 $0
 endsnippet
 
 snippet el "else" !b
 else
 {
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 }
 endsnippet
 
 snippet sel "short else" !b
 else
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 endsnippet
 
 snippet wh "while loop" !b
 while (${1:CONDITION})
 {
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 }
 endsnippet
 
 snippet swh "short while loop" !b
 while (${1:CONDITION})
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 endsnippet
 
 snippet fo "for loop" !b
 for ($${1:i} = 0; $$1 < ${2:COUNT}; $$1${3:++})
 {
-	${2:// code...}
+	${4:${VISUAL:\/\/ code...}}
 }
 endsnippet
 
 snippet sfo "short for loop" !b
 for ($${1:i} = 0; $$1 < ${2:COUNT}; $$1${3:++})
-	${2:// code...}
+	${4:${VISUAL:\/\/ code...}}
 endsnippet
 
 snippet fh "foreach loop" !b
-foreach ($1 as ${2:$value})
+foreach ($1 as $${2:value})
 {
-	${3:// code...}
+	${3:${VISUAL:\/\/ code...}}
 }
 endsnippet
 
 snippet sfh "short foreach loop" !b
-foreach ($1 as ${2:$value})
-	${3:// code...}
+foreach ($1 as $${2:value})
+	${3:${VISUAL:\/\/ code...}}
 endsnippet
 
-snippet fk "foreach loop with key" !b
-foreach (${1:CONTENT} as ${2:$key} => ${3:$value})
+snippet fh "foreach loop with key" !b
+foreach (${1:CONTENT} as $${2:key} => $${3:value})
 {
-	${2:// code...}
+	${4:${VISUAL:\/\/ code...}}
 }
 endsnippet
 
-snippet sfk "foreach loop with key" !b
-foreach (${1:CONTENT} as ${2:$key} => ${3:$value})
-	${2:// code...}
+snippet sfh "short foreach loop with key" !b
+foreach (${1:CONTENT} as $${2:key} => $${3:value})
+	${4:${VISUAL:\/\/ code...}}
 endsnippet
 
 snippet sw "switch" !b
 switch (${1:VARIABLE})
 {
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 }
 endsnippet
 
 snippet ca "switch case" !b
 case ${1:CONDITION}:
-	${2:// code...}
+	${2:${VISUAL:\/\/ code...}}
 	${3:break;}
 $0
 endsnippet
 
 snippet de "switch default" !b
 default:
-	${2:// code...}
-	${3:break;}
+	${1:${VISUAL:\/\/ code...}}
+	${2:break;}
 endsnippet
 
 # POO
@@ -135,24 +135,37 @@ endsnippet
 
 # Various
 
+snippet echos "Echo with simple quote" !b
+echo '${1/\'/\\'/g}'; //$1
+endsnippet
+
+snippet echod "Echo with double quote" !b
+echo "${1/\"/\\"/g}"; //$1
+endsnippet
+
 snippet com "Comment" !b
-// ${1}
+// ${1:${VISUAL}}
+endsnippet
+
+snippet todo "To do" !b
+// TODO(${1:aymeric@beaumet.me}): ${2:${VISUAL}}
+endsnippet
+
+snippet dep "Deprecated" !b
+// DEPRECATED(${1:aymeric@beaumet.me}): ${2:${VISUAL}}
+
 endsnippet
 
 snippet debug "print a variable" !b
 echo '<pre>';
-var_dump(${0});
+var_dump($0);
 echo '</pre>';
 endsnippet
 
 snippet xdebug "print a variable and exit 42" !b
 echo '<pre>';
-var_dump(${0});
+var_dump($0);
 echo '</pre>';
-exit(42);
-endsnippet
-
-snippet ei "Exit" !b
 exit(42);
 endsnippet
 
