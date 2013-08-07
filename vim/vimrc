@@ -1,30 +1,30 @@
 " Author: Aymeric Beaumet <aymeric@beaumet.me>
 " Github: @abeaumet/dotfiles
+"
 " Content:
-"   *vimrc-options*                      Global options
-"   *vimrc-ui*                           User Interface
-"   *vimrc-search*                       Search & Replace behavior
-"   *vimrc-edition*                      Text editing
-"   *vimrc-indent-tab*                   Indentation / Tabulations
-"   *vimrc-errors*                       Errors
-"   *vimrc-binds*                        Binds
-"   *vimrc-languages*                    Languages specific configuration
-"   *vimrc-plugins*                      Plugins
-"     *vimrc-plugins-neobundle*            NeoBundle initialization
-"     *vimrc-plugins-themes*               Themes plugins
-"     *vimrc-plugins-languages*            Languages specific plugins
-"     *vimrc-plugins-tools*                Tools plugins
-"   *vimrc-filetype*                     File type / Syntax detection
-"   *vimrc-helpers*                      Helpers
-
+"   1. Global options                                  *vimrc-options*
+"   2. User Interface                                  *vimrc-ui*
+"   3. Search & Replace behavior                       *vimrc-search*
+"   4. Text editing                                    *vimrc-edition*
+"   5. Indentation / Tabulations                       *vimrc-indent-tab*
+"   6. Errors                                          *vimrc-errors*
+"   7. Binds                                           *vimrc-binds*
+"   8. Languages specific configuration                *vimrc-languages*
+"   9. Plugins                                         *vimrc-plugins*
+"     9.1. NeoBundle initialization                    *vimrc-plugins-neobundle*
+"     9.2. Themes plugins                              *vimrc-plugins-themes*
+"     9.3. Languages specific plugins                  *vimrc-plugins-languages*
+"     9.4. Tools plugins                               *vimrc-plugins-tools*
+"   10. File type / Syntax detection                   *vimrc-filetype*
+"   11. Helpers                                        *vimrc-helpers*
 
 
 
 " break away from old vi compatibility
 set nocompatible
 
-" clear previous autocmd
-autocmd!
+" clear autocommands of the default group
+au!
 
 
 
@@ -44,15 +44,13 @@ set noswapfile          " disable swap files
 
 set backup              " enable backup files
 set backupdir=~/.vim/tmp/backup// " backup files directory
-au VimEnter * if !isdirectory(expand(&backupdir)) |
-  \ silent! call mkdir(expand(&backupdir), "p") | endif
+au VimEnter * call CreateDirectory(&backupdir)
 
 set undofile            " enable undo files
 set undolevels=1000     " number of undo level
 set undoreload=10000    " number of lines to save for undo
 set undodir=~/.vim/tmp/undo// " undo files directory
-au VimEnter * if !isdirectory(expand(&undodir)) |
-  \ silent! call mkdir(expand(&undodir), "p") | endif
+au VimEnter * call CreateDirectory(&undodir)
 
 " }}}
 
@@ -77,7 +75,7 @@ set tabpagemax=100      " allow lots of tabs
 set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
-hi CursorLine cterm=bold " highlight cursor line
+au VimEnter * hi CursorLine cterm=bold " highlight cursor line
 au VimEnter * NeoBundleSource wombat256.vim " choose theme
 
 set relativenumber      " relative line numerotation by default
@@ -96,8 +94,8 @@ set incsearch           " show matches as soon as possible
 set wrapscan            " searches wrap around the end of the file
 set showmatch           " show the matching bracket when inserting
 set gdefault            " default substitute g flag
-au VimEnter * set hlsearch " highlight last search matches
 
+au VimEnter * set hlsearch " highlight last search matches (only on vim startup)
 au InsertEnter * setlocal nohlsearch " disable search highlighting in insert mode
 au InsertLeave * setlocal hlsearch " ... ands re-enable when leaving
 
@@ -117,19 +115,28 @@ set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
 set sidescrolloff=10    " (same as above about columns during side scrolling)
 set nolist              " hide invisible characters
 set textwidth=80        " 80 characters line
+set wrap                " wrap long lines
 
 " spell checker
+set nospell             " Disable spell language globally
 set spelllang=en        " configure spell language
 set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
-set nospell             " Disable spell language globally
+au VimEnter * hi clear SpellBad
+au VimEnter * hi clear SpellCap
+au VimEnter * hi clear SpellLocal
+au VimEnter * hi clear SpellRare
+au VimEnter * hi SpellBad cterm=underline
+au VimEnter * hi SpellCap cterm=underline
+au VimEnter * hi SpellLocal cterm=underline
+au VimEnter * hi SpellRare cterm=underline
 
 " format option stuff (see :help fo-table)
 set formatoptions=cro
 silent! set formatoptions+=j " not compatible with all vim versions
 
 " Highlight trailing whitespaces
-hi TrailingWhitespace ctermbg=darkyellow
-match TrailingWhitespace /\s\+$/
+au VimEnter * hi TrailingWhitespace ctermbg=darkyellow |
+  \ match TrailingWhitespace /\s\+$/
 
 " remember last position in file
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -244,6 +251,7 @@ vnoremap r "_dP
 
 " {{{ Languages specific configuration                         *vimrc-languages*
 
+" C/CPP
 au FileType c,cpp call LoadCConfiguration()
 function! LoadCConfiguration()
   setl omnifunc=ccomplete#Complete
@@ -265,7 +273,7 @@ endfunction
 " Git commit
 au FileType gitcommit call LoadGitCommitConfiguration()
 function! LoadGitCommitConfiguration()
-  call UnderlineSpellErrors()
+  setl spell
 endfunction
 
 " JavaScript
@@ -289,7 +297,7 @@ au FileType markdown call LoadMarkdownConfiguration()
 function! LoadMarkdownConfiguration()
   setl omnifunc=htmlcomplete#CompleteTags
   setl formatoptions=tcroqn2 comments=n:>
-  call UnderlineSpellErrors()
+  setl spell
 endfunction
 
 " PHP
@@ -315,13 +323,7 @@ endfunction
 au FileType text call LoadTextConfiguration()
 function! LoadTextConfiguration()
   setl formatoptions=tcroqn2
-  call UnderlineSpellErrors()
-endfunction
-
-" Vim help
-au FileType help call LoadVimHelpConfiguration()
-function! LoadVimHelpConfiguration()
-  setl nospell
+  setl spell
 endfunction
 
 " XML
@@ -356,10 +358,12 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
   \     'depends': [
   \         [
   \             'Shougo/vimproc.vim', {
-  \                 'build': {
-  \                     'unix': 'make-fmake_unix.mak',
-  \                     'mac': 'make-fmake_mac.mak',
-  \                 }
+  \                 'build' : {
+  \                     'windows' : 'make -f make_mingw32.mak',
+  \                     'cygwin' : 'make -f make_cygwin.mak',
+  \                     'mac' : 'make -f make_mac.mak',
+  \                     'unix' : 'make -f make_unix.mak',
+  \                 },
   \             }
   \         ]
   \     ]
@@ -517,13 +521,13 @@ let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
 let g:ycm_add_preview_to_completeopt = 1 " add preview to completion popup
 let g:ycm_autoclose_preview_window_after_completion = 0 " close completion
 let g:ycm_cache_omnifunc = 1 " disable omnifunc cache
-let g:ycm_key_list_select_completion = ['<C-N>'] " change bind to go down
-let g:ycm_key_list_previous_completion = ['<C-P>'] " change bind to go up
+let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
+let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
 
 NeoBundle 'abeaumet/ack.vim', {
   \     'external_commands': 'ack'
   \ }
-let g:ack_autoclose = 1 " automatically closing the quickfix window
+let g:ack_autoclose = 1 " automatically close the quickfix window
 
 NeoBundle 'airblade/vim-rooter'
 
@@ -600,11 +604,11 @@ let g:syntastic_c_compiler_options = "-Wall -Wextra"
 let g:syntastic_cpp_checkers = [
   \     'cpplint'
   \ ]
-nnoremap <silent> <Leader>s :SyntasticCheck<CR>
-nnoremap <silent> <Leader>S :SyntasticToggleMode<CR>
+nnoremap <silent> <Leader>sc :SyntasticCheck<CR>
+nnoremap <silent> <Leader>st :SyntasticToggleMode<CR>
 
 NeoBundle 'terryma/vim-multiple-cursors'
-vnoremap <silent> <Leader>m :MultipleCursorsFind<Space>
+vnoremap <silent> <Leader>mc :MultipleCursorsFind<Space>
 
 NeoBundle 'tpope/vim-abolish'
 
@@ -616,7 +620,7 @@ NeoBundle 'tpope/vim-fugitive', {
 let bundle = neobundle#get('vim-fugitive')
 function! bundle.hooks.on_post_source(bundle)
   " Ensure that the buffers do not pollute the buffer list
-  autocmd BufReadPost fugitive://* setl bufhidden=delete
+  au BufReadPost fugitive://* setl bufhidden=delete
 endfunction
 
 NeoBundle 'tpope/vim-repeat'
@@ -638,11 +642,8 @@ let g:easytags_resolve_links = 1 " follow symlinks
 let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
 let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
 
-NeoBundle 'Raimondi/delimitMate'
-au FileType php let b:delimitMate_matchpairs = "(:),[:],{:},':',\":\""
-
 NeoBundle 'abeaumet/IndexedSearch'
-let g:indexed_search_center_on_result = 1 " center on search results
+let g:indexed_search_center_on_result = 1 " center on search result
 
 NeoBundleLazy 'gregsexton/MatchTag', {
   \     'autoload': {
@@ -683,20 +684,21 @@ function! StripTrailingWhitespaces()
   call cursor(l, c)
 endfunction
 
-" Enable spell checker && Underline spell errors
-function! UnderlineSpellErrors()
-  hi clear SpellBad
-  hi clear SpellCap
-  hi clear SpellLocal
-  hi clear SpellRare
-  hi SpellBad cterm=underline
-  hi SpellCap cterm=underline
-  hi SpellLocal cterm=underline
-  hi SpellRare cterm=underline
-  setl spell
+
+" Check if the given directory exists, else create it
+function! CreateDirectory(directory_name)
+  let l:expanded_directory_name = expand(a:directory_name)
+
+  if !isdirectory(l:expanded_directory_name)
+    silent! call mkdir(l:expanded_directory_name, "p")
+  endif
 endfunction
 
 " }}}
+
+
+
+set secure " avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
 
 
 
