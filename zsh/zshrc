@@ -2,20 +2,6 @@
 # System #
 ##########
 
-# return 0 if $1 exists (as an alias or executable file in $PATH)
-function cmd_exists()
-{
-  return $([ $# -ne 0 ] && which $1 &>/dev/null);
-}
-
-# write 'unknown', only defined if uname(1) is not in $PATH
-if ! cmd_exists uname ; then
-  function uname()
-  {
-    echo unknown
-  }
-fi
-
 # return 0 if the os is linux
 function is_linux()
 {
@@ -206,32 +192,30 @@ setopt HIST_NO_FUNCTIONS        # remove function definition from history
 # ls #
 ######
 
-if cmd_exists ls ; then
-  SPECIFIC_LS_OPTIONS=''
-  if is_linux ; then
-    SPECIFIC_LS_OPTIONS=--color=auto
-  elif is_bsd || is_macosx ; then
-    SPECIFIC_LS_OPTIONS=-G
-  else
-    unalias ls &>/dev/null
-  fi
-  alias ls="ls -p -F $SPECIFIC_LS_OPTIONS"
-  alias ll='ls -hl'
-  compdef ll=ls
-  alias l='ll'
-  compdef l=ls
-  alias la='ll -A' # list .* files (but not . and ..)
-  compdef la=ls
+SPECIFIC_LS_OPTIONS=''
+if is_linux ; then
+  SPECIFIC_LS_OPTIONS=--color=auto
+elif is_bsd || is_macosx ; then
+  SPECIFIC_LS_OPTIONS=-G
+else
+  unalias ls &>/dev/null
+fi
+alias ls="ls -p -F $SPECIFIC_LS_OPTIONS"
+alias ll='ls -hl'
+compdef ll=ls
+alias l='ll'
+compdef l=ls
+alias la='ll -A' # list .* files (but not . and ..)
+compdef la=ls
 
-  # good ls colors (even on OSX)
-  unset LS_COLORS
-  unset LSCOLORS
-  if is_macosx || is_bsd ; then
-    export CLICOLOR=1
-    export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
-  else
-    export CLICOLOR=0
-  fi
+# good ls colors (even on OSX)
+unset LS_COLORS
+unset LSCOLORS
+if is_macosx || is_bsd ; then
+  export CLICOLOR=1
+  export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
+else
+  export CLICOLOR=0
 fi
 
 
@@ -312,9 +296,9 @@ function set_prompt()
 
   # right prompt
   RPROMPT=''
-  RPROMPT="${RPROMPT:+$RPROMPT }[%n$COLOR_BLUE@$COLOR_RESET%M]"
+  RPROMPT="${RPROMPT:+ $RPROMPT}[%n$COLOR_BLUE@$COLOR_RESET%M]"
   if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
-    RPROMPT="${RPROMPT:+$RPROMPT }{^$COLOR_BLUE%L$COLOR_RESET}"
+    RPROMPT="${RPROMPT:+ $RPROMPT}{^$COLOR_BLUE%L$COLOR_RESET}"
   fi
 }
 
