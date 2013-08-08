@@ -22,6 +22,8 @@ _Memo_
 - `zw` remove a word from the dictionary
 - `z=` show spell proposition(s) from dictionary
 - `]s` and `[s` jump to the previous/next spell error
+- `^wT` move to a new tab
+- `^w]` split and jump to the tag in a new tab
 
 ## Insert mode
 

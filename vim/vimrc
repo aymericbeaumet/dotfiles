@@ -75,6 +75,8 @@ set tabpagemax=100      " allow lots of tabs
 set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
+set splitbelow          " split horizontally below
+
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
 au VimEnter * NeoBundleSource wombat256.vim " choose theme
 
@@ -222,7 +224,6 @@ noremap <silent> ZZ <Nop>
 
 " bind `jj` to leave insert/op/command mode
 inoremap <silent> jj <C-C>
-cnoremap <silent> jj <C-C>
 
 " useful insert mode binds
 inoremap <silent> II <C-O>0
@@ -317,13 +318,6 @@ function! LoadPythonConfiguration()
   setl shiftwidth=4
   setl softtabstop=4
   setl tabstop=4
-endfunction
-
-" Text
-au FileType text call LoadTextConfiguration()
-function! LoadTextConfiguration()
-  setl formatoptions=tcroqn2
-  setl spell
 endfunction
 
 " XML
