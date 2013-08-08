@@ -8,7 +8,7 @@
 "   4. Text editing                              *vimrc-edition*
 "   5. Indentation / Tabulations                 *vimrc-indent-tab*
 "   6. Errors                                    *vimrc-errors*
-"   7. Binds                                     *vimrc-binds*
+"   7. Binds & Alias                             *vimrc-binds-alias*
 "   8. Languages specific configuration          *vimrc-languages*
 "   9. Plugins                                   *vimrc-plugins*
 "     9.1. NeoBundle initialization                *vimrc-plugins-neobundle*
@@ -39,6 +39,8 @@ set modeline            " enable modelines
 set modelines=3         " consider the first/last three lines
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=tags;/         " define tags file path
+set sessionoptions-=options " do not store options in session file
+set sessionoptions-=folds   " do not store folds in session file
 
 set noswapfile          " disable swap files
 
@@ -51,6 +53,8 @@ set undolevels=1000     " number of undo level
 set undoreload=10000    " number of lines to save for undo
 set undodir=~/.vim/tmp/undo// " undo files directory
 au VimEnter * call CreateDirectory(&undodir)
+
+let g:sessionfile='~/.vim/tmp/session.vim' " session file
 
 " }}}
 
@@ -67,7 +71,7 @@ set lazyredraw          " only redraw when needed
 set shortmess=aoOsI     " disable vim welcome message / enable shorter messages
 set cursorline          " highlight cursor line
 set wildmenu            " better command line completion menu
-set wildmode=list:longest,list,full " `-> better
+set wildmode=full       "  `-> ensure default completion
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
@@ -76,6 +80,7 @@ set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
 set splitbelow          " split horizontally below
+set noequalalways       " do not resize windows on split/close
 
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
 au VimEnter * NeoBundleSource wombat256.vim " choose theme
@@ -123,14 +128,17 @@ set wrap                " wrap long lines
 set nospell             " Disable spell language globally
 set spelllang=en        " configure spell language
 set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
-au VimEnter * hi clear SpellBad
-au VimEnter * hi clear SpellCap
-au VimEnter * hi clear SpellLocal
-au VimEnter * hi clear SpellRare
-au VimEnter * hi SpellBad cterm=underline
-au VimEnter * hi SpellCap cterm=underline
-au VimEnter * hi SpellLocal cterm=underline
-au VimEnter * hi SpellRare cterm=underline
+augroup spell_highlight
+  au!
+  au VimEnter * hi clear SpellBad
+  au VimEnter * hi clear SpellCap
+  au VimEnter * hi clear SpellLocal
+  au VimEnter * hi clear SpellRare
+  au VimEnter * hi SpellBad cterm=underline
+  au VimEnter * hi SpellCap cterm=underline
+  au VimEnter * hi SpellLocal cterm=underline
+  au VimEnter * hi SpellRare cterm=underline
+augroup END
 
 " format option stuff (see :help fo-table)
 set formatoptions=cro
@@ -172,7 +180,7 @@ set t_vb=
 
 
 
-" {{{ 7. Binds                                                     *vimrc-binds*
+" {{{ 7. Binds & Alias                                       *vimrc-binds-alias*
 
 " easy navigation between tabs
 nnoremap <silent> <S-H> gT
@@ -185,6 +193,7 @@ nnoremap <silent> k gk
 vnoremap <silent> k gk
 
 " define leading key
+let g:mapleader = '\'
 let mapleader = '\'
 
 " hide last search matches
@@ -221,6 +230,7 @@ noremap <silent> <F1> <Nop>
 inoremap <silent> <F1> <Nop>
 noremap <silent> Q <Nop>
 noremap <silent> ZZ <Nop>
+noremap <silent> ZQ <Nop>
 
 " bind `jj` to leave insert/op/command mode
 inoremap <silent> jj <C-C>
@@ -237,14 +247,29 @@ inoremap <silent> JJ <C-O>J
 nnoremap <silent> <leader>bq :bdelete<CR>
 
 " tab
-nnoremap <silent> <leader>tc :tabnew<CR>
-nnoremap <silent> <leader>tq :tabclose<CR>
+nnoremap <leader>tc :tabnew<CR>
+nnoremap <leader>tq :tabclose<CR>
+cnoreabbrev <expr> tm ((getcmdtype() is# ':' && getcmdline() is# 'tm')?('tabmove'):('tm'))
 
 " delete whitespaces
-nnoremap <silent>  <leader>dw :call StripTrailingWhitespaces()<CR>
+nnoremap <leader>dw :call <SID>StripTrailingWhitespaces()<CR>
 
-" replace visual selection with buffer
-vnoremap r "_dP
+" git alias (very convenient when you're used to it in shell)
+cnoreabbrev <expr> g ((getcmdtype() is# ':' && getcmdline() is# 'g')?('Git'):('g'))
+
+" save/load session
+nnoremap <leader>ss :mksession! <C-R>=g:sessionfile<CR><CR>
+nnoremap <leader>sl :source <C-R>=g:sessionfile<CR><CR>
+
+" command line useful binds
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+cnoremap <C-B> <Left>
+cnoremap <C-F> <Right>
+
+" disable completion popup while using ^e and ^y in insert mode
+inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
+inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 
 " }}}
 
@@ -465,91 +490,123 @@ NeoBundleLazy 'phpcomplete.vim', {
 " 9.4. Tools "
 """"""""""""""
 
+" ---  a.vim
 NeoBundleLazy 'a.vim', {
   \     'autoload': {
   \         'filetypes': ['c', 'cpp']
   \     }
   \ }
 
+" ---  HTML-AutoCloseTag
 NeoBundleLazy 'HTML-AutoCloseTag', {
   \     'autoload': {
   \         'filetypes': ['html', 'markdown', 'xml']
   \     }
   \ }
 
+" ---  Zen Coding
+let g:user_zen_leader_key = '<C-E>'
+let g:user_zen_mode = 'a' " enable all function in all mode
 NeoBundleLazy 'mattn/zencoding-vim', {
   \     'autoload': {
   \         'filetypes': ['html', 'xml']
   \     }
   \ }
-let g:user_zen_leader_key = '<C-E>'
-let g:user_zen_mode = 'a' " enable all function in all mode
 
+" ---  Powerline
 NeoBundle 'Lokaltog/powerline', {
-  \     'rtp': 'powerline/bindings/vim/'
+  \     'rtp': 'powerline/bindings/vim/',
+  \     'external_commands': ['python'],
   \ }
 let bundle = neobundle#get('powerline')
 function! bundle.hooks.on_post_source(bundle)
   set noshowmode " hide the duplicate mode in bottom status bar
 endfunction
 
-NeoBundle 'Lokaltog/vim-easymotion'
+" ---  Easymotion
 let bundle = neobundle#get('vim-easymotion')
 let g:EasyMotion_leader_key = '<Leader><Leader>'
+NeoBundle 'Lokaltog/vim-easymotion'
 
-NeoBundle 'SirVer/ultisnips'
+" ---  UltiSnips
 let g:UltiSnipsSnippetDirectories = ['snippet'] " Use only my snippets
 let g:UltiSnipsDontReverseSearchPath = 1 " Browse runtimepath in standard order
 let g:UltiSnipsExpandTrigger = '<Tab>'
 let g:UltiSnipsJumpForwardTrigger = '<Tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+NeoBundle 'SirVer/ultisnips'
 
+" ---  YouCompleteMe
+let g:ycm_complete_in_comments = 1 " show completion in comments
+let g:ycm_collect_identifiers_from_comments_and_strings = 1 " explicit...
+let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
+let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
+let g:ycm_add_preview_to_completeopt = 1 " more complete completion popup
+let g:ycm_autoclose_preview_window_after_completion = 0 " autoclose popup
+let g:ycm_autoclose_preview_window_after_insertion = 1  " autoclose popup
+let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
+let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
+let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
 NeoBundle 'Valloric/YouCompleteMe', {
   \     'build': {
   \         'unix': './install.sh --clang-completer',
   \         'mac': './install.sh --clang-completer',
   \     },
   \     'vim_version': '7.3.584',
+  \     'external_commands': ['python'],
   \ }
-let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
-let g:ycm_add_preview_to_completeopt = 1 " add preview to completion popup
-let g:ycm_autoclose_preview_window_after_completion = 0 " close completion
-let g:ycm_cache_omnifunc = 1 " disable omnifunc cache
-let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
-let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
 
-NeoBundle 'abeaumet/ack.vim', {
-  \     'external_commands': 'ack'
-  \ }
+" ---  Ack
 let g:ack_autoclose = 1 " automatically close the quickfix window
+NeoBundle 'abeaumet/ack.vim', {
+  \     'external_commands': ['ack']
+  \ }
 
+" ---  Vim Rooter
 NeoBundle 'airblade/vim-rooter'
 
-NeoBundle 'chrisbra/NrrwRgn'
+" ---  Narrow Region
 let g:nrrw_rgn_nohl = 1 " disable highlighting while isolating code
-noremap <silent> <Leader>r :NarrowRegion<CR>
+NeoBundle 'chrisbra/NrrwRgn'
+let bundle = neobundle#get('NrrwRgn')
+function! bundle.hooks.on_post_source(bundle)
+  noremap <silent> <Leader>r :NarrowRegion<CR>
+endfunction
 
+" ---  Tabular
 NeoBundle 'godlygeek/tabular'
-nnoremap <silent> <Leader>a :Tabularize /
-vnoremap <silent> <Leader>a :Tabularize /
+let bundle = neobundle#get('tabular')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>a :Tabularize /
+  vnoremap <silent> <Leader>a :Tabularize /
+endfunction
 
-NeoBundle 'bitbucket:sjl/gundo.vim'
+" ---  Gundo
 let g:gundo_width = 40 " gundo pane width
 let g:gundo_preview_height = 20 " preview height
 let g:gundo_preview_bottom = 1 " preview on bottom of file
 let g:gundo_help = 0 " disable help in gundo pane
 let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
-nnoremap <Leader>ue :GundoToggle<CR>
+NeoBundle 'bitbucket:sjl/gundo.vim'
+let bundle = neobundle#get('gundo.vim')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <Leader>ue :GundoToggle<CR>
+endfunction
 
-NeoBundle 'jeetsukumaran/vim-buffergator'
+" ---  Buffergator
 let g:buffergator_suppress_keymaps = 1 " delete default keymaps
 let g:buffergator_viewport_split_policy = 'L' " split on the left of the screen
-nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
+NeoBundle 'jeetsukumaran/vim-buffergator'
+let bundle = neobundle#get('vim-buffergator')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
+endfunction
 
-NeoBundle 'jimsei/winresizer'
+" ---  Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
+NeoBundle 'jimsei/winresizer'
 
-NeoBundle 'kien/ctrlp.vim'
+" ---  CtrlP
 let g:ctrlp_map = '<Leader>fo'
 let g:ctrlp_custom_ignore = {
   \     'dir':  '\v[\/]\.(git|hg|svn)$'
@@ -561,33 +618,48 @@ let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
 let g:ctrlp_show_hidden = 1 " search for hidden files
 let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files -co'] " .git faster
-let g:ctrlp_switch_buffer = 'et' " switch to any buffer in any tab
-nnoremap <silent> <Leader>fr :CtrlPMRU<CR>
-nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
+let g:ctrlp_switch_buffer = 't' " switch to any buffer in any tab
+NeoBundle 'kien/ctrlp.vim'
+let bundle = neobundle#get('ctrlp.vim')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>fr :CtrlPMRU<CR>
+  nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
+endfunction
 
-NeoBundle 'majutsushi/tagbar'
+" ---  Tagbar
 let g:tagbar_autofocus = 1 " focus tagbar when opened
 let g:tagbar_autoclose = 1 " close tagbar when opening a tag
 let g:tagbar_show_visibility = 1 " show public/private/protected
 let g:tagbar_compact = 1 " hide superfluous stuff
 let g:tagbar_width = 40 " set tagbar width
 let g:tagbar_left = 1 " set tagbar pane on the left side
-nnoremap <silent> <Leader>te :TagbarToggle<CR>
+NeoBundle 'majutsushi/tagbar'
+let bundle = neobundle#get('tagbar')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>te :TagbarToggle<CR>
+endfunction
 
+" ---  MatchIt
 NeoBundle 'matchit.zip'
 
+" ---  Vim Visual Star Search
 NeoBundle 'nelstrom/vim-visual-star-search'
 
+" ---  Nerd Commenter
 NeoBundle 'scrooloose/nerdcommenter'
 
-NeoBundle 'scrooloose/nerdtree'
+" ---  Nerd Tree
 let g:NERDTreeShowHidden = 1 " show hidden files
 let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
 let g:NERDTreeWinSize = 40 " tree width
 let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
-nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
+NeoBundle 'scrooloose/nerdtree'
+let bundle = neobundle#get('nerdtree')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
+endfunction
 
-NeoBundle 'scrooloose/syntastic'
+" ---  Syntastic
 let g:syntastic_mode_map = {
   \     'mode': 'passive'
   \ }
@@ -598,47 +670,65 @@ let g:syntastic_c_compiler_options = "-Wall -Wextra"
 let g:syntastic_cpp_checkers = [
   \     'cpplint'
   \ ]
-nnoremap <silent> <Leader>sc :SyntasticCheck<CR>
-nnoremap <silent> <Leader>st :SyntasticToggleMode<CR>
+NeoBundle 'scrooloose/syntastic'
+let bundle = neobundle#get('syntastic')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>sc :SyntasticCheck<CR>
+  nnoremap <silent> <Leader>st :SyntasticToggleMode<CR>
+endfunction
 
+" ---  Multiple Cursors
 NeoBundle 'terryma/vim-multiple-cursors'
-vnoremap <silent> <Leader>mc :MultipleCursorsFind<Space>
+let bundle = neobundle#get('vim-multiple-cursors')
+function! bundle.hooks.on_post_source(bundle)
+  vnoremap <silent> <Leader>mc :MultipleCursorsFind<Space>
+endfunction
 
+" ---  Abolish
 NeoBundle 'tpope/vim-abolish'
 
+" ---  Eunuch
 NeoBundle 'tpope/vim-eunuch'
 
+" ---  Fugitive
 NeoBundle 'tpope/vim-fugitive', {
-  \     'external_commands': 'git'
+  \     'external_commands': ['git']
   \ }
 let bundle = neobundle#get('vim-fugitive')
 function! bundle.hooks.on_post_source(bundle)
-  " Ensure that the buffers do not pollute the buffer list
+  " Ensure that the buffers do not pollute the buffers list
   au BufReadPost fugitive://* setl bufhidden=delete
 endfunction
 
+" ---  Repeat
 NeoBundle 'tpope/vim-repeat'
 
+" ---  Speed Dating
 NeoBundle 'tpope/vim-speeddating'
 
+" ---  Surround
 NeoBundle 'tpope/vim-surround'
 
+" ---  Unimpaired
 NeoBundle 'tpope/vim-unimpaired'
 
-NeoBundle 'xolox/vim-easytags', {
-  \     'depends': [
-  \         'xolox/vim-misc'
-  \     ]
-  \ }
+" ---  Easytags
 "let g:easytags_by_filetype = 1 " separate tag files for each languages
 let g:easytags_include_members = 1 " more complete tag files for C++ and Java
 let g:easytags_resolve_links = 1 " follow symlinks
 let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
 let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
+NeoBundle 'xolox/vim-easytags', {
+  \     'depends': [
+  \         'xolox/vim-misc'
+  \     ]
+  \ }
 
-NeoBundle 'abeaumet/IndexedSearch'
+" ---  Indexed Search
 let g:indexed_search_center_on_result = 1 " center on search result
+NeoBundle 'abeaumet/IndexedSearch'
 
+" ---  Match Tag
 NeoBundleLazy 'gregsexton/MatchTag', {
   \     'autoload': {
   \         'filetypes': ['html', 'xml']
@@ -646,7 +736,7 @@ NeoBundleLazy 'gregsexton/MatchTag', {
   \ }
 
 
-" Install bundles, generate/check documentation
+" Install bundles && generate/check documentation
 NeoBundleCheck
 
 " }}}
@@ -679,13 +769,9 @@ function! StripTrailingWhitespaces()
 endfunction
 
 
-" Check if the given directory exists, else create it
+" Create the given directory
 function! CreateDirectory(directory_name)
-  let l:expanded_directory_name = expand(a:directory_name)
-
-  if !isdirectory(l:expanded_directory_name)
-    silent! call mkdir(l:expanded_directory_name, "p")
-  endif
+  silent! call mkdir(expand(a:directory_name))
 endfunction
 
 " }}}
@@ -694,7 +780,4 @@ endfunction
 
 set secure " avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
 
-
-
-" Modeline to browse the file using '*' and '#' on *vimrc-markers*
 " vim: isk+=- isk+=*
