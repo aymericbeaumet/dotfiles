@@ -12,7 +12,7 @@ if which chsh &>/dev/null ; then
       break
     fi
     if [ "$answer" = 'y' ] || [ "$answer" = 'yes' ] ; then
-      echo "$current_user, please type your password to proceed:"
+      [ "$(id -u)" -ne 0 ] && echo "$USER, please type your password to proceed:"
       chsh -s "$(which zsh | head -1)"
       break
     fi
