@@ -80,7 +80,6 @@ set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
 set splitbelow          " split horizontally below
-set noequalalways       " do not resize windows on split/close
 
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
 au VimEnter * NeoBundleSource wombat256.vim " choose theme
@@ -432,12 +431,6 @@ NeoBundleLazy 'Better-CSS-Syntax-for-Vim', {
   \     }
   \ }
 
-NeoBundleLazy 'ap/vim-css-color', {
-  \     'autoload': {
-  \         'filetypes': ['css', 'html']
-  \     }
-  \ }
-
 " CPP
 
 NeoBundleLazy 'google.vim', {
@@ -462,7 +455,7 @@ NeoBundleLazy 'othree/html5.vim', {
 
 NeoBundleLazy 'pangloss/vim-javascript', {
   \     'autoload': {
-  \         'filetypes': ['javascript']
+  \         'filetypes': ['html', 'javascript']
   \     }
   \ }
 
@@ -472,12 +465,12 @@ NeoBundle 'tpope/vim-markdown'
 
 " PHP
 
+let g:PHP_vintage_case_default_indent = 1 " change indentation
 NeoBundleLazy '2072/PHP-Indenting-for-VIm', {
   \     'autoload': {
   \         'filetypes': ['php']
   \     }
   \ }
-let g:PHP_vintage_case_default_indent = 1 " change indentation
 
 NeoBundleLazy 'phpcomplete.vim', {
   \     'autoload': {
