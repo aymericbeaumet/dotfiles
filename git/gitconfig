@@ -51,7 +51,7 @@
   sw = show
   t = tag
   uia = update-index --assume-unchanged
-  uin = update-index --no-assume-unchanged
+  uina = update-index --no-assume-unchanged
 
   ; usefull aliases
   gitconfig = "!cat ~/.gitconfig"
