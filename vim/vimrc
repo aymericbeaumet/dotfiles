@@ -273,6 +273,9 @@ cnoremap <C-O> <Up>
 inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
 inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 
+" open tag in a new tab
+nnoremap <silent> <C-W><C-]> <C-W><C-]><C-W>T
+
 " }}}
 
 
@@ -426,27 +429,18 @@ endfunction
 " 9.3. Languages "
 """"""""""""""""""
 
+" CoffeeScript
+NeoBundle 'kchmck/vim-coffee-script'
+
 " CSS
 
-NeoBundleLazy 'Better-CSS-Syntax-for-Vim', {
-  \     'autoload': {
-  \         'filetypes': ['css'],
-  \     },
-  \ }
+NeoBundle 'Better-CSS-Syntax-for-Vim'
 
-NeoBundleLazy 'ap/vim-css-color', {
-  \     'autoload': {
-  \         'filetypes': ['css', 'html'],
-  \     },
-  \ }
+NeoBundle 'ap/vim-css-color'
 
 " CPP
 
-NeoBundleLazy 'google.vim', {
-  \     'autoload': {
-  \         'filetypes': ['cpp'],
-  \     },
-  \ }
+NeoBundle 'google.vim'
 
 " Git
 
@@ -454,19 +448,11 @@ NeoBundle 'tpope/vim-git'
 
 " HTML
 
-NeoBundleLazy 'othree/html5.vim', {
-  \     'autoload': {
-  \         'filetypes': ['html', 'markdown'],
-  \     },
-  \ }
+NeoBundle 'othree/html5.vim'
 
 " Javascript
 
-NeoBundleLazy 'pangloss/vim-javascript', {
-  \     'autoload': {
-  \         'filetypes': ['html', 'javascript']
-  \     }
-  \ }
+NeoBundle 'pangloss/vim-javascript'
 
 " Markdown
 
@@ -475,17 +461,9 @@ NeoBundle 'tpope/vim-markdown'
 " PHP
 
 let g:PHP_vintage_case_default_indent = 1 " change indentation
-NeoBundleLazy '2072/PHP-Indenting-for-VIm', {
-  \     'autoload': {
-  \         'filetypes': ['php'],
-  \     },
-  \ }
+NeoBundle '2072/PHP-Indenting-for-VIm'
 
-NeoBundleLazy 'phpcomplete.vim', {
-  \     'autoload': {
-  \         'filetypes': ['php'],
-  \     },
-  \ }
+NeoBundle 'phpcomplete.vim'
 
 
 """"""""""""""                                             *vimrc-plugins-tools*
@@ -493,27 +471,15 @@ NeoBundleLazy 'phpcomplete.vim', {
 """"""""""""""
 
 " ---  a.vim
-NeoBundleLazy 'a.vim', {
-  \     'autoload': {
-  \         'filetypes': ['c', 'cpp'],
-  \     },
-  \ }
+NeoBundle 'a.vim'
 
 " ---  HTML-AutoCloseTag
-NeoBundleLazy 'HTML-AutoCloseTag', {
-  \     'autoload': {
-  \         'filetypes': ['html', 'markdown', 'xml'],
-  \     },
-  \ }
+NeoBundle 'HTML-AutoCloseTag'
 
 " ---  Zen Coding
 let g:user_zen_leader_key = '<C-E>'
 let g:user_zen_mode = 'a' " enable all function in all mode
-NeoBundleLazy 'mattn/zencoding-vim', {
-  \     'autoload': {
-  \         'filetypes': ['html', 'xml'],
-  \     },
-  \ }
+NeoBundle 'mattn/zencoding-vim'
 
 " ---  Powerline
 NeoBundle 'Lokaltog/powerline', {
@@ -540,7 +506,7 @@ NeoBundle 'SirVer/ultisnips'
 
 " ---  YouCompleteMe
 let g:ycm_complete_in_comments = 1 " show completion in comments
-let g:ycm_collect_identifiers_from_comments_and_strings = 1 " explicit...
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
 let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
 let g:ycm_add_preview_to_completeopt = 1 " preview pane
@@ -732,11 +698,7 @@ let g:indexed_search_center_on_result = 1 " center on search result
 NeoBundle 'abeaumet/IndexedSearch'
 
 " ---  Match Tag
-NeoBundleLazy 'gregsexton/MatchTag', {
-  \     'autoload': {
-  \         'filetypes': ['html', 'xml'],
-  \     },
-  \ }
+NeoBundle 'gregsexton/MatchTag'
 
 
 " Install bundles && generate/check documentation

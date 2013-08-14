@@ -126,7 +126,7 @@ endsnippet
 
 # POO
 
-snippet cl "Class template" !b
+snippet class "Class template" !b
 class ${1:`!p snip.rv = snip.basename`} ${2}
 {
 	${3}
@@ -134,14 +134,6 @@ class ${1:`!p snip.rv = snip.basename`} ${2}
 endsnippet
 
 # Various
-
-snippet echos "Echo with simple quote" !b
-echo '${1/\'/\\'/g}'; //$1
-endsnippet
-
-snippet echod "Echo with double quote" !b
-echo "${1/\"/\\"/g}"; //$1
-endsnippet
 
 snippet com "Comment" !b
 // ${1:${VISUAL}}
@@ -153,18 +145,17 @@ endsnippet
 
 snippet dep "Deprecated" !b
 // DEPRECATED(${1:aymeric@beaumet.me}): ${2:${VISUAL}}
-
 endsnippet
 
 snippet debug "print a variable" !b
 echo '<pre>';
-var_dump($0);
+var_dump(${0:${VISUAL}});
 echo '</pre>';
 endsnippet
 
 snippet xdebug "print a variable and exit 42" !b
 echo '<pre>';
-var_dump($0);
+var_dump(${0:${VISUAL}});
 echo '</pre>';
 exit(42);
 endsnippet
