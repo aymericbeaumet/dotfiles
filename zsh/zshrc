@@ -31,7 +31,6 @@ precmd_functions=(
   set_prompt
 )
 
-
 ##########
 # Colors #
 ##########
@@ -49,7 +48,6 @@ COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
 COLOR_YELLOW=$'%{\033[38;05;3m%}'
 COLOR_RED=$'%{\033[38;05;1m%}'
 COLOR_ORANGE=$'%{\033[38;05;202m%}'
-
 
 ################
 # Autocomplete #
@@ -77,7 +75,6 @@ setopt AUTO_PARAM_SLASH         # automatically append a slash after a directory
 setopt COMPLETE_ALIASES		      # autocomplete on aliases
 setopt COMPLETE_IN_WORD         # complete word even if the cursor is not after the last character
 unsetopt EXTENDED_GLOB          # avoid bad completions
-
 
 #########
 # Alias #
@@ -140,7 +137,6 @@ alias -g H=' | head'
 alias -g T=' | tail'
 alias -g N=' &>/dev/null'
 
-
 ###########
 # Binding #
 ###########
@@ -156,13 +152,12 @@ bindkey '^[[1;5D'	backward-word                       # Ctrl <-
 bindkey '^[[1;5C'	forward-word                        # Ctrl ->
 bindkey '^[[3~'		delete-char                         # Delete
 
-
 ###############
 # Environment #
 ###############
 
 export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
-export PATH="$HOME/.rvm/bin" # Add RVM to PATH for scripting
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null || echo $EDITOR`
 export USE_EDITOR=$EDITOR
@@ -170,7 +165,6 @@ export VISUAL=$EDITOR
 export VIEWER=`which open 2>/dev/null || which eog 2>/dev/null || echo $VIEWER`
 export PAGER=`which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER`
 export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null || echo $SHELL`
-
 
 ###########
 # History #
@@ -188,7 +182,6 @@ setopt HIST_IGNORE_SPACE        # do not store a command in history if it begins
 setopt HIST_NO_STORE            # do not store the `history` command
 setopt HIST_FIND_NO_DUPS        # do not display dups when searching using ^R
 setopt HIST_NO_FUNCTIONS        # remove function definition from history
-
 
 ######
 # ls #
@@ -219,7 +212,6 @@ if is_macosx || is_bsd ; then
 else
   export CLICOLOR=0
 fi
-
 
 ###########
 # Options #
@@ -256,7 +248,6 @@ setopt C_PRECEDENCES            # alter operators precedence to be more C-like
 
 # Expansion and Globbing
 setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx='a b c'
-
 
 ##########
 # Prompt #
@@ -304,7 +295,6 @@ function set_prompt()
   fi
 }
 
-
 ########
 # Sudo #
 ########
@@ -312,7 +302,6 @@ function set_prompt()
 insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
-
 
 ############
 # Terminal #
@@ -332,7 +321,6 @@ str=`whoami`@`hostname`
 
 tabname $str
 winname $str
-
 
 ########
 # Tmux #
