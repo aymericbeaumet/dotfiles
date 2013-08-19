@@ -190,3 +190,9 @@ settings = {
     awl_display_nokey_active = "= %8$N$H$C$S%n";
   };
 };
+chatnets = { freenode = { type = "IRC"; }; };
+channels = (
+  { name = "#git"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#vim"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#zsh"; chatnet = "freenode"; autojoin = "yes"; }
+);
