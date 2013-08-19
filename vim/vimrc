@@ -82,6 +82,7 @@ set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
 set splitbelow          " split horizontally below
+set mouse=a             " enable mouse support
 
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
 au VimEnter * NeoBundleSource wombat256.vim " choose theme
@@ -445,6 +446,10 @@ NeoBundle 'google.vim'
 " Git
 
 NeoBundle 'tpope/vim-git'
+
+" LaTeX
+
+NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex', '2ef995684d6addfa96d60'
 
 " HTML
 
