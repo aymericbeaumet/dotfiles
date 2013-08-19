@@ -81,7 +81,6 @@ set tabpagemax=100      " allow lots of tabs
 set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
-set splitbelow          " split horizontally below
 set mouse=a             " enable mouse support
 
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
