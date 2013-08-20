@@ -168,6 +168,13 @@ statusbar = {
         topicbarend = { priority = "100"; alignment = "right"; };
       };
     };
+    awl_0 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
   };
 };
 settings = {
@@ -182,7 +189,7 @@ settings = {
     awl_display_key_active = "= %8$N$H$C$S%n";
     awl_display_nokey_active = "= %8$N$H$C$S%n";
   };
-  "fe-common/core" = { theme = "xchat"; };
+  "fe-common/core" = { theme = "weed"; };
 };
 chatnets = { freenode = { type = "IRC"; }; };
 channels = (
