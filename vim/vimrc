@@ -740,7 +740,7 @@ endfunction
 
 " Create the given directory
 function! CreateDirectory(directory_name)
-  silent! call mkdir(expand(a:directory_name))
+  silent! call mkdir(expand(a:directory_name), "p", 0755)
 endfunction
 
 " }}}
