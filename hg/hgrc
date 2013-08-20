@@ -1,4 +1,0 @@
-[alias]
-  ; fast access aliases
-  co = checkout
-  cl = clone
