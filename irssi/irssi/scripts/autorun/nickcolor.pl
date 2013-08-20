@@ -1,1 +1,1 @@
-nickcolor.pl
+../nickcolor.pl
