@@ -198,3 +198,8 @@ channels = (
   { name = "#vim"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#zsh"; chatnet = "freenode"; autojoin = "yes"; }
 );
+ignores = (
+  { level = "JOINS PARTS QUITS NICK"; channels = ( "#git" ); network = "freenode"; },
+  { level = "JOINS PARTS QUITS NICK"; channels = ( "#vim" ); network = "freenode"; },
+  { level = "JOINS PARTS QUITS NICK"; channels = ( "#zsh" ); network = "freenode"; }
+);
