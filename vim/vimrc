@@ -84,7 +84,6 @@ set t_Co=256            " 256 colors
 set mouse=a             " enable mouse support
 
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
-au VimEnter * NeoBundleSource wombat256.vim " choose theme
 
 set relativenumber      " relative line numerotation by default
 au InsertEnter * set norelativenumber number " classic in insert mode
@@ -276,8 +275,12 @@ inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 " open tag in a new tab
 nnoremap <silent> <C-W><C-]> <C-W><C-]><C-W>T
 
-" center on definition when jumping on a tag
+" center on movements
 nnoremap <silent> <C-]> <C-]>zz
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
 
 " }}}
 
@@ -371,9 +374,9 @@ let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
 
 let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
 if (exists("g:bundle_dir"))
-  call neobundle#rc(g:bundle_dir) " load NeoBundle
+  call neobundle#rc(g:bundle_dir) " load NeoBundle from a specific directory
 else
-  call neobundle#rc() " load NeoBundle
+  call neobundle#rc() " load NeoBundle from the classic directory
 endif
 
 
@@ -401,26 +404,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
 " 9.2. Themes "
 """""""""""""""
 
-" Only one of the following themes will be loaded (using `NeoBundleSource`)
-
-NeoBundleLazy 'Mustang2'
-let bundle = neobundle#get('Mustang2')
-function! bundle.hooks.on_post_source(bundle)
-  set background=dark
-  colorscheme mustang
-endfunction
-
-NeoBundleLazy 'http://blog.toddwerth.com/entry_files/8/ir_black.vim', {
-  \     'name': 'ir_black.vim',
-  \     'script_type': 'colors',
-  \ }
-let bundle = neobundle#get('ir_black.vim')
-function! bundle.hooks.on_post_source(bundle)
-  set background=dark
-  colorscheme irblack
-endfunction
-
-NeoBundleLazy 'wombat256.vim'
+NeoBundle 'wombat256.vim'
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
   set background=dark
@@ -432,45 +416,39 @@ endfunction
 " 9.3. Languages "
 """"""""""""""""""
 
-" CoffeeScript
-NeoBundle 'kchmck/vim-coffee-script'
-
-" CSS
-
-NeoBundle 'Better-CSS-Syntax-for-Vim'
+" --- CSS
 
 NeoBundle 'ap/vim-css-color'
 
-" CPP
+" --- CPP
 
 NeoBundle 'google.vim'
 
-" Git
+" --- Git
 
 NeoBundle 'tpope/vim-git'
 
-" LaTeX
+" --- LaTeX
 
 NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex', '2ef995684d6addfa96d60'
 
-" HTML
+" --- HTML
 
 NeoBundle 'othree/html5.vim'
 
-" Javascript
+" --- Javascript
 
 NeoBundle 'pangloss/vim-javascript'
 
-" Markdown
+" --- Markdown
 
 NeoBundle 'tpope/vim-markdown'
 
-" PHP
+" --- PHP
 
-let g:PHP_vintage_case_default_indent = 1 " change indentation
 NeoBundle '2072/PHP-Indenting-for-VIm'
 
-NeoBundle 'phpcomplete.vim'
+NeoBundle 'shawncplus/phpcomplete.vim'
 
 
 """"""""""""""                                             *vimrc-plugins-tools*
@@ -480,23 +458,21 @@ NeoBundle 'phpcomplete.vim'
 " ---  a.vim
 NeoBundle 'a.vim'
 
-" ---  HTML-AutoCloseTag
-NeoBundle 'HTML-AutoCloseTag'
-
 " ---  Zen Coding
 let g:user_zen_leader_key = '<C-E>'
 let g:user_zen_mode = 'a' " enable all function in all mode
 NeoBundle 'mattn/zencoding-vim'
 
 " ---  Powerline
-NeoBundle 'Lokaltog/powerline', {
-  \     'rtp': 'powerline/bindings/vim/',
-  \     'external_commands': ['python'],
-  \ }
-let bundle = neobundle#get('powerline')
-function! bundle.hooks.on_post_source(bundle)
-  set noshowmode " hide the duplicate mode in bottom status bar
-endfunction
+if has('python') || has('python3')
+  NeoBundle 'Lokaltog/powerline', {
+    \     'rtp': 'powerline/bindings/vim/'
+    \ }
+  let bundle = neobundle#get('powerline')
+  function! bundle.hooks.on_post_source(bundle)
+    set noshowmode " hide the duplicate mode in bottom status bar
+  endfunction
+endif
 
 " ---  Easymotion
 let bundle = neobundle#get('vim-easymotion')
@@ -504,41 +480,35 @@ let g:EasyMotion_leader_key = '<Leader><Leader>'
 NeoBundle 'Lokaltog/vim-easymotion'
 
 " ---  UltiSnips
-let g:UltiSnipsSnippetDirectories = ['snippet'] " Use only my snippets
-let g:UltiSnipsDontReverseSearchPath = 1 " Browse runtimepath in standard order
-let g:UltiSnipsExpandTrigger = '<Tab>'
-let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-NeoBundle 'SirVer/ultisnips'
+if has('python') || has('python3')
+  let g:UltiSnipsSnippetDirectories = ['snippet'] " Use only my snippets
+  let g:UltiSnipsDontReverseSearchPath = 1 " Browse runtimepath in standard order
+  let g:UltiSnipsExpandTrigger = '<Tab>'
+  let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+  let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+  NeoBundle 'SirVer/ultisnips'
+endif
 
 " ---  YouCompleteMe
-let g:ycm_complete_in_comments = 1 " show completion in comments
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
-let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
-let g:ycm_add_preview_to_completeopt = 1 " preview pane
-let g:ycm_autoclose_preview_window_after_completion = 1 " autoclose preview
-let g:ycm_autoclose_preview_window_after_insertion = 1  " autoclose preview
-let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
-let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
-let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
-NeoBundle 'Valloric/YouCompleteMe', {
-  \     'build': {
-  \         'unix': './install.sh --clang-completer',
-  \         'mac': './install.sh --clang-completer',
-  \     },
-  \     'vim_version': '7.3.584',
-  \     'external_commands': ['python'],
-  \ }
-
-" ---  Ack
-let g:ack_autoclose = 1 " automatically close the quickfix window
-NeoBundle 'abeaumet/ack.vim', {
-  \     'external_commands': ['ack'],
-  \ }
-
-" ---  Vim Rooter
-NeoBundle 'airblade/vim-rooter'
+if has('python') || has('python3')
+  let g:ycm_complete_in_comments = 1 " show completion in comments
+  let g:ycm_collect_identifiers_from_comments_and_strings = 1
+  let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
+  let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
+  let g:ycm_add_preview_to_completeopt = 1 " preview pane
+  let g:ycm_autoclose_preview_window_after_completion = 1 " autoclose preview
+  let g:ycm_autoclose_preview_window_after_insertion = 1  " autoclose preview
+  let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
+  let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
+  let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
+  NeoBundle 'Valloric/YouCompleteMe', {
+    \     'build': {
+    \         'unix': './install.sh --clang-completer',
+    \         'mac': './install.sh --clang-completer',
+    \     },
+    \     'vim_version': '7.3.584',
+    \ }
+endif
 
 " ---  Narrow Region
 let g:nrrw_rgn_nohl = 1 " disable highlighting while isolating code
@@ -699,10 +669,6 @@ NeoBundle 'xolox/vim-easytags', {
   \     ],
   \     'external_commands': ['ctags'],
   \ }
-
-" ---  Indexed Search
-let g:indexed_search_center_on_result = 1 " center on search result
-NeoBundle 'abeaumet/IndexedSearch'
 
 " ---  Match Tag
 NeoBundle 'gregsexton/MatchTag'
