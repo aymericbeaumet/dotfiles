@@ -135,12 +135,16 @@ endsnippet
 
 # Various
 
-snippet com "Comment" !b
-// ${1:${VISUAL}}
-endsnippet
-
 snippet todo "To do" !b
 // TODO(${1:aymeric@beaumet.me}): ${2:${VISUAL}}
+endsnippet
+
+snippet fdoc "PHP Documentation function comment block" !b
+/**
+ * ${1:${VISUAL:Description}}
+ * @param ${2:Type} ${3:Name} ${4:Description}
+ * @return ${5:Type} ${6:Description}
+ */
 endsnippet
 
 snippet dep "Deprecated" !b

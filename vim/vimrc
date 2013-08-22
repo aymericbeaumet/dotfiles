@@ -252,8 +252,8 @@ nnoremap <leader>tc :tabnew<CR>
 nnoremap <leader>tq :tabclose<CR>
 cnoreabbrev <expr> tm ((getcmdtype() is# ':' && getcmdline() is# 'tm')?('tabmove'):('tm'))
 
-" delete whitespaces
-nnoremap <leader>dw :call StripTrailingWhitespaces()<CR>
+" strip whitespaces
+nnoremap <leader>sw :call StripTrailingWhitespaces()<CR>
 
 " git alias (very convenient when you're used to it in shell)
 cnoreabbrev <expr> g ((getcmdtype() is# ':' && getcmdline() is# 'g')?('Git'):('g'))
@@ -275,6 +275,9 @@ inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 
 " open tag in a new tab
 nnoremap <silent> <C-W><C-]> <C-W><C-]><C-W>T
+
+" center on definition when jumping on a tag
+nnoremap <silent> <C-]> <C-]>zz
 
 " }}}
 
