@@ -197,9 +197,9 @@ let g:mapleader = '\'
 let mapleader = '\'
 
 " hide last search matches
-nnoremap <silent> <Space> :nohlsearch<CR>
+nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
 
-" use `\d`  `\D` `\x` `\X` to delete without altering the yanked stack
+" use `\d` `\D` `\x` `\X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
@@ -232,7 +232,7 @@ noremap <silent> Q <Nop>
 noremap <silent> ZZ <Nop>
 noremap <silent> ZQ <Nop>
 
-" bind `jj` to leave insert/op/command mode
+" bind `jj` to leave insert mode
 inoremap <silent> jj <C-C>
 
 " useful insert mode binds
@@ -573,7 +573,6 @@ endfunction
 
 " ---  Tagbar
 let g:tagbar_autofocus = 1 " focus tagbar when opened
-let g:tagbar_autoclose = 1 " close tagbar when opening a tag
 let g:tagbar_show_visibility = 1 " show public/private/protected
 let g:tagbar_compact = 1 " hide superfluous stuff
 let g:tagbar_width = 40 " set tagbar width
