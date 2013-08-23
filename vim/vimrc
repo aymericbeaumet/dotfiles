@@ -2,8 +2,8 @@
 " Github: @abeaumet/dotfiles
 "
 " Content:
-"   1. Global options                            *vimrc-options*
-"   2. Helpers                                   *vimrc-helpers*
+"   1. Helpers                                   *vimrc-helpers*
+"   2. Global options                            *vimrc-options*
 "   3. User Interface                            *vimrc-ui*
 "   4. Search & Replace behavior                 *vimrc-search*
 "   5. Text editing                              *vimrc-edition*
@@ -28,7 +28,33 @@ au!
 
 
 
-" {{{ 1. Global options                                          *vimrc-options*
+" {{{ 1. Helpers                                                 *vimrc-helpers*
+
+" https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
+" Clean all the trailing whitespaces in the current buffer
+function! StripTrailingWhitespaces()
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  %s/\s\+$//e
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+
+" Create the given directory
+function! CreateDirectory(directory_name)
+  silent! call mkdir(expand(a:directory_name), "p", 0755)
+endfunction
+
+" }}}
+
+
+
+" {{{ 2. Global options                                          *vimrc-options*
 
 set shell=zsh           " shell for :sh
 set autoread            " watch for file changes by other programs
@@ -53,32 +79,6 @@ if has("persistent_undo")
   set undodir=~/.vim/tmp/undo// " undo files directory
   au VimEnter * call CreateDirectory(&undodir)
 endif
-
-" }}}
-
-
-
-" {{{ 2. Helpers                                                 *vimrc-helpers*
-
-" https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
-" Clean all the trailing whitespaces in the current buffer
-function! StripTrailingWhitespaces()
-  " Preparation: save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business:
-  %s/\s\+$//e
-  " Clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
-
-" Create the given directory
-function! CreateDirectory(directory_name)
-  silent! call mkdir(expand(a:directory_name), "p", 0755)
-endfunction
 
 " }}}
 
@@ -698,7 +698,6 @@ let g:session_default_overwrite = 1 " overwrite last default session
 let g:session_autoload = 'no' " do not autoload sessions
 let g:session_autosave = 'yes' " automatically save session on vim close
 let g:session_default_to_last = 1 " ask last (!= default) session on vim launch
-let g:session_command_aliases = 1 " Session[Action] instead of [Action]Session
 set sessionoptions-=options " do not store options in session file
 set sessionoptions-=folds   " do not store folds in session file
 NeoBundle 'xolox/vim-session', {
