@@ -73,7 +73,8 @@ setopt AUTO_REMOVE_SLASH        # autoremove slash when not needed
 setopt AUTO_PARAM_SLASH         # automatically append a slash after a directory
 setopt COMPLETE_ALIASES		      # autocomplete on aliases
 setopt COMPLETE_IN_WORD         # complete word even if the cursor is not after the last character
-unsetopt EXTENDED_GLOB          # avoid bad completions
+setopt EXTENDED_GLOB            # advanced completion
+unsetopt NOMATCH                # no mismatch due to advanced completion (e.g.: git checkout HEAD^)
 
 #########
 # Alias #
