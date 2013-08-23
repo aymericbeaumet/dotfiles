@@ -294,6 +294,11 @@ function set_prompt()
   fi
 }
 
+# Disable flow control
+
+stty stop undef
+stty start undef
+
 ########
 # Sudo #
 ########
