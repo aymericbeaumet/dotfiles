@@ -1,3 +1,6 @@
+[submodule "tmux/tmux/bundle/powerline"]
+	path = tmux/tmux/bundle/powerline
+	url = https://github.com/Lokaltog/powerline.git
 [submodule "vim/vim/bundle/neobundle.vim"]
 	path = vim/vim/bundle/neobundle.vim
 	url = https://github.com/Shougo/neobundle.vim.git
