@@ -220,6 +220,7 @@ let mapleader = '\'
 
 " hide last search matches
 nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
+vnoremap <silent> <C-L> :nohlsearch<CR><C-L>
 
 " use `\d` `\D` `\x` `\X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
