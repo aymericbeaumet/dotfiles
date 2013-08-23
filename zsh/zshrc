@@ -155,8 +155,10 @@ bindkey '^[[3~'		delete-char                         # Delete
 # Environment #
 ###############
 
+OLD_PATH=$PATH
 export PATH="$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export PATH="$PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+export PATH="$PATH:$OLD_PATH"
 
 export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null || echo $EDITOR`
 export USE_EDITOR=$EDITOR
