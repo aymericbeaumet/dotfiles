@@ -39,8 +39,6 @@ set modeline            " enable modelines
 set modelines=3         " consider the first/last three lines
 set fileformats=unix,mac,dos " support all three newline formats
 set tags=tags;/         " define tags file path
-set sessionoptions-=options " do not store options in session file
-set sessionoptions-=folds   " do not store folds in session file
 
 set noswapfile          " disable swap files
 
@@ -55,8 +53,6 @@ if has("persistent_undo")
   set undodir=~/.vim/tmp/undo// " undo files directory
   au VimEnter * call CreateDirectory(&undodir)
 endif
-
-let g:sessionfile='~/.vim/tmp/session.vim' " session file
 
 " }}}
 
@@ -256,10 +252,6 @@ nnoremap <leader>sw :call StripTrailingWhitespaces()<CR>
 
 " git alias (very convenient when you're used to it in shell)
 cnoreabbrev <expr> g ((getcmdtype() is# ':' && getcmdline() is# 'g')?('Git'):('g'))
-
-" save/load session
-nnoremap <leader>ss :mksession! <C-R>=g:sessionfile<CR><CR>
-nnoremap <leader>sl :source <C-R>=g:sessionfile<CR><CR>
 
 " command line useful binds
 cnoremap <C-A> <Home>
@@ -671,6 +663,21 @@ NeoBundle 'xolox/vim-easytags', {
 
 " ---  Match Tag
 NeoBundle 'gregsexton/MatchTag'
+
+" --- Session
+
+let g:session_directory = '~/.vim/tmp/sessions' " where to store the sessions
+let g:session_default_overwrite = 1 " overwrite last default session
+let g:session_default_to_last = 1 " open last session (not default one) on vim launch
+let g:session_command_aliases = 1 " Session[Action] instead of [Action]Session
+set sessionoptions-=options " do not store options in session file
+set sessionoptions-=folds   " do not store folds in session file
+NeoBundle 'xolox/vim-session', {
+  \     'depends': [
+  \         'xolox/vim-misc'
+  \     ],
+  \ }
+let bundle = neobundle#get('vim-session')
 
 
 " Install bundles && generate/check documentation
