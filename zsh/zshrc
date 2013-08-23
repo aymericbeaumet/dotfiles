@@ -295,7 +295,6 @@ function set_prompt()
 }
 
 # Disable flow control
-
 stty stop undef
 stty start undef
 
