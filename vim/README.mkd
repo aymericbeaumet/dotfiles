@@ -92,7 +92,6 @@ _Memo_
 
 - `:A` alternate between .c/.h, .cpp/.hpp, etc...
 - `:Tab /<regex>` align lines matching the given regex
-- `:Ack` search from the working directory using **Ack**
 
 ## Visual mode
 

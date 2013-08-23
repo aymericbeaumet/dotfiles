@@ -3,20 +3,20 @@
 "
 " Content:
 "   1. Global options                            *vimrc-options*
-"   2. User Interface                            *vimrc-ui*
-"   3. Search & Replace behavior                 *vimrc-search*
-"   4. Text editing                              *vimrc-edition*
-"   5. Indentation / Tabulations                 *vimrc-indent-tab*
-"   6. Errors                                    *vimrc-errors*
-"   7. Binds & Alias                             *vimrc-binds-alias*
-"   8. Languages specific configuration          *vimrc-languages*
-"   9. Plugins                                   *vimrc-plugins*
-"     9.1. NeoBundle initialization                *vimrc-plugins-neobundle*
-"     9.2. Themes plugins                          *vimrc-plugins-themes*
-"     9.3. Languages specific plugins              *vimrc-plugins-languages*
-"     9.4. Tools plugins                           *vimrc-plugins-tools*
-"   10. File type / Syntax detection             *vimrc-filetype*
-"   11. Helpers                                  *vimrc-helpers*
+"   2. Helpers                                   *vimrc-helpers*
+"   3. User Interface                            *vimrc-ui*
+"   4. Search & Replace behavior                 *vimrc-search*
+"   5. Text editing                              *vimrc-edition*
+"   6. Indentation / Tabulations                 *vimrc-indent-tab*
+"   7. Errors                                    *vimrc-errors*
+"   8. Binds & Alias                             *vimrc-binds-alias*
+"   9. Languages specific configuration          *vimrc-languages*
+"  10. Plugins                                   *vimrc-plugins*
+"     10.1. NeoBundle initialization                *vimrc-plugins-neobundle*
+"     10.2. Themes                                  *vimrc-plugins-themes*
+"     10.3. Languages specific plugins              *vimrc-plugins-languages*
+"     10.4. Tools plugins                           *vimrc-plugins-tools*
+"  11. File type / Syntax detection              *vimrc-filetype*
 
 
 
@@ -58,7 +58,33 @@ endif
 
 
 
-" {{{ 2. User Interface                                               *vimrc-ui*
+" {{{ 2. Helpers                                                 *vimrc-helpers*
+
+" https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
+" Clean all the trailing whitespaces in the current buffer
+function! StripTrailingWhitespaces()
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  %s/\s\+$//e
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+
+" Create the given directory
+function! CreateDirectory(directory_name)
+  silent! call mkdir(expand(a:directory_name), "p", 0755)
+endfunction
+
+" }}}
+
+
+
+" {{{ 3. User Interface                                               *vimrc-ui*
 
 set timeoutlen=500      " time to wait when a part of a maped sequence is typped
 set ttimeoutlen=0       " instant insert mode exit using escape
@@ -89,7 +115,7 @@ au InsertLeave * set nonumber relativenumber " relative out of insert mode
 
 
 
-" {{{ 3. Search & Replace behavior                                *vimrc-search*
+" {{{ 4. Search & Replace behavior                                *vimrc-search*
 
 set ignorecase          " ignore case when searching
 set smartcase           "  `-> except if there is one uppercase character
@@ -106,7 +132,7 @@ au InsertLeave * setlocal hlsearch " ... ands re-enable when leaving
 
 
 
-" {{{ 4. Text editing                                            *vimrc-edition*
+" {{{ 5. Text editing                                            *vimrc-edition*
 
 set backspace=2         " fix backspace (on some OS/term)
 set nostartofline       " leave my cursor position alone!
@@ -152,7 +178,7 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
 
 
 
-" {{{ 5. Indentation / Tabulations                            *vimrc-indent-tab*
+" {{{ 6. Indentation / Tabulations                            *vimrc-indent-tab*
 
 set autoindent          " auto-indentation
 set smarttab            " insert shiftwidth spaces instead of tabs
@@ -165,7 +191,7 @@ set tabstop=2     " n spaces when using <Tab>
 
 
 
-" {{{ 6. Errors                                                   *vimrc-errors*
+" {{{ 7. Errors                                                   *vimrc-errors*
 
 " turn off error bells
 set noerrorbells
@@ -176,7 +202,7 @@ set t_vb=
 
 
 
-" {{{ 7. Binds & Alias                                       *vimrc-binds-alias*
+" {{{ 8. Binds & Alias                                       *vimrc-binds-alias*
 
 " easy navigation between tabs
 nnoremap <silent> <S-H> gT
@@ -278,7 +304,7 @@ nnoremap <silent> # #zz
 
 
 
-" {{{ 8. Languages specific configuration                      *vimrc-languages*
+" {{{ 9. Languages specific configuration                      *vimrc-languages*
 
 " C/CPP
 au FileType c,cpp call LoadCConfiguration()
@@ -358,7 +384,7 @@ endfunction
 
 
 
-" {{{ 9. Plugins                                                 *vimrc-plugins*
+" {{{ 10. Plugins                                                *vimrc-plugins*
 
 " found vim config file and config dir
 let s:vim_conf = expand('<sfile>:p')
@@ -372,9 +398,9 @@ else
 endif
 
 
-"""""""""""""""""""""""""""""                          *vimrc-plugins-neobundle*
-" 9.1. Load NeoBundle first "
-"""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""                         *vimrc-plugins-neobundle*
+" 10.1. Load NeoBundle first "
+""""""""""""""""""""""""""""""
 
 NeoBundleFetch 'Shougo/neobundle.vim', {
   \     'depends': [
@@ -392,9 +418,9 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
   \ }
 
 
-"""""""""""""""                                           *vimrc-plugins-themes*
-" 9.2. Themes "
-"""""""""""""""
+""""""""""""""""                                          *vimrc-plugins-themes*
+" 10.2. Themes "
+""""""""""""""""
 
 NeoBundle 'wombat256.vim'
 let bundle = neobundle#get('wombat256.vim')
@@ -404,9 +430,9 @@ function! bundle.hooks.on_post_source(bundle)
 endfunction
 
 
-""""""""""""""""""                                     *vimrc-plugins-languages*
-" 9.3. Languages "
-""""""""""""""""""
+"""""""""""""""""""                                    *vimrc-plugins-languages*
+" 10.3. Languages "
+"""""""""""""""""""
 
 " --- CSS
 
@@ -443,9 +469,9 @@ NeoBundle '2072/PHP-Indenting-for-VIm'
 NeoBundle 'shawncplus/phpcomplete.vim'
 
 
-""""""""""""""                                             *vimrc-plugins-tools*
-" 9.4. Tools "
-""""""""""""""
+"""""""""""""""                                            *vimrc-plugins-tools*
+" 10.4. Tools "
+"""""""""""""""
 
 " ---  a.vim
 NeoBundle 'a.vim'
@@ -649,7 +675,8 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 
 " ---  Easytags
-"let g:easytags_by_filetype = 1 " separate tag files for each languages
+let g:easytags_by_filetype = '~/.vim/tmp/tags//' " tag files by languages
+call CreateDirectory(g:easytags_by_filetype) " create tags directory
 let g:easytags_include_members = 1 " more complete tag files for C++ and Java
 let g:easytags_resolve_links = 1 " follow symlinks
 let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
@@ -665,10 +692,12 @@ NeoBundle 'xolox/vim-easytags', {
 NeoBundle 'gregsexton/MatchTag'
 
 " --- Session
-
-let g:session_directory = '~/.vim/tmp/sessions' " where to store the sessions
+let g:session_directory = '~/.vim/tmp/sessions//' " where to store the sessions
+call CreateDirectory(g:session_directory) " create sessions directory
 let g:session_default_overwrite = 1 " overwrite last default session
-let g:session_default_to_last = 1 " open last session (not default one) on vim launch
+let g:session_autoload = 'no' " do not autoload sessions
+let g:session_autosave = 'yes' " automatically save session on vim close
+let g:session_default_to_last = 1 " ask last (!= default) session on vim launch
 let g:session_command_aliases = 1 " Session[Action] instead of [Action]Session
 set sessionoptions-=options " do not store options in session file
 set sessionoptions-=folds   " do not store folds in session file
@@ -677,7 +706,6 @@ NeoBundle 'xolox/vim-session', {
   \         'xolox/vim-misc'
   \     ],
   \ }
-let bundle = neobundle#get('vim-session')
 
 
 " Install bundles && generate/check documentation
@@ -687,36 +715,10 @@ NeoBundleCheck
 
 
 
-" {{{ 10. File type / Syntax detection                          *vimrc-filetype*
+" {{{ 11. File type / Syntax detection                          *vimrc-filetype*
 
 syntax enable
 filetype plugin indent on
-
-" }}}
-
-
-
-" {{{ 11. Helpers                                                *vimrc-helpers*
-
-" https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
-" Clean all the trailing whitespaces in the current buffer
-function! StripTrailingWhitespaces()
-  " Preparation: save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business:
-  %s/\s\+$//e
-  " Clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
-
-" Create the given directory
-function! CreateDirectory(directory_name)
-  silent! call mkdir(expand(a:directory_name), "p", 0755)
-endfunction
 
 " }}}
 
