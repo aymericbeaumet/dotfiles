@@ -183,9 +183,9 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
 set autoindent          " auto-indentation
 set smarttab            " insert shiftwidth spaces instead of tabs
 set expandtab           " replace tabs by spaces
-set shiftwidth=2  " n spaces when using <Tab>
-set softtabstop=2 " n spaces when using <Tab>
-set tabstop=2     " n spaces when using <Tab>
+set shiftwidth=2        " n spaces when using <Tab>
+set softtabstop=2       " n spaces when using <Tab>
+set tabstop=2           " n spaces when using <Tab>
 
 " }}}
 
@@ -242,11 +242,11 @@ nnoremap <silent> M K
 nnoremap <silent> J myJ`y
 
 " split line with K
-nnoremap <silent> K i<CR><Esc>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
+nnoremap <silent> K i<CR><C-C>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
 
 " insert blank lines without entering insert mode (do not alter any register)
-nnoremap <silent> gO O<esc>0"_D
-nnoremap <silent> go o<esc>0"_D
+nnoremap <silent> gO O<C-C>0"_D
+nnoremap <silent> go o<C-C>0"_D
 
 " disable annoying keys
 noremap <silent> <F1> <Nop>
@@ -259,7 +259,7 @@ noremap <silent> ZQ <Nop>
 inoremap <silent> jj <C-C>
 
 " useful insert mode binds
-inoremap <silent> II <C-O>0
+inoremap <silent> II <C-O>^
 inoremap <silent> AA <C-O>$
 inoremap <silent> CC <C-O>"_D
 inoremap <silent> OO <C-C>O
@@ -449,7 +449,7 @@ NeoBundle 'tpope/vim-git'
 
 " --- LaTeX
 
-NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex', '2ef995684d6addfa96d60'
+NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
 
 " --- HTML
 
@@ -680,7 +680,9 @@ let g:easytags_by_filetype = '~/.vim/tmp/tags//' " tag files by languages
 call CreateDirectory(g:easytags_by_filetype) " create tags directory
 let g:easytags_include_members = 1 " more complete tag files for C++ and Java
 let g:easytags_resolve_links = 1 " follow symlinks
-let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
+if has('python') || has('python3')
+  let g:easytags_python_enabled = 1 " use Python for faster syntax highlighting
+endif
 let g:easytags_updatetime_warn = 0 " never warn about fast updatetime
 NeoBundle 'xolox/vim-easytags', {
   \     'depends': [
@@ -698,7 +700,6 @@ call CreateDirectory(g:session_directory) " create sessions directory
 let g:session_default_overwrite = 1 " overwrite last default session
 let g:session_autoload = 'no' " do not autoload sessions
 let g:session_autosave = 'yes' " automatically save session on vim close
-let g:session_default_to_last = 1 " ask last (!= default) session on vim launch
 set sessionoptions-=options " do not store options in session file
 set sessionoptions-=folds   " do not store folds in session file
 NeoBundle 'xolox/vim-session', {
