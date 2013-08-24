@@ -1,5 +1,8 @@
 ; `man git-config` is your friend
 
+[advice]
+  statusHints = false
+
 [alias]
   ; fast access aliases
   a = add
@@ -69,6 +72,7 @@
 
 [branch]
   autosetuprebase = always
+  autosetupmerge = true
 
 [color]
   branch = auto
@@ -87,6 +91,8 @@
 
 [diff]
   tool = vimdiff
+  mnemonicprefix = true
+  renames = copies
 
 [grep]
   lineNumber = true
@@ -106,6 +112,9 @@
 [rebase]
   stat = true
 
+[rerere]
+  enabled = true
+
 [status]
   showUntrackedFiles = all
 
@@ -113,5 +122,3 @@
   name = Aymeric Beaumet
   email = aymeric@beaumet.me
   editor = vim
-[advice]
-	statusHints = false
