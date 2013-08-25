@@ -75,7 +75,8 @@ set ttyfast             " we have a fast terminal
 set modeline            " enable modelines
 set modelines=3         " consider the first/last three lines
 set fileformats=unix,mac,dos " support all three newline formats
-set tags=tags;/         " define tags file path
+set tags=~/.vim/tmp/tags/* " define tags file path
+set history=1000        " increase history size
 
 set noswapfile          " disable swap files
 
@@ -110,7 +111,7 @@ set wildmode=full       "  `-> ensure default completion
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
-set tabpagemax=100      " allow lots of tabs
+set tabpagemax=15       " limit number of tabs
 set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
@@ -137,7 +138,7 @@ set showmatch           " show the matching bracket when inserting
 set gdefault            " default substitute g flag
 
 au VimEnter * set hlsearch " highlight last search matches (only on vim startup)
-au InsertEnter * setlocal nohlsearch " disable search highlighting in insert mode
+au InsertEnter * setlocal nohlsearch " hide search highlighting in insert mode
 au InsertLeave * setlocal hlsearch " ... ands re-enable when leaving
 
 " }}}
@@ -150,7 +151,6 @@ set backspace=2         " fix backspace (on some OS/term)
 set nostartofline       " leave my cursor position alone!
 set foldmethod=manual   " ensure that foldmethod is manual
 set virtualedit=block   " allow the cursor to go in to 'invalid' places
-set history=1000        " increase history size
 set selection=inclusive " cursor is in selection
 set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
 set sidescrolloff=10    " (same as above about columns during side scrolling)
@@ -217,7 +217,7 @@ let mapleader = '\'
 
 " hide last search matches
 nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-vnoremap <silent> <C-L> :nohlsearch<CR><C-L>
+vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>
 
 " use `\d` `\D` `\x` `\X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
@@ -290,7 +290,7 @@ inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
 inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 
 " open tag in a new tab
-nnoremap <silent> <C-W><C-]> <C-W><C-]><C-W>T
+nnoremap <silent> <C-W><C-]> <C-W><C-]><C-W>Tzz
 
 " center on movements
 nnoremap <silent> <C-]> <C-]>zz
@@ -511,14 +511,15 @@ endif
 
 " ---  YouCompleteMe
 if has('python') || has('python3')
-  let g:ycm_complete_in_comments = 1 " show completion in comments
+  let g:ycm_complete_in_comments = 1 " complete in comments
+  let g:ycm_complete_in_strings = 1 " complete in strings
   let g:ycm_collect_identifiers_from_comments_and_strings = 1
   let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
   let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
-  let g:ycm_add_preview_to_completeopt = 0 " disable preview pane
-  let g:ycm_cache_omnifunc = 1 " enable omnifunc cache
   let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
   let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
+  let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
+  let g:ycm_add_preview_to_completeopt = 0 " disable preview
   NeoBundle 'Valloric/YouCompleteMe', {
     \     'build': {
     \         'unix': './install.sh --clang-completer',
