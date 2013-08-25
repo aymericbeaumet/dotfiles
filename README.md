@@ -1,8 +1,11 @@
 ### What's happening here?
 
-Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one! Here you can find my configuration files for these programs.
+Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one! Here you can
+find my configuration files for these programs (and many others).
 
-Feel free to pick some lines here and there! In a flash of madness you can also try them, that's safe for your actual configuration files as they are automatically backed up :)
+These repository is first of all for my personal use. I use it to share my
+dotfiles over all my machines. But feel free to pick some code snippets here and
+there!
 
 ## Overview
 
@@ -10,7 +13,7 @@ Feel free to pick some lines here and there! In a flash of madness you can also 
 
 ![overview](http://beaumet.me/dotfiles/images/overview.png)
 
-This prompt is splitted in two part:
+This prompt is split in two part:
 
 - In the left part:
 
@@ -23,7 +26,7 @@ This prompt is splitted in two part:
 
   * the username
   * the hostname
-  * the shell level (if greather than 1)
+  * the shell level (if greater than 1)
 
 ## Installation
 
@@ -33,7 +36,8 @@ Simply clone the project, then run `make && make install`:
     cd ~/.dotfiles
     make && make install
 
-Don't worry about your previous configuration files, they are automatically backed up!
+Don't worry about your previous configuration files, they are automatically
+backed up!
 
 ## Uninstallation
 
