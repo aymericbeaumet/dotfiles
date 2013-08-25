@@ -115,6 +115,7 @@ set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
 set mouse=a             " enable mouse support
+set background=dark     " dark background
 
 au VimEnter * hi CursorLine cterm=bold " highlight cursor line
 
@@ -122,7 +123,7 @@ set relativenumber      " relative line numerotation by default
 au InsertEnter * set norelativenumber number " classic in insert mode
 au InsertLeave * set nonumber relativenumber " relative out of insert mode
 
-  " }}}
+" }}}
 
 
 
@@ -168,7 +169,7 @@ silent! set formatoptions+=j " not compatible with all vim versions
 
 " remember last position in file
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
-  \ exe "normal! g`\"" | endif
+  \ exe 'normal! g`"' | endif
 
 " }}}
 
@@ -250,6 +251,7 @@ inoremap <silent> <F1> <Nop>
 noremap <silent> Q <Nop>
 noremap <silent> ZZ <Nop>
 noremap <silent> ZQ <Nop>
+nnoremap <C-C> <Nop>
 
 " bind `jj` to leave insert mode
 inoremap <silent> jj <C-C>
@@ -296,6 +298,10 @@ nnoremap <silent> n nzz
 nnoremap <silent> N Nzz
 nnoremap <silent> * *zz
 nnoremap <silent> # #zz
+
+" reselect visual block after indent
+vnoremap < <gv
+vnoremap > >gv
 
 " }}}
 
@@ -395,9 +401,9 @@ else
 endif
 
 
-""""""""""""""""""""""""""""""                         *vimrc-plugins-neobundle*
-" 10.1. NeoBundle            "
-""""""""""""""""""""""""""""""
+"""""""""""""""""""                                    *vimrc-plugins-neobundle*
+" 10.1. NeoBundle "
+"""""""""""""""""""
 
 NeoBundleFetch 'Shougo/neobundle.vim', {
   \     'depends': [
@@ -415,15 +421,16 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
   \ }
 
 
-""""""""""""""""                                          *vimrc-plugins-themes*
-" 10.2. Themes "
-""""""""""""""""
+"""""""""""""""                                            *vimrc-plugins-theme*
+" 10.2. Theme "
+"""""""""""""""
 
 NeoBundle 'wombat256.vim'
+colorscheme wombat256mod
+
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
-  set background=dark
-  colorscheme wombat256mod
+  " This callback permits to override some highlight
 
   " Change spell detection skin
   hi clear SpellBad
@@ -716,6 +723,9 @@ let bundle = neobundle#get('vim-airline')
 function! bundle.hooks.on_post_source(bundle)
   set noshowmode " hide the duplicate mode in bottom status bar
 endfunction
+
+" --- Auto pairs
+NeoBundle 'jiangmiao/auto-pairs'
 
 
 " Install bundles && generate/check documentation
