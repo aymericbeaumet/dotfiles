@@ -3,7 +3,7 @@
 Are you a unconditional of _git_, _vim_, _tmux_ or _zsh_? I am one! Here you can
 find my configuration files for these programs (and many others).
 
-These repository is first of all for my personal use. I use it to share my
+This repository is first of all for my personal use. I use it to share my
 dotfiles over all my machines. But feel free to pick some code snippets here and
 there!
 
