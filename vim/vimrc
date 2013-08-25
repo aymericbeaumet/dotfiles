@@ -12,7 +12,7 @@
 "   8. Binds & Alias                             *vimrc-binds-alias*
 "   9. Languages specific configuration          *vimrc-languages*
 "  10. Plugins                                   *vimrc-plugins*
-"     10.1. NeoBundle initialization                *vimrc-plugins-neobundle*
+"     10.1. NeoBundle                               *vimrc-plugins-neobundle*
 "     10.2. Themes                                  *vimrc-plugins-themes*
 "     10.3. Languages specific plugins              *vimrc-plugins-languages*
 "     10.4. Tools plugins                           *vimrc-plugins-tools*
@@ -150,25 +150,10 @@ set wrap                " wrap long lines
 set nospell             " Disable spell language globally
 set spelllang=en        " configure spell language
 set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
-augroup spell_highlight
-  au!
-  au VimEnter * hi clear SpellBad
-  au VimEnter * hi clear SpellCap
-  au VimEnter * hi clear SpellLocal
-  au VimEnter * hi clear SpellRare
-  au VimEnter * hi SpellBad cterm=underline
-  au VimEnter * hi SpellCap cterm=underline
-  au VimEnter * hi SpellLocal cterm=underline
-  au VimEnter * hi SpellRare cterm=underline
-augroup END
 
 " format option stuff (see :help fo-table)
 set formatoptions=cro
 silent! set formatoptions+=j " not compatible with all vim versions
-
-" Highlight trailing whitespaces
-au VimEnter * hi TrailingWhitespace ctermbg=darkyellow |
-  \ match TrailingWhitespace /\s\+$/
 
 " remember last position in file
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -400,7 +385,7 @@ endif
 
 
 """"""""""""""""""""""""""""""                         *vimrc-plugins-neobundle*
-" 10.1. Load NeoBundle first "
+" 10.1. NeoBundle            "
 """"""""""""""""""""""""""""""
 
 NeoBundleFetch 'Shougo/neobundle.vim', {
@@ -428,6 +413,24 @@ let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
   set background=dark
   colorscheme wombat256mod
+
+  " Change spell detection skin
+  hi clear SpellBad
+  hi clear SpellCap
+  hi clear SpellLocal
+  hi clear SpellRare
+  hi SpellBad cterm=underline
+  hi SpellCap cterm=underline
+  hi SpellLocal cterm=underline
+  hi SpellRare cterm=underline
+
+  " Highlight color column
+  set colorcolumn=+1 " relative to text-width
+  highlight ColorColumn ctermbg=0
+
+  " Highlight trailing whitespaces
+  hi TrailingWhitespace ctermbg=darkyellow
+  match TrailingWhitespace /\s\+$/
 endfunction
 
 
@@ -446,10 +449,6 @@ NeoBundle 'google.vim'
 " --- Git
 
 NeoBundle 'tpope/vim-git'
-
-" --- LaTeX
-
-NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
 
 " --- HTML
 
@@ -477,22 +476,6 @@ NeoBundle 'shawncplus/phpcomplete.vim'
 " ---  a.vim
 NeoBundle 'a.vim'
 
-" ---  Zen Coding
-let g:user_zen_leader_key = '<C-E>'
-let g:user_zen_mode = 'a' " enable all function in all mode
-NeoBundle 'mattn/zencoding-vim'
-
-" ---  Powerline
-if has('python') || has('python3')
-  NeoBundle 'Lokaltog/powerline', {
-    \     'rtp': 'powerline/bindings/vim/'
-    \ }
-  let bundle = neobundle#get('powerline')
-  function! bundle.hooks.on_post_source(bundle)
-    set noshowmode " hide the duplicate mode in bottom status bar
-  endfunction
-endif
-
 " ---  Easymotion
 let bundle = neobundle#get('vim-easymotion')
 let g:EasyMotion_leader_key = '<Leader><Leader>'
@@ -514,10 +497,8 @@ if has('python') || has('python3')
   let g:ycm_collect_identifiers_from_comments_and_strings = 1
   let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
   let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
-  let g:ycm_add_preview_to_completeopt = 1 " preview pane
-  let g:ycm_autoclose_preview_window_after_completion = 1 " autoclose preview
-  let g:ycm_autoclose_preview_window_after_insertion = 1  " autoclose preview
-  let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
+  let g:ycm_add_preview_to_completeopt = 0 " disable preview pane
+  let g:ycm_cache_omnifunc = 1 " enable omnifunc cache
   let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
   let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
   NeoBundle 'Valloric/YouCompleteMe', {
@@ -666,9 +647,6 @@ endfunction
 " ---  Repeat
 NeoBundle 'tpope/vim-repeat'
 
-" ---  Speed Dating
-NeoBundle 'tpope/vim-speeddating'
-
 " ---  Surround
 NeoBundle 'tpope/vim-surround'
 
@@ -707,6 +685,22 @@ NeoBundle 'xolox/vim-session', {
   \         'xolox/vim-misc'
   \     ],
   \ }
+
+" --- Airline
+let g:airline_theme = 'badwolf' " specify theme
+let g:airline_exclude_preview = 1 " remove airline from preview window
+let g:airline_left_sep = '»' " change left sections separator
+let g:airline_right_sep = '«' " change right sections separator
+let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+let g:airline#extensions#tagbar#enabled = 0 " disable tagbar integration
+let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
+NeoBundle 'bling/vim-airline', {
+  \     'vim_version': '7.2',
+  \ }
+let bundle = neobundle#get('vim-airline')
+function! bundle.hooks.on_post_source(bundle)
+  set noshowmode " hide the duplicate mode in bottom status bar
+endfunction
 
 
 " Install bundles && generate/check documentation
