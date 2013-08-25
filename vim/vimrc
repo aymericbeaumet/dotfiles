@@ -44,10 +44,21 @@ function! StripTrailingWhitespaces()
   call cursor(l, c)
 endfunction
 
-
-" Create the given directory
+" Create directory
 function! CreateDirectory(directory_name)
   silent! call mkdir(expand(a:directory_name), "p", 0755)
+endfunction
+
+" Detect Linux
+function! IsLinux()
+  return has("unix") &&
+        \  substitute(system("uname -s"), '\n', '', '') ==# 'Linux'
+endfunction
+
+" Detect OSX
+function! IsOSX()
+  return has("unix") &&
+        \ substitute(system("uname -s"), '\n', '', '') ==# 'Darwin'
 endfunction
 
 " }}}
@@ -553,17 +564,21 @@ NeoBundle 'jimsei/winresizer'
 
 " ---  CtrlP
 let g:ctrlp_map = '<Leader>fo'
+let g:ctrlp_by_filename = 1 " search by filename (<C-D> to include folders)
+let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
+let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
+let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
+let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
 let g:ctrlp_custom_ignore = {
   \     'dir':  '\v[\/]\.(git|hg|svn)$'
   \ } " will be ignored in completion (`wildignore` is applied first)
-let g:ctrlp_working_path_mode = 'ra' " search root is the nearest SCM
 let g:ctrlp_max_files = 1000 " avoid lag if launched in a high level directory
 let g:ctrlp_max_depth = 10 " same as above
-let g:ctrlp_clear_cache_on_exit = 0 " keep cache across sessions
-let g:ctrlp_show_hidden = 1 " search for hidden files
+let g:ctrlp_open_multiple_files = 'vjr' " allow to open several files at once
 let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
-let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files -co'] " .git faster
-let g:ctrlp_switch_buffer = 't' " switch to any buffer in any tab
+if     IsOSX()   | let g:ctrlp_mruf_case_sensitive = 0 " set case sensitive
+elseif IsLinux() | let g:ctrlp_mruf_case_sensitive = 1 | endif
+let g:ctrlp_mruf_save_on_update = 0 " only save on Vim exit
 NeoBundle 'kien/ctrlp.vim'
 let bundle = neobundle#get('ctrlp.vim')
 function! bundle.hooks.on_post_source(bundle)
