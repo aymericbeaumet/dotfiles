@@ -13,7 +13,7 @@ there!
 
 ![overview](http://beaumet.me/dotfiles/images/overview.png)
 
-This prompt is split in two part:
+This prompt is split in two parts:
 
 - In the left part:
 
