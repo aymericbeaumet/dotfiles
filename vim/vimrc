@@ -265,18 +265,19 @@ inoremap <silent> <C-O><C-O> <C-C>o
 inoremap <silent> JJ <C-O>J
 
 " buffer
-nnoremap <silent> <leader>bq :bdelete<CR>
+cnoreabbrev <expr> bq ((getcmdtype() is# ':' && getcmdline() is# 'bq')?('bdelete'):('bq'))
 
 " tab
 nnoremap <leader>tc :tabnew<CR>
 nnoremap <leader>tq :tabclose<CR>
+cnoreabbrev <expr> tc ((getcmdtype() is# ':' && getcmdline() is# 'tc')?('tabnew'):('tc'))
 cnoreabbrev <expr> tm ((getcmdtype() is# ':' && getcmdline() is# 'tm')?('tabmove'):('tm'))
 
 " strip whitespaces
 nnoremap <leader>sw :call StripTrailingWhitespaces()<CR>
 
-" git alias (very convenient when you're used to it in shell)
-cnoreabbrev <expr> g ((getcmdtype() is# ':' && getcmdline() is# 'g')?('Git'):('g'))
+" git alias
+cnoreabbrev <expr> G ((getcmdtype() is# ':' && getcmdline() is# 'G')?('Git'):('G'))
 
 " command line useful binds
 cnoremap <C-A> <Home>
@@ -427,7 +428,6 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
 
 NeoBundle 'wombat256.vim'
 colorscheme wombat256mod
-
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
   " This callback permits to override some highlight
@@ -445,6 +445,9 @@ function! bundle.hooks.on_post_source(bundle)
   " Highlight color column
   set colorcolumn=+1 " relative to text-width
   highlight ColorColumn ctermbg=0
+
+  " Set sign column with the same background as code edition zone
+  hi! link SignColumn Normal
 
   " Highlight trailing whitespaces
   hi TrailingWhitespace ctermbg=darkyellow
@@ -582,10 +585,9 @@ let g:ctrlp_custom_ignore = {
   \ } " will be ignored in completion (`wildignore` is applied first)
 let g:ctrlp_max_files = 1000 " avoid lag if launched in a high level directory
 let g:ctrlp_max_depth = 10 " same as above
-let g:ctrlp_open_multiple_files = 'vjr' " allow to open several files at once
+let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
 let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
-if     IsOSX()   | let g:ctrlp_mruf_case_sensitive = 0 " set case sensitive
-elseif IsLinux() | let g:ctrlp_mruf_case_sensitive = 1 | endif
+let g:ctrlp_mruf_case_sensitive = IsLinux() ? 1 : 0 " set case sensitive search
 let g:ctrlp_mruf_save_on_update = 0 " only save on Vim exit
 NeoBundle 'kien/ctrlp.vim'
 let bundle = neobundle#get('ctrlp.vim')
@@ -678,7 +680,6 @@ NeoBundle 'tpope/vim-unimpaired'
 
 " ---  Easytags
 let g:easytags_by_filetype = '~/.vim/tmp/tags//' " tag files by languages
-call CreateDirectory(g:easytags_by_filetype) " create tags directory
 let g:easytags_include_members = 1 " more complete tag files for C++ and Java
 let g:easytags_resolve_links = 1 " follow symlinks
 if has('python') || has('python3')
@@ -691,16 +692,17 @@ NeoBundle 'xolox/vim-easytags', {
   \     ],
   \     'external_commands': ['ctags'],
   \ }
+au VimEnter * call CreateDirectory(g:easytags_by_filetype)
 
 " ---  Match Tag
 NeoBundle 'gregsexton/MatchTag'
 
 " --- Session
 let g:session_directory = '~/.vim/tmp/sessions//' " where to store the sessions
-call CreateDirectory(g:session_directory) " create sessions directory
 let g:session_default_overwrite = 1 " overwrite last default session
 let g:session_autoload = 'no' " do not autoload sessions
 let g:session_autosave = 'yes' " automatically save session on vim close
+let g:session_command_aliases = 1 " enable aliased commands
 set sessionoptions-=options " do not store options in session file
 set sessionoptions-=folds   " do not store folds in session file
 NeoBundle 'xolox/vim-session', {
@@ -708,6 +710,7 @@ NeoBundle 'xolox/vim-session', {
   \         'xolox/vim-misc'
   \     ],
   \ }
+au VimEnter * call CreateDirectory(g:session_directory)
 
 " --- Airline
 let g:airline_theme = 'badwolf' " specify theme
@@ -728,6 +731,12 @@ endfunction
 " --- Auto pairs
 NeoBundle 'jiangmiao/auto-pairs'
 
+" --- Rooter
+NeoBundle 'airblade/vim-rooter'
+
+" --- Git Gutter
+NeoBundle 'airblade/vim-gitgutter'
+
 
 " Install bundles && generate/check documentation
 NeoBundleCheck
@@ -745,6 +754,11 @@ filetype plugin indent on
 
 
 
-set secure " avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
+" Call NeoBundle post source hooks again to support several consecutive
+" `source ~/.vimrc`
+call neobundle#call_hook('on_post_source')
+
+" Avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
+set secure
 
 " vim: isk+=- isk+=*
