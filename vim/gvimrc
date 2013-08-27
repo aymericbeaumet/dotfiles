@@ -17,6 +17,3 @@ set guicursor+=a:blinkon0
 
 " Set the cursor as an underscore
 set guicursor+=a:hor8
-
-" Remove annoying beep
-set vb t_vb=

@@ -61,6 +61,11 @@ function! IsOSX()
         \ substitute(system("uname -s"), '\n', '', '') ==# 'Darwin'
 endfunction
 
+" Properly abbreviate a command
+function! AbbreviateCommand(abbreviation, expansion)
+  execute 'cnoreabbrev <expr> ' . a:abbreviation . ' ((getcmdtype() is# ":" && getcmdline() is# "' . a:abbreviation . '") ? ("' . a:expansion . '") : ("' . a:abbreviation . '"))'
+endfunction
+
 " }}}
 
 
@@ -111,14 +116,14 @@ set wildmode=full       "  `-> ensure default completion
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
-set tabpagemax=15       " limit number of tabs
 set hidden              " when a tab is closed, do not delete the buffer
 set laststatus=2        " always display status line
 set t_Co=256            " 256 colors
 set mouse=a             " enable mouse support
 set background=dark     " dark background
 
-au VimEnter * hi CursorLine cterm=bold " highlight cursor line
+" highlight cursor line
+au VimEnter * hi CursorLine cterm=bold
 
 set relativenumber      " relative line numerotation by default
 au InsertEnter * set norelativenumber number " classic in insert mode
@@ -154,9 +159,9 @@ set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set selection=inclusive " cursor is in selection
 set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
 set sidescrolloff=10    " (same as above about columns during side scrolling)
-set nolist              " hide invisible characters
 set textwidth=80        " 80 characters line
 set wrap                " wrap long lines
+set nolist              " hide invisible characters by default
 
 " spell checker
 set nospell             " Disable spell language globally
@@ -192,8 +197,7 @@ set tabstop=2           " n spaces when using <Tab>
 
 " turn off error bells
 set noerrorbells
-set novisualbell
-set t_vb=
+set visualbell t_vb=
 
 " }}}
 
@@ -236,10 +240,10 @@ nnoremap <silent> Y y$
 nnoremap <silent> M K
 
 " keep the cursor in place while joining lines
-nnoremap <silent> J myJ`y
+nnoremap <silent> J mpJ`p
 
 " split line with K
-nnoremap <silent> K i<CR><C-C>^mzgk:silent! s/\v +$//<CR>:nohlsearch<CR>`z
+nnoremap <silent> K i<CR><C-C>^mpgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`p
 
 " insert blank lines without entering insert mode (do not alter any register)
 nnoremap <silent> gO O<C-C>0"_D
@@ -251,7 +255,7 @@ inoremap <silent> <F1> <Nop>
 noremap <silent> Q <Nop>
 noremap <silent> ZZ <Nop>
 noremap <silent> ZQ <Nop>
-nnoremap <C-C> <Nop>
+nnoremap <silent> <C-C> <Nop>
 
 " bind `jj` to leave insert mode
 inoremap <silent> jj <C-C>
@@ -261,23 +265,16 @@ inoremap <silent> II <C-O>^
 inoremap <silent> AA <C-O>$
 inoremap <silent> CC <C-O>"_D
 inoremap <silent> OO <C-C>O
-inoremap <silent> <C-O><C-O> <C-C>o
 inoremap <silent> JJ <C-O>J
 
-" buffer
-cnoreabbrev <expr> bq ((getcmdtype() is# ':' && getcmdline() is# 'bq')?('bdelete'):('bq'))
+" move tab
+call AbbreviateCommand('tm', 'tabmove')
 
-" tab
-nnoremap <leader>tc :tabnew<CR>
-nnoremap <leader>tq :tabclose<CR>
-cnoreabbrev <expr> tc ((getcmdtype() is# ':' && getcmdline() is# 'tc')?('tabnew'):('tc'))
-cnoreabbrev <expr> tm ((getcmdtype() is# ':' && getcmdline() is# 'tm')?('tabmove'):('tm'))
+" git
+call AbbreviateCommand('G', 'Git')
 
 " strip whitespaces
-nnoremap <leader>sw :call StripTrailingWhitespaces()<CR>
-
-" git alias
-cnoreabbrev <expr> G ((getcmdtype() is# ':' && getcmdline() is# 'G')?('Git'):('G'))
+nnoremap <leader>w :call StripTrailingWhitespaces()<CR>
 
 " command line useful binds
 cnoremap <C-A> <Home>
@@ -287,11 +284,8 @@ cnoremap <C-F> <Right>
 cnoremap <C-O> <Up>
 
 " disable completion popup while using ^e and ^y in insert mode
-inoremap <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
-inoremap <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
-
-" open tag in a new tab
-nnoremap <silent> <C-W><C-]> <C-W><C-]><C-W>Tzz
+inoremap <silent> <expr> <C-E> pumvisible() ? "\<C-Y>\<C-E>" : "\<C-E>"
+inoremap <silent> <expr> <C-Y> pumvisible() ? "\<C-Y>\<C-Y>" : "\<C-Y>"
 
 " center on movements
 nnoremap <silent> <C-]> <C-]>zz
@@ -301,8 +295,11 @@ nnoremap <silent> * *zz
 nnoremap <silent> # #zz
 
 " reselect visual block after indent
-vnoremap < <gv
-vnoremap > >gv
+vnoremap <silent> < <gv
+vnoremap <silent> > >gv
+
+" display/hide invisible characters
+nnoremap <silent> <leader>l :set list! list?<CR>
 
 " }}}
 
@@ -390,15 +387,14 @@ endfunction
 
 " {{{ 10. Plugins                                                *vimrc-plugins*
 
-" found vim config file and config dir
-let s:vim_conf = expand('<sfile>:p')
-let s:vim_dir = fnamemodify(s:vim_conf, ':h') . '/.vim'
+if has('vim_starting')
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
 
-let &runtimepath .= ',' . s:vim_dir . '/bundle/neobundle.vim'
 if (exists("g:bundle_dir"))
-  call neobundle#rc(g:bundle_dir) " load NeoBundle from a specific directory
+  call neobundle#rc(g:bundle_dir) " load bundles from a specific directory
 else
-  call neobundle#rc() " load NeoBundle from the classic directory
+  call neobundle#rc() " load bundles from the default directory
 endif
 
 
@@ -430,39 +426,22 @@ NeoBundle 'wombat256.vim'
 colorscheme wombat256mod
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
-  " This callback permits to override some highlights
-
   " Change spell detection skin
   hi clear SpellBad
   hi clear SpellCap
   hi clear SpellLocal
   hi clear SpellRare
-  if has("gui")
-    hi SpellBad gui=underline
-    hi SpellCap gui=underline
-    hi SpellLocal gui=underline
-    hi SpellRare gui=underline
-  else
-    hi SpellBad cterm=underline
-    hi SpellCap cterm=underline
-    hi SpellLocal cterm=underline
-    hi SpellRare cterm=underline
-  endif
+  hi SpellBad cterm=underline gui=underline
+  hi SpellCap cterm=underline gui=underline
+  hi SpellLocal cterm=underline gui=underline
+  hi SpellRare cterm=underline gui=underline
 
   " Highlight color column
   set colorcolumn=+1 " relative to text-width
-  if has("gui")
-    hi ColorColumn guibg=black
-  else
-    hi ColorColumn ctermbg=0
-  endif
+  hi ColorColumn ctermbg=0 guibg=black
 
   " Highlight trailing whitespaces
-  if has("gui")
-    hi TrailingWhitespace guibg=darkyellow
-  else
-    hi TrailingWhitespace ctermbg=darkyellow
-  endif
+  hi TrailingWhitespace ctermbg=darkyellow guibg=darkyellow
   match TrailingWhitespace /\s\+$/
 endfunction
 
@@ -547,10 +526,6 @@ endif
 " ---  Narrow Region
 let g:nrrw_rgn_nohl = 1 " disable highlighting while isolating code
 NeoBundle 'chrisbra/NrrwRgn'
-let bundle = neobundle#get('NrrwRgn')
-function! bundle.hooks.on_post_source(bundle)
-  noremap <silent> <Leader>r :NarrowRegion<CR>
-endfunction
 
 " ---  Tabular
 NeoBundle 'godlygeek/tabular'
@@ -558,6 +533,29 @@ let bundle = neobundle#get('tabular')
 function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>a :Tabularize /
   vnoremap <silent> <Leader>a :Tabularize /
+endfunction
+
+" ---  Nerd Tree
+let g:NERDTreeShowHidden = 1 " show hidden files
+let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
+let g:NERDTreeWinSize = 40 " tree width
+let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
+NeoBundle 'scrooloose/nerdtree'
+let bundle = neobundle#get('nerdtree')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <F10> :NERDTreeToggle<CR>
+endfunction
+
+" ---  Tagbar
+let g:tagbar_autofocus = 1 " focus tagbar when opened
+let g:tagbar_show_visibility = 1 " show public/private/protected
+let g:tagbar_compact = 1 " hide superfluous stuff
+let g:tagbar_width = 40 " set tagbar width
+let g:tagbar_left = 1 " set tagbar on the left
+NeoBundle 'majutsushi/tagbar'
+let bundle = neobundle#get('tagbar')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <F11> :TagbarToggle<CR>
 endfunction
 
 " ---  Gundo
@@ -569,16 +567,7 @@ let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
 NeoBundle 'bitbucket:sjl/gundo.vim'
 let bundle = neobundle#get('gundo.vim')
 function! bundle.hooks.on_post_source(bundle)
-  nnoremap <Leader>ue :GundoToggle<CR>
-endfunction
-
-" ---  Buffergator
-let g:buffergator_suppress_keymaps = 1 " delete default keymaps
-let g:buffergator_viewport_split_policy = 'L' " split on the left of the screen
-NeoBundle 'jeetsukumaran/vim-buffergator'
-let bundle = neobundle#get('vim-buffergator')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>be :BuffergatorToggle<CR>
+  nnoremap <silent> <F12> :GundoToggle<CR>
 endfunction
 
 " ---  Winresizer
@@ -586,7 +575,7 @@ let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
 
 " ---  CtrlP
-let g:ctrlp_map = '<Leader>fo'
+let g:ctrlp_map = '<Leader>f'
 let g:ctrlp_by_filename = 1 " search by filename (<C-D> to include folders)
 let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
 let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
@@ -604,20 +593,8 @@ let g:ctrlp_mruf_save_on_update = 0 " only save on Vim exit
 NeoBundle 'kien/ctrlp.vim'
 let bundle = neobundle#get('ctrlp.vim')
 function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>fr :CtrlPMRU<CR>
-  nnoremap <silent> <Leader>bo :CtrlPBuffer<CR>
-endfunction
-
-" ---  Tagbar
-let g:tagbar_autofocus = 1 " focus tagbar when opened
-let g:tagbar_show_visibility = 1 " show public/private/protected
-let g:tagbar_compact = 1 " hide superfluous stuff
-let g:tagbar_width = 40 " set tagbar width
-let g:tagbar_left = 1 " set tagbar pane on the left side
-NeoBundle 'majutsushi/tagbar'
-let bundle = neobundle#get('tagbar')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>te :TagbarToggle<CR>
+  nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
+  nnoremap <silent> <Leader>r :CtrlPMRU<CR>
 endfunction
 
 " ---  MatchIt
@@ -629,16 +606,6 @@ NeoBundle 'nelstrom/vim-visual-star-search'
 " ---  Nerd Commenter
 NeoBundle 'scrooloose/nerdcommenter'
 
-" ---  Nerd Tree
-let g:NERDTreeShowHidden = 1 " show hidden files
-let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
-let g:NERDTreeWinSize = 40 " tree width
-let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
-NeoBundle 'scrooloose/nerdtree'
-let bundle = neobundle#get('nerdtree')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>fe :NERDTreeToggle<CR>
-endfunction
 
 " ---  Syntastic
 let g:syntastic_mode_map = {
@@ -653,17 +620,10 @@ let g:syntastic_cpp_checkers = [
   \ ]
 NeoBundle 'scrooloose/syntastic'
 let bundle = neobundle#get('syntastic')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>sc :SyntasticCheck<CR>
-  nnoremap <silent> <Leader>st :SyntasticToggleMode<CR>
-endfunction
 
 " ---  Multiple Cursors
 NeoBundle 'terryma/vim-multiple-cursors'
 let bundle = neobundle#get('vim-multiple-cursors')
-function! bundle.hooks.on_post_source(bundle)
-  vnoremap <silent> <Leader>mc :MultipleCursorsFind<Space>
-endfunction
 
 " ---  Abolish
 NeoBundle 'tpope/vim-abolish'
