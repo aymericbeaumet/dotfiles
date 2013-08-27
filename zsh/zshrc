@@ -127,7 +127,6 @@ alias rm='rm -v'
 alias mkdir='mkdir -v'
 is_linux && alias rmdir='rmdir -v'
 alias j='jobs' ; compdef j=jobs
-alias m=man ; compdef m=man
 alias g='git' ; compdef g=git
 
 alias -g A=' | awk'
