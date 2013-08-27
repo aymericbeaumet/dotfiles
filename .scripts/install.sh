@@ -65,8 +65,8 @@ for i in ${files2install[@]} ; do
   for j in $(ls "$i/" | sort) ; do
     # if the file extension is '.md' or '.mkd'
     # or if hidden files
-    # just skip it
-    if [[ "$j" =~ ^.+.mk*d$ ]] || [[ "$j" =~ ^\. ]] ; then
+    # just skip them
+    if [[ "$j" =~ ^.+\.mk?d$ ]] || [[ "$j" =~ ^\. ]] ; then
       continue
     fi
 
