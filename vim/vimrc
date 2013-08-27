@@ -2,21 +2,21 @@
 " Github: @abeaumet/dotfiles
 "
 " Content:
-"   1. Helpers                                   *vimrc-helpers*
-"   2. Global options                            *vimrc-options*
-"   3. User Interface                            *vimrc-ui*
-"   4. Search & Replace behavior                 *vimrc-search*
-"   5. Text editing                              *vimrc-edition*
-"   6. Indentation / Tabulations                 *vimrc-indent-tab*
-"   7. Errors                                    *vimrc-errors*
-"   8. Binds & Alias                             *vimrc-binds-alias*
-"   9. Languages specific configuration          *vimrc-languages*
-"  10. Plugins                                   *vimrc-plugins*
-"     10.1. NeoBundle                               *vimrc-plugins-neobundle*
-"     10.2. Themes                                  *vimrc-plugins-themes*
-"     10.3. Languages specific plugins              *vimrc-plugins-languages*
-"     10.4. Tools plugins                           *vimrc-plugins-tools*
-"  11. File type / Syntax detection              *vimrc-filetype*
+"   1. Helpers                                      *vimrc-helpers*
+"   2. Global options                               *vimrc-options*
+"   3. User Interface                               *vimrc-ui*
+"   4. Search & Replace behavior                    *vimrc-search*
+"   5. Text editing                                 *vimrc-edition*
+"   6. Indentation / Tabulations                    *vimrc-indent-tab*
+"   7. Errors                                       *vimrc-errors*
+"   8. Binds & Alias                                *vimrc-binds-alias*
+"   9. Languages specific configuration             *vimrc-languages*
+"  10. Plugins                                      *vimrc-plugins*
+"     10.1. NeoBundle                                  *vimrc-plugins-neobundle*
+"     10.2. Themes                                     *vimrc-plugins-themes*
+"     10.3. Languages specific plugins                 *vimrc-plugins-languages*
+"     10.4. Tools plugins                              *vimrc-plugins-tools*
+"  11. File type / Syntax detection                 *vimrc-filetype*
 
 
 
@@ -430,27 +430,39 @@ NeoBundle 'wombat256.vim'
 colorscheme wombat256mod
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
-  " This callback permits to override some highlight
+  " This callback permits to override some highlights
 
   " Change spell detection skin
   hi clear SpellBad
   hi clear SpellCap
   hi clear SpellLocal
   hi clear SpellRare
-  hi SpellBad cterm=underline
-  hi SpellCap cterm=underline
-  hi SpellLocal cterm=underline
-  hi SpellRare cterm=underline
+  if has("gui")
+    hi SpellBad gui=underline
+    hi SpellCap gui=underline
+    hi SpellLocal gui=underline
+    hi SpellRare gui=underline
+  else
+    hi SpellBad cterm=underline
+    hi SpellCap cterm=underline
+    hi SpellLocal cterm=underline
+    hi SpellRare cterm=underline
+  endif
 
   " Highlight color column
   set colorcolumn=+1 " relative to text-width
-  highlight ColorColumn ctermbg=0
-
-  " Set sign column with the same background as code edition zone
-  hi! link SignColumn Normal
+  if has("gui")
+    hi ColorColumn guibg=black
+  else
+    hi ColorColumn ctermbg=0
+  endif
 
   " Highlight trailing whitespaces
-  hi TrailingWhitespace ctermbg=darkyellow
+  if has("gui")
+    hi TrailingWhitespace guibg=darkyellow
+  else
+    hi TrailingWhitespace ctermbg=darkyellow
+  endif
   match TrailingWhitespace /\s\+$/
 endfunction
 
@@ -734,9 +746,6 @@ NeoBundle 'jiangmiao/auto-pairs'
 " --- Rooter
 NeoBundle 'airblade/vim-rooter'
 
-" --- Git Gutter
-NeoBundle 'airblade/vim-gitgutter'
-
 
 " Install bundles && generate/check documentation
 NeoBundleCheck
@@ -760,5 +769,7 @@ call neobundle#call_hook('on_post_source')
 
 " Avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
 set secure
+
+
 
 " vim: isk+=- isk+=*
