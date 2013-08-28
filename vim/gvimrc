@@ -17,3 +17,7 @@ set guicursor+=a:blinkon0
 
 " Set the cursor as an underscore
 set guicursor+=a:hor8
+
+" easy navigation between tabs
+nnoremap <silent> <C-S-Tab> gT
+nnoremap <silent> <C-Tab> gt
