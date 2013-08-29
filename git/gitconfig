@@ -1,4 +1,4 @@
-; `man git-config` is your friend
+; `man git-config` could help you
 
 [advice]
   statusHints = false
@@ -7,12 +7,9 @@
   ; fast access aliases
   a = add
   br = branch
-  cf = cat-file
   ci = commit
   cia = commit --amend
-  cl = clone
   co = checkout
-  cp = cherry-pick
   df = diff
   dfc = diff --cached
   fe = fetch
@@ -21,27 +18,16 @@
   me = merge
   pl = pull
   plo = pull origin
-  plom = pull origin master
   ps = push
   pso = push origin
-  psom = push origin master
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
   re = remote
-  rea = remote add
-  reu = remote update
-  rer = remote rm
   rmc = rm --cached
   rs = reset
-  rss = reset --soft
   rsh = reset --hard
   rv = revert
-  sm = submodule
-  sma = submodule add
-  smf = submodule foreach
-  smu = submodule update
-  smui = submodule update --init
   sh = stash
   sha = stash apply
   shc = stash clear
@@ -49,26 +35,33 @@
   shl = stash list
   shp = stash pop
   shs = stash save
-  shsk = stash save --keep-index
   st = status
   sw = show
-  t = tag
-  uia = update-index --assume-unchanged
-  uina = update-index --no-assume-unchanged
 
-  ; usefull aliases
+  ; Show git configuration
   gitconfig = "!cat ~/.gitconfig"
+
+  ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
+
+  ; Print the file to trash / trash them
   totrash = clean -ndx
   trash = clean -ffdx
+
+  ; Find a file in the project
   find = "!git ls-files | grep -i"
+
+  ; Print a tree of the project
   tree = log --graph --abbrev-commit --decorate --date=relative --all \
     --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) \
     %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+
+  ; Print all the committers for the project
   who = shortlog -sne
 
-[apply]
-  whitespace = fix
+  ; Ignore modifications on some specified files
+  unwatch = update-index --assume-unchanged
+  watch = update-index --no-assume-unchanged
 
 [branch]
   autosetuprebase = always
