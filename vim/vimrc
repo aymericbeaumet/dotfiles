@@ -536,7 +536,6 @@ endfunction
 
 " ---  Nerd Tree
 let g:NERDTreeShowHidden = 1 " show hidden files
-let g:NERDTreeQuitOnOpen = 1 " close tree when opening a file
 let g:NERDTreeWinSize = 40 " tree width
 let g:NERDTreeMinimalUI = 1 " hide superfluous stuff
 NeoBundle 'scrooloose/nerdtree'
@@ -555,18 +554,6 @@ function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <F10> :BuffergatorToggle<CR>
 endfunction
 
-" ---  Tagbar
-let g:tagbar_autofocus = 1 " focus tagbar when opened
-let g:tagbar_show_visibility = 1 " show public/private/protected
-let g:tagbar_compact = 1 " hide superfluous stuff
-let g:tagbar_width = 40 " set tagbar width
-let g:tagbar_left = 0 " set tagbar on the right
-NeoBundle 'majutsushi/tagbar'
-let bundle = neobundle#get('tagbar')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <F11> :TagbarToggle<CR>
-endfunction
-
 " ---  Gundo
 let g:gundo_width = 40 " gundo pane width
 let g:gundo_preview_height = 20 " preview height
@@ -577,7 +564,19 @@ let g:gundo_right = 1 " open on the right of the screen
 NeoBundle 'bitbucket:sjl/gundo.vim'
 let bundle = neobundle#get('gundo.vim')
 function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <F12> :GundoToggle<CR>
+  nnoremap <silent> <F11> :GundoToggle<CR>
+endfunction
+
+" ---  Tagbar
+let g:tagbar_autofocus = 1 " focus tagbar when opened
+let g:tagbar_show_visibility = 1 " show public/private/protected
+let g:tagbar_compact = 1 " hide superfluous stuff
+let g:tagbar_width = 40 " set tagbar width
+let g:tagbar_left = 0 " set tagbar on the right
+NeoBundle 'majutsushi/tagbar'
+let bundle = neobundle#get('tagbar')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <F12> :TagbarToggle<CR>
 endfunction
 
 " ---  Winresizer
