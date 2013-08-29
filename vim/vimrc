@@ -267,11 +267,10 @@ inoremap <silent> CC <C-O>"_D
 inoremap <silent> OO <C-C>O
 inoremap <silent> JJ <C-O>J
 
-" move tab
+" useful command line abbreviations
 call AbbreviateCommand('tm', 'tabmove')
-
-" git
 call AbbreviateCommand('G', 'Git')
+call AbbreviateCommand('E', 'e')
 
 " strip whitespaces
 nnoremap <leader>w :call StripTrailingWhitespaces()<CR>
