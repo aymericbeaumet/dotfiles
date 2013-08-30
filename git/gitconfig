@@ -9,6 +9,7 @@
   br = branch
   ci = commit
   cia = commit --amend
+  cl = clone
   co = checkout
   df = diff
   dfc = diff --cached
@@ -24,6 +25,7 @@
   rba = rebase --abort
   rbc = rebase --continue
   re = remote
+  reu = remote update
   rmc = rm --cached
   rs = reset
   rsh = reset --hard
