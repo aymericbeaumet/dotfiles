@@ -112,7 +112,7 @@ set lazyredraw          " only redraw when needed
 set shortmess=aoOsI     " disable vim welcome message / enable shorter messages
 set cursorline          " highlight cursor line
 set wildmenu            " better command line completion menu
-set wildmode=full       "  `-> ensure default completion
+set wildmode=full       "  `-> ensure better completion
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
 set wildignore+=*.zip,*.gz,*.xz,*.tar       " ignore compressed files
 set wildignore+=.*.sw*,*~                   " ignore temporary files
@@ -270,12 +270,21 @@ inoremap <silent> JJ <C-O>J
 " useful command line abbreviations
 call AbbreviateCommand('tm', 'tabmove')
 call AbbreviateCommand('G', 'Git')
+
+" fix command line typos I'm used to do
 call AbbreviateCommand('E', 'e')
+call AbbreviateCommand('Cd', 'cd')
+call AbbreviateCommand('CD', 'cd')
+call AbbreviateCommand('Pwd', 'pwd')
+call AbbreviateCommand('PWd', 'pwd')
+call AbbreviateCommand('PWD', 'pwd')
+call AbbreviateCommand('Wq', 'wq')
+call AbbreviateCommand('WQ', 'wq')
 
 " strip whitespaces
 nnoremap <leader>w :call StripTrailingWhitespaces()<CR>
 
-" command line useful binds
+" useful command line binds
 cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
 cnoremap <C-B> <Left>
@@ -300,6 +309,9 @@ vnoremap <silent> > >gv
 " display/hide invisible characters
 nnoremap <silent> <leader>l :set list! list?<CR>
 
+" bind to create a tab
+nnoremap <silent> <leader>t :tabnew<CR>
+
 " }}}
 
 
@@ -323,6 +335,8 @@ function! LoadCSSConfiguration()
   setl softtabstop=4
   setl tabstop=4
   setl iskeyword+=-
+  setl iskeyword+=#
+  setl iskeyword+=.
 endfunction
 
 " Git commit
@@ -345,6 +359,8 @@ au FileType html call LoadHTMLConfiguration()
 function! LoadHTMLConfiguration()
   setl omnifunc=htmlcomplete#CompleteTags
   setl iskeyword+=-
+  setl iskeyword+=#
+  setl iskeyword+=.
 endfunction
 
 " Markdown
@@ -488,7 +504,6 @@ NeoBundle 'shawncplus/phpcomplete.vim'
 NeoBundle 'a.vim'
 
 " ---  Easymotion
-let bundle = neobundle#get('vim-easymotion')
 let g:EasyMotion_leader_key = '<Leader><Leader>'
 NeoBundle 'Lokaltog/vim-easymotion'
 
@@ -509,8 +524,8 @@ if has('python') || has('python3')
   let g:ycm_collect_identifiers_from_comments_and_strings = 1
   let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
   let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
-  let g:ycm_key_list_select_completion = ['<C-N>'] " previous completion
-  let g:ycm_key_list_previous_completion = ['<C-P>'] " next completion
+  let g:ycm_key_list_select_completion = ['<C-N>'] " next completion
+  let g:ycm_key_list_previous_completion = ['<C-P>'] " previous completion
   let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
   let g:ycm_add_preview_to_completeopt = 0 " disable preview
   NeoBundle 'Valloric/YouCompleteMe', {
@@ -614,7 +629,6 @@ NeoBundle 'nelstrom/vim-visual-star-search'
 
 " ---  Nerd Commenter
 NeoBundle 'scrooloose/nerdcommenter'
-
 
 " ---  Syntastic
 let g:syntastic_mode_map = {
