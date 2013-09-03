@@ -205,10 +205,6 @@ set visualbell t_vb=
 
 " {{{ 8. Binds & Alias                                       *vimrc-binds-alias*
 
-" easy navigation between tabs
-nnoremap <silent> <S-H> gT
-nnoremap <silent> <S-L> gt
-
 " up and down are more logical with g
 nnoremap <silent> j gj
 vnoremap <silent> j gj
@@ -223,31 +219,14 @@ let mapleader = '\'
 nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
 vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>
 
-" use `\d` `\D` `\x` `\X` to delete without altering the yanked stack
-nnoremap <silent> <Leader>d "_d
-vnoremap <silent> <Leader>d "_d
-nnoremap <silent> <Leader>D "_D
-vnoremap <silent> <Leader>D "_D
-nnoremap <silent> <Leader>x "_x
-vnoremap <silent> <Leader>x "_x
-nnoremap <silent> <Leader>X "_X
-vnoremap <silent> <Leader>X "_X
-
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
 
-" man key on M
-nnoremap <silent> M K
-
 " keep the cursor in place while joining lines
-nnoremap <silent> J mpJ`p
+nnoremap <silent> J mpJ`z
 
-" split line with K
-nnoremap <silent> K i<CR><C-C>^mpgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`p
-
-" insert blank lines without entering insert mode (do not alter any register)
-nnoremap <silent> gO O<C-C>0"_D
-nnoremap <silent> go o<C-C>0"_D
+" convenient bind to split line
+nnoremap <silent> K i<CR><C-C>^mzgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`z
 
 " disable annoying keys
 noremap <silent> <F1> <Nop>
@@ -281,9 +260,6 @@ call AbbreviateCommand('PWD', 'pwd')
 call AbbreviateCommand('Wq', 'wq')
 call AbbreviateCommand('WQ', 'wq')
 
-" strip whitespaces
-nnoremap <leader>w :call StripTrailingWhitespaces()<CR>
-
 " useful command line binds
 cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
@@ -306,11 +282,28 @@ nnoremap <silent> # #zz
 vnoremap <silent> < <gv
 vnoremap <silent> > >gv
 
+" insert blank lines without entering insert mode (do not alter any register)
+nnoremap <silent> gO O<C-C>0"_D
+nnoremap <silent> go o<C-C>0"_D
+
+" use `\d` `\D` `\x` `\X` to delete without altering the yanked stack
+nnoremap <silent> <Leader>d "_d
+vnoremap <silent> <Leader>d "_d
+nnoremap <silent> <Leader>D "_D
+vnoremap <silent> <Leader>D "_D
+nnoremap <silent> <Leader>x "_x
+vnoremap <silent> <Leader>x "_x
+nnoremap <silent> <Leader>X "_X
+vnoremap <silent> <Leader>X "_X
+
 " display/hide invisible characters
 nnoremap <silent> <leader>l :set list! list?<CR>
 
 " bind to create a tab
 nnoremap <silent> <leader>t :tabnew<CR>
+
+" strip whitespaces
+nnoremap <leader>w :call StripTrailingWhitespaces()<CR>
 
 " }}}
 
