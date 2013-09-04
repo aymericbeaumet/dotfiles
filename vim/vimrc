@@ -223,7 +223,7 @@ vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>
 nnoremap <silent> Y y$
 
 " keep the cursor in place while joining lines
-nnoremap <silent> J mpJ`z
+nnoremap <silent> J mpJ`p
 
 " convenient bind to split line
 nnoremap <silent> K i<CR><C-C>^mzgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`z
