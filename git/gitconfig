@@ -47,8 +47,7 @@
   alias = "!git config -l | grep alias | cut -c 7- | sort"
 
   ; Print the file to trash / trash them
-  totrash = clean -ndx
-  trash = clean -ffdx
+  trash = clean -ffdx ; suffix `-n` to just see which files would be deleted
 
   ; Find a file in the project
   find = "!git ls-files | grep -i"
