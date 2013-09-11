@@ -126,8 +126,8 @@ set background=dark     " dark background
 au VimEnter * hi CursorLine cterm=bold
 
 set relativenumber      " relative line numerotation by default
-au InsertEnter * set norelativenumber number " classic in insert mode
-au InsertLeave * set nonumber relativenumber " relative out of insert mode
+au InsertEnter * setl norelativenumber number " classic in insert mode
+au InsertLeave * setl nonumber relativenumber " relative out of insert mode
 
 " }}}
 
@@ -143,8 +143,8 @@ set showmatch           " show the matching bracket when inserting
 set gdefault            " default substitute g flag
 
 au VimEnter * set hlsearch " highlight last search matches (only on vim startup)
-au InsertEnter * setlocal nohlsearch " hide search highlighting in insert mode
-au InsertLeave * setlocal hlsearch " ... ands re-enable when leaving
+au InsertEnter * setl nohlsearch " hide search highlighting in insert mode
+au InsertLeave * setl hlsearch " ... ands re-enable when leaving
 
 " }}}
 
@@ -172,7 +172,7 @@ set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
 set formatoptions=cro
 silent! set formatoptions+=j " not compatible with all vim versions
 
-" remember last position in file
+" remember last position in file (line and column)
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
   \ exe 'normal! g`"' | endif
 
@@ -223,7 +223,7 @@ vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>
 nnoremap <silent> Y y$
 
 " keep the cursor in place while joining lines
-nnoremap <silent> J mpJ`p
+nnoremap <silent> J mzJ`z
 
 " convenient bind to split line
 nnoremap <silent> K i<CR><C-C>^mzgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`z
@@ -235,16 +235,6 @@ noremap <silent> Q <Nop>
 noremap <silent> ZZ <Nop>
 noremap <silent> ZQ <Nop>
 nnoremap <silent> <C-C> <Nop>
-
-" bind `jj` to leave insert mode
-inoremap <silent> jj <C-C>
-
-" useful insert mode binds
-inoremap <silent> II <C-O>^
-inoremap <silent> AA <C-O>$
-inoremap <silent> CC <C-O>"_D
-inoremap <silent> OO <C-C>O
-inoremap <silent> JJ <C-O>J
 
 " useful command line abbreviations
 call AbbreviateCommand('tm', 'tabmove')
@@ -259,6 +249,9 @@ call AbbreviateCommand('PWd', 'pwd')
 call AbbreviateCommand('PWD', 'pwd')
 call AbbreviateCommand('Wq', 'wq')
 call AbbreviateCommand('WQ', 'wq')
+call AbbreviateCommand('Q', 'q')
+call AbbreviateCommand('Qa', 'qa')
+call AbbreviateCommand('QA', 'qa')
 
 " useful command line binds
 cnoremap <C-A> <Home>
@@ -431,7 +424,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
 """""""""""""""
 
 NeoBundle 'wombat256.vim'
-colorscheme wombat256mod
+silent! colorscheme wombat256mod
 let bundle = neobundle#get('wombat256.vim')
 function! bundle.hooks.on_post_source(bundle)
   " Change spell detection skin
@@ -458,13 +451,14 @@ endfunction
 " 10.3. Languages "
 """""""""""""""""""
 
+" --- C/CPP
+
+NeoBundle 'a.vim'
+NeoBundle 'google.vim'
+
 " --- CSS
 
 NeoBundle 'ap/vim-css-color'
-
-" --- CPP
-
-NeoBundle 'google.vim'
 
 " --- Git
 
@@ -477,6 +471,7 @@ NeoBundle 'othree/html5.vim'
 " --- Javascript
 
 NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'marijnh/tern_for_vim'
 
 " --- Markdown
 
@@ -485,7 +480,6 @@ NeoBundle 'tpope/vim-markdown'
 " --- PHP
 
 NeoBundle '2072/PHP-Indenting-for-VIm'
-
 NeoBundle 'shawncplus/phpcomplete.vim'
 
 
@@ -493,8 +487,25 @@ NeoBundle 'shawncplus/phpcomplete.vim'
 " 10.4. Tools "
 """""""""""""""
 
-" ---  a.vim
-NeoBundle 'a.vim'
+" --- YouCompleteMe
+if has('python') || has('python3')
+  let g:ycm_complete_in_comments = 1 " Complete even inside comments
+  let g:ycm_complete_in_strings = 1 " Complete even inside strings
+  let g:ycm_collect_identifiers_from_tags_files = 1 " Collect from tag files
+  let g:ycm_seed_identifiers_with_syntax = 1 " Use language keywords
+  set completeopt-=preview " Disable preview pane
+  let g:ycm_key_list_select_completion = ['<C-n>'] " Use ^N for next result
+  let g:ycm_key_list_previous_completion = ['<C-p>'] " Use ^P for previous result
+  let g:ycm_key_detailed_diagnostics = '' " Disable diagnostic bind
+  let g:ycm_filepath_completion_use_working_dir = 1 " Use CWD for path completion
+  NeoBundle 'Valloric/YouCompleteMe', {
+    \     'build': {
+    \         'unix': './install.sh --clang-completer',
+    \         'mac': './install.sh --clang-completer',
+    \     },
+    \     'vim_version': '7.3.584',
+    \ }
+endif
 
 " ---  Easymotion
 let g:EasyMotion_leader_key = '<Leader><Leader>'
@@ -510,29 +521,14 @@ if has('python') || has('python3')
   NeoBundle 'SirVer/ultisnips'
 endif
 
-" ---  YouCompleteMe
-if has('python') || has('python3')
-  let g:ycm_complete_in_comments = 1 " complete in comments
-  let g:ycm_complete_in_strings = 1 " complete in strings
-  let g:ycm_collect_identifiers_from_comments_and_strings = 1
-  let g:ycm_collect_identifiers_from_tags_files = 1 " use tag files if needed
-  let g:ycm_seed_identifiers_with_syntax = 1 " take care of language syntax
-  let g:ycm_key_list_select_completion = ['<C-N>'] " next completion
-  let g:ycm_key_list_previous_completion = ['<C-P>'] " previous completion
-  let g:ycm_cache_omnifunc = 0 " disable omnifunc cache
-  let g:ycm_add_preview_to_completeopt = 0 " disable preview
-  NeoBundle 'Valloric/YouCompleteMe', {
-    \     'build': {
-    \         'unix': './install.sh --clang-completer',
-    \         'mac': './install.sh --clang-completer',
-    \     },
-    \     'vim_version': '7.3.584',
-    \ }
-endif
-
 " ---  Narrow Region
-let g:nrrw_rgn_nohl = 1 " disable highlighting while isolating code
+let g:nrrw_rgn_nohl = 1 " disable line highlighting while isolating code
 NeoBundle 'chrisbra/NrrwRgn'
+let bundle = neobundle#get('NrrwRgn')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>r :NarrowRegion<CR>
+  vnoremap <silent> <Leader>r :NarrowRegion<CR>
+endfunction
 
 " ---  Tabular
 NeoBundle 'godlygeek/tabular'
@@ -562,6 +558,18 @@ function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <F10> :BuffergatorToggle<CR>
 endfunction
 
+" ---  Tagbar
+let g:tagbar_autofocus = 1 " focus tagbar when opened
+let g:tagbar_show_visibility = 1 " show public/private/protected
+let g:tagbar_compact = 1 " hide superfluous stuff
+let g:tagbar_width = 40 " set tagbar width
+let g:tagbar_left = 0 " set tagbar on the right
+NeoBundle 'majutsushi/tagbar'
+let bundle = neobundle#get('tagbar')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <F11> :TagbarToggle<CR>
+endfunction
+
 " ---  Gundo
 let g:gundo_width = 40 " gundo pane width
 let g:gundo_preview_height = 20 " preview height
@@ -572,19 +580,7 @@ let g:gundo_right = 1 " open on the right of the screen
 NeoBundle 'bitbucket:sjl/gundo.vim'
 let bundle = neobundle#get('gundo.vim')
 function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <F11> :GundoToggle<CR>
-endfunction
-
-" ---  Tagbar
-let g:tagbar_autofocus = 1 " focus tagbar when opened
-let g:tagbar_show_visibility = 1 " show public/private/protected
-let g:tagbar_compact = 1 " hide superfluous stuff
-let g:tagbar_width = 40 " set tagbar width
-let g:tagbar_left = 0 " set tagbar on the right
-NeoBundle 'majutsushi/tagbar'
-let bundle = neobundle#get('tagbar')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <F12> :TagbarToggle<CR>
+  nnoremap <silent> <F12> :GundoToggle<CR>
 endfunction
 
 " ---  Winresizer
@@ -611,7 +607,6 @@ NeoBundle 'kien/ctrlp.vim'
 let bundle = neobundle#get('ctrlp.vim')
 function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
-  nnoremap <silent> <Leader>r :CtrlPMRU<CR>
 endfunction
 
 " ---  MatchIt
@@ -636,10 +631,12 @@ let g:syntastic_cpp_checkers = [
   \ ]
 NeoBundle 'scrooloose/syntastic'
 let bundle = neobundle#get('syntastic')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <Leader>s :SyntasticToggleMode<CR>
+endfunction
 
 " ---  Multiple Cursors
 NeoBundle 'terryma/vim-multiple-cursors'
-let bundle = neobundle#get('vim-multiple-cursors')
 
 " ---  Abolish
 NeoBundle 'tpope/vim-abolish'
@@ -715,9 +712,6 @@ let bundle = neobundle#get('vim-airline')
 function! bundle.hooks.on_post_source(bundle)
   set noshowmode " hide the duplicate mode in bottom status bar
 endfunction
-
-" --- Auto pairs
-NeoBundle 'jiangmiao/auto-pairs'
 
 " --- Rooter
 NeoBundle 'airblade/vim-rooter'
