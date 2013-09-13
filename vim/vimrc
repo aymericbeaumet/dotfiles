@@ -577,7 +577,7 @@ let g:gundo_preview_bottom = 1 " preview on bottom of file
 let g:gundo_help = 0 " disable help in gundo pane
 let g:gundo_close_on_revert = 1 " automatically close the gundo pane on revert
 let g:gundo_right = 1 " open on the right of the screen
-NeoBundle 'bitbucket:sjl/gundo.vim'
+NeoBundle 'sjl/gundo.vim'
 let bundle = neobundle#get('gundo.vim')
 function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <F12> :GundoToggle<CR>
@@ -597,8 +597,7 @@ let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
 let g:ctrlp_custom_ignore = {
   \     'dir':  '\v[\/]\.(git|hg|svn)$'
   \ } " will be ignored in completion (`wildignore` is applied first)
-let g:ctrlp_max_files = 1000 " avoid lag if launched in a high level directory
-let g:ctrlp_max_depth = 10 " same as above
+let g:ctrlp_max_depth = 10 " avoid lag if launched in a high level directory
 let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
 let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
 let g:ctrlp_mruf_case_sensitive = IsLinux() ? 1 : 0 " set case sensitive search
