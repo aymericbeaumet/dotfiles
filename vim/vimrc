@@ -80,7 +80,7 @@ set ttyfast             " we have a fast terminal
 set modeline            " enable modelines
 set modelines=3         " consider the first/last three lines
 set fileformats=unix,mac,dos " support all three newline formats
-set tags=~/.vim/tmp/tags/* " define tags file path
+set tags=~/.vim/tmp/tags/* " define tag files path
 set history=1000        " increase history size
 
 set noswapfile          " disable swap files
@@ -290,13 +290,13 @@ nnoremap <silent> <Leader>X "_X
 vnoremap <silent> <Leader>X "_X
 
 " display/hide invisible characters
-nnoremap <silent> <leader>l :set list! list?<CR>
+nnoremap <silent> <Leader>l :set list! list?<CR>
 
 " bind to create a tab
-nnoremap <silent> <leader>t :tabnew<CR>
+nnoremap <silent> <Leader>t :tabnew<CR>
 
 " strip whitespaces
-nnoremap <leader>w :call StripTrailingWhitespaces()<CR>
+nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
 
 " }}}
 
@@ -471,7 +471,13 @@ NeoBundle 'othree/html5.vim'
 " --- Javascript
 
 NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'marijnh/tern_for_vim'
+NeoBundle 'marijnh/tern_for_vim', {
+  \     'build': {
+  \         'unix': 'npm install',
+  \         'mac': 'npm install',
+  \     },
+  \     'external_commands': ['npm'],
+  \ }
 
 " --- Markdown
 
@@ -503,6 +509,7 @@ if has('python') || has('python3')
     \         'unix': './install.sh --clang-completer',
     \         'mac': './install.sh --clang-completer',
     \     },
+    \     'external_commands': ['cmake', 'python'],
     \     'vim_version': '7.3.584',
     \ }
 endif
@@ -625,9 +632,6 @@ let g:syntastic_check_on_wq = 0 " disable on save
 let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
 let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
 let g:syntastic_c_compiler_options = "-Wall -Wextra"
-let g:syntastic_cpp_checkers = [
-  \     'cpplint'
-  \ ]
 NeoBundle 'scrooloose/syntastic'
 let bundle = neobundle#get('syntastic')
 function! bundle.hooks.on_post_source(bundle)
@@ -649,7 +653,7 @@ NeoBundle 'tpope/vim-fugitive', {
   \ }
 let bundle = neobundle#get('vim-fugitive')
 function! bundle.hooks.on_post_source(bundle)
-  " Ensure that the buffers do not pollute the buffers list
+  " Ensure that the fugitive buffers do not pollute the buffers list
   au BufReadPost fugitive://* setl bufhidden=delete
 endfunction
 
