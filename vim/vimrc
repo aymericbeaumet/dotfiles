@@ -49,16 +49,14 @@ function! CreateDirectory(directory_name)
   silent! call mkdir(expand(a:directory_name), "p", 0755)
 endfunction
 
-" Detect Linux
-function! IsLinux()
-  return has("unix") &&
-        \  substitute(system("uname -s"), '\n', '', '') ==# 'Linux'
+" Detect Linux/BSD
+function! IsLinuxBSD()
+  return has("unix") && !IsOSX()
 endfunction
 
 " Detect OSX
 function! IsOSX()
-  return has("unix") &&
-        \ substitute(system("uname -s"), '\n', '', '') ==# 'Darwin'
+  return has('mac') && has('macunix')
 endfunction
 
 " Properly abbreviate a command
@@ -223,18 +221,16 @@ vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>
 nnoremap <silent> Y y$
 
 " keep the cursor in place while joining lines
-nnoremap <silent> J mzJ`z
+nnoremap <silent> J mlJ`l
 
 " convenient bind to split line
-nnoremap <silent> K i<CR><C-C>^mzgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`z
+nnoremap <silent> K i<CR><C-C>^mlgk:silent! s/\ v +$//<CR>:nohlsearch<CR>`l
 
 " disable annoying keys
 noremap <silent> <F1> <Nop>
 inoremap <silent> <F1> <Nop>
-noremap <silent> Q <Nop>
-noremap <silent> ZZ <Nop>
-noremap <silent> ZQ <Nop>
 nnoremap <silent> <C-C> <Nop>
+noremap <silent> <Del> <Nop>
 
 " useful command line abbreviations
 call AbbreviateCommand('tm', 'tabmove')
@@ -275,7 +271,7 @@ nnoremap <silent> # #zz
 vnoremap <silent> < <gv
 vnoremap <silent> > >gv
 
-" insert blank lines without entering insert mode (do not alter any register)
+" insert blank lines without entering insert mode
 nnoremap <silent> gO O<C-C>0"_D
 nnoremap <silent> go o<C-C>0"_D
 
@@ -338,6 +334,15 @@ function! LoadJavaScriptConfiguration()
   setl shiftwidth=4
   setl softtabstop=4
   setl tabstop=4
+endfunction
+
+" [La]TeX
+au FileType tex call LoadTexConfiguration()
+function! LoadTexConfiguration()
+  setl shiftwidth=2
+  setl softtabstop=2
+  setl tabstop=2
+  setl iskeyword+=:
 endfunction
 
 " HTML
@@ -479,6 +484,11 @@ NeoBundle 'marijnh/tern_for_vim', {
   \     'external_commands': ['npm'],
   \ }
 
+" --- LaTeX
+
+let g:tex_flavor = 'latex'
+NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
+
 " --- Markdown
 
 NeoBundle 'tpope/vim-markdown'
@@ -607,7 +617,7 @@ let g:ctrlp_custom_ignore = {
 let g:ctrlp_max_depth = 10 " avoid lag if launched in a high level directory
 let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
 let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
-let g:ctrlp_mruf_case_sensitive = IsLinux() ? 1 : 0 " set case sensitive search
+let g:ctrlp_mruf_case_sensitive = IsLinuxBSD() ? 1 : 0 " set case sensitive search
 let g:ctrlp_mruf_save_on_update = 0 " only save on Vim exit
 NeoBundle 'kien/ctrlp.vim'
 let bundle = neobundle#get('ctrlp.vim')
@@ -745,4 +755,4 @@ set secure
 
 
 
-" vim: isk+=- isk+=*
+"vim:isk+=-:isk+=*
