@@ -83,9 +83,7 @@ unsetopt NOMATCH                # no mismatch due to advanced completion (e.g.: 
 alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm -f {} \;'
 
 unalias vim &>/dev/null
-alias vi=vim
 alias v=vim
-compdef vi=vim
 compdef v=vim
 
 # bind some extension to be opened with $EDITOR
