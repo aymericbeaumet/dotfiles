@@ -51,12 +51,17 @@ endfunction
 
 " Detect Linux/BSD
 function! IsLinuxBSD()
-  return has("unix") && !IsOSX()
+  return has("unix") && !IsMac()
 endfunction
 
-" Detect OSX
-function! IsOSX()
-  return has('mac') && has('macunix')
+" Detect Mac
+function! IsMac()
+  return has('mac') || has('macunix')
+endfunction
+
+" Detect Windows
+function! IsWindows()
+  return has('win16') || ('win32') || ('win64') || ('win95') || ('win32unix')
 endfunction
 
 " Properly abbreviate a command
