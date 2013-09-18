@@ -341,13 +341,15 @@ function! LoadJavaScriptConfiguration()
   setl tabstop=4
 endfunction
 
-" [La]TeX
+" TeX
 au FileType tex call LoadTexConfiguration()
 function! LoadTexConfiguration()
-  setl shiftwidth=2
-  setl softtabstop=2
-  setl tabstop=2
+  setl shiftwidth=4
+  setl softtabstop=4
+  setl tabstop=4
   setl iskeyword+=:
+  setl formatoptions=tcroqn2
+  setl spell
 endfunction
 
 " HTML
@@ -491,7 +493,8 @@ NeoBundle 'marijnh/tern_for_vim', {
 
 " --- LaTeX
 
-let g:tex_flavor = 'latex'
+let g:Imap_UsePlaceHolders = 0 " Do not use placeholder
+let g:tex_flavor = 'latex' " Fix filetype
 NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
 
 " --- Markdown
