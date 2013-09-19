@@ -18,7 +18,9 @@
   l = log
   me = merge
   pl = pull
+  plo = pul origin
   ps = push
+  pso = push origin
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
@@ -45,7 +47,7 @@
   alias = "!git config -l | grep alias | cut -c 7- | sort"
 
   ; Print the file to trash / trash them
-  trash = clean -ffdx ; suffix `-n` to just see which files would be deleted
+  trash = clean -ffdx ; suffix with `-n` to see which files would be deleted
 
   ; Find a file in the project
   find = "!git ls-files | grep -i"
