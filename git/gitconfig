@@ -18,7 +18,7 @@
   l = log
   me = merge
   pl = pull
-  plo = pul origin
+  plo = pull origin
   ps = push
   pso = push origin
   rb = rebase
