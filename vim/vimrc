@@ -113,7 +113,6 @@ set cmdheight=1         " explicitly set the command line height
 set showcmd             " show (partial) command in the last line of the screen
 set lazyredraw          " only redraw when needed
 set shortmess=aoOsI     " disable vim welcome message / enable shorter messages
-set cursorline          " highlight cursor line
 set wildmenu            " better command line completion menu
 set wildmode=full       "  `-> ensure better completion
 set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc  " ignore compiled files
@@ -131,6 +130,10 @@ au VimEnter * hi CursorLine cterm=bold
 set relativenumber      " relative line numerotation by default
 au InsertEnter * setl norelativenumber number " classic in insert mode
 au InsertLeave * setl nonumber relativenumber " relative out of insert mode
+
+set cursorline          " highlight cursor line
+au InsertEnter * setl nocursorline " do not highlight in insert mode
+au InsertLeave * setl cursorline " highlight out of insert mode
 
 " }}}
 
@@ -168,7 +171,7 @@ set nolist              " hide invisible characters by default
 
 " spell checker
 set nospell             " Disable spell language globally
-set spelllang=en        " configure spell language
+set spelllang=en_gb     " configure spell language
 set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
 
 " format option stuff (see :help fo-table)
