@@ -25,6 +25,7 @@
   rba = rebase --abort
   rbc = rebase --continue
   re = remote
+  rl = reflog
   reu = remote update
   rmc = rm --cached
   rs = reset
