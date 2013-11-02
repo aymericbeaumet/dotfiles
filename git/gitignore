@@ -1,5 +1,16 @@
 # Inspired from https://github.com/github/gitignore
 
+# Unix
+*~
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
 # Vim
 .*.s[a-w][a-z]
 *.un~
@@ -12,17 +23,6 @@ TAGS
 !TAGS/
 tags
 !tags/
-
-# OSX
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
-
-# Linux
-*~
 
 # Xcode
 .DS_Store

@@ -11,9 +11,4 @@ install:
 	@$(SCRIPTS_DIR)/install.sh
 	@echo 'dotfiles successfully installed!'
 
-uninstall:
-	@echo 'Uninstalling dotfiles...'
-	@$(SCRIPTS_DIR)/uninstall.sh
-	@echo 'dotfiles successfully uninstalled!'
-
-.PHONY:	all install uninstall
+.PHONY:	all install
