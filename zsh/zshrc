@@ -82,52 +82,10 @@ unsetopt NOMATCH                # no mismatch due to advanced completion (e.g.: 
 
 alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm -f {} \;'
 
-unalias vim &>/dev/null
-alias v=vim
-compdef v=vim
-
-# bind some extension to be opened with $EDITOR
-alias -s c=$EDITOR
-alias -s cpp=$EDITOR
-alias -s css=$EDITOR
-alias -s h=$EDITOR
-alias -s hh=$EDITOR
-alias -s hpp=$EDITOR
-alias -s html=$EDITOR
-alias -s js=$EDITOR
-alias -s xhtml=$EDITOR
-alias -s txt=$EDITOR
-alias -s md=$EDITOR
-alias -s mkd=$EDITOR
-alias -s markdown=$EDITOR
-
-# bind some extension to be directly executed
-alias -s ml=`which ocaml 2> /dev/null`
-alias -s php3=`which php 2> /dev/null`
-alias -s php4=`which php 2> /dev/null`
-alias -s php5=`which php 2> /dev/null`
-alias -s php=`which php 2> /dev/null`
-alias -s pl=`which perl 2> /dev/null`
-alias -s py=`which python 2> /dev/null`
-alias -s rb=`which ruby 2> /dev/null`
-
-# bind some extension to be opened with $VIEWER
-alias -s bmp=$VIEWER
-alias -s gif=$VIEWER
-alias -s jpg=$VIEWER
-alias -s png=$VIEWER
-
 # common aliases
 alias grep='grep --color=auto'
-alias cp='cp -v'
-alias mv='mv -v'
-alias rm='rm -v'
-alias mkdir='mkdir -v'
-is_linux && alias rmdir='rmdir -v'
-alias j='jobs' ; compdef j=jobs
 alias g='git' ; compdef g=git
 
-alias -g A=' | awk'
 alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
 alias -g L=' | less'
 alias -g H=' | head'
@@ -158,12 +116,11 @@ export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
 export PATH="/usr/texbin:$PATH" # Add tex binaries
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
 
-export EDITOR=`which vim 2>/dev/null || which vi 2>/dev/null || echo $EDITOR`
+export EDITOR=vim
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
-export VIEWER=`which open 2>/dev/null || which eog 2>/dev/null || echo $VIEWER`
-export PAGER=`which less 2>/dev/null || which more 2>/dev/null || which cat 2>/dev/null || echo $PAGER`
-export SHELL=`which zsh 2>/dev/null || which bash 2>/dev/null || echo $SHELL`
+export VIEWER=open
+export PAGER=less
 
 ###########
 # History #
@@ -186,13 +143,12 @@ setopt HIST_NO_FUNCTIONS        # remove function definition from history
 # ls #
 ######
 
+unalias ls &>/dev/null
 LS_OPTIONS=''
 if is_linux ; then
-  LS_OPTIONS=--color=auto
+  LS_OPTIONS='--color=auto'
 elif is_bsd || is_macosx ; then
-  LS_OPTIONS=-G
-else
-  unalias ls &>/dev/null
+  LS_OPTIONS='-G'
 fi
 alias ls="ls -p -F $LS_OPTIONS"
 alias ll='ls -hl' ; compdef ll=ls
@@ -250,7 +206,8 @@ setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar
 # Prompt #
 ##########
 
-setopt TRANSIENT_RPROMPT        # remove right prompt after accepting a command line
+setopt PROMPT_SUBST         # substitution in prompt
+setopt TRANSIENT_RPROMPT    # remove right prompt after accepting a command line
 
 # Git prompt
 if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
@@ -280,19 +237,19 @@ function set_prompt()
 
   # left prompt
   PROMPT=''
-  PROMPT="${PROMPT:+$PROMPT }[$COLOR_SMOOTH_GREEN%j$COLOR_RESET&|?$COLOR_SMOOTH_GREEN%?$COLOR_RESET]"
   PROMPT="${PROMPT:+$PROMPT }$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt}"
   PROMPT="${PROMPT:+$PROMPT }%(!.#.$) "
 
   # right prompt
   RPROMPT=''
-  RPROMPT="${RPROMPT:+ $RPROMPT}[%n$COLOR_BLUE@$COLOR_RESET%M]"
+  RPROMPT="[$COLOR_SMOOTH_GREEN%j$COLOR_RESET&|?$COLOR_SMOOTH_GREEN%?$COLOR_RESET]"
+  RPROMPT="$RPROMPT [%n$COLOR_BLUE@$COLOR_RESET%M]"
   if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
-    RPROMPT="${RPROMPT:+ $RPROMPT}{^$COLOR_BLUE%L$COLOR_RESET}"
+    RPROMPT="$RPROMPT {^$COLOR_BLUE%L$COLOR_RESET}"
   fi
 }
 
-# Disable flow control
+# Disable flow control (^S / ^Q)
 stty stop undef
 stty start undef
 
