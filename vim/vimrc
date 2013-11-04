@@ -163,7 +163,7 @@ set nostartofline       " leave my cursor position alone!
 set foldmethod=manual   " ensure that foldmethod is manual
 set virtualedit=block   " allow the cursor to go in to 'invalid' places
 set selection=inclusive " cursor is in selection
-set scrolloff=8         " keep at least 8 lines after the cusor when scrolling
+set scrolloff=8         " keep at least 8 lines after the cursor when scrolling
 set sidescrolloff=10    " (same as above about columns during side scrolling)
 set textwidth=80        " 80 characters line
 set wrap                " wrap long lines
@@ -431,6 +431,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
   \             },
   \         ],
   \     ],
+  \     'vim_version': '7.2.051',
   \ }
 
 
