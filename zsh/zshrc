@@ -55,25 +55,48 @@ COLOR_ORANGE=$'%{\033[38;05;202m%}'
 # enable advanced completion
 autoload -U compinit && compinit
 
+zstyle ':completion:*' verbose yes
+
+# Better description
+zstyle ':completion:*' auto-description 'specify: %d'
+
+# Allow arrow navigation
+zstyle ':completion:*' menu select
+
+zstyle ':completion:*' group-name ''
+
 # cache
 zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path ~/.zshcache
 
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' menu select # enable arrow-key drive interface
-zstyle ':completion:*:warnings' format "${COLOR_RED}${COLOR_BOLD}%d${COLOR_RESET} not found" # change the warning message when no results were found
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
 
-zstyle ':completion:*:*:*:*:processes' menu yes select
-zstyle ':completion:*:*:*:*:processes' force-list always
+# Don't prompt for a huge list, page it!
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 
-zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.o' # ignore compiled files on vim completion
+# Don't prompt for a huge list, menu it!
+zstyle ':completion:*:default' menu 'select=0'
 
-setopt AUTO_REMOVE_SLASH        # autoremove slash when not needed
-setopt AUTO_PARAM_SLASH         # automatically append a slash after a directory
-setopt COMPLETE_ALIASES		      # autocomplete on aliases
-setopt COMPLETE_IN_WORD         # complete word even if the cursor is not after the last character
-setopt EXTENDED_GLOB            # advanced completion
-unsetopt NOMATCH                # no mismatch due to advanced completion (e.g.: git checkout HEAD^)
+# Ignore some patterns on vim completion
+zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.(a|dylib|so|o)'
+
+# Separate man page sections
+zstyle ':completion:*:manuals' separate-sections true
+
+# Do not complete stuff already on the line
+zstyle ':completion::*:(cp|mv|rm|vi|vim):*' ignore-line true
+
+# Don't complete directory we are already in (../here)
+zstyle ':completion:*' ignore-parents parent pwd
+
+setopt AUTO_REMOVE_SLASH # autoremove slash when not needed
+setopt AUTO_PARAM_SLASH  # automatically append a slash after a directory
+setopt COMPLETE_ALIASES	 # autocomplete on aliases
+setopt COMPLETE_IN_WORD  # complete word even if the cursor is not after the last character
+setopt EXTENDED_GLOB     # advanced completion
+unsetopt NOMATCH         # no mismatch due to advanced completion (e.g.: git checkout HEAD^)
 
 #########
 # Alias #
@@ -189,8 +212,9 @@ fi
 
 # Directory
 setopt AUTO_CD			            # change directory without cd
-setopt CDABLE_VARS              # autocd in ~ directory if the folder isn't found in the current directory
+setopt AUTO_PUSHD               # cd to pushd stack
 setopt PUSHD_IGNORE_DUPS        # don't push dup to cd history
+setopt AUTO_NAME_DIRS           # auto create directories in var (e.g.: FOO=/tmp/foo)
 
 # Automatic URL escaping
 autoload -Uz url-quote-magic && zle -N self-insert url-quote-magic
