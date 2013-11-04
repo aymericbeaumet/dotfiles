@@ -84,7 +84,6 @@ alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec p
 
 # common aliases
 alias grep='grep --color=auto'
-alias g='git' ; compdef g=git
 
 alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
 alias -g L=' | less'
@@ -138,6 +137,22 @@ setopt HIST_IGNORE_SPACE        # do not store a command in history if it begins
 setopt HIST_NO_STORE            # do not store the `history` command
 setopt HIST_FIND_NO_DUPS        # do not display dups when searching using ^R
 setopt HIST_NO_FUNCTIONS        # remove function definition from history
+
+#######
+# git #
+#######
+
+# `g` will invoke `git st`
+# `g a b c` will invoke `git a b c`
+g()
+{
+  if (( $# == 0 )) ; then
+    git st
+  else
+    git "$@"
+  fi
+}
+compdef g=git
 
 ######
 # ls #
@@ -232,19 +247,21 @@ fi
 # set content
 function set_prompt()
 {
-  # get git prompt
+  # get git information for the current directory
   git_prompt="$(git_super_status)"
 
   # left prompt
-  PROMPT=''
-  PROMPT="${PROMPT:+$PROMPT }$COLOR_BLUE%25<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt}"
-  PROMPT="${PROMPT:+$PROMPT }%(!.#.$) "
+  if [ -n "$(jobs)" ] ; then
+    PROMPT="[${COLOR_SMOOTH_GREEN}%j${COLOR_RESET}&:?${COLOR_SMOOTH_GREEN}%?${COLOR_RESET}] "
+  else
+    PROMPT="%(0?..[${COLOR_SMOOTH_GREEN}%j${COLOR_RESET}&:?${COLOR_SMOOTH_GREEN}%?${COLOR_RESET}] )"
+  fi
+  PROMPT="$PROMPT$COLOR_BLUE%30<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt} "
+  PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
-  RPROMPT=''
-  RPROMPT="[$COLOR_SMOOTH_GREEN%j$COLOR_RESET&|?$COLOR_SMOOTH_GREEN%?$COLOR_RESET]"
-  RPROMPT="$RPROMPT [%n$COLOR_BLUE@$COLOR_RESET%M]"
-  if [ -n "$SHLVL" ] && [ $SHLVL -gt 1 ] ; then
+  RPROMPT="[%n$COLOR_BLUE@$COLOR_RESET%M]"
+  if [ -n "$SHLVL" ] && (( $SHLVL > 1 )) ; then
     RPROMPT="$RPROMPT {^$COLOR_BLUE%L$COLOR_RESET}"
   fi
 }
