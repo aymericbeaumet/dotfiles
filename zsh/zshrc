@@ -146,6 +146,9 @@ setopt HIST_NO_FUNCTIONS        # remove function definition from history
 # `g a b c` will invoke `git a b c`
 g()
 {
+  # Used by zsh-git-prompt
+  __EXECUTED_GIT_COMMAND=1
+
   if (( $# == 0 )) ; then
     git status -s
   else
