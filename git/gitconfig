@@ -11,6 +11,7 @@
   cia = commit --amend
   cl = clone
   co = checkout
+  cob = checkout -b
   df = diff
   dfc = diff --cached
   fe = fetch
