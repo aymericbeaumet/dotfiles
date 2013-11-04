@@ -151,14 +151,16 @@ export SAVEHIST=10000
 export HISTSIZE=10000
 export HISTFILE=~/.zsh_history
 
-setopt APPEND_HISTORY           # allow multiple parallel zsh sessions in history
-setopt EXTENDED_HISTORY         # more information in history (beginning time, elpased time and command)
-setopt HIST_IGNORE_DUPS         # avoid duplicate command lines in history
-setopt HIST_REDUCE_BLANKS       # remove superfluous blanks from history
-setopt HIST_IGNORE_SPACE        # do not store a command in history if it begins with a space
-setopt HIST_NO_STORE            # do not store the `history` command
-setopt HIST_FIND_NO_DUPS        # do not display dups when searching using ^R
-setopt HIST_NO_FUNCTIONS        # remove function definition from history
+setopt APPEND_HISTORY     # do not overwrite history
+setopt INC_APPEND_HISTORY # write after each command
+setopt SHARE_HISTORY      # share history between multiple shell sessions
+setopt EXTENDED_HISTORY   # more information in history (beginning time, elpased time and command)
+setopt HIST_IGNORE_DUPS   # avoid duplicate command lines in history
+setopt HIST_REDUCE_BLANKS # remove superfluous blanks from history
+setopt HIST_IGNORE_SPACE  # do not store a command in history if it begins with a space
+setopt HIST_NO_STORE      # do not store the `history` command
+setopt HIST_FIND_NO_DUPS  # do not display dups when searching using ^R
+setopt HIST_NO_FUNCTIONS  # remove function definition from history
 
 #######
 # git #
@@ -255,6 +257,9 @@ if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
 
   # Set install directory
   export __GIT_PROMPT_DIR=~/.zsh/bundle/zsh-git-prompt
+
+  # Update git var
+  chpwd_update_git_vars
 
   # Change defaults values
   ZSH_THEME_GIT_PROMPT_PREFIX="("
