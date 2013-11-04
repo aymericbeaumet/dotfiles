@@ -29,7 +29,7 @@
   shd = stash drop
   shl = stash list
   shs = stash save
-  st = status -s
+  st = status
   sw = show
 
   ; Show git aliases

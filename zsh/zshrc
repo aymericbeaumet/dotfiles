@@ -147,7 +147,7 @@ setopt HIST_NO_FUNCTIONS        # remove function definition from history
 g()
 {
   if (( $# == 0 )) ; then
-    git st
+    git status -s
   else
     git "$@"
   fi
