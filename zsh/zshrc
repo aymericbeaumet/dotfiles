@@ -24,11 +24,10 @@ function is_bsd()
 # Hooks #
 #########
 
-# Before each prompt
-precmd_functions=(
-  # Refresh the prompt
-  set_prompt
-)
+autoload -U add-zsh-hook
+
+# Refresh the prompt
+add-zsh-hook precmd set_prompt
 
 ##########
 # Colors #
@@ -67,7 +66,7 @@ zstyle ':completion:*' group-name ''
 
 # cache
 zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path ~/.zshcache
+zstyle ':completion::complete:*' cache-path ~/.zsh/tmp/cache
 
 zstyle ':completion:*:descriptions' format '%B%d%b'
 zstyle ':completion:*:messages' format '%d'
@@ -80,7 +79,7 @@ zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 zstyle ':completion:*:default' menu 'select=0'
 
 # Ignore some patterns on vim completion
-zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.(a|dylib|so|o)'
+zstyle ':completion:*:*:(vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 
 # Separate man page sections
 zstyle ':completion:*:manuals' separate-sections true
@@ -149,7 +148,7 @@ export PAGER=less
 
 export SAVEHIST=10000
 export HISTSIZE=10000
-export HISTFILE=~/.zsh_history
+export HISTFILE=~/.zsh/tmp/history
 
 setopt APPEND_HISTORY     # do not overwrite history
 setopt INC_APPEND_HISTORY # write after each command

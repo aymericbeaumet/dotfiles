@@ -1,0 +1,11 @@
+: 1383564927:0;cd ~/.dotfiles
+: 1383564927:0;l
+: 1383564937:0;vim vim/.gitignore
+: 1383564943:0;cp vim/.gitignore zsh
+: 1383564980:0;mv ~/.zsh_history ~/.zsh
+: 1383564983:0;l ~/.zsh*
+: 1383564990:0;<~/.zsh-update
+: 1383565018:0;rm ~/.zsh-update
+: 1383565019:0;l
+: 1383565022:0;la ~
+: 1383565031:0;vim ~/.viminfo
