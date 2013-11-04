@@ -14,35 +14,23 @@
   df = diff
   dfc = diff --cached
   fe = fetch
-  feo = fetch origin
   l = log
   me = merge
   pl = pull
-  plo = pull origin
   ps = push
-  pso = push origin
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
   re = remote
-  rl = reflog
-  reu = remote update
-  rmc = rm --cached
   rs = reset
   rsh = reset --hard
-  rv = revert
   sh = stash
   sha = stash apply
-  shc = stash clear
   shd = stash drop
   shl = stash list
-  shp = stash pop
   shs = stash save
-  st = status
+  st = status -s
   sw = show
-
-  ; Show git configuration
-  gitconfig = "!cat ~/.gitconfig"
 
   ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
@@ -54,20 +42,10 @@
   find = "!git ls-files | grep -i"
 
   ; Print a tree of the project
-  tree = log --graph --abbrev-commit --decorate --date=relative --all \
-    --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) \
-    %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+  tree = log --oneline --graph --decorate
 
   ; Print all the committers for the project
   who = shortlog -sne
-
-  ; Ignore modifications on some specific files
-  unwatch = update-index --assume-unchanged
-  watch = update-index --no-assume-unchanged
-
-[branch]
-  autosetuprebase = always
-  autosetupmerge = true
 
 [color]
   branch = auto
@@ -82,12 +60,10 @@
 [core]
   excludesfile = ~/.gitignore
   pager = less
-  whitespace = space-before-tab,trailing-space
 
 [diff]
   tool = vimdiff
   mnemonicprefix = true
-  renames = copies
 
 [grep]
   lineNumber = true
@@ -96,24 +72,6 @@
 [man]
   viewer = less
 
-[mergetool]
-  keepbackup = false
-  keeptemporaries = false
-  prompt = false
-
-[push]
-  default = current
-
-[rebase]
-  stat = true
-
-[rerere]
-  enabled = true
-
-[status]
-  showUntrackedFiles = all
-
 [user]
   name = Aymeric Beaumet
   email = aymeric@beaumet.me
-  editor = vim
