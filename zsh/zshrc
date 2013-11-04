@@ -84,9 +84,6 @@ zstyle ':completion:*:*:(vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 # Separate man page sections
 zstyle ':completion:*:manuals' separate-sections true
 
-# Do not complete stuff already on the line
-zstyle ':completion::*:(cp|mv|rm|vi|vim):*' ignore-line true
-
 # Don't complete directory we are already in (../here)
 zstyle ':completion:*' ignore-parents parent pwd
 
