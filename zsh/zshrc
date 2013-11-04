@@ -61,7 +61,6 @@ zstyle ':completion::complete:*' cache-path ~/.zshcache
 
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' menu select # enable arrow-key drive interface
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case-insensitive completion
 zstyle ':completion:*:warnings' format "${COLOR_RED}${COLOR_BOLD}%d${COLOR_RESET} not found" # change the warning message when no results were found
 
 zstyle ':completion:*:*:*:*:processes' menu yes select
@@ -224,7 +223,6 @@ setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar
 # Prompt #
 ##########
 
-setopt PROMPT_SUBST         # substitution in prompt
 setopt TRANSIENT_RPROMPT    # remove right prompt after accepting a command line
 
 # Git prompt
