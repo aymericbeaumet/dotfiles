@@ -88,7 +88,7 @@ set history=1000        " increase history size
 
 set noswapfile          " disable swap files
 
-set viminfo+=n~/.vim/info " change viminfo file path
+set viminfo+=n~/.vim/tmp/info " change viminfo file path
 
 set backup              " enable backup files
 set backupdir=~/.vim/tmp/backup// " backup files directory
