@@ -1,33 +1,15 @@
-##########
-# System #
-##########
+###########
+# Helpers #
+###########
 
 # return 0 if the os is linux
-function is_linux()
-{
-  return $([ `uname -s` = Linux ]);
-}
+function is_linux() { return $([ `uname -s` = Linux ]); }
 
 # return 0 if the os is macosx
-function is_macosx()
-{
-  return $([ `uname -s` = Darwin ]);
-}
+function is_macosx() { return $([ `uname -s` = Darwin ]); }
 
 # return 0 if the os is bsd
-function is_bsd()
-{
-  return $([[ `uname -s` =~ .*bsd.* ]]);
-}
-
-#########
-# Hooks #
-#########
-
-autoload -U add-zsh-hook
-
-# Refresh the prompt
-add-zsh-hook precmd set_prompt
+function is_bsd() { return $([[ `uname -s` =~ .*bsd.* ]]); }
 
 ##########
 # Colors #
@@ -51,87 +33,101 @@ COLOR_ORANGE=$'%{\033[38;05;202m%}'
 # Autocomplete #
 ################
 
-# enable advanced completion
+# Add completion scripts from a custom directory
+fpath=("$HOME/.zsh/completion" $fpath)
+
+# Enable advanced completion
 autoload -U compinit && compinit
-
-zstyle ':completion:*' verbose yes
-
-# Better description
-zstyle ':completion:*' auto-description 'specify: %d'
 
 # Allow arrow navigation
 zstyle ':completion:*' menu select
 
-zstyle ':completion:*' group-name ''
-
-# cache
-zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path ~/.zsh/tmp/cache
-
-zstyle ':completion:*:descriptions' format '%B%d%b'
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-
-# Don't prompt for a huge list, page it!
-zstyle ':completion:*:default' list-prompt '%S%M matches%s'
-
-# Don't prompt for a huge list, menu it!
-zstyle ':completion:*:default' menu 'select=0'
-
-# Ignore some patterns on vim completion
+# Ignore compiled files on vim completion
 zstyle ':completion:*:*:(vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
-
-# Separate man page sections
-zstyle ':completion:*:manuals' separate-sections true
 
 # Don't complete directory we are already in (../here)
 zstyle ':completion:*' ignore-parents parent pwd
 
-setopt AUTO_REMOVE_SLASH # autoremove slash when not needed
-setopt AUTO_PARAM_SLASH  # automatically append a slash after a directory
-setopt COMPLETE_ALIASES	 # autocomplete on aliases
-setopt COMPLETE_IN_WORD  # complete word even if the cursor is not after the last character
-setopt EXTENDED_GLOB     # advanced completion
-unsetopt NOMATCH         # no mismatch due to advanced completion (e.g.: git checkout HEAD^)
+# Cache to increase speed
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$HOME/.zsh/tmp/cache"
+
+# Fuzzy matching (allow approximation)
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*:match:*' original only
+zstyle ':completion:*:approximate:*' max-errors 1 numeric
+
+# Ignore completion functions
+zstyle ':completion:*:functions' ignored-patterns '_*'
+
+setopt AUTO_REMOVE_SLASH   # autoremove slash when not needed
+setopt AUTO_PARAM_SLASH    # automatically append a slash after a directory
+unsetopt COMPLETE_IN_WORD  # complete at the end of a word even if the cursor is not after the last character
 
 #########
 # Alias #
 #########
 
-alias clean='find . -type f -and \( -name ".*.sw[a-z]" -or -name "*~" \) -exec printf "\033[32m[-]\033[00m Delete file \033[31m{}\033[0m\n" \; -exec rm -f {} \;'
+# Fast access to configuration files
+alias sz="source $HOME/.zshrc"
+alias ez="$EDITOR $HOME/.zshrc"
+alias eg="$EDITOR $HOME/.gitconfig"
+alias ev="$EDITOR $HOME/.vimrc"
 
-# common aliases
 alias grep='grep --color=auto'
 
-alias -g G=' | grep' # e.g.: 'ls | grep -e toto' == 'ls G -e toto'
+alias -g C=' | wc -l'
+alias -g G=' | grep' # e.g.: 'ls | grep -e foo' <=> 'ls G -e foo'
 alias -g L=' | less'
 alias -g H=' | head'
 alias -g T=' | tail'
+alias -g S=' | sort'
+
+alias -g EC=' |& wc -l'
+alias -g EG=' |& grep'
+alias -g EL=' |& less'
+alias -g EH=' |& head'
+alias -g ET=' |& tail'
+alias -g ES=' |& sort'
+
 alias -g N=' &>/dev/null'
+
+############
+# Browsing #
+############
+
+# Quickly way to browse parent directories
+rationalise-dot()
+{
+  if [[ $LBUFFER = *.. ]] ; then
+    LBUFFER+=/..
+  else
+    LBUFFER+=.
+  fi
+}
+zle -N rationalise-dot
+bindkey . rationalise-dot
 
 ###########
 # Binding #
 ###########
 
+# Use emacs bindings in console
 bindkey -e
 
-bindkey '^[OH'		beginning-of-line                   # Home
-bindkey '^[OF'		end-of-line                         # End
-bindkey '^[[6~'		history-search-forward              # Page down
-bindkey '^[[5~'		history-search-backward             # Page up
-bindkey '^[[2~'		overwrite-mode                      # Insert
-bindkey '^[[1;5D'	backward-word                       # Ctrl <-
-bindkey '^[[1;5C'	forward-word                        # Ctrl ->
-bindkey '^[[3~'		delete-char                         # Delete
+# Fix some bindings
+bindkey '^[OH'		beginning-of-line       # Home
+bindkey '^[OF'		end-of-line             # End
+bindkey '^[[6~'		history-search-forward  # Page down
+bindkey '^[[5~'		history-search-backward # Page up
+bindkey '^[[2~'		overwrite-mode          # Insert
+bindkey '^[[1;5D'	backward-word           # Ctrl <-
+bindkey '^[[1;5C'	forward-word            # Ctrl ->
+bindkey '^[[3~'		delete-char             # Delete
 
 ###############
 # Environment #
 ###############
-
-# Less to most important
-export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
-export PATH="/usr/texbin:$PATH" # Add tex binaries
-export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
 
 export EDITOR=vim
 export USE_EDITOR=$EDITOR
@@ -145,7 +141,7 @@ export PAGER=less
 
 export SAVEHIST=10000
 export HISTSIZE=10000
-export HISTFILE=~/.zsh/tmp/history
+export HISTFILE="$HOME/.zsh/tmp/history"
 
 setopt APPEND_HISTORY     # do not overwrite history
 setopt INC_APPEND_HISTORY # write after each command
@@ -162,7 +158,7 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 # git #
 #######
 
-# `g` will invoke `git st`
+# `g` will invoke `git status -s`
 # `g a b c` will invoke `git a b c`
 g()
 {
@@ -170,12 +166,16 @@ g()
   __EXECUTED_GIT_COMMAND=1
 
   if (( $# == 0 )) ; then
-    git status -s
+    \git status -s
   else
-    git "$@"
+    \git "$@"
   fi
 }
 compdef g=git
+
+# Disable globbing to avoid problem with parameter containing #[] etc...
+alias g='noglob \g'
+alias git='g'
 
 ######
 # ls #
@@ -209,37 +209,31 @@ fi
 ###########
 
 # Directory
-setopt AUTO_CD			            # change directory without cd
-setopt AUTO_PUSHD               # cd to pushd stack
-setopt PUSHD_IGNORE_DUPS        # don't push dup to cd history
-setopt AUTO_NAME_DIRS           # auto create directories in var (e.g.: FOO=/tmp/foo)
-
-# Automatic URL escaping
-autoload -Uz url-quote-magic && zle -N self-insert url-quote-magic
+setopt AUTO_CD			     # change directory without cd
+setopt AUTO_PUSHD        # cd to pushd stack
+setopt PUSHD_IGNORE_DUPS # don't push dup to cd history
 
 # No beep
-unsetopt BEEP			              # no beep
-unsetopt HIST_BEEP		          # no beep
-unsetopt LIST_BEEP		          # no beep
+unsetopt BEEP			 # no beep
+unsetopt HIST_BEEP # no beep
+unsetopt LIST_BEEP # no beep
 
 # Input/Output
-setopt ALIASES			            # expand aliases
-setopt CORRECT                  # auto correct command
-unsetopt CORRECT_ALL		        # do not auto correct all command line
-setopt MAIL_WARNING             # warn for new mail
-setopt RC_QUOTES                # allow '' to type a single quoted string
-unsetopt RM_STAR_WAIT           # don't wait after `rm *`
+setopt ALIASES			  # expand aliases
+setopt CORRECT        # auto correct command
+unsetopt CORRECT_ALL	# do not auto correct the whole command line
+unsetopt RM_STAR_WAIT # don't wait after `rm *`
 
 # Job Control
-setopt AUTO_CONTINUE		        # background process stay alive on shell exit
-setopt CHECK_JOBS               # warn about background jobs before shell exit
+setopt CHECK_JOBS    # warn about background jobs before shell exit
 
-# Scripts and Functions
-setopt C_BASES                  # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
-setopt C_PRECEDENCES            # alter operators precedence to be more C-like
+## Scripts and Functions
+setopt C_BASES       # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
+setopt C_PRECEDENCES # alter operators precedence to be more C-like
 
-# Expansion and Globbing
-setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx='a b c'
+## Expansion and Globbing
+setopt RC_EXPAND_PARAM # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx=(a b c)
+setopt EXTENDED_GLOB   # advanced globbing
 
 ##########
 # Prompt #
@@ -248,11 +242,11 @@ setopt RC_EXPAND_PARAM          # expand foo${xx}bar to 'fooabar foobbar foocbar
 setopt TRANSIENT_RPROMPT    # remove right prompt after accepting a command line
 
 # Git prompt
-if [ -r ~/.zsh/bundle/zsh-git-prompt/zshrc.sh ] ; then
-  source ~/.zsh/bundle/zsh-git-prompt/zshrc.sh
+if [ -r "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh" ] ; then
+  source "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
 
   # Set install directory
-  export __GIT_PROMPT_DIR=~/.zsh/bundle/zsh-git-prompt
+  export __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
 
   # Update git var
   chpwd_update_git_vars
@@ -332,3 +326,12 @@ if [ -n "$TMUX" ] ; then
 else
   export TERM=xterm-256color
 fi
+
+#########
+# Hooks #
+#########
+
+autoload -U add-zsh-hook
+
+# Refresh the prompt
+add-zsh-hook precmd set_prompt
