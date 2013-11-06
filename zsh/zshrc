@@ -1,15 +1,70 @@
+# Enable the hook loader
+autoload -U add-zsh-hook
+
+# Enable advanced completion
+autoload -U compinit && compinit
+
 ###########
 # Helpers #
 ###########
 
-# return 0 if the os is linux
-function is_linux() { return $([ `uname -s` = Linux ]); }
+# Check if the OS is Linux
+# @return 0 if the os is Linux
+is_linux() { return $([ `uname -s` = Linux ]); }
 
-# return 0 if the os is macosx
-function is_macosx() { return $([ `uname -s` = Darwin ]); }
+# Check if the OS is Mac OS X
+# @return 0 if the os is Mac OS X
+is_macosx() { return $([ `uname -s` = Darwin ]); }
 
-# return 0 if the os is bsd
-function is_bsd() { return $([[ `uname -s` =~ .*bsd.* ]]); }
+# Check if the OS is *BSD
+# @return 0 if the os is *BSD
+is_bsd() { return $([[ `uname -s` =~ .*bsd.* ]]); }
+
+# Check if a given command exists (as an alias or in the PATH)
+# @param string $1 The command to check
+# @return 0 if the command exists
+is_command() { return $(which $1 &>/dev/null); }
+
+# Set the tab name
+# @param string $1 The desired tab name
+set_tab_name() { printf "\e]1;$1\a" }
+
+# Set the window name
+# @param string $1 The desired window name
+set_window_name() { printf "\e]2;$1\a" }
+
+###########
+# Options #
+###########
+
+# Directory
+setopt AUTO_CD           # change directory without cd (`..` goes up by one)
+setopt AUTO_PUSHD        # cd to pushd stack (useful for `cd -<tab>`)
+setopt PUSHD_IGNORE_DUPS # do not push dups to cd history
+
+# No beep
+unsetopt BEEP      # no beep
+unsetopt HIST_BEEP # no beep
+unsetopt LIST_BEEP # no beep
+
+# Correction
+setopt CORRECT       # auto correct command
+unsetopt CORRECT_ALL # do not auto correct the whole command line
+
+# Job Control
+setopt CHECK_JOBS # warn about background jobs before shell exit
+
+# Scripting
+setopt C_BASES       # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
+setopt C_PRECEDENCES # alter operators precedence to be more C-like
+
+# Expansion and Globbing
+setopt RC_EXPAND_PARAM # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx=(a b c)
+setopt EXTENDED_GLOB   # advanced globbing
+setopt ALIASES         # expand aliases
+
+# Warning
+unsetopt RM_STAR_WAIT # don't wait after `rm *`
 
 ##########
 # Colors #
@@ -29,6 +84,60 @@ COLOR_YELLOW=$'%{\033[38;05;220m%}'
 COLOR_RED=$'%{\033[38;05;1m%}'
 COLOR_ORANGE=$'%{\033[38;05;202m%}'
 
+###############
+# Environment #
+###############
+
+export TERM=xterm-256color
+export EDITOR=vim
+export USE_EDITOR=$EDITOR
+export VISUAL=$EDITOR
+export VIEWER=open
+export PAGER=less
+
+#########
+# Alias #
+#########
+
+# Fast access to configuration files
+alias sz="source $HOME/.zshrc"
+alias ez="$EDITOR $HOME/.zshrc"
+alias eg="$EDITOR $HOME/.gitconfig"
+alias ev="$EDITOR $HOME/.vimrc"
+
+# Useful grep colors
+alias grep='grep --color=auto'
+
+# Pipe standard output to common commands
+alias -g C=' | wc -l'
+alias -g G=' | grep' # e.g.: 'ls | grep -e foo' <=> 'ls G -e foo'
+alias -g L=' | less'
+alias -g H=' | head'
+alias -g T=' | tail'
+alias -g S=' | sort'
+
+# Redirect both standard output and standard error to dev null
+alias -g N=' &>/dev/null'
+
+###########
+# History #
+###########
+
+export SAVEHIST=10000
+export HISTSIZE=10000
+export HISTFILE="$HOME/.zsh/tmp/history"
+
+setopt APPEND_HISTORY     # do not overwrite history
+setopt INC_APPEND_HISTORY # write after each command
+setopt SHARE_HISTORY      # share history between multiple shell sessions
+setopt EXTENDED_HISTORY   # more information in history (begin time, elapsed time, command)
+setopt HIST_IGNORE_DUPS   # avoid duplicate command lines in history
+setopt HIST_REDUCE_BLANKS # remove superfluous blanks from history
+setopt HIST_IGNORE_SPACE  # do not store a command in history if it begins with a space
+setopt HIST_NO_STORE      # do not store the `history` command
+setopt HIST_FIND_NO_DUPS  # do not display dups when searching using ^R
+setopt HIST_NO_FUNCTIONS  # remove function definition from history
+
 ################
 # Autocomplete #
 ################
@@ -36,14 +145,14 @@ COLOR_ORANGE=$'%{\033[38;05;202m%}'
 # Add completion scripts from a custom directory
 fpath=("$HOME/.zsh/completion" $fpath)
 
-# Enable advanced completion
-autoload -U compinit && compinit
-
 # Allow arrow navigation
 zstyle ':completion:*' menu select
 
-# Ignore compiled files on vim completion
+# Ignore compiled files on vi/vim completion
 zstyle ':completion:*:*:(vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
+
+# Don't complete stuff already on the line
+zstyle ':completion::*:(vi|vim|rm):*' ignore-line true
 
 # Don't complete directory we are already in (../here)
 zstyle ':completion:*' ignore-parents parent pwd
@@ -60,43 +169,52 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 # Ignore completion functions
 zstyle ':completion:*:functions' ignored-patterns '_*'
 
-setopt AUTO_REMOVE_SLASH   # autoremove slash when not needed
-setopt AUTO_PARAM_SLASH    # automatically append a slash after a directory
-unsetopt COMPLETE_IN_WORD  # complete at the end of a word even if the cursor is not after the last character
+# More complete output (not always)
+zstyle ':completion:*' verbose yes
 
-#########
-# Alias #
-#########
+# Explicitly write the type of what the autocomplete has found / was looking for
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
 
-# Fast access to configuration files
-alias sz="source $HOME/.zshrc"
-alias ez="$EDITOR $HOME/.zshrc"
-alias eg="$EDITOR $HOME/.gitconfig"
-alias ev="$EDITOR $HOME/.vimrc"
+# Don't prompt for a huge list, page it!
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 
-alias grep='grep --color=auto'
+# Don't prompt for a huge list, menu it!
+zstyle ':completion:*:default' menu 'select=0'
 
-alias -g C=' | wc -l'
-alias -g G=' | grep' # e.g.: 'ls | grep -e foo' <=> 'ls G -e foo'
-alias -g L=' | less'
-alias -g H=' | head'
-alias -g T=' | tail'
-alias -g S=' | sort'
+# Fix group name display
+zstyle ':completion:*' group-name ''
 
-alias -g EC=' |& wc -l'
-alias -g EG=' |& grep'
-alias -g EL=' |& less'
-alias -g EH=' |& head'
-alias -g ET=' |& tail'
-alias -g ES=' |& sort'
+# Separate man page sections
+zstyle ':completion:*:manuals' separate-sections true
 
-alias -g N=' &>/dev/null'
+setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
+setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
+unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is not after the last character
 
-############
-# Browsing #
-############
+###########
+# Binding #
+###########
 
-# Quickly way to browse parent directories
+# Use emacs bindings in console
+bindkey -e
+
+# Fix some bindings
+bindkey '^[OH'     beginning-of-line       # Home
+bindkey '^[OF'     end-of-line             # End
+bindkey '^[[6~'    history-search-forward  # Page down
+bindkey '^[[5~'    history-search-backward # Page up
+bindkey '^[[2~'    overwrite-mode          # Insert
+bindkey '^[[1;5D'  backward-word           # Ctrl <-
+bindkey '^[[1;5C'  forward-word            # Ctrl ->
+bindkey '^[[3~'    delete-char             # Delete
+
+# Insert a missing sudo by pressing M-S (http://stackoverflow.com/a/970202/1071486)
+insert_sudo() { zle beginning-of-line; zle -U 'sudo ' }
+zle -N insert-sudo insert_sudo
+bindkey '^[s' insert-sudo
+
+# Quickly way to browse parent directories (http://grml.org/zsh/zsh-lovers.html)
 rationalise-dot()
 {
   if [[ $LBUFFER = *.. ]] ; then
@@ -108,166 +226,40 @@ rationalise-dot()
 zle -N rationalise-dot
 bindkey . rationalise-dot
 
-###########
-# Binding #
-###########
-
-# Use emacs bindings in console
-bindkey -e
-
-# Fix some bindings
-bindkey '^[OH'		beginning-of-line       # Home
-bindkey '^[OF'		end-of-line             # End
-bindkey '^[[6~'		history-search-forward  # Page down
-bindkey '^[[5~'		history-search-backward # Page up
-bindkey '^[[2~'		overwrite-mode          # Insert
-bindkey '^[[1;5D'	backward-word           # Ctrl <-
-bindkey '^[[1;5C'	forward-word            # Ctrl ->
-bindkey '^[[3~'		delete-char             # Delete
-
-###############
-# Environment #
-###############
-
-export EDITOR=vim
-export USE_EDITOR=$EDITOR
-export VISUAL=$EDITOR
-export VIEWER=open
-export PAGER=less
-
-###########
-# History #
-###########
-
-export SAVEHIST=10000
-export HISTSIZE=10000
-export HISTFILE="$HOME/.zsh/tmp/history"
-
-setopt APPEND_HISTORY     # do not overwrite history
-setopt INC_APPEND_HISTORY # write after each command
-setopt SHARE_HISTORY      # share history between multiple shell sessions
-setopt EXTENDED_HISTORY   # more information in history (beginning time, elpased time and command)
-setopt HIST_IGNORE_DUPS   # avoid duplicate command lines in history
-setopt HIST_REDUCE_BLANKS # remove superfluous blanks from history
-setopt HIST_IGNORE_SPACE  # do not store a command in history if it begins with a space
-setopt HIST_NO_STORE      # do not store the `history` command
-setopt HIST_FIND_NO_DUPS  # do not display dups when searching using ^R
-setopt HIST_NO_FUNCTIONS  # remove function definition from history
-
-#######
-# git #
-#######
-
-# `g` will invoke `git status -s`
-# `g a b c` will invoke `git a b c`
-g()
-{
-  # Used by zsh-git-prompt
-  __EXECUTED_GIT_COMMAND=1
-
-  if (( $# == 0 )) ; then
-    \git status -s
-  else
-    \git "$@"
-  fi
-}
-compdef g=git
-
-# Disable globbing to avoid problem with parameter containing #[] etc...
-alias g='noglob \g'
-alias git='g'
-
-######
-# ls #
-######
-
-unalias ls &>/dev/null
-LS_OPTIONS=''
-if is_linux ; then
-  LS_OPTIONS='--color=auto'
-elif is_bsd || is_macosx ; then
-  LS_OPTIONS='-G'
-fi
-alias ls="ls -p -F $LS_OPTIONS"
-alias ll='ls -hl' ; compdef ll=ls
-alias l='ll' ; compdef l=ls
-alias la='ll -A' ; compdef la=ls
-
-# good ls colors (even on OSX)
-unset CLICOLOR
-unset LS_COLORS
-unset LSCOLORS
-if is_macosx || is_bsd ; then
-  export CLICOLOR=1
-  export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
-else
-  export CLICOLOR=0
-fi
-
-###########
-# Options #
-###########
-
-# Directory
-setopt AUTO_CD			     # change directory without cd
-setopt AUTO_PUSHD        # cd to pushd stack
-setopt PUSHD_IGNORE_DUPS # don't push dup to cd history
-
-# No beep
-unsetopt BEEP			 # no beep
-unsetopt HIST_BEEP # no beep
-unsetopt LIST_BEEP # no beep
-
-# Input/Output
-setopt ALIASES			  # expand aliases
-setopt CORRECT        # auto correct command
-unsetopt CORRECT_ALL	# do not auto correct the whole command line
-unsetopt RM_STAR_WAIT # don't wait after `rm *`
-
-# Job Control
-setopt CHECK_JOBS    # warn about background jobs before shell exit
-
-## Scripts and Functions
-setopt C_BASES       # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
-setopt C_PRECEDENCES # alter operators precedence to be more C-like
-
-## Expansion and Globbing
-setopt RC_EXPAND_PARAM # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx=(a b c)
-setopt EXTENDED_GLOB   # advanced globbing
-
 ##########
 # Prompt #
 ##########
 
-setopt TRANSIENT_RPROMPT    # remove right prompt after accepting a command line
+setopt TRANSIENT_RPROMPT # remove right prompt after accepting a command line
 
-# Git prompt
+# Git prompt (https://github.com/olivierverdier/zsh-git-prompt)
 if [ -r "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh" ] ; then
   source "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
 
   # Set install directory
   export __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
 
-  # Update git var
+  # Update zsh-git-prompt data after the first load to avoid missing prompt
+  # informations if zsh is started inside a Git repository
   chpwd_update_git_vars
 
-  # Change defaults values
-  ZSH_THEME_GIT_PROMPT_PREFIX="("
-  ZSH_THEME_GIT_PROMPT_SUFFIX=")"
-  ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
-  ZSH_THEME_GIT_PROMPT_BRANCH="${COLOR_YELLOW}"
-  ZSH_THEME_GIT_PROMPT_STAGED="${COLOR_GREEN}±"
-  ZSH_THEME_GIT_PROMPT_CONFLICTS="${COLOR_ORANGE}×"
-  ZSH_THEME_GIT_PROMPT_CHANGED="${COLOR_RED}≠"
-  ZSH_THEME_GIT_PROMPT_REMOTE=""
-  ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
-  ZSH_THEME_GIT_PROMPT_CLEAN="${COLOR_LIGHT_GREEN}✓"
+  # Change appearance
+  ZSH_THEME_GIT_PROMPT_PREFIX='('
+  ZSH_THEME_GIT_PROMPT_SUFFIX=')'
+  ZSH_THEME_GIT_PROMPT_SEPARATOR='|'
+  ZSH_THEME_GIT_PROMPT_BRANCH="$COLOR_YELLOW"
+  ZSH_THEME_GIT_PROMPT_STAGED="$COLOR_GREEN±"
+  ZSH_THEME_GIT_PROMPT_CONFLICTS="$COLOR_ORANGE×"
+  ZSH_THEME_GIT_PROMPT_CHANGED="$COLOR_RED≠"
+  ZSH_THEME_GIT_PROMPT_REMOTE=''
+  ZSH_THEME_GIT_PROMPT_UNTRACKED='…'
+  ZSH_THEME_GIT_PROMPT_CLEAN="$COLOR_LIGHT_GREEN✓"
 fi
 
-# set content
-function set_prompt()
+# This function will be called each time the prompt has to be generated
+precmd_set_prompt()
 {
-  # get git information for the current directory
+  # get Git information for the current directory
   git_prompt="$(git_super_status)"
 
   # left prompt
@@ -285,53 +277,79 @@ function set_prompt()
     RPROMPT="$RPROMPT {^$COLOR_BLUE%L$COLOR_RESET}"
   fi
 }
+add-zsh-hook precmd precmd_set_prompt
 
 # Disable flow control (^S / ^Q)
 stty stop undef
 stty start undef
 
-########
-# Sudo #
-########
+####################
+# Specific command #
+####################
 
-insert_sudo () { zle beginning-of-line; zle -U "sudo " }
-zle -N insert-sudo insert_sudo
-bindkey "^[s" insert-sudo
+###
+# Git
+###
 
-############
-# Terminal #
-############
+# `git_wrapper` (without argument) will invoke `git status -s`
+# `git_wrapper ...` will invoke `git ...`
+git_wrapper()
+{
+  # Used by zsh-git-prompt
+  __EXECUTED_GIT_COMMAND=1
 
-# set the tab name
-function tabname {
-  printf "\e]1;${1:-default}\a"
+  if (( $# == 0 )) ; then
+    \git status -s
+  else
+    \git "$@"
+  fi
 }
+compdef git_wrapper=git
 
-# set the window name
-function winname {
-  printf "\e]2;$1\a"
-}
+# Bind `g` and `git` to `git_wrapper` (disable globbing to avoid problem with
+# parameter containing extended globbing characters)
+alias g='noglob git_wrapper'
+alias git='noglob git_wrapper'
 
-str=`whoami`@`hostname`
+###
+# ls
+###
 
-tabname $str
-winname $str
+unalias ls &>/dev/null
+OS_SPECIFIC_LS_OPTIONS=''
+if is_linux ; then
+  OS_SPECIFIC_LS_OPTIONS='--color=auto'
+elif is_bsd || is_macosx ; then
+  OS_SPECIFIC_LS_OPTIONS='-G'
+fi
+alias ls="ls -p -F $OS_SPECIFIC_LS_OPTIONS"
+alias ll='ls -hl' ; compdef ll=ls
+alias l='ll' ; compdef l=ls
+alias la='ll -A' ; compdef la=ls
 
-########
-# Tmux #
-########
+# nice ls colors (even on Mac OS X)
+unset CLICOLOR
+unset LS_COLORS
+unset LSCOLORS
+if is_macosx || is_bsd ; then
+  export CLICOLOR=1
+  export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
+else
+  export CLICOLOR=0
+fi
+
+###
+# Terminal
+###
+
+user_host="$(whoami)@$(hostname)"
+set_tab_name "$user_host"
+set_window_name "$user_host"
+
+###
+# Tmux
+###
 
 if [ -n "$TMUX" ] ; then
   export TERM=screen-256color
-else
-  export TERM=xterm-256color
 fi
-
-#########
-# Hooks #
-#########
-
-autoload -U add-zsh-hook
-
-# Refresh the prompt
-add-zsh-hook precmd set_prompt
