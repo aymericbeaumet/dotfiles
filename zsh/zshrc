@@ -353,3 +353,10 @@ set_window_name "$user_host"
 if [ -n "$TMUX" ] ; then
   export TERM=screen-256color
 fi
+
+###########################
+# Zsh syntax highlighting #
+###########################
+
+source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
