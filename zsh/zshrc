@@ -1,9 +1,6 @@
 # Enable the hook loader
 autoload -U add-zsh-hook
 
-# Enable advanced completion
-autoload -U compinit && compinit
-
 ###########
 # Helpers #
 ###########
@@ -144,6 +141,9 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 
 # Add completion scripts from a custom directory
 fpath=("$HOME/.zsh/completion" $fpath)
+
+# Enable advanced completion
+autoload -U compinit && compinit
 
 # Allow arrow navigation
 zstyle ':completion:*' menu select
