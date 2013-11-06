@@ -1,10 +1,10 @@
-; `man git-config` could help you
+; `man git-config`
 
 [advice]
   statusHints = false
 
 [alias]
-  ; fast access aliases
+  ; Fast access aliases
   a = add
   br = branch
   ci = commit
