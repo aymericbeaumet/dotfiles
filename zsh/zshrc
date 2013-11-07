@@ -149,10 +149,10 @@ autoload -U compinit && compinit
 zstyle ':completion:*' menu select
 
 # Ignore compiled files on vi/vim completion
-zstyle ':completion:*:*:(vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
+zstyle ':completion:*:*:(v|vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 
 # Don't complete stuff already on the line
-zstyle ':completion::*:(vi|vim|rm):*' ignore-line true
+zstyle ':completion::*:(v|vi|vim|rm):*' ignore-line true
 
 # Don't complete directory we are already in (../here)
 zstyle ':completion:*' ignore-parents parent pwd
@@ -232,30 +232,6 @@ bindkey . rationalise-dot
 
 setopt TRANSIENT_RPROMPT # remove right prompt after accepting a command line
 
-# Git prompt (https://github.com/olivierverdier/zsh-git-prompt)
-if [ -r "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh" ] ; then
-  source "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
-
-  # Set install directory
-  export __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
-
-  # Update zsh-git-prompt data after the first load to avoid missing prompt
-  # informations if zsh is started inside a Git repository
-  chpwd_update_git_vars
-
-  # Change appearance
-  ZSH_THEME_GIT_PROMPT_PREFIX='('
-  ZSH_THEME_GIT_PROMPT_SUFFIX=')'
-  ZSH_THEME_GIT_PROMPT_SEPARATOR='|'
-  ZSH_THEME_GIT_PROMPT_BRANCH="$COLOR_YELLOW"
-  ZSH_THEME_GIT_PROMPT_STAGED="$COLOR_GREEN±"
-  ZSH_THEME_GIT_PROMPT_CONFLICTS="$COLOR_ORANGE×"
-  ZSH_THEME_GIT_PROMPT_CHANGED="$COLOR_RED≠"
-  ZSH_THEME_GIT_PROMPT_REMOTE=''
-  ZSH_THEME_GIT_PROMPT_UNTRACKED='…'
-  ZSH_THEME_GIT_PROMPT_CLEAN="$COLOR_LIGHT_GREEN✓"
-fi
-
 # This function will be called each time the prompt has to be generated
 precmd_set_prompt()
 {
@@ -283,9 +259,9 @@ add-zsh-hook precmd precmd_set_prompt
 stty stop undef
 stty start undef
 
-####################
-# Specific command #
-####################
+##################################
+# Specific command configuration #
+##################################
 
 ###
 # Git
@@ -295,7 +271,7 @@ stty start undef
 # `git_wrapper ...` will invoke `git ...`
 git_wrapper()
 {
-  # Used by zsh-git-prompt
+  # Used by zsh-git-prompt to recognize a git command
   __EXECUTED_GIT_COMMAND=1
 
   if (( $# == 0 )) ; then
@@ -307,7 +283,7 @@ git_wrapper()
 compdef git_wrapper=git
 
 # Bind `g` and `git` to `git_wrapper` (disable globbing to avoid problem with
-# parameter containing extended globbing characters)
+# parameter containing extended globbing characters, like '#' or '^')
 alias g='noglob git_wrapper'
 alias git='noglob git_wrapper'
 
@@ -354,9 +330,42 @@ if [ -n "$TMUX" ] ; then
   export TERM=screen-256color
 fi
 
-###########################
-# Zsh syntax highlighting #
-###########################
+####################
+# External bundles #
+####################
 
-source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+###
+# zsh-git-prompt (https://github.com/olivierverdier/zsh-git-prompt)
+###
+
+if [ -r "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh" ] ; then
+  source "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
+
+  # Set install directory
+  export __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
+
+  # Update zsh-git-prompt data after the first load to avoid missing prompt
+  # informations if zsh is started inside a Git repository
+  chpwd_update_git_vars
+
+  # Change appearance
+  ZSH_THEME_GIT_PROMPT_PREFIX='('
+  ZSH_THEME_GIT_PROMPT_SUFFIX=')'
+  ZSH_THEME_GIT_PROMPT_SEPARATOR='|'
+  ZSH_THEME_GIT_PROMPT_BRANCH="$COLOR_YELLOW"
+  ZSH_THEME_GIT_PROMPT_STAGED="$COLOR_GREEN±"
+  ZSH_THEME_GIT_PROMPT_CONFLICTS="$COLOR_ORANGE×"
+  ZSH_THEME_GIT_PROMPT_CHANGED="$COLOR_RED≠"
+  ZSH_THEME_GIT_PROMPT_REMOTE=''
+  ZSH_THEME_GIT_PROMPT_UNTRACKED='…'
+  ZSH_THEME_GIT_PROMPT_CLEAN="$COLOR_LIGHT_GREEN✓"
+fi
+
+###
+# zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
+###
+
+if [ -r "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] ; then
+  source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+fi
