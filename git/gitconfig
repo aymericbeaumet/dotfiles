@@ -72,6 +72,9 @@
 [man]
   viewer = less
 
+[push]
+	default = nothing
+
 [user]
   name = Aymeric Beaumet
   email = aymeric@beaumet.me
