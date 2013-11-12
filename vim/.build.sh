@@ -3,7 +3,7 @@
 
 ABSPATH=$(cd "$(dirname "$0")"; pwd)
 
-echo 'Installing vim bundles'
+echo 'Installing Vim bundles via NeoBundle'
 
 vim \
 --cmd "let &rtp .= ',' . '$ABSPATH/vim/bundle/neobundle.vim'" \
