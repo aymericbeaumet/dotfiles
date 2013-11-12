@@ -496,6 +496,9 @@ NeoBundle 'tpope/vim-markdown'
 
 " --- PHP
 
+if v:version < 704 " already included in Vim >= 7.4
+  NeoBundle '2072/PHP-Indenting-for-VIm'
+endif
 NeoBundle 'shawncplus/phpcomplete.vim'
 
 
@@ -511,7 +514,7 @@ if has('python') || has('python3')
   set completeopt-=preview " Disable preview pane
   let g:ycm_key_list_select_completion = ['<C-n>'] " Use ^N for next result
   let g:ycm_key_list_previous_completion = ['<C-p>'] " Use ^P for previous result
-  let g:ycm_key_detailed_diagnostics = '' " Disable diagnostic bind
+  let g:ycm_key_detailed_diagnostics = '' " Disable diagnostic keybind
   let g:ycm_filepath_completion_use_working_dir = 1 " Use CWD for path completion
   set pumheight=20 " Limit the suggestion popup height
   NeoBundle 'Valloric/YouCompleteMe', {
