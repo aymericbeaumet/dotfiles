@@ -6,21 +6,21 @@ autoload -U add-zsh-hook
 ###########
 
 # Check if the OS is Linux
-# @return 0 if the os is Linux
+# @return 0 if the OS is Linux
 is_linux() { return $([ `uname -s` = Linux ]); }
 
 # Check if the OS is Mac OS X
-# @return 0 if the os is Mac OS X
+# @return 0 if the OS is Mac OS X
 is_macosx() { return $([ `uname -s` = Darwin ]); }
 
 # Check if the OS is *BSD
-# @return 0 if the os is *BSD
+# @return 0 if the OS is a BSD
 is_bsd() { return $([[ `uname -s` =~ .*bsd.* ]]); }
 
 # Check if a given command exists (as an alias or in the PATH)
 # @param string $1 The command to check
 # @return 0 if the command exists
-is_command() { return $(which $1 &>/dev/null); }
+is_command() { return $(which "$1" &>/dev/null); }
 
 # Set the tab name
 # @param string $1 The desired tab name
@@ -96,12 +96,6 @@ export PAGER=less
 # Alias #
 #########
 
-# Fast access to configuration files
-alias sz="source $HOME/.zshrc"
-alias ez="$EDITOR $HOME/.zshrc"
-alias eg="$EDITOR $HOME/.gitconfig"
-alias ev="$EDITOR $HOME/.vimrc"
-
 # Useful grep colors
 alias grep='grep --color=auto'
 
@@ -160,11 +154,6 @@ zstyle ':completion:*' ignore-parents parent pwd
 # Cache to increase speed
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.zsh/tmp/cache"
-
-# Fuzzy matching (allow approximation)
-zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*:match:*' original only
-zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
 # Ignore completion functions
 zstyle ':completion:*:functions' ignored-patterns '_*'
@@ -275,10 +264,13 @@ git_wrapper()
   __EXECUTED_GIT_COMMAND=1
 
   if (( $# == 0 )) ; then
-    \git status -s
+    command git status -s
   else
-    \git "$@"
+    command git "$@"
   fi
+
+  # Used by zsh-git-prompt to recognize the end of a git command
+  __EXECUTED_GIT_COMMAND=0
 }
 compdef git_wrapper=git
 
@@ -338,15 +330,12 @@ fi
 # zsh-git-prompt (https://github.com/olivierverdier/zsh-git-prompt)
 ###
 
-if [ -r "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh" ] ; then
-  source "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
+local zsh_git_prompt="$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
+if [ -r "$zsh_git_prompt" ] ; then
+  source "$zsh_git_prompt"
 
   # Set install directory
-  export __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
-
-  # Update zsh-git-prompt data after the first load to avoid missing prompt
-  # informations if zsh is started inside a Git repository
-  chpwd_update_git_vars
+  __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
 
   # Change appearance
   ZSH_THEME_GIT_PROMPT_PREFIX='('
@@ -359,13 +348,8 @@ if [ -r "$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh" ] ; then
   ZSH_THEME_GIT_PROMPT_REMOTE=''
   ZSH_THEME_GIT_PROMPT_UNTRACKED='…'
   ZSH_THEME_GIT_PROMPT_CLEAN="$COLOR_LIGHT_GREEN✓"
-fi
 
-###
-# zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
-###
-
-if [ -r "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] ; then
-  source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+  # Update zsh-git-prompt data after the first load to avoid missing prompt
+  # informations if zsh is started inside a Git repository
+  chpwd_update_git_vars
 fi
