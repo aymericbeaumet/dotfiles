@@ -506,6 +506,11 @@ if has('lua')
   NeoBundle 'Shougo/neocomplete.vim', {
     \     'vim_version': '7.3.885',
     \ }
+  let bundle = neobundle#get('neocomplete.vim')
+  function! bundle.hooks.on_post_source(bundle)
+    inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
+    inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
+  endfunction
 endif
 
 " --- Syntastic
