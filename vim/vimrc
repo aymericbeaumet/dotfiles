@@ -461,6 +461,10 @@ endfunction
 " 10.3. Languages "
 """""""""""""""""""
 
+" --- Generic
+
+NeoBundle 'editorconfig/editorconfig-vim'
+
 " --- C/CPP
 
 NeoBundle 'google.vim'
