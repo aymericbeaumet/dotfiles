@@ -548,7 +548,7 @@ let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
 let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
 let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
 let g:ctrlp_custom_ignore = {
-  \     'dir':  '\v[\/](\.(git|hg|svn)|node_modules|build)$'
+  \     'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build)$'
   \ } " will be ignored in completion (`wildignore` is applied first)
 let g:ctrlp_max_depth = 13 " avoid lag if launched in a high level directory
 let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
