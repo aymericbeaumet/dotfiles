@@ -337,9 +337,9 @@ endfunction
 au FileType javascript call LoadJavaScriptConfiguration()
 function! LoadJavaScriptConfiguration()
   setl omnifunc=javascriptcomplete#CompleteJS
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
+  setl shiftwidth=2
+  setl softtabstop=2
+  setl tabstop=2
 endfunction
 
 " TeX
@@ -474,6 +474,10 @@ NeoBundle 'editorconfig/editorconfig-vim'
 
 NeoBundle 'google.vim'
 
+" --- CoffeeScript
+
+NeoBundle 'kchmck/vim-coffee-script'
+
 " --- CSS
 
 NeoBundle 'ap/vim-css-color'
@@ -501,40 +505,14 @@ NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
 
 NeoBundle 'tpope/vim-markdown'
 
+" --- TypeScript
+
+NeoBundle 'leafgarland/typescript-vim'
+
 
 """""""""""""""                                            *vimrc-plugins-tools*
 " 10.4. Tools "
 """""""""""""""
-
-" --- NeoComplete
-if has('lua')
-  let g:acp_enableAtStartup = 0 " disable AutoComplPop
-  let g:neocomplete#enable_at_startup = 1 " enable at startup
-  let g:neocomplete#enable_smart_case = 1 " use smartcase.
-  let g:neocomplete#sources#syntax#min_keyword_length = 3 " set minimum syntax keyword length.
-  NeoBundle 'Shougo/neocomplete.vim', {
-    \     'vim_version': '7.3.885',
-    \ }
-  let bundle = neobundle#get('neocomplete.vim')
-  function! bundle.hooks.on_post_source(bundle)
-    inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
-    inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
-  endfunction
-endif
-
-" --- Syntastic
-let g:syntastic_mode_map = {
-    \     'mode': 'passive'
-    \ }
-let g:syntastic_check_on_wq = 0 " disable on save
-let g:syntastic_always_populate_loc_list = 1 " stick any errors in the loclist
-let g:syntastic_auto_loc_list = 1 " open loclist on error / else close it
-let g:syntastic_c_compiler_options = "-Wall -Wextra"
-NeoBundle 'scrooloose/syntastic'
-let bundle = neobundle#get('syntastic')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <Leader>s :SyntasticToggleMode<CR>
-endfunction
 
 " ---  Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
@@ -548,7 +526,7 @@ let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
 let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
 let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
 let g:ctrlp_custom_ignore = {
-  \     'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build)$'
+  \     'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build|dist)$'
   \ } " will be ignored in completion (`wildignore` is applied first)
 let g:ctrlp_max_depth = 13 " avoid lag if launched in a high level directory
 let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
