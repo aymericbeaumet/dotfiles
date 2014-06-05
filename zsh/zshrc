@@ -259,7 +259,7 @@ stty start undef
 # Git
 ###
 
-# `git_wrapper` (without argument) will invoke `git status -s`
+# `git_wrapper` (without argument) will invoke `git status -sb`
 # `git_wrapper ...` will invoke `git ...`
 git_wrapper()
 {
@@ -267,7 +267,7 @@ git_wrapper()
   __EXECUTED_GIT_COMMAND=1
 
   if (( $# == 0 )) ; then
-    command git status -s
+    command git status -sb
   else
     command git "$@"
   fi

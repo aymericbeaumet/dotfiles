@@ -296,7 +296,6 @@ nnoremap <silent> <Leader>l :set list! list?<CR>
 nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
 
 " convenient tab aliases
-nnoremap <Leader>t :tabnew<CR>
 nnoremap H :tabprev<CR>
 nnoremap L :tabnext<CR>
 
@@ -482,6 +481,10 @@ NeoBundle 'kchmck/vim-coffee-script'
 
 NeoBundle 'ap/vim-css-color'
 
+" --- EJS
+
+NeoBundle 'briancollins/vim-jst'
+
 " --- Git
 
 NeoBundle 'tpope/vim-git'
@@ -489,6 +492,10 @@ NeoBundle 'tpope/vim-git'
 " --- HTML
 
 NeoBundle 'othree/html5.vim'
+
+" --- Jade
+
+NeoBundle 'digitaltoad/vim-jade'
 
 " --- Javascript
 
@@ -505,14 +512,25 @@ NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
 
 NeoBundle 'tpope/vim-markdown'
 
-" --- TypeScript
+" --- Stylus
 
-NeoBundle 'leafgarland/typescript-vim'
+NeoBundle 'wavded/vim-stylus'
 
 
 """""""""""""""                                            *vimrc-plugins-tools*
 " 10.4. Tools "
 """""""""""""""
+
+" --- NerdTree
+NeoBundle 'scrooloose/nerdtree'
+let NERDTreeMinimalUI = 1 " minimal UI
+let NERDTreeWinSize = 40 " Define the default width
+au vimenter * if !argc() | NERDTree | endif
+au bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+let bundle = neobundle#get('nerdtree')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>t :NERDTreeToggle<CR>
+endfunction
 
 " ---  Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'

@@ -6,6 +6,7 @@
 [alias]
   ; Fast access aliases
   a = add
+  aa = add -A
   br = branch
   ci = commit
   cia = commit --amend
@@ -21,15 +22,16 @@
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
-  re = remote
+  rmc = rm --cached
   rs = reset
   rsh = reset --hard
   sh = stash
   sha = stash apply
   shd = stash drop
   shl = stash list
+  shp = stash pop
   shs = stash save
-  st = status
+  st = status -sb
   sw = show
 
   ; Show git aliases
@@ -73,7 +75,7 @@
   viewer = less
 
 [push]
-	default = nothing
+  default = nothing
 
 [user]
   name = Aymeric Beaumet
