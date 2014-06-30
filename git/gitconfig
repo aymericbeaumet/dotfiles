@@ -1,21 +1,19 @@
-; `man git-config`
-
 [advice]
   statusHints = false
 
 [alias]
   ; Fast access aliases
   a = add
-  aa = add -A
+  aa = add --all
   br = branch
-  ci = commit
-  cia = commit --amend
+  ci = commit --gpg-sign
+  cia = commit --gpg-sign --amend
   cl = clone
   co = checkout
   df = diff
   dfc = diff --cached
   fe = fetch
-  l = log
+  l = log --show-signature
   me = merge
   pl = pull
   ps = push
@@ -31,14 +29,14 @@
   shl = stash list
   shp = stash pop
   shs = stash save
-  st = status -sb
-  sw = show
+  st = status --short --branch
+  sw = show --show-signature
 
   ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
 
-  ; Print the file to trash / trash them
-  trash = clean -ffdx ; suffix with `-n` to see which files would be deleted
+  ; Delete all the untracked files
+  dump = clean -ffdx ; suffix with `-n` to see which files would be deleted
 
   ; Find a file in the project
   find = "!git ls-files | grep -i"
@@ -80,3 +78,4 @@
 [user]
   name = Aymeric Beaumet
   email = aymeric@beaumet.me
+	signingkey = E5474D2C

@@ -1,5 +1,5 @@
 " Author: Aymeric Beaumet <aymeric@beaumet.me>
-" Github: @abeaumet/dotfiles
+" Github: @aymericbeaumet/dotfiles
 "
 " Content:
 "   1. Helpers                                      *vimrc-helpers*
@@ -42,6 +42,28 @@ function! StripTrailingWhitespaces()
   " Clean up: restore previous search history, and cursor position
   let @/=_s
   call cursor(l, c)
+endfunction
+
+" http://stackoverflow.com/a/7321131/1071486
+" Delete all the inactive buffers
+function! DeleteInactiveBufs()
+  "From tabpagebuflist() help, get a list of all buffers in all tabs
+  let tablist = []
+  for i in range(tabpagenr('$'))
+    call extend(tablist, tabpagebuflist(i + 1))
+  endfor
+
+  "Below originally inspired by Hara Krishna Dara and Keith Roberts
+  "http://tech.groups.yahoo.com/group/vim/message/56425
+  let nWipeouts = 0
+  for i in range(1, bufnr('$'))
+    if bufexists(i) && !getbufvar(i,"&mod") && index(tablist, i) == -1
+      "bufno exists AND isn't modified AND isn't in the list of buffers open in windows and tabs
+      silent exec 'bwipeout' i
+      let nWipeouts = nWipeouts + 1
+    endif
+  endfor
+  echomsg nWipeouts . ' buffer(s) wiped out'
 endfunction
 
 " Create directory
@@ -219,8 +241,8 @@ nnoremap <silent> k gk
 vnoremap <silent> k gk
 
 " define leading key
-let g:mapleader = '\'
-let mapleader = '\'
+let g:mapleader = ','
+let mapleader = ','
 
 " hide last search matches
 nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
@@ -258,13 +280,6 @@ call AbbreviateCommand('Q', 'q')
 call AbbreviateCommand('Qa', 'qa')
 call AbbreviateCommand('QA', 'qa')
 
-" useful command line binds
-cnoremap <C-A> <Home>
-cnoremap <C-E> <End>
-cnoremap <C-B> <Left>
-cnoremap <C-F> <Right>
-cnoremap <C-O> <Up>
-
 " center on movements
 nnoremap <silent> n nzz
 nnoremap <silent> N Nzz
@@ -295,9 +310,8 @@ nnoremap <silent> <Leader>l :set list! list?<CR>
 " strip whitespaces
 nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
 
-" convenient tab aliases
-nnoremap H :tabprev<CR>
-nnoremap L :tabnext<CR>
+" delete inactive buffers
+nnoremap <Leader>d :call DeleteInactiveBufs()<CR>
 
 " }}}
 

@@ -96,6 +96,9 @@ export PAGER=less
 # Alias #
 #########
 
+alias v='vim'
+alias vi='vim'
+
 # Useful grep colors
 alias grep='grep --color=auto'
 
@@ -313,9 +316,7 @@ fi
 # Terminal
 ###
 
-user_host="$(whoami)@$(hostname)"
-set_tab_name "$user_host"
-set_window_name "$user_host"
+set_window_name "$(whoami)@$(hostname)"
 
 ###
 # Tmux
@@ -356,6 +357,3 @@ if [ -r "$zsh_git_prompt" ] ; then
   # informations if zsh is started inside a Git repository
   chpwd_update_git_vars
 fi
-
-# added by travis gem
-[ -f /Users/abeaumet/.travis/travis.sh ] && source /Users/abeaumet/.travis/travis.sh
