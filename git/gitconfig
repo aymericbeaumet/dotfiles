@@ -14,7 +14,7 @@
   dfc = diff --cached
   fe = fetch
   l = log --show-signature
-  me = merge
+  me = merge --no-ff
   pl = pull
   ps = push
   rb = rebase
