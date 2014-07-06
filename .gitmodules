@@ -1,12 +1,6 @@
-[submodule "tmux/tmux/bundle/powerline"]
-	path = tmux/tmux/bundle/powerline
-	url = https://github.com/Lokaltog/powerline.git
 [submodule "vim/vim/bundle/neobundle.vim"]
 	path = vim/vim/bundle/neobundle.vim
 	url = https://github.com/Shougo/neobundle.vim.git
 [submodule "zsh/zsh/bundle/zsh-git-prompt"]
 	path = zsh/zsh/bundle/zsh-git-prompt
 	url = https://github.com/olivierverdier/zsh-git-prompt.git
-[submodule "zsh/zsh/bundle/zsh-syntax-highlighting"]
-	path = zsh/zsh/bundle/zsh-syntax-highlighting
-	url = git://github.com/zsh-users/zsh-syntax-highlighting.git

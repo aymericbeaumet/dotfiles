@@ -191,35 +191,42 @@ unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is 
 # Binding #
 ###########
 
-# Use emacs bindings in console
-bindkey -e
+# Vim mode
+set editing-mode vi
 
-# Fix some bindings
-bindkey '^[OH'     beginning-of-line       # Home
-bindkey '^[OF'     end-of-line             # End
-bindkey '^[[6~'    history-search-forward  # Page down
-bindkey '^[[5~'    history-search-backward # Page up
-bindkey '^[[2~'    overwrite-mode          # Insert
-bindkey '^[[1;5D'  backward-word           # Ctrl <-
-bindkey '^[[1;5C'  forward-word            # Ctrl ->
-bindkey '^[[3~'    delete-char             # Delete
+# Some custom binds
+bindkey -v '^P' up-history
+bindkey -v '^N' down-history
+bindkey -v '^?' backward-delete-char
+bindkey -v '^H' backward-delete-char
+bindkey -v '^W' backward-kill-word
+bindkey -v '^R' history-incremental-search-backward
 
-# Insert a missing sudo by pressing M-S (http://stackoverflow.com/a/970202/1071486)
-insert_sudo() { zle beginning-of-line; zle -U 'sudo ' }
-zle -N insert-sudo insert_sudo
-bindkey '^[s' insert-sudo
+# Kill the lag when exiting insert mode
+export KEYTIMEOUT=1
 
-# Quickly way to browse parent directories (http://grml.org/zsh/zsh-lovers.html)
-rationalise-dot()
+# Change the cursor depending on Vim mode
+
+function zle-keymap-select zle-line-init
 {
-  if [[ $LBUFFER = *.. ]] ; then
-    LBUFFER+=/..
-  else
-    LBUFFER+=.
-  fi
+    # change cursor shape in iTerm2
+    case $KEYMAP in
+        vicmd)      print -n -- "\E]50;CursorShape=0\C-G";; # block cursor
+        viins|main) print -n -- "\E]50;CursorShape=2\C-G";; # underscore cursor
+    esac
+
+    zle reset-prompt
+    zle -R
 }
-zle -N rationalise-dot
-bindkey . rationalise-dot
+
+function zle-line-finish
+{
+    print -n -- "\E]50;CursorShape=0\C-G"  # block cursor
+}
+
+zle -N zle-line-init
+zle -N zle-line-finish
+zle -N zle-keymap-select
 
 ##########
 # Prompt #

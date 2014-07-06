@@ -35,8 +35,8 @@ au!
 function! StripTrailingWhitespaces()
   " Preparation: save last search, and cursor position.
   let _s=@/
-  let l = line(".")
-  let c = col(".")
+  let l = line('.')
+  let c = col('.')
   " Do the business:
   %s/\s\+$//e
   " Clean up: restore previous search history, and cursor position
@@ -57,7 +57,7 @@ function! DeleteInactiveBufs()
   "http://tech.groups.yahoo.com/group/vim/message/56425
   let nWipeouts = 0
   for i in range(1, bufnr('$'))
-    if bufexists(i) && !getbufvar(i,"&mod") && index(tablist, i) == -1
+    if bufexists(i) && !getbufvar(i, '&mod') && index(tablist, i) == -1
       "bufno exists AND isn't modified AND isn't in the list of buffers open in windows and tabs
       silent exec 'bwipeout' i
       let nWipeouts = nWipeouts + 1
@@ -68,12 +68,12 @@ endfunction
 
 " Create directory
 function! CreateDirectory(directory_name)
-  silent! call mkdir(expand(a:directory_name), "p", 0755)
+  silent! call mkdir(expand(a:directory_name), 'p', 0755)
 endfunction
 
 " Detect Linux/BSD
 function! IsLinuxBSD()
-  return has("unix") && !IsMac()
+  return has('unix') && !IsMac()
 endfunction
 
 " Detect Mac
@@ -115,7 +115,7 @@ set backup              " enable backup files
 set backupdir=~/.vim/tmp/backup// " backup files directory
 au VimEnter * call CreateDirectory(&backupdir)
 
-if has("persistent_undo")
+if has('persistent_undo')
   set undofile            " enable undo files
   set undolevels=1000     " number of undo level
   set undoreload=10000    " number of lines to save for undo
@@ -157,6 +157,10 @@ au InsertLeave * setl nonumber relativenumber " relative out of insert mode
 set cursorline          " highlight cursor line
 au InsertEnter * setl nocursorline " do not highlight in insert mode
 au InsertLeave * setl cursorline " highlight out of insert mode
+
+" Custom cursors whether insert mode is enabled
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+let &t_SI = "\<Esc>]50;CursorShape=2\x7"
 
 " }}}
 
@@ -202,7 +206,7 @@ set formatoptions=cro
 silent! set formatoptions+=j " not compatible with all vim versions
 
 " remember last position in file (line and column)
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') |
   \ exe 'normal! g`"' | endif
 
 " }}}
@@ -239,6 +243,10 @@ nnoremap <silent> j gj
 vnoremap <silent> j gj
 nnoremap <silent> k gk
 vnoremap <silent> k gk
+
+" switch between tabs
+nnoremap <silent> H :tabprev<CR>
+nnoremap <silent> L :tabnext<CR>
 
 " define leading key
 let g:mapleader = ','
@@ -311,7 +319,7 @@ nnoremap <silent> <Leader>l :set list! list?<CR>
 nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
 
 " delete inactive buffers
-nnoremap <Leader>d :call DeleteInactiveBufs()<CR>
+nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
 
 " }}}
 
@@ -321,92 +329,92 @@ nnoremap <Leader>d :call DeleteInactiveBufs()<CR>
 
 " C/CPP
 au FileType c,cpp call LoadCConfiguration()
-function! LoadCConfiguration()
-  setl omnifunc=ccomplete#Complete
-  setl shiftwidth=2
-  setl softtabstop=2
-  setl tabstop=2
-endfunction
+  function! LoadCConfiguration()
+    setl omnifunc=ccomplete#Complete
+    setl shiftwidth=2
+    setl softtabstop=2
+    setl tabstop=2
+  endfunction
 
 " CSS
 au FileType css call LoadCSSConfiguration()
-function! LoadCSSConfiguration()
-  setl omnifunc=csscomplete#CompleteCSS
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-  setl iskeyword+=-
-  setl iskeyword+=#
-  setl iskeyword+=.
-endfunction
+  function! LoadCSSConfiguration()
+    setl omnifunc=csscomplete#CompleteCSS
+    setl shiftwidth=4
+    setl softtabstop=4
+    setl tabstop=4
+    setl iskeyword+=-
+    setl iskeyword+=#
+    setl iskeyword+=.
+  endfunction
 
 " Git commit
 au FileType gitcommit call LoadGitCommitConfiguration()
-function! LoadGitCommitConfiguration()
-  setl spell
-endfunction
+  function! LoadGitCommitConfiguration()
+    setl spell
+  endfunction
 
 " JavaScript
 au FileType javascript call LoadJavaScriptConfiguration()
-function! LoadJavaScriptConfiguration()
-  setl omnifunc=javascriptcomplete#CompleteJS
-  setl shiftwidth=2
-  setl softtabstop=2
-  setl tabstop=2
-endfunction
+  function! LoadJavaScriptConfiguration()
+    setl omnifunc=javascriptcomplete#CompleteJS
+    setl shiftwidth=2
+    setl softtabstop=2
+    setl tabstop=2
+  endfunction
 
 " TeX
 au FileType tex call LoadTexConfiguration()
-function! LoadTexConfiguration()
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-  setl iskeyword+=:
-  setl formatoptions=tcroqn2
-  setl spell
-endfunction
+  function! LoadTexConfiguration()
+    setl shiftwidth=4
+    setl softtabstop=4
+    setl tabstop=4
+    setl iskeyword+=:
+    setl formatoptions=tcroqn2
+    setl spell
+  endfunction
 
 " HTML
 au FileType html call LoadHTMLConfiguration()
-function! LoadHTMLConfiguration()
-  setl omnifunc=htmlcomplete#CompleteTags
-  setl iskeyword+=-
-  setl iskeyword+=#
-  setl iskeyword+=.
-endfunction
+  function! LoadHTMLConfiguration()
+    setl omnifunc=htmlcomplete#CompleteTags
+    setl iskeyword+=-
+    setl iskeyword+=#
+    setl iskeyword+=.
+  endfunction
 
 " Markdown
 au FileType markdown call LoadMarkdownConfiguration()
-function! LoadMarkdownConfiguration()
-  setl omnifunc=htmlcomplete#CompleteTags
-  setl formatoptions=tcroqn2 comments=n:>
-  setl spell
-endfunction
+  function! LoadMarkdownConfiguration()
+    setl omnifunc=htmlcomplete#CompleteTags
+    setl formatoptions=tcroqn2 comments=n:>
+    setl spell
+  endfunction
 
 " PHP
 au FileType php call LoadPHPConfiguration()
-function! LoadPHPConfiguration()
-  setl omnifunc=phpcomplete#CompletePHP
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-  setl iskeyword-=$
-endfunction
+  function! LoadPHPConfiguration()
+    setl omnifunc=phpcomplete#CompletePHP
+    setl shiftwidth=4
+    setl softtabstop=4
+    setl tabstop=4
+    setl iskeyword-=$
+  endfunction
 
 " Python
 au FileType python call LoadPythonConfiguration()
-function! LoadPythonConfiguration()
-  setl omnifunc=pythoncomplete#Complete
-  setl shiftwidth=4
-  setl softtabstop=4
-  setl tabstop=4
-endfunction
+  function! LoadPythonConfiguration()
+    setl omnifunc=pythoncomplete#Complete
+    setl shiftwidth=4
+    setl softtabstop=4
+    setl tabstop=4
+  endfunction
 
 " XML
 au FileType xml call LoadXMLConfiguration()
-function! LoadXMLConfiguration()
-  setl omnifunc=xmlcomplete#CompleteTags
-endfunction
+  function! LoadXMLConfiguration()
+    setl omnifunc=xmlcomplete#CompleteTags
+  endfunction
 
 " }}}
 
@@ -431,19 +439,19 @@ call neobundle#rc(g:bundle_dir) " load bundles
 """""""""""""""""""
 
 NeoBundleFetch 'Shougo/neobundle.vim', {
-  \     'depends': [
-  \         [
-  \             'Shougo/vimproc.vim', {
-  \                 'build' : {
-  \                     'windows' : 'make -f make_mingw32.mak',
-  \                     'cygwin' : 'make -f make_cygwin.mak',
-  \                     'mac' : 'make -f make_mac.mak',
-  \                     'unix' : 'make -f make_unix.mak',
-  \                 },
-  \             },
-  \         ],
+  \   'depends': [
+  \     [
+  \       'Shougo/vimproc.vim', {
+  \         'build' : {
+  \           'windows' : 'make -f make_mingw32.mak',
+  \           'cygwin' : 'make -f make_cygwin.mak',
+  \           'mac' : 'make -f make_mac.mak',
+  \           'unix' : 'make -f make_unix.mak',
+  \         },
+  \       },
   \     ],
-  \     'vim_version': '7.2.051',
+  \   ],
+  \   'vim_version': '7.2.051',
   \ }
 
 
@@ -495,10 +503,6 @@ NeoBundle 'kchmck/vim-coffee-script'
 
 NeoBundle 'ap/vim-css-color'
 
-" --- EJS
-
-NeoBundle 'briancollins/vim-jst'
-
 " --- Git
 
 NeoBundle 'tpope/vim-git'
@@ -515,6 +519,8 @@ NeoBundle 'digitaltoad/vim-jade'
 
 let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
 NeoBundle 'pangloss/vim-javascript'
+
+NeoBundle 'marijnh/tern_for_vim'
 
 " --- LaTeX
 
@@ -535,20 +541,76 @@ NeoBundle 'wavded/vim-stylus'
 " 10.4. Tools "
 """""""""""""""
 
-" --- NerdTree
-NeoBundle 'scrooloose/nerdtree'
-let NERDTreeMinimalUI = 1 " minimal UI
-let NERDTreeWinSize = 40 " Define the default width
-au vimenter * if !argc() | NERDTree | endif
-au bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-let bundle = neobundle#get('nerdtree')
+" --- TagBar
+let g:tagbar_autoclose = 1
+NeoBundle 'majutsushi/tagbar', {
+  \   'external_commands': ['ctags'],
+  \ }
+let bundle = neobundle#get('tagbar')
 function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>t :NERDTreeToggle<CR>
+  nnoremap <silent> <Leader>t :TagbarToggle<CR>
 endfunction
+
+" --- SearchComplete
+NeoBundle 'SearchComplete'
 
 " ---  Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
+
+" --- DelimitMate
+NeoBundle 'Raimondi/delimitMate'
+
+" --- Rainbow Parenthesis
+NeoBundle 'kien/rainbow_parentheses.vim'
+
+" --- Syntastic
+let g:syntastic_check_on_open = 1
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_javascript_checkers = ['jshint', 'jscs']
+let g:syntastic_mode_map = {
+  \   'mode': 'passive',
+  \   'active_filetypes': ['javascript'],
+  \   'passive_filetypes': []
+  \ }
+let g:syntastic_error_symbol = 'E>'
+let g:syntastic_style_error_symbol = 'E>'
+let g:syntastic_warning_symbol = 'W>'
+let g:syntastic_style_warning_symbol = 'W>'
+NeoBundle 'scrooloose/syntastic'
+let bundle = neobundle#get('syntastic')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>s :SyntasticCheck<CR>
+endfunction
+
+" --- YouCompleteMe
+let g:ycm_add_preview_to_completeopt = 0
+set completeopt-=preview
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_register_as_syntastic_checker = 1
+let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_cache_omnifunc = 0
+let g:ycm_key_detailed_diagnostics = ''
+let g:ycm_key_invoke_completion = ''
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_error_symbol = 'E>'
+let g:ycm_warning_symbol = 'W>'
+NeoBundle 'Valloric/YouCompleteMe', {
+  \   'build': {
+  \     'mac': './install.sh --clang-completer',
+  \     'unix': './install.sh --clang-completer',
+  \   }
+  \ }
+
+" --- UltiSnips
+let g:UltiSnipsSnippetDirectories = ['snippet']
+let g:UltiSnipsExpandTrigger = '<C-J>'
+let g:UltiSnipsJumpForwardTrigger = '<C-J>'
+let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
+NeoBundle 'SirVer/ultisnips'
 
 " ---  CtrlP
 let g:ctrlp_map = '<Leader>f'
@@ -558,7 +620,7 @@ let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
 let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
 let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
 let g:ctrlp_custom_ignore = {
-  \     'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build|dist)$'
+  \   'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build|dist)$'
   \ } " will be ignored in completion (`wildignore` is applied first)
 let g:ctrlp_max_depth = 13 " avoid lag if launched in a high level directory
 let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
@@ -582,7 +644,7 @@ NeoBundle 'tpope/vim-eunuch'
 
 " ---  Fugitive
 NeoBundle 'tpope/vim-fugitive', {
-  \     'external_commands': ['git'],
+  \   'external_commands': ['git'],
   \ }
 let bundle = neobundle#get('vim-fugitive')
 function! bundle.hooks.on_post_source(bundle)
