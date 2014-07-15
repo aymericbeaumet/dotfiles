@@ -195,12 +195,14 @@ unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is 
 set editing-mode vi
 
 # Some custom binds
-bindkey -v '^P' up-history
-bindkey -v '^N' down-history
 bindkey -v '^?' backward-delete-char
+bindkey -v '^A' beginning-of-line
+bindkey -v '^E' end-of-line
 bindkey -v '^H' backward-delete-char
-bindkey -v '^W' backward-kill-word
+bindkey -v '^N' down-history
+bindkey -v '^P' up-history
 bindkey -v '^R' history-incremental-search-backward
+bindkey -v '^W' backward-kill-word
 
 # Kill the lag when exiting insert mode
 export KEYTIMEOUT=1

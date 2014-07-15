@@ -5,6 +5,10 @@
 # follow symbolic links
 --follow
 
+# ignore some directories
+--ignore-dir=bower_components
+--ignore-dir=node_modules
+
 # add custom types support
 --type-set=json=.json
 --type-set=markdown=.markdown,.mdown,.mkdn,.md,.mkd,.mdwn,.mdtxt,.mdtext

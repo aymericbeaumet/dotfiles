@@ -198,8 +198,8 @@ set nolist              " hide invisible characters by default
 
 " spell checker
 set nospell             " Disable spell language globally
-set spelllang=en_gb     " configure spell language
-set spellfile=~/.vim/spell/en.utf-8.add " specify spell file
+set spelllang=en_us     " configure spell language
+set spellfile=~/.vim/spell/en.utf-8.add " additional spell file
 
 " format option stuff (see :help fo-table)
 set formatoptions=cro
@@ -330,7 +330,6 @@ nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
 " C/CPP
 au FileType c,cpp call LoadCConfiguration()
   function! LoadCConfiguration()
-    setl omnifunc=ccomplete#Complete
     setl shiftwidth=2
     setl softtabstop=2
     setl tabstop=2
@@ -339,7 +338,6 @@ au FileType c,cpp call LoadCConfiguration()
 " CSS
 au FileType css call LoadCSSConfiguration()
   function! LoadCSSConfiguration()
-    setl omnifunc=csscomplete#CompleteCSS
     setl shiftwidth=4
     setl softtabstop=4
     setl tabstop=4
@@ -357,7 +355,7 @@ au FileType gitcommit call LoadGitCommitConfiguration()
 " JavaScript
 au FileType javascript call LoadJavaScriptConfiguration()
   function! LoadJavaScriptConfiguration()
-    setl omnifunc=javascriptcomplete#CompleteJS
+    setl omnifunc=nodejscomplete#CompleteJS
     setl shiftwidth=2
     setl softtabstop=2
     setl tabstop=2
@@ -377,7 +375,6 @@ au FileType tex call LoadTexConfiguration()
 " HTML
 au FileType html call LoadHTMLConfiguration()
   function! LoadHTMLConfiguration()
-    setl omnifunc=htmlcomplete#CompleteTags
     setl iskeyword+=-
     setl iskeyword+=#
     setl iskeyword+=.
@@ -394,7 +391,6 @@ au FileType markdown call LoadMarkdownConfiguration()
 " PHP
 au FileType php call LoadPHPConfiguration()
   function! LoadPHPConfiguration()
-    setl omnifunc=phpcomplete#CompletePHP
     setl shiftwidth=4
     setl softtabstop=4
     setl tabstop=4
@@ -404,16 +400,9 @@ au FileType php call LoadPHPConfiguration()
 " Python
 au FileType python call LoadPythonConfiguration()
   function! LoadPythonConfiguration()
-    setl omnifunc=pythoncomplete#Complete
     setl shiftwidth=4
     setl softtabstop=4
     setl tabstop=4
-  endfunction
-
-" XML
-au FileType xml call LoadXMLConfiguration()
-  function! LoadXMLConfiguration()
-    setl omnifunc=xmlcomplete#CompleteTags
   endfunction
 
 " }}}
@@ -518,9 +507,35 @@ NeoBundle 'digitaltoad/vim-jade'
 " --- Javascript
 
 let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
-NeoBundle 'pangloss/vim-javascript'
+NeoBundleLazy 'pangloss/vim-javascript', {
+  \   'autoload': { 'filetypes': ['javascript'] },
+  \ }
 
-NeoBundle 'marijnh/tern_for_vim'
+NeoBundleLazy 'jelera/vim-javascript-syntax', {
+  \   'autoload': { 'filetypes': ['javascript'] },
+  \ }
+
+NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {
+  \   'autoload': { 'filetypes': ['javascript'] },
+  \ }
+
+NeoBundleLazy 'marijnh/tern_for_vim', {
+  \   'autoload': { 'filetypes': ['javascript'] },
+  \   'build': {
+  \     'windows': 'npm install',
+  \     'cygwin': 'npm install',
+  \     'mac': 'npm install',
+  \     'unix': 'npm install',
+  \   }
+  \ }
+
+let g:nodejs_complete_config = { 'js_compl_fn': 'tern#Complete' }
+NeoBundleLazy 'myhere/vim-nodejs-complete', {
+  \   'autoload': { 'filetypes': ['javascript'] },
+  \ }
+
+" --- JSON
+NeoBundle 'elzr/vim-json'
 
 " --- LaTeX
 
@@ -541,6 +556,9 @@ NeoBundle 'wavded/vim-stylus'
 " 10.4. Tools "
 """""""""""""""
 
+" --- Vim Indent Guides
+NeoBundle 'nathanaelkane/vim-indent-guides'
+
 " --- TagBar
 let g:tagbar_autoclose = 1
 NeoBundle 'majutsushi/tagbar', {
@@ -557,12 +575,6 @@ NeoBundle 'SearchComplete'
 " ---  Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
-
-" --- DelimitMate
-NeoBundle 'Raimondi/delimitMate'
-
-" --- Rainbow Parenthesis
-NeoBundle 'kien/rainbow_parentheses.vim'
 
 " --- Syntastic
 let g:syntastic_check_on_open = 1
@@ -586,8 +598,8 @@ endfunction
 
 " --- YouCompleteMe
 let g:ycm_add_preview_to_completeopt = 0
-set completeopt-=preview
 let g:ycm_confirm_extra_conf = 0
+set completeopt-=preview
 let g:ycm_register_as_syntastic_checker = 1
 let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
@@ -598,6 +610,9 @@ let g:ycm_key_invoke_completion = ''
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_error_symbol = 'E>'
 let g:ycm_warning_symbol = 'W>'
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
 NeoBundle 'Valloric/YouCompleteMe', {
   \   'build': {
   \     'mac': './install.sh --clang-completer',
@@ -614,7 +629,7 @@ NeoBundle 'SirVer/ultisnips'
 
 " ---  CtrlP
 let g:ctrlp_map = '<Leader>f'
-let g:ctrlp_by_filename = 1 " search by filename (<C-D> to include folders)
+let g:ctrlp_by_filename = 0 " search by filename and folder
 let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
 let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
 let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
@@ -641,16 +656,6 @@ NeoBundle 'tpope/vim-abolish'
 
 " ---  Eunuch
 NeoBundle 'tpope/vim-eunuch'
-
-" ---  Fugitive
-NeoBundle 'tpope/vim-fugitive', {
-  \   'external_commands': ['git'],
-  \ }
-let bundle = neobundle#get('vim-fugitive')
-function! bundle.hooks.on_post_source(bundle)
-  " Ensure that the fugitive buffers do not pollute the buffers list
-  au BufReadPost fugitive://* setl bufhidden=delete
-endfunction
 
 " ---  Repeat
 NeoBundle 'tpope/vim-repeat'
@@ -682,7 +687,6 @@ let g:airline_exclude_preview = 1 " remove airline from preview window
 let g:airline_left_sep = '»' " change left sections separator
 let g:airline_right_sep = '«' " change right sections separator
 let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-let g:airline#extensions#tagbar#enabled = 0 " disable tagbar integration
 let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
 NeoBundle 'bling/vim-airline', {
   \     'vim_version': '7.2',
