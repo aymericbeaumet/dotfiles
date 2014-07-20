@@ -194,7 +194,10 @@ unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is 
 # Vim mode
 set editing-mode vi
 
-# Some custom binds
+# Compatibility
+bindkey -v '\e[3~' delete-char
+
+# Custom binds
 bindkey -v '^?' backward-delete-char
 bindkey -v '^A' beginning-of-line
 bindkey -v '^E' end-of-line

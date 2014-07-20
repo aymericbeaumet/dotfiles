@@ -62,7 +62,6 @@
   "disallowMixedSpacesAndTabs": true,
   "disallowTrailingWhitespace": true,
   "disallowTrailingComma": true,
-  "disallowKeywordsOnNewLine": ["else"],
   "safeContextKeyword": ["that"],
   "disallowYodaConditions": true,
   "validateJSDoc": {
