@@ -507,20 +507,14 @@ NeoBundle 'digitaltoad/vim-jade'
 " --- Javascript
 
 let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
-NeoBundleLazy 'pangloss/vim-javascript', {
-  \   'autoload': { 'filetypes': ['javascript'] },
-  \ }
+NeoBundle 'pangloss/vim-javascript'
 
-NeoBundleLazy 'jelera/vim-javascript-syntax', {
-  \   'autoload': { 'filetypes': ['javascript'] },
-  \ }
+NeoBundle 'jelera/vim-javascript-syntax'
 
-NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {
-  \   'autoload': { 'filetypes': ['javascript'] },
-  \ }
+let g:used_javascript_libs = 'jquery,underscore,angularjs,angularui,requirejs,jasmine'
+NeoBundle 'othree/javascript-libraries-syntax.vim'
 
-NeoBundleLazy 'marijnh/tern_for_vim', {
-  \   'autoload': { 'filetypes': ['javascript'] },
+NeoBundle 'marijnh/tern_for_vim', {
   \   'build': {
   \     'windows': 'npm install',
   \     'cygwin': 'npm install',
@@ -530,9 +524,7 @@ NeoBundleLazy 'marijnh/tern_for_vim', {
   \ }
 
 let g:nodejs_complete_config = { 'js_compl_fn': 'tern#Complete' }
-NeoBundleLazy 'myhere/vim-nodejs-complete', {
-  \   'autoload': { 'filetypes': ['javascript'] },
-  \ }
+NeoBundle 'myhere/vim-nodejs-complete'
 
 " --- JSON
 NeoBundle 'elzr/vim-json'
@@ -543,9 +535,17 @@ let g:Imap_UsePlaceHolders = 0 " Do not use placeholder
 let g:tex_flavor = 'latex' " Fix filetype
 NeoBundle 'git://git.code.sf.net/p/vim-latex/vim-latex'
 
+" --- LESS
+
+NeoBundle 'groenewege/vim-less'
+
 " --- Markdown
 
 NeoBundle 'tpope/vim-markdown'
+
+" --- SASS/SCSS
+
+NeoBundle 'cakebaker/scss-syntax.vim'
 
 " --- Stylus
 
@@ -556,8 +556,19 @@ NeoBundle 'wavded/vim-stylus'
 " 10.4. Tools "
 """""""""""""""
 
-" --- Vim Indent Guides
-NeoBundle 'nathanaelkane/vim-indent-guides'
+" --- Distraction free
+NeoBundle 'junegunn/goyo.vim'
+function! GoyoBefore()
+endfunction
+function! GoyoAfter()
+  " Fix ColorColumn issue
+  hi ColorColumn ctermbg=0 guibg=black
+endfunction
+let g:goyo_callbacks = [function('GoyoBefore'), function('GoyoAfter')]
+let bundle = neobundle#get('goyo.vim')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>z :Goyo<CR>
+endfunction
 
 " --- TagBar
 let g:tagbar_autoclose = 1
