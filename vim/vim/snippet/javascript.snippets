@@ -1,0 +1,218 @@
+################################################################################
+# Generic
+
+snippet apply "apply()"
+${2:method}.apply(${1:context}${3:, $4});$0
+endsnippet
+
+snippet call "call()"
+${2:method}.call(${1:context}${3:, $4});$0
+endsnippet
+
+snippet cd "console.debug()" b
+console.debug(${1:'$2'});$0
+endsnippet
+
+snippet ce "console.error()" b
+console.error(${1:'$2'});$0
+endsnippet
+
+snippet cl "console.log()" b
+console.log(${1:'$2'});$0
+endsnippet
+
+snippet cw "console.warn()" b
+console.warn(${1:'$2'});$0
+endsnippet
+
+snippet fe "forEach()"
+Array.prototype.forEach.call(${1:arr}, function(${2:value}${3:, ${4:index}${5:, ${6:array}}}) {$0
+});
+endsnippet
+
+snippet fi "for in"
+(function(${2:key}, ${3:value}) {
+	for ($2 in ${1:obj}) {
+		if (Object.prototype.hasOwnProperty.call($1, $2)) {
+			$3 = $1[$2];$0
+		}
+	}
+})();
+endsnippet
+
+snippet f "Declare a function"
+function$1($2) {$0
+}
+endsnippet
+
+snippet j "Add a JSDoc block" b
+/**
+ * ${1:Description}.$0
+ */
+endsnippet
+
+snippet jc "Add a JSDoc @constructor" b
+@constructor
+endsnippet
+
+snippet jp "Add a JSDoc @param"
+@param {${1:Type}} ${2:name} - ${3:Description}$0
+endsnippet
+
+snippet jr "Add a JSDoc @return"
+@return {${1:Type}} - ${2:Description}$0
+endsnippet
+
+snippet pr "Add a property to an object prototype" b
+${1:obj}.prototype.${2:property} = ${3:value};$0
+endsnippet
+
+snippet okv "Declare an object key/value" b
+${1:'${2:key}'}: ${3:'${4:value}'}${5:,}$0
+endsnippet
+
+snippet us "Insert 'use strict' string" b
+'use strict';
+
+$0
+endsnippet
+
+snippet v "Declare a variable"
+var ${1:name} = ${2:'${3:value}'};$0
+endsnippet
+
+snippet vc "Declare a const variable"
+const ${1:name} = ${2:'${3:value}'};$0
+endsnippet
+
+snippet vl "Declare a local variable"
+local ${1:name} = ${2:'${3:value}'};$0
+endsnippet
+
+snippet t "Add a TODO comment" b
+// TODO(aymeric): ${1:we should...}$0
+endsnippet
+
+snippet w "Insert a wrapper" b
+;(function(undefined) {
+
+	$0
+
+})();
+endsnippet
+
+
+################################################################################
+# Node.js stuff
+
+snippet me "Export from a module" b
+module.exports = exports = ${1:export};$0
+endsnippet
+
+snippet r "Require an external module" b
+var ${1:module} = require('${2:${1/([a-z]+)([A-Z])?/$1(?2:-\l$2)/g}}');$0
+endsnippet
+
+
+################################################################################
+# Testing stuff
+
+snippet be "Insert a 'beforeEach'" b
+beforeEach(function() {$0
+});
+endsnippet
+
+snippet ae "Insert a 'afterEach'" b
+afterEach(function() {$0
+}
+endsnippet
+
+snippet d "Insert a 'describe'" b
+describe('${1:what you are testing}', function() {
+
+  $0
+
+});
+endsnippet
+
+snippet i "Insert an 'it'" b
+it('should ${1:do this...}', function(${2:done}) {$0
+});
+endsnippet
+
+
+################################################################################
+# Angular stuff (prefixed with a)
+
+snippet aw "Insert a wrapper passing the angular var" b
+;(function(angular, undefined) {
+
+  $0
+
+})(angular);
+endsnippet
+
+snippet am "Declare an Angular module" b
+angular.module('${1:name}', [$2]);$0
+endsnippet
+
+snippet ac "Declare an Angular controller" b
+function $2Controller($3) {
+	${3/\s*([a-zA-Z_$][a-zA-Z0-9_$-]*),?\s*/  this.$1 = $1;\n/g}
+	this.init();
+}
+$2Controller.$inject = [${3/\s*([a-zA-Z_$][a-zA-Z0-9_$-]*)(,?\s*)/'$1'(?2:, )/g}];
+
+$2Controller.prototype.init = function() {$0
+};
+
+angular.module('${1:app}')
+	.controller('${2:My}Controller', $2Controller)
+;
+endsnippet
+
+snippet ad "Declare an Angular directive" b
+function $2($3) {
+	return {${4:
+		restrict: '${5:AEC}',}${6:
+		scope: {
+		},}
+		link: function(${7:scope${8:, element${9:, attrs}}}) {$0
+		}
+	};
+}
+$2.$inject = [${3/\s*([a-zA-Z_$][a-zA-Z0-9_$-]*)(,?\s*)/'$1'(?2:, )/g}];
+
+angular.module('${1:app}')
+	.directive('${2:myDirective}', $2)
+;
+endsnippet
+
+snippet af "Declare an Angular filter" b
+function $2($3) {
+	return function(input${4:, args...}}) {
+		var out = input;$0
+		return out;
+	};
+}
+$2.$inject = [${3/\s*([a-zA-Z_$][a-zA-Z0-9_$-]*)(,?\s*)/'$1'(?2:, )/g}];
+
+angular.module('${1:app}')
+	.filter('${2:myFilter}', $2)
+;
+endsnippet
+
+snippet as "Declare an Angular service" b
+function $2($3) {
+	${3/\s*([a-zA-Z_$][a-zA-Z0-9_$-]*),?\s*/  this.$1 = $1;\n/g}
+	this.init();
+}
+$2.$inject = [${3/\s*([a-zA-Z_$][a-zA-Z0-9_$-]*)(,?\s*)/'$1'(?2:, )/g}];
+
+$2.prototype.init = function() {$0
+};
+
+angular.module('${1:app}')
+	.service('${2:myService}', $2)
+;
+endsnippet
