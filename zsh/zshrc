@@ -102,13 +102,16 @@ alias vi='vim'
 # Useful grep colors
 alias grep='grep --color=auto'
 
+# Color in less (usefull when piping)
+alias less='less -R'
+
 # Define the `updatedb` command on OSX
 is_macosx && alias updatedb='/usr/libexec/locate.updatedb'
 
 # Pipe standard output to common commands
 alias -g C=' | wc -l'
 alias -g G=' | grep' # e.g.: 'ls | grep -e foo' <=> 'ls G -e foo'
-alias -g L=' | less'
+alias -g L=' | less -R'
 alias -g H=' | head'
 alias -g T=' | tail'
 alias -g S=' | sort'

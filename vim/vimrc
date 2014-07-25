@@ -556,6 +556,9 @@ NeoBundle 'wavded/vim-stylus'
 " 10.4. Tools "
 """""""""""""""
 
+" --- Tabular
+NeoBundle 'godlygeek/tabular'
+
 " --- Distraction free
 NeoBundle 'junegunn/goyo.vim'
 function! GoyoBefore()
