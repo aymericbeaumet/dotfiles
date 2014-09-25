@@ -76,7 +76,7 @@ snippet vl "Declare a local variable" b
 local ${1:name} = ${2:value};$0
 endsnippet
 
-snippet todo "Add a TODO comment" b
+snippet todo "Add a TODO comment" i
 // TODO(aymeric): ${1:we should...}$0
 endsnippet
 
@@ -98,6 +98,10 @@ endsnippet
 
 snippet req "require()" b
 var ${1:module} = require('${2:${1/([a-z]+)([A-Z])?/$1(?2:-\l$2)/g}}');$0
+endsnippet
+
+snippet greq "require('gulp-*')" b
+var ${1:module} = require('${2:gulp-${1/([a-z]+)([A-Z])?/$1(?2:-\l$2)/g}}');$0
 endsnippet
 
 

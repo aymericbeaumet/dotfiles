@@ -1,5 +1,5 @@
 {
-  "bitwise": true,
+  "bitwise": false,
   "eqeqeq": true,
   "forin": true,
   "freeze": true,
@@ -14,22 +14,16 @@
   "unused": true,
   "strict": true,
 
+  "asi": true,
+  "laxcomma": true,
   "validthis": true,
 
-  "debug": true,
   "esnext": true,
-
   "browser": true,
-  "devel": true,
-  "jquery": true,
+  "browserify": true,
   "node": true,
 
   "globals" : {
-    "_": true,
-    "angular": false,
-    "io": true,
-    "moment": false,
-
     "describe" : false,
     "it" : false,
     "before" : false,
