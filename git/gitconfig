@@ -6,8 +6,8 @@
   a = add
   aa = add --all
   br = branch
-  ci = commit --gpg-sign
-  cia = commit --gpg-sign --amend
+  ci = commit
+  cia = commit --amend
   cl = clone
   co = checkout
   df = diff
@@ -79,3 +79,5 @@
   name = Aymeric Beaumet
   email = aymeric@beaumet.me
 	signingkey = E5474D2C
+[heroku]
+	account = personal

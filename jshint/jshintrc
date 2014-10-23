@@ -15,10 +15,9 @@
   "strict": true,
 
   "expr": true,
+  "laxcomma": true,
   "validthis": true,
 
-  "browser": true,
-  "browserify": true,
   "node": true,
 
   "globals" : {

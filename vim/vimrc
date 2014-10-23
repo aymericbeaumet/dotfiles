@@ -327,84 +327,15 @@ nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
 
 " {{{ 9. Languages specific configuration                      *vimrc-languages*
 
-" C/CPP
-au FileType c,cpp call LoadCConfiguration()
-  function! LoadCConfiguration()
-    setl shiftwidth=2
-    setl softtabstop=2
-    setl tabstop=2
-  endfunction
-
-" CSS
-au FileType css call LoadCSSConfiguration()
-  function! LoadCSSConfiguration()
-    setl shiftwidth=4
-    setl softtabstop=4
-    setl tabstop=4
-    setl iskeyword+=-
-    setl iskeyword+=#
-    setl iskeyword+=.
-  endfunction
-
-" Haskell
-au FileType haskell call LoadHaskellConfiguration()
-  function! LoadHaskellConfiguration()
-    setl omnifunc=necoghc#omnifunc
-    setl shiftwidth=4
-    setl softtabstop=4
-    setl tabstop=8
-    setl shiftround
-  endfunction
-
-" JavaScript
-au FileType javascript call LoadJavaScriptConfiguration()
-  function! LoadJavaScriptConfiguration()
-    setl omnifunc=nodejscomplete#CompleteJS
-    setl shiftwidth=2
-    setl softtabstop=2
-    setl tabstop=2
-  endfunction
-
-" HTML
-au FileType html call LoadHTMLConfiguration()
-  function! LoadHTMLConfiguration()
-    setl iskeyword+=-
-    setl iskeyword+=#
-    setl iskeyword+=.
-  endfunction
-
-" Makefile
-au FileType make call LoadMakeConfiguration()
-  function! LoadMakeConfiguration()
-    setl noexpandtab
-    setl shiftwidth=4
-    setl softtabstop=4
-    setl tabstop=4
-  endfunction
-
-" Markdown
-au FileType markdown call LoadMarkdownConfiguration()
-  function! LoadMarkdownConfiguration()
-    setl omnifunc=htmlcomplete#CompleteTags
-    setl formatoptions=tcroqn2 comments=n:>
-  endfunction
-
-" PHP
-au FileType php call LoadPHPConfiguration()
-  function! LoadPHPConfiguration()
-    setl shiftwidth=4
-    setl softtabstop=4
-    setl tabstop=4
-    setl iskeyword-=$
-  endfunction
-
-" Python
-au FileType python call LoadPythonConfiguration()
-  function! LoadPythonConfiguration()
-    setl shiftwidth=4
-    setl softtabstop=4
-    setl tabstop=4
-  endfunction
+au FileType css        setl shiftwidth=4 softtabstop=4 tabstop=4 iskeyword+=- iskeyword+=# iskeyword+=.
+au FileType haskell    setl omnifunc=necoghc#omnifunc shiftwidth=4 softtabstop=4 tabstop=8 shiftround
+au FileType html       setl iskeyword+=- iskeyword+=# iskeyword+=.
+au FileType javascript setl omnifunc=nodejscomplete#CompleteJS
+au FileType make       setl noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+au FileType markdown   setl omnifunc=htmlcomplete#CompleteTags formatoptions=tcroqn2 comments=n:>
+au FileType php        setl shiftwidth=4 softtabstop=4 tabstop=4 iskeyword-=$
+au FileType python     setl shiftwidth=4 softtabstop=4 tabstop=4
+au FileType typescript setl omnifunc=TSScompleteFunc
 
 " }}}
 
@@ -543,24 +474,35 @@ NeoBundle 'cakebaker/scss-syntax.vim'
 
 NeoBundle 'wavded/vim-stylus'
 
+" --- TypeScript
+
+NeoBundle 'leafgarland/typescript-vim'
+NeoBundle 'clausreinke/typescript-tools', {
+  \   'build': { 'mac': 'npm install -g' }
+  \ }
+
+" ---
+
 NeoBundle 'matchit.zip'
 
 """""""""""""""                                            *vimrc-plugins-tools*
 " 10.4. Tools "
 """""""""""""""
 
-" --- Dash
-
-NeoBundle 'rizzatti/dash.vim'
-
-" --- Fugitive
-
-NeoBundle 'tpope/vim-fugitive'
-
-" --- Tabular
+NeoBundle 'SearchComplete'
+NeoBundle 'airblade/vim-rooter'
+NeoBundle 'bronson/vim-visual-star-search'
 NeoBundle 'godlygeek/tabular'
+NeoBundle 'rizzatti/dash.vim'
+NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'tpope/vim-abolish'
+NeoBundle 'tpope/vim-eunuch'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-repeat'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-unimpaired'
 
-" --- TagBar
+" ---  Tagbar
 let g:tagbar_autoclose = 1
 NeoBundle 'majutsushi/tagbar', {
   \   'external_commands': ['ctags'],
@@ -570,10 +512,7 @@ function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>t :TagbarToggle<CR>
 endfunction
 
-" --- SearchComplete
-NeoBundle 'SearchComplete'
-
-" ---  Winresizer
+" --- Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
 
@@ -582,17 +521,15 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 2
 let g:syntastic_javascript_checkers = ['jshint']
-let g:syntastic_json_checkers = ['jsonlint']
+let g:syntastic_typescript_checkers = ['tslint']
 let g:syntastic_mode_map = {
   \   'mode': 'passive',
-  \   'active_filetypes': ['javascript', 'json'],
+  \   'active_filetypes': ['javascript', 'typescript'],
   \   'passive_filetypes': []
   \ }
-let g:syntastic_error_symbol = 'E>'
-let g:syntastic_style_error_symbol = 'E>'
-let g:syntastic_warning_symbol = 'W>'
-let g:syntastic_style_warning_symbol = 'W>'
-NeoBundle 'scrooloose/syntastic'
+NeoBundle 'scrooloose/syntastic', {
+  \   'build': { 'mac': 'npm install -g jshint tslint' }
+  \ }
 let bundle = neobundle#get('syntastic')
 function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>s :SyntasticCheck<CR>
@@ -627,7 +564,7 @@ let g:UltiSnipsJumpForwardTrigger = '<C-J>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
 NeoBundle 'SirVer/ultisnips'
 
-" ---  CtrlP
+" --- CtrlP
 let g:ctrlp_map = '<Leader>f'
 let g:ctrlp_by_filename = 0 " search by filename and folder
 let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
@@ -647,24 +584,6 @@ let bundle = neobundle#get('ctrlp.vim')
 function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
 endfunction
-
-" ---  Nerd Commenter
-NeoBundle 'scrooloose/nerdcommenter'
-
-" ---  Abolish
-NeoBundle 'tpope/vim-abolish'
-
-" ---  Eunuch
-NeoBundle 'tpope/vim-eunuch'
-
-" ---  Repeat
-NeoBundle 'tpope/vim-repeat'
-
-" ---  Surround
-NeoBundle 'tpope/vim-surround'
-
-" ---  Unimpaired
-NeoBundle 'tpope/vim-unimpaired'
 
 " --- Session
 let g:session_directory = '~/.vim/tmp/sessions//' " where to store the sessions
@@ -695,12 +614,6 @@ let bundle = neobundle#get('vim-airline')
 function! bundle.hooks.on_post_source(bundle)
   set noshowmode " hide the duplicate mode in bottom status bar
 endfunction
-
-" --- Rooter
-NeoBundle 'airblade/vim-rooter'
-
-" --- Vim visual star search
-NeoBundle 'bronson/vim-visual-star-search'
 
 
 " Install bundles && generate/check documentation
