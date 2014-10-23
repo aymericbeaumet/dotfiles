@@ -1,6 +1,6 @@
-[submodule "home/.vim/bundle/neobundle.vim"]
-	path = home/.vim/bundle/neobundle.vim
+[submodule ".shallow/.vim/bundle/neobundle.vim"]
+	path = .shallow/.vim/bundle/neobundle.vim
 	url = https://github.com/Shougo/neobundle.vim.git
-[submodule "home/.zsh/bundle/zsh-git-prompt"]
-	path = home/.zsh/bundle/zsh-git-prompt
+[submodule ".shallow/.zsh/bundle/zsh-git-prompt"]
+	path = .shallow/.zsh/bundle/zsh-git-prompt
 	url = https://github.com/olivierverdier/zsh-git-prompt.git
