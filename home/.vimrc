@@ -244,17 +244,13 @@ vnoremap <silent> j gj
 nnoremap <silent> k gk
 vnoremap <silent> k gk
 
-" switch between tabs
-nnoremap <silent> H :tabprev<CR>
-nnoremap <silent> L :tabnext<CR>
-
 " define leading key
 let g:mapleader = ','
 let mapleader = ','
 
 " hide last search matches
 nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>
+vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>gv
 
 " copy from the cursor to the end of line using Y
 nnoremap <silent> Y y$
@@ -302,7 +298,7 @@ vnoremap <silent> > >gv
 nnoremap <silent> gO O<C-C>0"_D
 nnoremap <silent> go o<C-C>0"_D
 
-" use `\d` `\D` `\x` `\X` to delete without altering the yanked stack
+" use `,d` `,D` `,x` `,X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
@@ -343,10 +339,7 @@ au FileType typescript setl omnifunc=TSScompleteFunc
 
 " {{{ 10. Plugins                                                *vimrc-plugins*
 
-" The installation script may specify a different bundle directory
-if (!exists('g:bundle_dir'))
-  let g:bundle_dir = resolve(expand('~/.vim/bundle/'))
-endif
+let g:bundle_dir = resolve(expand('~/.vim/bundle/'))
 
 if has('vim_starting')
   let &rtp .= ',' . g:bundle_dir . '/neobundle.vim/'
@@ -461,11 +454,6 @@ NeoBundle 'groenewege/vim-less'
 
 NeoBundle 'tpope/vim-markdown'
 
-let g:instant_markdown_autostart = 0
-NeoBundle 'suan/vim-instant-markdown', {
-  \   'build': { 'mac': 'gem install pygments.rb redcarpet && npm install -g instant-markdown-d' }
-  \ }
-
 " --- SASS/SCSS
 
 NeoBundle 'cakebaker/scss-syntax.vim'
@@ -489,7 +477,6 @@ NeoBundle 'matchit.zip'
 " 10.4. Tools "
 """""""""""""""
 
-NeoBundle 'SearchComplete'
 NeoBundle 'airblade/vim-rooter'
 NeoBundle 'bronson/vim-visual-star-search'
 NeoBundle 'godlygeek/tabular'

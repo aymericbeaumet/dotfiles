@@ -4,7 +4,6 @@
 [alias]
   ; Fast access aliases
   a = add
-  aa = add --all
   br = branch
   ci = commit
   cia = commit --amend
@@ -13,8 +12,8 @@
   df = diff
   dfc = diff --cached
   fe = fetch
-  l = log --show-signature
-  me = merge --no-ff
+  l = log --signature
+  menf = merge --no-ff
   pl = pull
   ps = push
   rb = rebase
@@ -24,19 +23,11 @@
   rs = reset
   rsh = reset --hard
   sh = stash
-  sha = stash apply
-  shd = stash drop
-  shl = stash list
-  shp = stash pop
-  shs = stash save
   st = status --short --branch
   sw = show --show-signature
 
   ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
-
-  ; Delete all the untracked files
-  dump = clean -ffdx ; suffix with `-n` to see which files would be deleted
 
   ; Find a file in the project
   find = "!git ls-files | grep -i"
@@ -59,7 +50,7 @@
 
 [core]
   excludesfile = ~/.gitignore
-  pager = less
+  pager = less -R
 
 [diff]
   tool = vimdiff
@@ -78,6 +69,3 @@
 [user]
   name = Aymeric Beaumet
   email = aymeric@beaumet.me
-	signingkey = E5474D2C
-[heroku]
-	account = personal
