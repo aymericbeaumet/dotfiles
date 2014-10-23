@@ -1,0 +1,1 @@
+/Users/abeaumet/.homesick/repos/dotfiles/home/.zsh/completion/git-completion.bash
