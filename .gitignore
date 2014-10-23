@@ -1,5 +1,5 @@
-/home/*/bundle/
-/home/*/tmp/
+bundle/
+tmp/
 
-/home/.vim/.netrwhist
-/home/.vim/spell/*.spl
+.vim/.netrwhist
+.vim/spell/*.spl
