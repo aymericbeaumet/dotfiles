@@ -1,8 +1,0 @@
-# Load NVM
-source $(brew --prefix nvm)/nvm.sh
-
-# Load RVM
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# Load Travis
-[ -f /Users/abeaumet/.travis/travis.sh ] && source /Users/abeaumet/.travis/travis.sh

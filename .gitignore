@@ -1,2 +1,5 @@
-bundle
-tmp
+/home/*/bundle/
+/home/*/tmp/
+
+/home/.vim/.netrwhist
+/home/.vim/spell/*.spl
