@@ -345,7 +345,8 @@ if has('vim_starting')
   let &rtp .= ',' . g:bundle_dir . '/neobundle.vim/'
 endif
 
-call neobundle#rc(g:bundle_dir) " load bundles
+call neobundle#begin(g:bundle_dir)
+call neobundle#end()
 
 
 """""""""""""""""""                                    *vimrc-plugins-neobundle*
