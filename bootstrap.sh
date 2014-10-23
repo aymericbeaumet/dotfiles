@@ -47,6 +47,7 @@ npm=(
 )
 
 # Fetch dotfiles
+git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
 git clone --recursive git@github.com:aymericbeaumet/dotfiles $HOME/.homesick/repos/dotfiles
 
 # Install Brew
