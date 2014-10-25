@@ -1,6 +1,9 @@
 [submodule ".shallow/.vim/bundle/neobundle.vim"]
 	path = .shallow/.vim/bundle/neobundle.vim
 	url = https://github.com/Shougo/neobundle.vim.git
+[submodule ".shallow/.zsh/bundle/zsh-completion"]
+	path = .shallow/.zsh/bundle/zsh-completion
+	url = https://github.com/zsh-users/zsh-completions.git
 [submodule ".shallow/.zsh/bundle/zsh-git-prompt"]
 	path = .shallow/.zsh/bundle/zsh-git-prompt
 	url = https://github.com/olivierverdier/zsh-git-prompt.git
