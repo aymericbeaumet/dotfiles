@@ -12,7 +12,7 @@
   df = diff
   dfc = diff --cached
   fe = fetch
-  l = log --signature
+  l = log
   menf = merge --no-ff
   pl = pull
   ps = push
@@ -24,7 +24,7 @@
   rsh = reset --hard
   sh = stash
   st = status --short --branch
-  sw = show --show-signature
+  sw = show
 
   ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
