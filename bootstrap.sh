@@ -13,16 +13,13 @@ brew=(
   pandoc
   redis
   s3cmd
+  tmux
   wget
   xz
   zsh
 )
 
 cask=(
-  alfred
-  dash
-  firefox
-  thunderbird
   iterm2
   transmission
   vlc
@@ -36,35 +33,44 @@ node=(
 )
 
 npm=(
+  bower
+  browserify
   coffeescript
   grunt
   gulp
+  jasmine
+  jscs
   jshint
   karma-cli
+  mocha
+  trash
   tslint
   typescript
   uglify-js
+  watchify
 )
 
 # Fetch dotfiles
-git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
-git clone --recursive git@github.com:aymericbeaumet/dotfiles $HOME/.homesick/repos/dotfiles
+git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
+source "$HOME/.homesick/repos/dotfiles/home/.zlogin"
+homeshick clone git@github.com:aymericbeaumet/dotfiles
+homeshick link dotfiles
 
 # Install Brew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # Install Brew packages
-for package in "${brew[@]}" ; do brew install "$package" ; done
+for i in "${brew[@]}" ; do      brew install "$i" ; done
 
 # Install Cask apps
-for app in "${cask[@]}"     ; do brew cask install "$application" ; done
+for i in "${cask[@]}" ; do brew cask install "$i" ; done
 
 # Install Node
-for version in "${node[@]}" ; do nvm install "$app" ; done
+for i in "${node[@]}" ; do       nvm install "$i" ; done
 nvm alias default "$NODE_STABLE"
 nvm use "$NODE_STABLE"
 
 # Install NPM packages
-for package in "${npm[@]}"  ; do npm install -g "$app" ; done
+for i in "${npm[@]}"  ; do    npm -g install "$i" ; done
 
 exit 0
