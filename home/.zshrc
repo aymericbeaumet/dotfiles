@@ -105,6 +105,9 @@ alias grep='grep --color=auto'
 # Colorful less
 alias less='less -R'
 
+# Quick trash access (https://github.com/sindresorhus/trash)
+alias t='trash'
+
 # Define the `updatedb` command on OSX
 if is_macosx ; then
   alias updatedb='/usr/libexec/locate.updatedb'
