@@ -4,5 +4,5 @@ fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
 homeshick --quiet refresh
 
 # Load NVM
-export NVM_DIR=~/.nvm
+export NVM_DIR="$HOME/.nvm"
 source $(brew --prefix nvm)/nvm.sh
