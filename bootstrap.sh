@@ -2,6 +2,7 @@
 
 brew=(
   ack
+  bash
   caskroom/cask/brew-cask
   cmake
   git
