@@ -142,9 +142,6 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 # Autocomplete #
 ################
 
-# Add completion scripts from a custom directory
-fpath=("$HOME/.zsh/completion" $fpath)
-
 # Enable advanced completion
 autoload -U compinit && compinit
 
@@ -189,52 +186,6 @@ zstyle ':completion:*:manuals' separate-sections true
 setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
 setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
 unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is not after the last character
-
-###########
-# Binding #
-###########
-
-# Vim mode
-set editing-mode vi
-
-# Compatibility
-bindkey -v '\e[3~' delete-char
-
-# Custom binds
-bindkey -v '^?' backward-delete-char
-bindkey -v '^A' beginning-of-line
-bindkey -v '^E' end-of-line
-bindkey -v '^H' backward-delete-char
-bindkey -v '^N' down-history
-bindkey -v '^P' up-history
-bindkey -v '^R' history-incremental-search-backward
-bindkey -v '^W' backward-kill-word
-
-# Kill the lag when exiting insert mode
-export KEYTIMEOUT=1
-
-# Change the cursor depending on Vim mode
-
-function zle-keymap-select zle-line-init
-{
-    # change cursor shape in iTerm2
-    case $KEYMAP in
-        vicmd)      print -n -- "\E]50;CursorShape=0\C-G";; # block cursor
-        viins|main) print -n -- "\E]50;CursorShape=2\C-G";; # underscore cursor
-    esac
-
-    zle reset-prompt
-    zle -R
-}
-
-function zle-line-finish
-{
-    print -n -- "\E]50;CursorShape=0\C-G"  # block cursor
-}
-
-zle -N zle-line-init
-zle -N zle-line-finish
-zle -N zle-keymap-select
 
 ##########
 # Prompt #
@@ -281,7 +232,7 @@ stty start undef
 # `git_wrapper ...` will invoke `git ...`
 git_wrapper()
 {
-  # Used by zsh-git-prompt to recognize a git command
+  # used by zsh-git-prompt
   __EXECUTED_GIT_COMMAND=1
 
   if (( $# == 0 )) ; then
@@ -289,9 +240,6 @@ git_wrapper()
   else
     command git "$@"
   fi
-
-  # Used by zsh-git-prompt to recognize the end of a git command
-  __EXECUTED_GIT_COMMAND=0
 }
 compdef git_wrapper=git
 
@@ -304,7 +252,6 @@ alias git='noglob git_wrapper'
 # ls
 ###
 
-unalias ls &>/dev/null
 OS_SPECIFIC_LS_OPTIONS=''
 if is_linux ; then
   OS_SPECIFIC_LS_OPTIONS='--color=auto'
@@ -346,15 +293,20 @@ fi
 ####################
 
 ###
+# zsh-completion (https://github.com/zsh-users/zsh-completions)
+###
+
+# Add completion scripts from a custom directory
+fpath=("$HOME/.zsh/completion" $fpath)
+
+###
 # zsh-git-prompt (https://github.com/olivierverdier/zsh-git-prompt)
 ###
 
 local zsh_git_prompt="$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
 if [ -r "$zsh_git_prompt" ] ; then
+  ZSH_THEME_GIT_PROMPT_CACHE=1
   source "$zsh_git_prompt"
-
-  # Set install directory
-  __GIT_PROMPT_DIR="$HOME/.zsh/bundle/zsh-git-prompt"
 
   # Change appearance
   ZSH_THEME_GIT_PROMPT_PREFIX='('
