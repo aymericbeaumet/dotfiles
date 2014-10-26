@@ -324,3 +324,9 @@ if [ -r "$zsh_git_prompt" ] ; then
   # informations if zsh is started inside a Git repository
   chpwd_update_git_vars
 fi
+
+###
+# zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
+###
+
+source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
