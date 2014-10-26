@@ -1,5 +1,5 @@
-# Enable the hook loader
 autoload -U add-zsh-hook
+autoload -U compinit
 
 ###########
 # Helpers #
@@ -30,6 +30,24 @@ set_tab_name() { printf "\e]1;$1\a" }
 # @param string $1 The desired window name
 set_window_name() { printf "\e]2;$1\a" }
 
+##########
+# Colors #
+##########
+
+COLOR_RESET=$'%{\033[0m%}'
+
+COLOR_BOLD=$'%{\033[1m%}'
+COLOR_UNDERLINE=$'%{\033[4m%}'
+COLOR_INVERSE=$'%{\033[7m%}'
+
+COLOR_BLUE=$'%{\033[38;05;75m%}'
+COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
+COLOR_GREEN=$'%{\033[38;05;34m%}'
+COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
+COLOR_YELLOW=$'%{\033[38;05;220m%}'
+COLOR_RED=$'%{\033[38;05;1m%}'
+COLOR_ORANGE=$'%{\033[38;05;202m%}'
+
 ###########
 # Options #
 ###########
@@ -51,10 +69,6 @@ unsetopt CORRECT_ALL # do not auto correct the whole command line
 # Job Control
 setopt CHECK_JOBS # warn about background jobs before shell exit
 
-# Scripting
-setopt C_BASES       # write base X numbers using C-style (e.g.: 0xFF instead of 16#FF)
-setopt C_PRECEDENCES # alter operators precedence to be more C-like
-
 # Expansion and Globbing
 setopt RC_EXPAND_PARAM # expand foo${xx}bar to 'fooabar foobbar foocbar' if xx=(a b c)
 setopt EXTENDED_GLOB   # advanced globbing
@@ -63,60 +77,48 @@ setopt ALIASES         # expand aliases
 # Warning
 unsetopt RM_STAR_WAIT # don't wait after `rm *`
 
-##########
-# Colors #
-##########
-
-COLOR_RESET=$'%{\033[0m%}'
-
-COLOR_BOLD=$'%{\033[1m%}'
-COLOR_UNDERLINE=$'%{\033[4m%}'
-COLOR_INVERSE=$'%{\033[7m%}'
-
-COLOR_BLUE=$'%{\033[38;05;75m%}'
-COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
-COLOR_GREEN=$'%{\033[38;05;34m%}'
-COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
-COLOR_YELLOW=$'%{\033[38;05;220m%}'
-COLOR_RED=$'%{\033[38;05;1m%}'
-COLOR_ORANGE=$'%{\033[38;05;202m%}'
+# Set Emacs-like bindings
+bindkey -e
 
 ###############
 # Environment #
 ###############
 
 export TERM=xterm-256color
-export EDITOR=vim
-export USE_EDITOR=$EDITOR
-export VISUAL=$EDITOR
-export VIEWER=open
-export PAGER=less
+if [ -n "$TMUX" ] ; then
+  export TERM=screen-256color
+fi
+
+export EDITOR=`which vim`
+export USE_EDITOR="$EDITOR"
+export VISUAL="$EDITOR"
+export VIEWER=`which open`
+export PAGER=`which less`
 
 #########
 # Alias #
 #########
 
-alias v='vim'
-alias vi='vim'
-
-# Useful grep colors
+# Colorful grep
 alias grep='grep --color=auto'
 
-# Color in less (usefull when piping)
+# Colorful less
 alias less='less -R'
 
 # Define the `updatedb` command on OSX
-is_macosx && alias updatedb='/usr/libexec/locate.updatedb'
+if is_macosx ; then
+  alias updatedb='/usr/libexec/locate.updatedb'
+fi
 
 # Pipe standard output to common commands
 alias -g C=' | wc -l'
 alias -g G=' | grep' # e.g.: 'ls | grep -e foo' <=> 'ls G -e foo'
-alias -g L=' | less -R'
+alias -g L=' | less'
 alias -g H=' | head'
 alias -g T=' | tail'
 alias -g S=' | sort'
 
-# Redirect both standard output and standard error to dev null
+# Redirect both standard output and standard error to /dev/null
 alias -g N=' &>/dev/null'
 
 ###########
@@ -142,8 +144,7 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 # Autocomplete #
 ################
 
-# Enable advanced completion
-autoload -U compinit && compinit
+compinit
 
 # Allow arrow navigation
 zstyle ':completion:*' menu select
@@ -154,10 +155,10 @@ zstyle ':completion:*:*:(v|vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 # Don't complete stuff already on the line
 zstyle ':completion::*:(v|vi|vim|rm):*' ignore-line true
 
-# Don't complete directory we are already in (../here)
+# Don't complete directory we are already in
 zstyle ':completion:*' ignore-parents parent pwd
 
-# Cache to increase speed
+# Use a cache to increase speed
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.zsh/tmp/cache"
 
@@ -191,7 +192,7 @@ unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is 
 # Prompt #
 ##########
 
-setopt TRANSIENT_RPROMPT # remove right prompt after accepting a command line
+setopt TRANSIENT_RPROMPT # remove the right prompt after accepting a command line
 
 # This function will be called each time the prompt has to be generated
 precmd_set_prompt()
@@ -214,6 +215,7 @@ precmd_set_prompt()
     RPROMPT="$RPROMPT {^$COLOR_BLUE%L$COLOR_RESET}"
   fi
 }
+
 add-zsh-hook precmd precmd_set_prompt
 
 # Disable flow control (^S / ^Q)
@@ -264,7 +266,6 @@ alias l='ll' ; compdef l=ls
 alias la='ll -A' ; compdef la=ls
 
 # nice ls colors (even on Mac OS X)
-unset CLICOLOR
 unset LS_COLORS
 unset LSCOLORS
 if is_macosx || is_bsd ; then
@@ -279,14 +280,6 @@ fi
 ###
 
 set_window_name "$(whoami)@$(hostname)"
-
-###
-# Tmux
-###
-
-if [ -n "$TMUX" ] ; then
-  export TERM=screen-256color
-fi
 
 ####################
 # External bundles #
@@ -323,10 +316,17 @@ if [ -r "$zsh_git_prompt" ] ; then
   # Update zsh-git-prompt data after the first load to avoid missing prompt
   # informations if zsh is started inside a Git repository
   chpwd_update_git_vars
+else
+  echo 'The "zsh-git-prompt" bundle is not installed.'
 fi
 
 ###
 # zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
 ###
 
-source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+local zsh_syntax_highlighting="$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [ -r "$zsh_syntax_highlighting" ] ; then
+  source "$zsh_syntax_highlighting"
+else
+  echo 'The "zsh-syntax-highlighting" bundle is not installed.'
+fi
