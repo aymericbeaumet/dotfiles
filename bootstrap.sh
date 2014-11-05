@@ -8,13 +8,17 @@ brew=(
   git
   hg
   htop
+  j1mr10rd4n/tap/meteor
+  'llvm --with-clang --with-asan'
   macvim
   mongodb
   nvm
   pandoc
   redis
   s3cmd
+  tags
   tmux
+  tree
   wget
   xz
   zsh
@@ -39,12 +43,17 @@ npm=(
   coffeescript
   grunt
   gulp
+  jake
   jasmine
   jscs
   jshint
   karma-cli
+  meteor
   mocha
+  node-gyp
+  node-inspector
   trash
+  tsd
   tslint
   typescript
   uglify-js
@@ -67,5 +76,8 @@ nvm use "$NODE_STABLE"
 
 # Install NPM packages
 for i in "${npm[@]}"  ; do    npm -g install "$i" ; done
+
+# OSX Configuration
+defaults write com.apple.screencapture location ~/Pictures/MacBook\ Pro/Screenshots
 
 exit 0

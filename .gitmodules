@@ -10,3 +10,6 @@
 [submodule ".shallow/.zsh/bundle/zsh-syntax-highlighting"]
 	path = .shallow/.zsh/bundle/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule ".shallow/.zsh/bundle/zsh-history-substring-search"]
+	path = .shallow/.zsh/bundle/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search.git

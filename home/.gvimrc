@@ -1,6 +1,5 @@
 " Set the font
 silent! set guifont=Monaco:h12
-silent! set guifont=Inconsolata\ for\ Powerline:h14
 silent! set guifont=Inconsolata:h14
 
 " Disable all the superfluous GUI stuff

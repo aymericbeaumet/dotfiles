@@ -1,6 +1,12 @@
 autoload -U add-zsh-hook
 autoload -U compinit
 
+##################
+# Initialization #
+##################
+
+[ -d ~/.zsh/tmp ] || mkdir ~/.zsh/tmp
+
 ###########
 # Helpers #
 ###########
@@ -79,6 +85,10 @@ unsetopt RM_STAR_WAIT # don't wait after `rm *`
 
 # Set Emacs-like bindings
 bindkey -e
+
+# Fix delete key
+bindkey '^[[3~'  delete-char
+bindkey '^[3;5~' delete-char
 
 ###############
 # Environment #
@@ -213,8 +223,9 @@ precmd_set_prompt()
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
-  RPROMPT="[%n$COLOR_BLUE@$COLOR_RESET%M]"
+  RPROMPT=''
   if [ -n "$SHLVL" ] && (( $SHLVL > 1 )) ; then
+    RPROMPT="[%n$COLOR_BLUE@$COLOR_RESET%M]"
     RPROMPT="$RPROMPT {^$COLOR_BLUE%L$COLOR_RESET}"
   fi
 }
@@ -332,4 +343,17 @@ if [ -r "$zsh_syntax_highlighting" ] ; then
   source "$zsh_syntax_highlighting"
 else
   echo 'The "zsh-syntax-highlighting" bundle is not installed.'
+fi
+
+###
+# zsh-history-substring-search (https://github.com/zsh-users/zsh-history-substring-search)
+###
+
+local zsh_history_substring_search="$HOME/.zsh/bundle/zsh-history-substring-search/zsh-history-substring-search.zsh"
+if [ -r "$zsh_history_substring_search" ] ; then
+  source "$zsh_history_substring_search"
+  bindkey -M emacs '^P' history-substring-search-up
+  bindkey -M emacs '^N' history-substring-search-down
+else
+  echo 'The "zsh-history-substring-search" bundle is not installed.'
 fi
