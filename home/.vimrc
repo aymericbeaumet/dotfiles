@@ -108,6 +108,7 @@ set fileformats=unix,mac,dos " support all three newline formats
 set history=1000        " increase history size
 
 set noswapfile          " disable swap files
+let g:netrw_dirhistmax = 0 " disable netrw
 
 set viminfo+=n~/.vim/tmp/info " change viminfo file path
 
@@ -157,10 +158,6 @@ au InsertLeave * setl nonumber relativenumber " relative out of insert mode
 set cursorline          " highlight cursor line
 au InsertEnter * setl nocursorline " do not highlight in insert mode
 au InsertLeave * setl cursorline " highlight out of insert mode
-
-" Custom cursors whether insert mode is enabled
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-let &t_SI = "\<Esc>]50;CursorShape=2\x7"
 
 " }}}
 
@@ -245,7 +242,6 @@ nnoremap <silent> k gk
 vnoremap <silent> k gk
 
 " define leading key
-let g:mapleader = ','
 let mapleader = ','
 
 " hide last search matches
@@ -524,24 +520,16 @@ function! bundle.hooks.on_post_source(bundle)
 endfunction
 
 " --- YouCompleteMe
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_confirm_extra_conf = 0
-set completeopt-=preview
-let g:ycm_register_as_syntastic_checker = 1
-let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_cache_omnifunc = 0
-let g:ycm_key_detailed_diagnostics = ''
-let g:ycm_key_invoke_completion = ''
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_error_symbol = 'E>'
-let g:ycm_warning_symbol = 'W>'
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
+set completeopt=longest,menuone
+let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 NeoBundle 'Valloric/YouCompleteMe', {
-  \   'build': { 'mac': './install.sh --clang-completer' }
+  \   'build': { 'mac': './install.sh --clang-completer' },
+  \   'vim_version': '7.3.584',
   \ }
 let bundle = neobundle#get('YouCompleteMe')
 
