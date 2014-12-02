@@ -13,3 +13,6 @@
 [submodule ".shallow/.zsh/bundle/zsh-history-substring-search"]
 	path = .shallow/.zsh/bundle/zsh-history-substring-search
 	url = https://github.com/zsh-users/zsh-history-substring-search.git
+[submodule ".shallow/.tmux/bundle/tmuxifier"]
+	path = .shallow/.tmux/bundle/tmuxifier
+	url = https://github.com/jimeh/tmuxifier.git

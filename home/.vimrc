@@ -567,8 +567,9 @@ let g:session_default_overwrite = 1 " overwrite last default session
 let g:session_autoload = 'no' " do not autoload sessions
 let g:session_autosave = 'yes' " automatically save session on vim close
 let g:session_command_aliases = 1 " enable aliased commands
-set sessionoptions-=options " do not store options in session file
 set sessionoptions-=folds   " do not store folds in session file
+set sessionoptions-=help    " do not store help windows in session file
+set sessionoptions-=options " do not store options in session file
 NeoBundle 'xolox/vim-session', {
   \     'depends': [
   \         'xolox/vim-misc'

@@ -41,7 +41,7 @@ npm=(
   bower
   browserify
   coffeescript
-  grunt
+  grunt-cli
   gulp
   jake
   jasmine
