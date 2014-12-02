@@ -38,3 +38,6 @@ xcuserdata
 *.moved-aside
 DerivedData
 *.xcuserstate
+
+# Node.js
+npm-debug.log

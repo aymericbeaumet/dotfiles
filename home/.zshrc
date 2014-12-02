@@ -102,18 +102,17 @@ fi
 export EDITOR=`which vim`
 export USE_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
-export VIEWER=`which open`
-export PAGER=`which less`
+export VIEWER=open
+export PAGER=less
 
 #########
 # Alias #
 #########
 
-# Colorful grep
+# Colorful aliases
 alias grep='grep --color=auto'
-
-# Colorful less
 alias less='less -R'
+alias tree='tree -C'
 
 # Quick trash access (https://github.com/sindresorhus/trash)
 alias t='trash'
@@ -197,6 +196,9 @@ zstyle ':completion:*' group-name ''
 # Separate man page sections
 zstyle ':completion:*:manuals' separate-sections true
 
+# Case insensitive completion
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
 setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
 setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
 unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is not after the last character
@@ -259,8 +261,8 @@ git_wrapper()
 }
 compdef git_wrapper=git
 
-# Bind `g` and `git` to `git_wrapper` (disable globbing to avoid problem with
-# parameter containing extended globbing characters, like '#' or '^')
+# Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
+# parameter containing extended globing characters, like '#' or '^')
 alias g='noglob git_wrapper'
 alias git='noglob git_wrapper'
 
