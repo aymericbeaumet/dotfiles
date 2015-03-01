@@ -19,6 +19,7 @@
   "validthis": true,
 
   "node": true,
+  "esnext": true,
 
   "globals" : {
     "describe" : false,

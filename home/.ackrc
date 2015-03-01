@@ -10,6 +10,7 @@
 --ignore-dir=node_modules
 
 # add custom types support
+--type-set=csv=.csv
 --type-set=json=.json
 --type-set=markdown=.markdown,.mdown,.mkdn,.md,.mkd,.mdwn,.mdtxt,.mdtext
---type-set=csv=.csv
+--type-set=typescript=.ts
