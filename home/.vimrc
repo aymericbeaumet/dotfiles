@@ -104,7 +104,6 @@ set encoding=utf-8      " ensure proper encoding
 set ttyfast             " we have a fast terminal
 set modeline            " enable modelines
 set modelines=3         " consider the first/last three lines
-set fileformats=unix,mac,dos " support all three newline formats
 set history=1000        " increase history size
 
 set noswapfile          " disable swap files
@@ -327,7 +326,6 @@ au FileType make       setl noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
 au FileType markdown   setl omnifunc=htmlcomplete#CompleteTags formatoptions=tcroqn2 comments=n:>
 au FileType php        setl shiftwidth=4 softtabstop=4 tabstop=4 iskeyword-=$
 au FileType python     setl shiftwidth=4 softtabstop=4 tabstop=4
-au FileType typescript setl omnifunc=TSScompleteFunc
 
 " }}}
 
@@ -409,6 +407,10 @@ NeoBundle 'kchmck/vim-coffee-script'
 
 NeoBundle 'ap/vim-css-color'
 
+" --- Docker
+
+NeoBundle 'ekalinin/Dockerfile.vim'
+
 " --- Git
 
 NeoBundle 'tpope/vim-git'
@@ -431,6 +433,8 @@ NeoBundle 'digitaltoad/vim-jade'
 let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
 NeoBundle 'pangloss/vim-javascript'
 
+NeoBundle 'mxw/vim-jsx'
+
 NeoBundle 'jelera/vim-javascript-syntax'
 
 NeoBundle 'marijnh/tern_for_vim', {
@@ -441,6 +445,7 @@ let g:nodejs_complete_config = { 'js_compl_fn': 'tern#Complete' }
 NeoBundle 'myhere/vim-nodejs-complete'
 
 " --- JSON
+
 NeoBundle 'elzr/vim-json'
 
 " --- LESS
@@ -451,6 +456,11 @@ NeoBundle 'groenewege/vim-less'
 
 NeoBundle 'tpope/vim-markdown'
 
+" --- Nginx
+
+NeoBundle 'nginx.vim'
+au BufRead,BufNewFile /etc/nginx/*,/usr/local/nginx/conf/*,*nginx.conf if &ft == '' | setfiletype nginx | endif
+
 " --- SASS/SCSS
 
 NeoBundle 'cakebaker/scss-syntax.vim'
@@ -458,13 +468,6 @@ NeoBundle 'cakebaker/scss-syntax.vim'
 " --- Stylus
 
 NeoBundle 'wavded/vim-stylus'
-
-" --- TypeScript
-
-NeoBundle 'leafgarland/typescript-vim'
-NeoBundle 'clausreinke/typescript-tools', {
-  \   'build': { 'mac': 'npm install -g' }
-  \ }
 
 " ---
 
@@ -505,14 +508,13 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 2
 let g:syntastic_javascript_checkers = ['jshint']
-let g:syntastic_typescript_checkers = ['tslint']
 let g:syntastic_mode_map = {
   \   'mode': 'passive',
-  \   'active_filetypes': ['javascript', 'typescript'],
+  \   'active_filetypes': ['javascript'],
   \   'passive_filetypes': []
   \ }
 NeoBundle 'scrooloose/syntastic', {
-  \   'build': { 'mac': 'npm install -g jshint tslint' }
+  \   'build': { 'mac': 'npm install -g jshint' }
   \ }
 let bundle = neobundle#get('syntastic')
 function! bundle.hooks.on_post_source(bundle)
@@ -528,7 +530,7 @@ let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 NeoBundle 'Valloric/YouCompleteMe', {
-  \   'build': { 'mac': './install.sh --clang-completer' },
+  \   'build': { 'mac': 'git submodule update --init --recursive && ./install.sh --clang-completer' },
   \   'vim_version': '7.3.584',
   \ }
 let bundle = neobundle#get('YouCompleteMe')
