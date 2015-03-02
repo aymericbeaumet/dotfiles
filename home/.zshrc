@@ -243,6 +243,30 @@ stty start undef
 ##################################
 
 ###
+# Docker
+###
+
+# `docker_wrapper` (without arguments) will invoke `docker ps`
+# `docker_wrapper ...` will invoke `docker ...`
+docker_wrapper()
+{
+  if (( $# == 0 )) ; then
+    command docker ps
+  else
+    command docker "$@"
+  fi
+}
+
+# Bind `d` and `docker` to `docker_wrapper` (disable globing to avoid problem
+# with parameter containing extended globing characters, like '#' or '^')
+alias d='noglob docker_wrapper'
+alias docker='noglob docker_wrapper'
+
+# Fix completion
+compdef d=docker
+compdef docker_wrapper=docker
+
+###
 # Git
 ###
 
@@ -259,12 +283,15 @@ git_wrapper()
     command git "$@"
   fi
 }
-compdef git_wrapper=git
 
 # Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
 # parameter containing extended globing characters, like '#' or '^')
 alias g='noglob git_wrapper'
 alias git='noglob git_wrapper'
+
+# Fix completion
+compdef g=git
+compdef git_wrapper=git
 
 ###
 # ls

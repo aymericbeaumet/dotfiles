@@ -1,35 +1,22 @@
 {
-  "bitwise": false,
-  "eqeqeq": true,
-  "forin": true,
-  "freeze": true,
-  "immed": true,
-  "latedef": "nofunc",
-  "newcap": true,
-  "noempty": true,
-  "nonbsp": true,
-  "nonew": false,
-  "plusplus": true,
-  "undef": true,
-  "unused": true,
-  "strict": true,
+  "enforceall": true,
+  "camelcase": false,
+  "es3": false,
+  "nocomma": false,
+  "singleGroups": false,
 
-  "expr": true,
-  "laxcomma": true,
-  "validthis": true,
-
-  "node": true,
   "esnext": true,
+  "node": true,
+  "browserify": true,
 
-  "globals" : {
-    "describe" : false,
-    "it" : false,
-    "before" : false,
-    "beforeEach" : false,
-    "after" : false,
-    "afterEach" : false,
-
-    "expect": true,
+  "globals": {
+    "before": false,
+    "beforeEach": false,
+    "after": false,
+    "afterEach": false,
+    "describe": false,
+    "it": false,
+    "expect": false,
     "sinon": true
   }
 }
