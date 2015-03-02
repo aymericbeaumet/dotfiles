@@ -1,5 +1,6 @@
 autoload -U add-zsh-hook
-autoload -U compinit
+autoload -U colors && colors
+autoload -U compinit && compinit
 
 ##################
 # Initialization #
@@ -35,24 +36,6 @@ set_tab_name() { printf "\e]1;$1\a" }
 # Set the window name
 # @param string $1 The desired window name
 set_window_name() { printf "\e]2;$1\a" }
-
-##########
-# Colors #
-##########
-
-COLOR_RESET=$'%{\033[0m%}'
-
-COLOR_BOLD=$'%{\033[1m%}'
-COLOR_UNDERLINE=$'%{\033[4m%}'
-COLOR_INVERSE=$'%{\033[7m%}'
-
-COLOR_BLUE=$'%{\033[38;05;75m%}'
-COLOR_SMOOTH_GREEN=$'%{\033[38;05;76m%}'
-COLOR_GREEN=$'%{\033[38;05;34m%}'
-COLOR_LIGHT_GREEN=$'%{\033[38;05;40m%}'
-COLOR_YELLOW=$'%{\033[38;05;220m%}'
-COLOR_RED=$'%{\033[38;05;1m%}'
-COLOR_ORANGE=$'%{\033[38;05;202m%}'
 
 ###########
 # Options #
@@ -156,8 +139,6 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 # Autocomplete #
 ################
 
-compinit
-
 # Allow arrow navigation
 zstyle ':completion:*' menu select
 
@@ -217,18 +198,18 @@ precmd_set_prompt()
 
   # left prompt
   if [ -n "$(jobs)" ] ; then
-    PROMPT="[${COLOR_SMOOTH_GREEN}%j${COLOR_RESET}&:?${COLOR_SMOOTH_GREEN}%?${COLOR_RESET}] "
+    PROMPT="[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
   else
-    PROMPT="%(0?..[${COLOR_SMOOTH_GREEN}%j${COLOR_RESET}&:?${COLOR_SMOOTH_GREEN}%?${COLOR_RESET}] )"
+    PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
-  PROMPT="$PROMPT$COLOR_BLUE%30<...<%~%<<$COLOR_RESET${git_prompt:+ $git_prompt} "
+  PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%}${git_prompt:+ $git_prompt} "
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
   RPROMPT=''
   if [ -n "$SHLVL" ] && (( $SHLVL > 1 )) ; then
-    RPROMPT="[%n$COLOR_BLUE@$COLOR_RESET%M]"
-    RPROMPT="$RPROMPT {^$COLOR_BLUE%L$COLOR_RESET}"
+    RPROMPT="[%n%{$fg[blue]%}@%{$reset_color%}%M]"
+    RPROMPT="$RPROMPT {^%{$fg[blue]%}%L%{$reset_color%}}"
   fi
 }
 
@@ -344,17 +325,18 @@ if [ -r "$zsh_git_prompt" ] ; then
   ZSH_THEME_GIT_PROMPT_CACHE=1
   source "$zsh_git_prompt"
 
-  # Change appearance
+  # Configure theme
   ZSH_THEME_GIT_PROMPT_PREFIX='('
   ZSH_THEME_GIT_PROMPT_SUFFIX=')'
   ZSH_THEME_GIT_PROMPT_SEPARATOR='|'
-  ZSH_THEME_GIT_PROMPT_BRANCH="$COLOR_YELLOW"
-  ZSH_THEME_GIT_PROMPT_STAGED="$COLOR_GREEN±"
-  ZSH_THEME_GIT_PROMPT_CONFLICTS="$COLOR_ORANGE×"
-  ZSH_THEME_GIT_PROMPT_CHANGED="$COLOR_RED≠"
-  ZSH_THEME_GIT_PROMPT_REMOTE=''
-  ZSH_THEME_GIT_PROMPT_UNTRACKED='…'
-  ZSH_THEME_GIT_PROMPT_CLEAN="$COLOR_LIGHT_GREEN✓"
+  ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg[yellow]%}"
+  ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[green]%}%{±%G%}"
+  ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$fg[orange]%}%{×%G%}"
+  ZSH_THEME_GIT_PROMPT_CHANGED="%{$fg[red]%}%{≠%G%}"
+  ZSH_THEME_GIT_PROMPT_BEHIND="%{↓%G%}"
+  ZSH_THEME_GIT_PROMPT_AHEAD="%{↑%G%}"
+  ZSH_THEME_GIT_PROMPT_UNTRACKED='%{…%G%}'
+  ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%}%{✓%G%}"
 
   # Update zsh-git-prompt data after the first load to avoid missing prompt
   # informations if zsh is started inside a Git repository
