@@ -97,24 +97,14 @@ alias grep='grep --color=auto'
 alias less='less -R'
 alias tree='tree -C'
 
-# Quick trash access (https://github.com/sindresorhus/trash)
-alias t='trash'
-
 # Define the `updatedb` command on OSX
 if is_macosx ; then
   alias updatedb='/usr/libexec/locate.updatedb'
 fi
 
 # Pipe standard output to common commands
-alias -g C=' | wc -l'
-alias -g G=' | grep' # e.g.: 'ls | grep -e foo' <=> 'ls G -e foo'
+alias -g G=' | grep'
 alias -g L=' | less'
-alias -g H=' | head'
-alias -g T=' | tail'
-alias -g S=' | sort'
-
-# Redirect both standard output and standard error to /dev/null
-alias -g N=' &>/dev/null'
 
 ###########
 # History #
