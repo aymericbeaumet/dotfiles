@@ -174,6 +174,17 @@ setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
 setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
 unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is not after the last character
 
+#######
+# Tab #
+#######
+
+precmd_set_tab_title()
+{
+  echo -ne "\e]1;$(basename $(pwd))\a"
+}
+
+add-zsh-hook precmd precmd_set_tab_title
+
 ##########
 # Prompt #
 ##########
@@ -263,6 +274,12 @@ alias git='noglob git_wrapper'
 # Fix completion
 compdef g=git
 compdef git_wrapper=git
+
+###
+# du
+###
+
+alias du='du -h'
 
 ###
 # ls

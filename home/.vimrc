@@ -420,6 +420,13 @@ NeoBundle 'tpope/vim-git'
 let g:necoghc_enable_detailed_browse = 1
 NeoBundle 'eagletmt/neco-ghc'
 
+let g:haskell_enable_quantification = 1
+let g:haskell_enable_recursivedo = 1
+let g:haskell_enable_arrowsyntax = 1
+let g:haskell_enable_pattern_synonyms = 1
+let g:haskell_enable_typeroles = 1
+NeoBundle 'raichoo/haskell-vim'
+
 " --- HTML
 
 NeoBundle 'othree/html5.vim'
