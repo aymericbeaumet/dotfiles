@@ -41,3 +41,15 @@ DerivedData
 
 # Node.js
 npm-debug.log
+
+# JetBrains IDEs
+*.iml
+.idea/
+*.ipr
+*.iws
+/out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
