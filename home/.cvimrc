@@ -1,7 +1,3 @@
-" Reverse scrolling (Apple style)
-map u scrollPageDown
-map d scrollPageUp
-
 " Colemak homerow, sorted considering accessibility on a matrix keyboard for a right-handed person
 " See: https://i1.wp.com/www.workmanlayout.com/blog/wp-content/uploads/2010/10/keyboard_graded_grid.png
 let hintcharacters = "ntesiroahd"
