@@ -261,7 +261,7 @@ set background=dark      " dark background
 set backspace=2          " fix backspace (on some OS/term)
 set encoding=utf-8       " ensure proper encoding
 set expandtab            " replace tabs by spaces
-set formatoptions=croqj " format option stuff (see :help fo-table)
+set formatoptions=croqj  " format option stuff (see :help fo-table)
 set gdefault             " default substitute g flag
 set hidden               " when a tab is closed, do not delete the buffer
 set history=1000         " increase history size
@@ -306,18 +306,18 @@ set wildmenu             " better command line completion menu
 set wildmode=full        "  `-> ensure better completion
 
 if has('persistent_undo')
-  set undofile            " enable undo files
-  set undolevels=1000     " number of undo level
-  set undoreload=10000    " number of lines to save for undo
+  set undofile           " enable undo files
+  set undolevels=1000    " number of undo level
+  set undoreload=10000   " number of lines to save for undo
   set undodir=~/.vim/tmp/undo// " undo files directory
   au VimEnter * call CreateDirectory(&undodir)
 endif
 
-set relativenumber      " relative line numerotation by default
+set relativenumber       " relative line numerotation by default
 au InsertEnter * setl norelativenumber number " classic in insert mode
 au InsertLeave * setl nonumber relativenumber " relative out of insert mode
 
-set cursorline          " highlight cursor line
+set cursorline           " highlight cursor line
 au VimEnter * hi CursorLine cterm=bold
 au InsertEnter * setl nocursorline " do not highlight in insert mode
 au InsertLeave * setl cursorline " highlight out of insert mode
