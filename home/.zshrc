@@ -1,13 +1,35 @@
 autoload -U add-zsh-hook
 autoload -U colors && colors
 autoload -U compinit && compinit
-autoload -U vcs_info
+autoload -Uz vcs_info
 
 ##################
 # Initialization #
 ##################
 
 [ -d ~/.zsh/tmp ] || mkdir ~/.zsh/tmp
+
+###########
+# Loaders #
+###########
+
+# Load Homeshick
+load_homeshick() {
+  source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+  fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
+  if which homeshick > /dev/null ; then homeshick --quiet refresh ; fi
+}
+
+# Load Boot2Docker
+load_boot2docker() {
+  if which boot2docker > /dev/null ; then $(boot2docker shellinit 2> /dev/null) ; fi
+}
+
+# Load NVM
+load_nvm() {
+  export NVM_DIR="$HOME/.nvm"
+  if which brew > /dev/null ; then source "$(brew --prefix nvm)/nvm.sh" ; fi
+}
 
 ###########
 # Helpers #
@@ -77,6 +99,8 @@ bindkey '^[3;5~' delete-char
 ###############
 # Environment #
 ###############
+
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
 
 export TERM=xterm-256color
 if [ -n "$TMUX" ] ; then
@@ -189,6 +213,8 @@ add-zsh-hook precmd precmd_set_tab_title
 ##########
 # Prompt #
 ##########
+
+setopt PROMPT_SUBST
 
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git*' formats "(%{$fg[yellow]%}%b%{$reset_color%})"
