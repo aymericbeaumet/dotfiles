@@ -375,6 +375,3 @@ if [ -r "$zsh_history_substring_search" ] ; then
 else
   echo 'The "zsh-history-substring-search" bundle is not installed.'
 fi
-
-# added by travis gem
-[ -f /Users/ab/.travis/travis.sh ] && source /Users/ab/.travis/travis.sh
