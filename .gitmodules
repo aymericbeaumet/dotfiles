@@ -1,18 +1,12 @@
 [submodule ".shallow/.vim/bundle/neobundle.vim"]
 	path = .shallow/.vim/bundle/neobundle.vim
 	url = https://github.com/Shougo/neobundle.vim.git
-[submodule ".shallow/.zsh/bundle/zsh-completion"]
-	path = .shallow/.zsh/bundle/zsh-completion
-	url = https://github.com/zsh-users/zsh-completions.git
-[submodule ".shallow/.zsh/bundle/zsh-git-prompt"]
-	path = .shallow/.zsh/bundle/zsh-git-prompt
-	url = https://github.com/olivierverdier/zsh-git-prompt.git
-[submodule ".shallow/.zsh/bundle/zsh-syntax-highlighting"]
-	path = .shallow/.zsh/bundle/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule ".shallow/.zsh/bundle/zsh-history-substring-search"]
-	path = .shallow/.zsh/bundle/zsh-history-substring-search
-	url = https://github.com/zsh-users/zsh-history-substring-search.git
 [submodule ".shallow/.zsh/bundle/docker-zsh-completion"]
 	path = .shallow/.zsh/bundle/docker-zsh-completion
 	url = https://github.com/felixr/docker-zsh-completion.git
+[submodule ".shallow/.zsh/bundle/zsh-completion"]
+	path = .shallow/.zsh/bundle/zsh-completion
+	url = https://github.com/zsh-users/zsh-completions.git
+[submodule ".shallow/.zsh/bundle/zsh-syntax-highlighting"]
+	path = .shallow/.zsh/bundle/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

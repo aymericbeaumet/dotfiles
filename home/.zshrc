@@ -1,6 +1,7 @@
 autoload -U add-zsh-hook
 autoload -U colors && colors
 autoload -U compinit && compinit
+autoload -U vcs_info
 
 ##################
 # Initialization #
@@ -180,7 +181,7 @@ unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is 
 
 precmd_set_tab_title()
 {
-  echo -ne "\e]1;$(basename $(pwd))\a"
+  set_tab_name "$(basename $(pwd))"
 }
 
 add-zsh-hook precmd precmd_set_tab_title
@@ -189,13 +190,16 @@ add-zsh-hook precmd precmd_set_tab_title
 # Prompt #
 ##########
 
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git*' formats "(%{$fg[yellow]%}%b%{$reset_color%})"
+
 setopt TRANSIENT_RPROMPT # remove the right prompt after accepting a command line
 
 # This function will be called each time the prompt has to be generated
 precmd_set_prompt()
 {
-  # get Git information for the current directory
-  git_prompt="$(git_super_status)"
+  # get VCS information
+  vcs_info
 
   # left prompt
   if [ -n "$(jobs)" ] ; then
@@ -203,7 +207,7 @@ precmd_set_prompt()
   else
     PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
-  PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%}${git_prompt:+ $git_prompt} "
+  PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} "
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
@@ -244,7 +248,7 @@ docker_wrapper()
 alias d='noglob docker_wrapper'
 alias docker='noglob docker_wrapper'
 
-# Fix completion
+# Working completion
 compdef d=docker
 compdef docker_wrapper=docker
 
@@ -256,9 +260,6 @@ compdef docker_wrapper=docker
 # `git_wrapper ...` will invoke `git ...`
 git_wrapper()
 {
-  # used by zsh-git-prompt
-  __EXECUTED_GIT_COMMAND=1
-
   if (( $# == 0 )) ; then
     command git status -sb
   else
@@ -271,7 +272,7 @@ git_wrapper()
 alias g='noglob git_wrapper'
 alias git='noglob git_wrapper'
 
-# Fix completion
+# Working completion
 compdef g=git
 compdef git_wrapper=git
 
@@ -324,35 +325,6 @@ set_window_name "$(whoami)@$(hostname)"
 fpath=("$HOME/.zsh/completion" $fpath)
 
 ###
-# zsh-git-prompt (https://github.com/olivierverdier/zsh-git-prompt)
-###
-
-local zsh_git_prompt="$HOME/.zsh/bundle/zsh-git-prompt/zshrc.sh"
-if [ -r "$zsh_git_prompt" ] ; then
-  ZSH_THEME_GIT_PROMPT_CACHE=1
-  source "$zsh_git_prompt"
-
-  # Configure theme
-  ZSH_THEME_GIT_PROMPT_PREFIX='('
-  ZSH_THEME_GIT_PROMPT_SUFFIX=')'
-  ZSH_THEME_GIT_PROMPT_SEPARATOR='|'
-  ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg[yellow]%}"
-  ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[green]%}%{±%G%}"
-  ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$fg[orange]%}%{×%G%}"
-  ZSH_THEME_GIT_PROMPT_CHANGED="%{$fg[red]%}%{≠%G%}"
-  ZSH_THEME_GIT_PROMPT_BEHIND="%{↓%G%}"
-  ZSH_THEME_GIT_PROMPT_AHEAD="%{↑%G%}"
-  ZSH_THEME_GIT_PROMPT_UNTRACKED='%{…%G%}'
-  ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%}%{✓%G%}"
-
-  # Update zsh-git-prompt data after the first load to avoid missing prompt
-  # informations if zsh is started inside a Git repository
-  chpwd_update_git_vars
-else
-  echo 'The "zsh-git-prompt" bundle is not installed.'
-fi
-
-###
 # zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
 ###
 
@@ -361,17 +333,4 @@ if [ -r "$zsh_syntax_highlighting" ] ; then
   source "$zsh_syntax_highlighting"
 else
   echo 'The "zsh-syntax-highlighting" bundle is not installed.'
-fi
-
-###
-# zsh-history-substring-search (https://github.com/zsh-users/zsh-history-substring-search)
-###
-
-local zsh_history_substring_search="$HOME/.zsh/bundle/zsh-history-substring-search/zsh-history-substring-search.zsh"
-if [ -r "$zsh_history_substring_search" ] ; then
-  source "$zsh_history_substring_search"
-  bindkey -M emacs '^P' history-substring-search-up
-  bindkey -M emacs '^N' history-substring-search-down
-else
-  echo 'The "zsh-history-substring-search" bundle is not installed.'
 fi
