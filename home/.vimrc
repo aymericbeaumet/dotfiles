@@ -137,6 +137,7 @@ autocmd FileType html,xml NeoBundleSource ['matchit.zip']
 
 "    {{{ 3.3 Tools
 
+let g:gitgutter_map_keys = 0
 NeoBundle 'airblade/vim-gitgutter'
 
 NeoBundle 'airblade/vim-rooter'
