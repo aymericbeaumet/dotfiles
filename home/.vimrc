@@ -158,7 +158,6 @@ NeoBundle 'tpope/vim-unimpaired'
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
 
-" Syntastic
 let g:syntastic_check_on_open = 1
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 2
@@ -177,7 +176,6 @@ function! bundle.hooks.on_post_source(bundle)
 endfunction
 au FileType javascript NeoBundleSource 'scrooloose/syntastic'
 
-" YouCompleteMe
 let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
@@ -191,7 +189,6 @@ NeoBundleLazy 'Valloric/YouCompleteMe', {
   \ }
 au FileType c,cpp,javascript NeoBundleSource 'Valloric/YouCompleteMe'
 
-" UltiSnips
 let g:UltiSnipsSnippetDirectories = ['snippet']
 let g:UltiSnipsExpandTrigger = '<C-J>'
 let g:UltiSnipsJumpForwardTrigger = '<C-J>'
@@ -199,7 +196,6 @@ let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
 NeoBundleLazy 'SirVer/ultisnips'
 au FileType javascript NeoBundleSource 'SirVer/ultisnips'
 
-" CtrlP
 let g:ctrlp_map = '<Leader>f'
 let g:ctrlp_by_filename = 0 " search by filename and folder
 let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
@@ -220,7 +216,6 @@ function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
 endfunction
 
-" Airline
 let g:airline_theme = 'badwolf' " specify theme
 let g:airline_exclude_preview = 1 " remove airline from preview window
 let g:airline_left_sep = '»' " change left sections separator
