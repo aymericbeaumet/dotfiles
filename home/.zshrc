@@ -1,6 +1,6 @@
-autoload -U add-zsh-hook
-autoload -U colors && colors
-autoload -U compinit && compinit
+autoload -Uz add-zsh-hook
+autoload -Uz colors && colors
+autoload -Uz compinit && compinit
 autoload -Uz vcs_info
 
 ##################
@@ -325,19 +325,19 @@ set_window_name "$(whoami)@$(hostname)"
 # External bundles #
 ####################
 
+# Custom autoload
+fpath=("$HOME/.zsh/autoload" "${fpath[@]}")
+
 ###
 # Homeshick
 ###
 source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
+fpath=("$HOME/.homesick/repos/homeshick/completions" "${fpath[@]}")
 
 ###
 # Boot2Docker
 ###
-deferred_boot2docker() { unalias boot2docker d docker &> /dev/null
-  if which boot2docker > /dev/null ; then $(boot2docker shellinit 2> /dev/null) ; fi
-  setup_docker_wrapper
-}
+autoload -Uz deferred_boot2docker
 alias boot2docker='deferred_boot2docker && boot2docker'
 alias d='deferred_boot2docker && docker_wrapper'
 alias docker='deferred_boot2docker && docker_wrapper'
@@ -345,10 +345,7 @@ alias docker='deferred_boot2docker && docker_wrapper'
 ###
 # NVM
 ###
-deferred_nvm() { unalias nvm node npm &> /dev/null
-  export NVM_DIR="$HOME/.nvm"
-  if which brew > /dev/null ; then source "$(brew --prefix nvm)/nvm.sh" ; fi
-}
+autoload -Uz deferred_nvm
 alias nvm='deferred_nvm && nvm'
 alias node='deferred_nvm && node'
 alias npm='deferred_nvm && npm'
@@ -356,7 +353,7 @@ alias npm='deferred_nvm && npm'
 ###
 # zsh-completion (https://github.com/zsh-users/zsh-completions)
 ###
-fpath=("$HOME/.zsh/completion" $fpath)
+fpath=("$HOME/.zsh/completion" "${fpath[@]}")
 
 ###
 # zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
