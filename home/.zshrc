@@ -194,7 +194,7 @@ add-zsh-hook precmd precmd_set_tab_title
 setopt PROMPT_SUBST
 
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git*' formats "(%{$fg[yellow]%}%b%{$reset_color%})"
+zstyle ':vcs_info:git*' formats "%{$fg_bold[blue]%}%r%{$reset_color%} (%{$fg[yellow]%}%b%{$reset_color%}%m%u%c) %S"
 
 setopt TRANSIENT_RPROMPT # remove the right prompt after accepting a command line
 
@@ -210,7 +210,11 @@ precmd_set_prompt()
   else
     PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
-  PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} "
+  if [ -n "$vcs_info_msg_0_" ] ; then
+    PROMPT="$PROMPT$vcs_info_msg_0_ "
+  else
+    PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%} "
+  fi
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
