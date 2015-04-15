@@ -1,0 +1,7 @@
+deferred_boot2docker() {
+  unalias boot2docker d docker &> /dev/null
+  unfunction deferred_boot2docker &> /dev/null
+
+  if which boot2docker > /dev/null ; then $(boot2docker shellinit 2> /dev/null) ; fi
+  setup_docker_wrapper
+}
