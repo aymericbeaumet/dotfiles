@@ -10,28 +10,6 @@ autoload -Uz vcs_info
 [ -d ~/.zsh/tmp ] || mkdir ~/.zsh/tmp
 
 ###########
-# Loaders #
-###########
-
-# Load Homeshick
-load_homeshick() {
-  source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-  fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
-  if which homeshick > /dev/null ; then homeshick --quiet refresh ; fi
-}
-
-# Load Boot2Docker
-load_boot2docker() {
-  if which boot2docker > /dev/null ; then $(boot2docker shellinit 2> /dev/null) ; fi
-}
-
-# Load NVM
-load_nvm() {
-  export NVM_DIR="$HOME/.nvm"
-  if which brew > /dev/null ; then source "$(brew --prefix nvm)/nvm.sh" ; fi
-}
-
-###########
 # Helpers #
 ###########
 
@@ -158,10 +136,10 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 zstyle ':completion:*' menu select
 
 # Ignore compiled files on vi/vim completion
-zstyle ':completion:*:*:(v|vi|vim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
+zstyle ':completion:*:*:(v|vi|vim|mvim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 
 # Don't complete stuff already on the line
-zstyle ':completion::*:(v|vi|vim|rm):*' ignore-line true
+zstyle ':completion::*:(v|vi|vim|mvim|rm):*' ignore-line true
 
 # Don't complete directory we are already in
 zstyle ':completion:*' ignore-parents parent pwd
@@ -243,7 +221,6 @@ precmd_set_prompt()
     RPROMPT="$RPROMPT {^%{$fg[blue]%}%L%{$reset_color%}}"
   fi
 }
-
 add-zsh-hook precmd precmd_set_prompt
 
 # Disable flow control (^S / ^Q)
@@ -258,49 +235,54 @@ stty start undef
 # Docker
 ###
 
-# `docker_wrapper` (without arguments) will invoke `docker ps`
-# `docker_wrapper ...` will invoke `docker ...`
-docker_wrapper()
-{
-  if (( $# == 0 )) ; then
-    command docker ps
-  else
-    command docker "$@"
-  fi
+setup_docker_wrapper() {
+  # `docker_wrapper` (without arguments) will invoke `docker ps`
+  # `docker_wrapper ...` will invoke `docker ...`
+  docker_wrapper()
+  {
+    if (( $# == 0 )) ; then
+      command docker ps
+    else
+      command docker "$@"
+    fi
+  }
+
+  # Bind `d` and `docker` to `docker_wrapper` (disable globing to avoid problem
+  # with parameter containing extended globing characters, like '#' or '^')
+  alias d='noglob docker_wrapper'
+  alias docker='noglob docker_wrapper'
+
+  # Working completion
+  compdef d=docker
+  compdef docker_wrapper=docker
 }
-
-# Bind `d` and `docker` to `docker_wrapper` (disable globing to avoid problem
-# with parameter containing extended globing characters, like '#' or '^')
-alias d='noglob docker_wrapper'
-alias docker='noglob docker_wrapper'
-
-# Working completion
-compdef d=docker
-compdef docker_wrapper=docker
 
 ###
 # Git
 ###
 
-# `git_wrapper` (without argument) will invoke `git status -sb`
-# `git_wrapper ...` will invoke `git ...`
-git_wrapper()
-{
-  if (( $# == 0 )) ; then
-    command git status -sb
-  else
-    command git "$@"
-  fi
+setup_git_wrapper() {
+  # `git_wrapper` (without argument) will invoke `git status -sb`
+  # `git_wrapper ...` will invoke `git ...`
+  git_wrapper()
+  {
+    if (( $# == 0 )) ; then
+      command git status -sb
+    else
+      command git "$@"
+    fi
+  }
+
+  # Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
+  # parameter containing extended globing characters, like '#' or '^')
+  alias g='noglob git_wrapper'
+  alias git='noglob git_wrapper'
+
+  # Working completion
+  compdef g=git
+  compdef git_wrapper=git
 }
-
-# Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
-# parameter containing extended globing characters, like '#' or '^')
-alias g='noglob git_wrapper'
-alias git='noglob git_wrapper'
-
-# Working completion
-compdef g=git
-compdef git_wrapper=git
+setup_git_wrapper
 
 ###
 # du
@@ -344,19 +326,39 @@ set_window_name "$(whoami)@$(hostname)"
 ####################
 
 ###
+# Homeshick
+###
+source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+fpath=($HOME/.homesick/repos/homeshick/completions $fpath)
+
+###
+# Boot2Docker
+###
+deferred_boot2docker() { unalias boot2docker d docker &> /dev/null
+  if which boot2docker > /dev/null ; then $(boot2docker shellinit 2> /dev/null) ; fi
+  setup_docker_wrapper
+}
+alias boot2docker='deferred_boot2docker && boot2docker'
+alias d='deferred_boot2docker && docker_wrapper'
+alias docker='deferred_boot2docker && docker_wrapper'
+
+###
+# NVM
+###
+deferred_nvm() { unalias nvm node npm &> /dev/null
+  export NVM_DIR="$HOME/.nvm"
+  if which brew > /dev/null ; then source "$(brew --prefix nvm)/nvm.sh" ; fi
+}
+alias nvm='deferred_nvm && nvm'
+alias node='deferred_nvm && node'
+alias npm='deferred_nvm && npm'
+
+###
 # zsh-completion (https://github.com/zsh-users/zsh-completions)
 ###
-
-# Add completion scripts from a custom directory
 fpath=("$HOME/.zsh/completion" $fpath)
 
 ###
 # zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
 ###
-
-local zsh_syntax_highlighting="$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-if [ -r "$zsh_syntax_highlighting" ] ; then
-  source "$zsh_syntax_highlighting"
-else
-  echo 'The "zsh-syntax-highlighting" bundle is not installed.'
-fi
+source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
