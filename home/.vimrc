@@ -126,7 +126,7 @@ au BufRead,BufNewFile /etc/nginx/*,/usr/local/nginx/conf/*,*nginx.conf if &ft ==
 
 " Stylus
 NeoBundleLazy 'wavded/vim-stylus'
-au FileType stylys NeoBundleSource 'wavded/vim-stylus'
+au FileType stylus NeoBundleSource 'wavded/vim-stylus'
 au BufRead,BufNewFile *.styl if &ft == '' | setfiletype stylus | endif
 
 " XML
@@ -189,7 +189,6 @@ NeoBundleLazy 'Valloric/YouCompleteMe', {
   \   'build': { 'mac': './install.sh --clang-completer' },
   \   'vim_version': '7.3.584',
   \ }
-let bundle = neobundle#get('YouCompleteMe')
 au FileType c,cpp,javascript NeoBundleSource 'Valloric/YouCompleteMe'
 
 " UltiSnips
