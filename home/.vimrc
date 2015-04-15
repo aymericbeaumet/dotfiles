@@ -402,6 +402,10 @@ nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
 " delete inactive buffers
 nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
 
+" fix how ^Y ^E behave in insert mode
+inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
+inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
+
 " }}}
 
 
