@@ -71,11 +71,11 @@ let g:neobundle#install_process_timeout = 3600 " 1 hour timeout during install/u
 call neobundle#begin(g:bundle_dir)
 
 NeoBundleFetch 'Shougo/neobundle.vim', {
-  \   'depends': [
-  \     [ 'Shougo/vimproc.vim', { 'build' : { 'mac' : 'make -f make_mac.mak' } } ],
-  \   ],
-  \   'vim_version': '7.2.051',
-  \ }
+\   'depends': [
+\     [ 'Shougo/vimproc.vim', { 'build' : { 'mac' : 'make -f make_mac.mak' } } ],
+\   ],
+\   'vim_version': '7.2.051',
+\ }
 
 call neobundle#end()
 
@@ -85,19 +85,19 @@ call neobundle#end()
 
 " Docker
 NeoBundleLazy 'ekalinin/Dockerfile.vim'
-au FileType =dockerfile NeoBundleSource 'ekalinin/Dockerfile.vim'
+au FileType =dockerfile NeoBundleSource ['ekalinin/Dockerfile.vim']
 
 " Git
 NeoBundleLazy 'tpope/vim-git'
-au FileType git* NeoBundleSource 'tpope/vim-git'
+au FileType git* NeoBundleSource ['tpope/vim-git']
 
 " HTML
 NeoBundleLazy 'othree/html5.vim'
-au FileType html NeoBundleSource 'othree/html5.vim'
+au FileType html NeoBundleSource ['othree/html5.vim']
 
 " Jade
 NeoBundleLazy 'digitaltoad/vim-jade'
-au FileType jade NeoBundleSource 'digitaltoad/vim-jade'
+au FileType jade NeoBundleSource ['digitaltoad/vim-jade']
 au BufRead,BufNewFile *.jade if &ft == '' | setfiletype jade | endif
 
 " Javascript
@@ -107,45 +107,110 @@ NeoBundleLazy 'jelera/vim-javascript-syntax'
 NeoBundleLazy 'marijnh/tern_for_vim', { 'build': { 'mac': 'npm install' } }
 let g:nodejs_complete_config = { 'js_compl_fn': 'tern#Complete' }
 NeoBundleLazy 'myhere/vim-nodejs-complete'
-au FileType html,javascript NeoBundleSource 'pangloss/vim-javascript', 'jelera/vim-javascript-syntax', 'marijnh/tern_for_vim', 'myhere/vim-nodejs-complete'
+au FileType html,javascript NeoBundleSource ['pangloss/vim-javascript', 'jelera/vim-javascript-syntax', 'marijnh/tern_for_vim', 'myhere/vim-nodejs-complete']
 au BufRead,BufNewFile *.es6 if &ft == '' | setfiletype javascript | endif
 
 " JSON
 NeoBundleLazy 'elzr/vim-json'
-au FileType json NeoBundleSource 'elzr/vim-json'
+au FileType json NeoBundleSource ['elzr/vim-json']
 
 " Markdown
 NeoBundleLazy 'tpope/vim-markdown'
-au FileType markdown NeoBundleSource 'tpope/vim-markdown'
+au FileType markdown NeoBundleSource ['tpope/vim-markdown']
 au BufRead,BufNewFile *.markdown,*.mdown,*.mkdn,*.md,*.mkd,*.mdwn,*.mdtxt,*.mdtext if &ft == '' | setfiletype markdown | endif
 
 " Nginx
 NeoBundleLazy 'nginx.vim'
-au FileType nginx NeoBundleSource 'nginx.vim'
+au FileType nginx NeoBundleSource ['nginx.vim']
 au BufRead,BufNewFile /etc/nginx/*,/usr/local/nginx/conf/*,*nginx.conf if &ft == '' | setfiletype nginx | endif
 
 " Stylus
 NeoBundleLazy 'wavded/vim-stylus'
-au FileType stylus NeoBundleSource 'wavded/vim-stylus'
+au FileType stylus NeoBundleSource ['wavded/vim-stylus']
 au BufRead,BufNewFile *.styl if &ft == '' | setfiletype stylus | endif
 
 " XML
 NeoBundleLazy 'matchit.zip'
-autocmd FileType html,xml NeoBundleSource 'matchit.zip'
+autocmd FileType html,xml NeoBundleSource ['matchit.zip']
 
 "    }}}
 
 "    {{{ 3.3 Tools
 
+NeoBundle 'airblade/vim-gitgutter'
+
 NeoBundle 'airblade/vim-rooter'
+
+let g:airline_theme = 'badwolf' " specify theme
+let g:airline_exclude_preview = 1 " remove airline from preview window
+let g:airline_left_sep = '»' " change left sections separator
+let g:airline_right_sep = '«' " change right sections separator
+let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
+NeoBundle 'bling/vim-airline', {
+\   'vim_version': '7.2',
+\ }
+let bundle = neobundle#get('vim-airline')
+function! bundle.hooks.on_post_source(bundle)
+  set noshowmode " hide the duplicate mode in bottom status bar
+endfunction
 
 NeoBundle 'editorconfig/editorconfig-vim'
 
+let g:winresizer_start_key = '<C-W><C-W>'
+NeoBundle 'jimsei/winresizer'
+
+let g:ctrlp_map = '<Leader>f'
+let g:ctrlp_by_filename = 0 " search by filename and folder
+let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
+let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
+let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
+let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
+let g:ctrlp_custom_ignore = {
+\   'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build|dist)$'
+\ } " will be ignored in completion (`wildignore` is applied first)
+let g:ctrlp_max_depth = 13 " avoid lag if launched in a high level directory
+let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
+let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
+let g:ctrlp_mruf_case_sensitive = 1 " set case sensitive search
+let g:ctrlp_mruf_save_on_update = 0 " only save MRU on Vim exit
+NeoBundle 'kien/ctrlp.vim'
+let bundle = neobundle#get('ctrlp.vim')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
+endfunction
+
 NeoBundle 'scrooloose/nerdcommenter'
+
+let g:syntastic_check_on_open = 1
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_javascript_checkers = ['jshint']
+let g:syntastic_mode_map = {
+\   'mode': 'passive',
+\   'active_filetypes': ['javascript'],
+\   'passive_filetypes': []
+\ }
+NeoBundleLazy 'scrooloose/syntastic', {
+\   'build': { 'mac': 'npm install -g jshint' }
+\ }
+let bundle = neobundle#get('syntastic')
+function! bundle.hooks.on_post_source(bundle)
+  nnoremap <silent> <Leader>s :SyntasticCheck<CR>
+endfunction
+au FileType javascript NeoBundleSource ['scrooloose/syntastic']
+
+let g:UltiSnipsSnippetDirectories = ['snippet']
+let g:UltiSnipsExpandTrigger = '<C-J>'
+let g:UltiSnipsJumpForwardTrigger = '<C-J>'
+let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
+NeoBundle 'SirVer/ultisnips'
 
 NeoBundle 'tpope/vim-abolish'
 
 NeoBundle 'tpope/vim-eunuch'
+
+NeoBundle 'tpope/vim-fugitive'
 
 NeoBundle 'tpope/vim-repeat'
 
@@ -155,27 +220,6 @@ NeoBundle 'tpope/vim-surround'
 
 NeoBundle 'tpope/vim-unimpaired'
 
-let g:winresizer_start_key = '<C-W><C-W>'
-NeoBundle 'jimsei/winresizer'
-
-let g:syntastic_check_on_open = 1
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 2
-let g:syntastic_javascript_checkers = ['jshint']
-let g:syntastic_mode_map = {
-  \   'mode': 'passive',
-  \   'active_filetypes': ['javascript'],
-  \   'passive_filetypes': []
-  \ }
-NeoBundleLazy 'scrooloose/syntastic', {
-  \   'build': { 'mac': 'npm install -g jshint' }
-  \ }
-let bundle = neobundle#get('syntastic')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>s :SyntasticCheck<CR>
-endfunction
-au FileType javascript NeoBundleSource 'scrooloose/syntastic'
-
 let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
@@ -184,51 +228,10 @@ let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 NeoBundleLazy 'Valloric/YouCompleteMe', {
-  \   'build': { 'mac': './install.sh --clang-completer' },
-  \   'vim_version': '7.3.584',
-  \ }
-au FileType c,cpp,javascript NeoBundleSource 'Valloric/YouCompleteMe'
-
-let g:UltiSnipsSnippetDirectories = ['snippet']
-let g:UltiSnipsExpandTrigger = '<C-J>'
-let g:UltiSnipsJumpForwardTrigger = '<C-J>'
-let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
-NeoBundleLazy 'SirVer/ultisnips'
-au FileType javascript NeoBundleSource 'SirVer/ultisnips'
-
-let g:ctrlp_map = '<Leader>f'
-let g:ctrlp_by_filename = 0 " search by filename and folder
-let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
-let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
-let g:ctrlp_clear_cache_on_exit = 0 " persistent cache
-let g:ctrlp_show_hidden = 1 " search for hidden files/dirs
-let g:ctrlp_custom_ignore = {
-  \   'dir':  '\v[\/](\.(git|hg|svn)|node_modules|bower_components|build|dist)$'
-  \ } " will be ignored in completion (`wildignore` is applied first)
-let g:ctrlp_max_depth = 13 " avoid lag if launched in a high level directory
-let g:ctrlp_open_multiple_files = '1vjr' " allow to open several files at once
-let g:ctrlp_follow_symlinks = 1 " follow symlinks (but prevent infinite loops)
-let g:ctrlp_mruf_case_sensitive = 1 " set case sensitive search
-let g:ctrlp_mruf_save_on_update = 0 " only save on Vim exit
-NeoBundle 'kien/ctrlp.vim'
-let bundle = neobundle#get('ctrlp.vim')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>b :CtrlPBuffer<CR>
-endfunction
-
-let g:airline_theme = 'badwolf' " specify theme
-let g:airline_exclude_preview = 1 " remove airline from preview window
-let g:airline_left_sep = '»' " change left sections separator
-let g:airline_right_sep = '«' " change right sections separator
-let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
-NeoBundle 'bling/vim-airline', {
-  \   'vim_version': '7.2',
-  \ }
-let bundle = neobundle#get('vim-airline')
-function! bundle.hooks.on_post_source(bundle)
-  set noshowmode " hide the duplicate mode in bottom status bar
-endfunction
+\   'build': { 'mac': './install.sh --clang-completer' },
+\   'vim_version': '7.3.584',
+\ }
+au FileType c,cpp,javascript NeoBundleSource ['Valloric/YouCompleteMe']
 
 "    }}}
 
