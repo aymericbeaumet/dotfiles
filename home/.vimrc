@@ -69,7 +69,6 @@ endif
 let g:neobundle#install_process_timeout = 3600 " 1 hour timeout during install/update (YCM takes a long time)
 
 call neobundle#begin(g:bundle_dir)
-call neobundle#end()
 
 NeoBundleFetch 'Shougo/neobundle.vim', {
   \   'depends': [
@@ -78,67 +77,84 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
   \   'vim_version': '7.2.051',
   \ }
 
+call neobundle#end()
+
 "    }}}
 
 "    {{{ 3.2 Languages
 
-" Generic
-NeoBundle 'editorconfig/editorconfig-vim'
-
-" C/CPP
-NeoBundle 'google.vim'
-
-" CSS
-NeoBundle 'ap/vim-css-color'
-
 " Docker
-NeoBundle 'ekalinin/Dockerfile.vim'
+NeoBundleLazy 'ekalinin/Dockerfile.vim'
+au FileType =dockerfile NeoBundleSource 'ekalinin/Dockerfile.vim'
 
 " Git
-NeoBundle 'tpope/vim-git'
+NeoBundleLazy 'tpope/vim-git'
+au FileType git* NeoBundleSource 'tpope/vim-git'
 
 " HTML
-NeoBundle 'matchit.zip'
-NeoBundle 'othree/html5.vim'
+NeoBundleLazy 'othree/html5.vim'
+au FileType html NeoBundleSource 'othree/html5.vim'
 
 " Jade
-NeoBundle 'digitaltoad/vim-jade'
+NeoBundleLazy 'digitaltoad/vim-jade'
+au FileType jade NeoBundleSource 'digitaltoad/vim-jade'
+au BufRead,BufNewFile *.jade if &ft == '' | setfiletype jade | endif
 
 " Javascript
 let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
-NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'jelera/vim-javascript-syntax'
-NeoBundle 'marijnh/tern_for_vim', { 'build': { 'mac': 'npm install' } }
+NeoBundleLazy 'pangloss/vim-javascript'
+NeoBundleLazy 'jelera/vim-javascript-syntax'
+NeoBundleLazy 'marijnh/tern_for_vim', { 'build': { 'mac': 'npm install' } }
 let g:nodejs_complete_config = { 'js_compl_fn': 'tern#Complete' }
-NeoBundle 'myhere/vim-nodejs-complete'
+NeoBundleLazy 'myhere/vim-nodejs-complete'
+au FileType html,javascript NeoBundleSource 'pangloss/vim-javascript', 'jelera/vim-javascript-syntax', 'marijnh/tern_for_vim', 'myhere/vim-nodejs-complete'
+au BufRead,BufNewFile *.es6 if &ft == '' | setfiletype javascript | endif
 
 " JSON
-NeoBundle 'elzr/vim-json'
+NeoBundleLazy 'elzr/vim-json'
+au FileType json NeoBundleSource 'elzr/vim-json'
 
 " Markdown
-NeoBundle 'tpope/vim-markdown'
+NeoBundleLazy 'tpope/vim-markdown'
+au FileType markdown NeoBundleSource 'tpope/vim-markdown'
+au BufRead,BufNewFile *.markdown,*.mdown,*.mkdn,*.md,*.mkd,*.mdwn,*.mdtxt,*.mdtext if &ft == '' | setfiletype markdown | endif
 
 " Nginx
-NeoBundle 'nginx.vim'
+NeoBundleLazy 'nginx.vim'
+au FileType nginx NeoBundleSource 'nginx.vim'
 au BufRead,BufNewFile /etc/nginx/*,/usr/local/nginx/conf/*,*nginx.conf if &ft == '' | setfiletype nginx | endif
 
 " Stylus
-NeoBundle 'wavded/vim-stylus'
+NeoBundleLazy 'wavded/vim-stylus'
+au FileType stylys NeoBundleSource 'wavded/vim-stylus'
+au BufRead,BufNewFile *.styl if &ft == '' | setfiletype stylus | endif
+
+" XML
+NeoBundleLazy 'matchit.zip'
+autocmd FileType html,xml NeoBundleSource 'matchit.zip'
 
 "    }}}
 
 "    {{{ 3.3 Tools
 
 NeoBundle 'airblade/vim-rooter'
+
+NeoBundle 'editorconfig/editorconfig-vim'
+
 NeoBundle 'scrooloose/nerdcommenter'
+
 NeoBundle 'tpope/vim-abolish'
+
 NeoBundle 'tpope/vim-eunuch'
+
 NeoBundle 'tpope/vim-repeat'
+
 NeoBundle 'tpope/vim-speeddating'
+
 NeoBundle 'tpope/vim-surround'
+
 NeoBundle 'tpope/vim-unimpaired'
 
-" Winresizer
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
 
@@ -152,13 +168,14 @@ let g:syntastic_mode_map = {
   \   'active_filetypes': ['javascript'],
   \   'passive_filetypes': []
   \ }
-NeoBundle 'scrooloose/syntastic', {
+NeoBundleLazy 'scrooloose/syntastic', {
   \   'build': { 'mac': 'npm install -g jshint' }
   \ }
 let bundle = neobundle#get('syntastic')
 function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>s :SyntasticCheck<CR>
 endfunction
+au FileType javascript NeoBundleSource 'scrooloose/syntastic'
 
 " YouCompleteMe
 let g:ycm_complete_in_comments = 1
@@ -168,18 +185,20 @@ set completeopt=longest,menuone
 let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-NeoBundle 'Valloric/YouCompleteMe', {
+NeoBundleLazy 'Valloric/YouCompleteMe', {
   \   'build': { 'mac': './install.sh --clang-completer' },
   \   'vim_version': '7.3.584',
   \ }
 let bundle = neobundle#get('YouCompleteMe')
+au FileType c,cpp,javascript NeoBundleSource 'Valloric/YouCompleteMe'
 
 " UltiSnips
 let g:UltiSnipsSnippetDirectories = ['snippet']
 let g:UltiSnipsExpandTrigger = '<C-J>'
 let g:UltiSnipsJumpForwardTrigger = '<C-J>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
-NeoBundle 'SirVer/ultisnips'
+NeoBundleLazy 'SirVer/ultisnips'
+au FileType javascript NeoBundleSource 'SirVer/ultisnips'
 
 " CtrlP
 let g:ctrlp_map = '<Leader>f'
@@ -210,7 +229,7 @@ let g:airline_right_sep = '«' " change right sections separator
 let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
 let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
 NeoBundle 'bling/vim-airline', {
-  \     'vim_version': '7.2',
+  \   'vim_version': '7.2',
   \ }
 let bundle = neobundle#get('vim-airline')
 function! bundle.hooks.on_post_source(bundle)
@@ -327,8 +346,7 @@ au InsertEnter * setl nohlsearch " hide search highlighting in insert mode
 au InsertLeave * setl hlsearch " ... and re-enable when leaving
 
 " remember last position in file (line and column)
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') |
-  \ exe 'normal! g`"' | endif
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | exe 'normal! g`"' | endif
 
 " }}}
 
@@ -411,7 +429,7 @@ filetype plugin indent on
 
 NeoBundleCheck
 
-" Call NeoBundle post source hooks again to support several consecutive `source ~/.vimrc`
+" Call NeoBundleLazy post source hooks again to support several consecutive `source ~/.vimrc`
 call neobundle#call_hook('on_post_source')
 
 " }}}
