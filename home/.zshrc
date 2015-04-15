@@ -191,12 +191,36 @@ add-zsh-hook precmd precmd_set_tab_title
 # Prompt #
 ##########
 
-setopt PROMPT_SUBST
-
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git*' formats "%{$fg_bold[blue]%}%r%{$reset_color%} (%{$fg[yellow]%}%b%{$reset_color%}%m%u%c) %S"
-
+setopt PROMPT_SUBST # allow substitutions in the prompts
 setopt TRANSIENT_RPROMPT # remove the right prompt after accepting a command line
+
+zstyle ':vcs_info:*' enable git hg svn
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' formats "%{$fg_bold[blue]%}%r%{$reset_color%} (%{$fg[cyan]%}%s%{$reset_color%}:%{$fg[yellow]%}%b%{$reset_color%}%m|%c%u%a) %S"
+zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}±%{$reset_color%}"
+zstyle ':vcs_info:*' unstagedstr "%{$fg[red]%}≠%{$reset_color%}"
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-remotebranch
+
+# From: https://github.com/sunaku/home/blob/master/.zsh/config/prompt.zsh#L26
++vi-git-untracked(){
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && git status --porcelain | fgrep '??' &> /dev/null ; then
+        hook_com[unstaged]+='…'
+    fi
+}
+
+# From: https://github.com/sunaku/home/blob/master/.zsh/config/prompt.zsh#L39
++vi-git-aheadbehind() {
+    local ahead behind
+    local -a gitstatus
+
+    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l | tr -d ' ')
+    (( $behind )) && gitstatus+=( "↓${behind}" )
+
+    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l | tr -d ' ')
+    (( $ahead )) && gitstatus+=( "↑${ahead}" )
+
+    hook_com[misc]+=${(j::)gitstatus}
+}
 
 # This function will be called each time the prompt has to be generated
 precmd_set_prompt()
@@ -208,20 +232,17 @@ precmd_set_prompt()
   if [ -n "$(jobs)" ] ; then
     PROMPT="[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
   else
-    PROMPT="%(0?..[&%{$fg_bold[green]%}%j%{$reset_color%}?%{$fg_bold[green]%}%?%{$reset_color%}] )"
+    PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
   if [ -n "$vcs_info_msg_0_" ] ; then
-    PROMPT="$PROMPT$vcs_info_msg_0_ "
+    PROMPT="$PROMPT${vcs_info_msg_0_/|)/)} " # Replace '|)' by ')' for aestheticism purpose
   else
     PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%} "
   fi
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
-  RPROMPT="[%n%{$fg_bold[red]%}@%{$reset_color%}%M]"
-  if [ -n "$SHLVL" ] && (( $SHLVL > 1 )) ; then
-    RPROMPT="$RPROMPT {^%{$fg_bold[red]%}%L%{$reset_color%}}"
-  fi
+  RPROMPT=''
 }
 add-zsh-hook precmd precmd_set_prompt
 
