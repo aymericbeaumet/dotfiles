@@ -185,7 +185,6 @@ precmd_set_tab_title()
 {
   set_tab_name "$(basename $(pwd))"
 }
-
 add-zsh-hook precmd precmd_set_tab_title
 
 ##########
