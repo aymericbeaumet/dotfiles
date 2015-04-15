@@ -208,7 +208,7 @@ precmd_set_prompt()
   if [ -n "$(jobs)" ] ; then
     PROMPT="[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
   else
-    PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
+    PROMPT="%(0?..[&%{$fg_bold[green]%}%j%{$reset_color%}?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
   if [ -n "$vcs_info_msg_0_" ] ; then
     PROMPT="$PROMPT$vcs_info_msg_0_ "
@@ -218,10 +218,9 @@ precmd_set_prompt()
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
-  RPROMPT=''
+  RPROMPT="[%n%{$fg_bold[red]%}@%{$reset_color%}%M]"
   if [ -n "$SHLVL" ] && (( $SHLVL > 1 )) ; then
-    RPROMPT="[%n%{$fg[blue]%}@%{$reset_color%}%M]"
-    RPROMPT="$RPROMPT {^%{$fg[blue]%}%L%{$reset_color%}}"
+    RPROMPT="$RPROMPT {^%{$fg_bold[red]%}%L%{$reset_color%}}"
   fi
 }
 add-zsh-hook precmd precmd_set_prompt
