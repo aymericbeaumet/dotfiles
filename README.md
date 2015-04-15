@@ -1,5 +1,7 @@
 # Aymeric's dotfiles
 
+Only tested on OSX.
+
 ## Requirements
 
 ```bash
