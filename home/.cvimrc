@@ -5,6 +5,7 @@ set nativelinkorder
 set sortlinkhints
 set vimcommand
 
+let barposition = "bottom"
 let blacklists = ["http://www.typing.com/*"]
 " Colemak homerow, sorted considering accessibility on a matrix keyboard for a
 " right-handed person
