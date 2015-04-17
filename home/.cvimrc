@@ -2,7 +2,6 @@ set noautofocus
 set autoupdategist
 set cncpcompletion
 set nativelinkorder
-set showtabindices
 set sortlinkhints
 set vimcommand
 
@@ -13,7 +12,5 @@ let blacklists = ["http://www.typing.com/*"]
 let hintcharacters = "ntesiroahd"
 let searchalias g = "google"
 
-map <Leader>r reloadTabUncached
-map <Leader>x :restore<Space>
 map <C-d> scrollFullPageDown
 map <C-u> scrollFullPageUp
