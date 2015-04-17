@@ -1,16 +1,16 @@
-let autoupdategist = true
+set autoupdategist
 let blacklists = ["http://www.typing.com/*"]
-let cncpcompletion = true
-let autofocus = false
-let autoupdategist = true
-let nativelinkorder = true
-let showtabindices = true
-let sortlinkhints = true
+set cncpcompletion
+set autofocus
+set autoupdategist
+set nativelinkorder
+set showtabindices
+set sortlinkhints
 " Colemak homerow, sorted considering accessibility on a matrix keyboard for a
 " right-handed person
 " See: https://i1.wp.com/www.workmanlayout.com/blog/wp-content/uploads/2010/10/keyboard_graded_grid.png
 let hintcharacters = "ntesiroahd"
-let vimcommand = true
+set vimcommand
 
 let searchalias g = "google"
 
