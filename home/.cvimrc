@@ -7,11 +7,17 @@ set vimcommand
 
 let barposition = "bottom"
 let blacklists = ["http://www.typing.com/*"]
-" Colemak homerow, sorted considering accessibility on a matrix keyboard for a
-" right-handed person
-" See: https://i1.wp.com/www.workmanlayout.com/blog/wp-content/uploads/2010/10/keyboard_graded_grid.png
-let hintcharacters = "ntesiroahd"
-let searchalias g = "google"
 
-map <C-d> scrollFullPageDown
-map <C-u> scrollFullPageUp
+"
+" Colemak stuff
+"
+
+" Colemak homerow
+let hintcharacters = "arstdhneio"
+
+" Feels like Apple natural scrolling
+" j and k already behave properly on the Colemak layout
+map u scrollFullDown
+map d scrollFullUp
+map <C-u> scrollFullPageDown
+map <C-d> scrollFullPageUp
