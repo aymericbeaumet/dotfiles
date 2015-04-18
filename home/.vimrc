@@ -361,13 +361,13 @@ vnoremap <silent> k gk
 
 " hide last search matches, refresh screen, re-read current buffer
 " See: http://www.reddit.com/r/vim/comments/1vdrxg/space_is_a_big_key_what_do_you_map_it_to/ceri6yf
-nnoremap <silent> <C-L> :nohl<CR>:redraw<CR>:checktime<CR><C-L>
-vnoremap <silent> <C-L> <C-C>:nohl<CR>:redraw<CR>:checktime<CR>gv
+nnoremap <silent> <C-L>      :nohl<CR>:redraw<CR>:checktime<CR><C-L>
+vnoremap <silent> <C-L> <C-C>:nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
 
 " copy from the cursor to the end of line using Y (matches D behavior)
 nnoremap <silent> Y y$
 
-" keep the cursor in place while joining lines (use the `l` register)
+" keep the cursor in place while joining lines (uses the `l` register)
 nnoremap <silent> J mlJ`l
 
 " disable annoying keys
