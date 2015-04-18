@@ -16,8 +16,10 @@ let blacklists = ["http://www.typing.com/*"]
 let hintcharacters = "arstdhneio"
 
 " Feels like Apple natural scrolling
-" j and k already behave properly on the Colemak layout
-map u scrollFullDown
-map d scrollFullUp
+unmap e
+unmap s
+unmap w
+map u scrollPageDown
 map <C-u> scrollFullPageDown
+map d scrollPageUp
 map <C-d> scrollFullPageUp
