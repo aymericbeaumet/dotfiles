@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root>
+
+  <item>
+    <identifier>remap.pc_application_to_control_escape</identifier>
+    <name>PC Application to control/escape</name>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::PC_APPLICATION,
+        KeyCode::CONTROL_L,
+        KeyCode::ESCAPE,
+    </autogen>
+  </item>
+
+  <item>
+    <identifier>remap.commands_to_curly_braces</identifier>
+    <name>Commands to curly braces</name>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::COMMAND_L, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
+        KeyCode::COMMAND_L,
+        KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_L,
+    </autogen>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::COMMAND_R, ModifierFlag::COMMAND_R | ModifierFlag::NONE,
+        KeyCode::COMMAND_R,
+        KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R,
+    </autogen>
+  </item>
+
+  <item>
+    <identifier>remap.controls_to_brackets</identifier>
+    <name>Controls to brackets</name>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::CONTROL_L, ModifierFlag::CONTROL_L | ModifierFlag::NONE,
+        KeyCode::CONTROL_L,
+        KeyCode::BRACKET_LEFT,
+    </autogen>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::CONTROL_R, ModifierFlag::CONTROL_R | ModifierFlag::NONE,
+        KeyCode::CONTROL_R,
+        KeyCode::BRACKET_RIGHT,
+    </autogen>
+  </item>
+
+</root>
