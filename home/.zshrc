@@ -196,7 +196,7 @@ setopt TRANSIENT_RPROMPT # remove the right prompt after accepting a command lin
 
 zstyle ':vcs_info:*' enable git hg svn
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' formats "%{$fg_bold[blue]%}%r%{$reset_color%} (%{$fg[cyan]%}%s%{$reset_color%}:%{$fg[yellow]%}%b%{$reset_color%}%m|%c%u%a) %S"
+zstyle ':vcs_info:*' formats "%r (%{$fg[cyan]%}%s%{$reset_color%}:%{$fg[yellow]%}%b%{$reset_color%}%m|%c%u%a) %{$fg_bold[blue]%}%S%{$reset_color%}"
 zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}±%{$reset_color%}"
 zstyle ':vcs_info:*' unstagedstr "%{$fg[red]%}≠%{$reset_color%}"
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-remotebranch
