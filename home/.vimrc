@@ -161,6 +161,8 @@ NeoBundle 'editorconfig/editorconfig-vim'
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
 
+NeoBundle 'Lokaltog/vim-easymotion'
+
 let g:ctrlp_map = '<Leader>f'
 let g:ctrlp_by_filename = 0 " search by filename and folder
 let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
@@ -357,9 +359,10 @@ vnoremap <silent> j gj
 nnoremap <silent> k gk
 vnoremap <silent> k gk
 
-" hide last search matches
-nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-vnoremap <silent> <C-L> <C-C>:nohlsearch<CR><C-L>gv
+" hide last search matches, refresh screen, re-read current buffer
+" See: http://www.reddit.com/r/vim/comments/1vdrxg/space_is_a_big_key_what_do_you_map_it_to/ceri6yf
+nnoremap <silent> <C-L> :nohl<CR>:redraw<CR>:checktime<CR><C-L>
+vnoremap <silent> <C-L> <C-C>:nohl<CR>:redraw<CR>:checktime<CR>gv
 
 " copy from the cursor to the end of line using Y (matches D behavior)
 nnoremap <silent> Y y$
@@ -384,8 +387,8 @@ vnoremap <silent> < <gv
 vnoremap <silent> > >gv
 
 " insert blank lines without entering insert mode
-nnoremap <silent> <leader>O O<C-C>0"_D
-nnoremap <silent> <leader>o o<C-C>0"_D
+nnoremap <silent> <Leader>O O<C-C>0"_D
+nnoremap <silent> <Leader>o o<C-C>0"_D
 
 " use `,d` `,D` `,x` `,X` to delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
@@ -406,14 +409,43 @@ nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
 " delete inactive buffers
 nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
 
-" fix how ^Y ^E behave in insert mode
+" fix how ^Y and ^E behave in insert mode
 inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
+
+" use space as an alias of the leader key
+nmap <Space> <Leader>
+nmap <Space><Space> <Leader><Leader>
+
+" use control + space to enter a command
+nnoremap <C-Space> :
+vnoremap <C-Space> :
 
 " }}}
 
 
-" {{{ 6. Languages specific configuration                      *vimrc-languages*
+" {{{ 6. Colemak stuff                                           *vimrc-colemak*
+
+" remap in normal, visual and operator pending mode
+nnoremap <silent> k j
+vnoremap <silent> k j
+onoremap <silent> k j
+nnoremap <silent> j k
+vnoremap <silent> j k
+onoremap <silent> j k
+
+" remap in normal, visual and operator pending mode
+nnoremap <silent> <C-u> <C-d>
+vnoremap <silent> <C-u> <C-d>
+onoremap <silent> <C-u> <C-d>
+nnoremap <silent> <C-d> <C-u>
+vnoremap <silent> <C-d> <C-u>
+onoremap <silent> <C-d> <C-u>
+
+" }}}
+
+
+" {{{ 7. Languages specific configuration                      *vimrc-languages*
 
 au FileType css        setl shiftwidth=4 softtabstop=4 tabstop=4 iskeyword+=- iskeyword+=# iskeyword+=.
 au FileType html       setl iskeyword+=- iskeyword+=# iskeyword+=.
@@ -424,7 +456,7 @@ au FileType markdown   setl omnifunc=htmlcomplete#CompleteTags formatoptions=tcr
 " }}}
 
 
-" {{{ 7. Various
+" {{{ 8. Various
 
 syntax enable
 filetype plugin indent on
