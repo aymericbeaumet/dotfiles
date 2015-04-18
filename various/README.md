@@ -13,7 +13,7 @@ Same.
 ### Export
 
 ```bash
-/Applications/Karabiner.app/Contents/Library/bin/karabiner export > ~/.homesick/repos/dotfiles/manual/karabiner.sh
+/Applications/Karabiner.app/Contents/Library/bin/karabiner export > ~/.homesick/repos/dotfiles/various/karabiner.sh
 ```
 
 ### Import
