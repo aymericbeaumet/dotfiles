@@ -8,9 +8,9 @@ set vimcommand
 let barposition = "bottom"
 let blacklists = ["http://www.typing.com/*"]
 
-"
+""
 " Colemak stuff
-"
+""
 
 " Colemak homerow
 let hintcharacters = "arstdhneio"
