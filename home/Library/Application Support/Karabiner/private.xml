@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <root>
 
+  <appdef>
+    <appname>MVIM</appname>
+    <equal>org.vim.MacVim</equal>
+  </appdef>
+
   <item>
     <identifier>remap.pc_application_to_control_escape</identifier>
     <name>PC Application to control/escape</name>
@@ -8,6 +13,27 @@
       __KeyOverlaidModifier__ KeyCode::PC_APPLICATION,
         KeyCode::CONTROL_L,
         KeyCode::ESCAPE,
+    </autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_to_option</identifier>
+    <name>Control to option</name>
+    <autogen>__KeyToKey__ KeyCode::CONTROL_L, KeyCode::OPTION_L</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.shifts_to_parenthesis</identifier>
+    <name>Shifts to parenthesis</name>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::SHIFT_L, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        KeyCode::SHIFT_L,
+        KeyCode::KEY_9, ModifierFlag::SHIFT_L,
+    </autogen>
+    <autogen>
+      __KeyOverlaidModifier__ KeyCode::SHIFT_R, ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+        KeyCode::SHIFT_R,
+        KeyCode::KEY_0, ModifierFlag::SHIFT_R,
     </autogen>
   </item>
 
@@ -27,18 +53,96 @@
   </item>
 
   <item>
-    <identifier>remap.controls_to_brackets</identifier>
-    <name>Controls to brackets</name>
+    <identifier>remap.options_to_control_brackets</identifier>
+    <name>Options to control/brackets</name>
     <autogen>
-      __KeyOverlaidModifier__ KeyCode::CONTROL_L, ModifierFlag::CONTROL_L | ModifierFlag::NONE,
+      __KeyOverlaidModifier__ KeyCode::OPTION_L, ModifierFlag::OPTION_L | ModifierFlag::NONE,
         KeyCode::CONTROL_L,
         KeyCode::BRACKET_LEFT,
     </autogen>
     <autogen>
-      __KeyOverlaidModifier__ KeyCode::CONTROL_R, ModifierFlag::CONTROL_R | ModifierFlag::NONE,
+      __KeyOverlaidModifier__ KeyCode::OPTION_R, ModifierFlag::OPTION_R | ModifierFlag::NONE,
         KeyCode::CONTROL_R,
         KeyCode::BRACKET_RIGHT,
     </autogen>
+  </item>
+
+  <!-- Emacs bindings -->
+
+  <item>
+    <identifier>remap.control_a</identifier>
+    <name>^A (not terminal)</name>
+    <not>TERMINAL</not>
+    <autogen>__KeyToKey__ KeyCode::A, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_b</identifier>
+    <name>^B</name>
+    <autogen>__KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_LEFT</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_d</identifier>
+    <name>^D</name>
+    <autogen>__KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::FORWARD_DELETE</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_e</identifier>
+    <name>^E (not terminal)</name>
+    <not>TERMINAL</not>
+    <autogen>__KeyToKey__ KeyCode::K, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_f</identifier>
+    <name>^F</name>
+    <autogen>__KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_RIGHT</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_h</identifier>
+    <name>^H</name>
+    <autogen>__KeyToKey__ KeyCode::H, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::DELETE</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_i</identifier>
+    <name>^I</name>
+    <autogen>__KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::TAB</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_m</identifier>
+    <name>^M</name>
+    <autogen>__KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::RETURN</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_n</identifier>
+    <name>^N (not mvim/terminal)</name>
+    <not>MVIM, TERMINAL</not>
+    <autogen>__KeyToKey__ KeyCode::J, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_DOWN</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_p</identifier>
+    <name>^P (not mvim/terminal)</name>
+    <not>MVIM, TERMINAL</not>
+    <autogen>__KeyToKey__ KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_UP</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_w</identifier>
+    <name>^W</name>
+    <autogen>__KeyToKey__ KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::DELETE, ModifierFlag::OPTION_L</autogen>
+  </item>
+
+  <item>
+    <identifier>remap.control_y</identifier>
+    <name>^Y</name>
+    <autogen>__KeyToKey__ KeyCode::O, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::V, ModifierFlag::COMMAND_L</autogen>
   </item>
 
 </root>
