@@ -161,6 +161,9 @@ NeoBundle 'editorconfig/editorconfig-vim'
 let g:winresizer_start_key = '<C-W><C-W>'
 NeoBundle 'jimsei/winresizer'
 
+let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
+let g:EasyMotion_keys = "LPUFYW;QNTESIROA" " Colemak toprow/homerow
+let g:EasyMotion_smartcase = 1 " like Vim
 NeoBundle 'Lokaltog/vim-easymotion'
 
 let g:ctrlp_map = '<Leader>f'
@@ -414,8 +417,8 @@ inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
 
 " use space as an alias of the leader key
-nmap <Space> <Leader>
-nmap <Space><Space> <Leader><Leader>
+map <Space> <Leader>
+map <Space><Space> <Leader><Leader>
 
 " use control + space to enter a command
 nnoremap <C-Space> :
@@ -424,28 +427,7 @@ vnoremap <C-Space> :
 " }}}
 
 
-" {{{ 6. Colemak stuff                                           *vimrc-colemak*
-
-" remap in normal, visual and operator pending mode
-nnoremap <silent> k j
-vnoremap <silent> k j
-onoremap <silent> k j
-nnoremap <silent> j k
-vnoremap <silent> j k
-onoremap <silent> j k
-
-" remap in normal, visual and operator pending mode
-nnoremap <silent> <C-u> <C-d>
-vnoremap <silent> <C-u> <C-d>
-onoremap <silent> <C-u> <C-d>
-nnoremap <silent> <C-d> <C-u>
-vnoremap <silent> <C-d> <C-u>
-onoremap <silent> <C-d> <C-u>
-
-" }}}
-
-
-" {{{ 7. Languages specific configuration                      *vimrc-languages*
+" {{{ 6. Languages specific configuration                      *vimrc-languages*
 
 au FileType css        setl shiftwidth=4 softtabstop=4 tabstop=4 iskeyword+=- iskeyword+=# iskeyword+=.
 au FileType html       setl iskeyword+=- iskeyword+=# iskeyword+=.
@@ -456,7 +438,7 @@ au FileType markdown   setl omnifunc=htmlcomplete#CompleteTags formatoptions=tcr
 " }}}
 
 
-" {{{ 8. Various
+" {{{ 7. Various
 
 syntax enable
 filetype plugin indent on
