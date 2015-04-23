@@ -1,13 +1,27 @@
-set noautofocus
-set autoupdategist
-set cncpcompletion
-set nativelinkorder
-set sortlinkhints
-set vimcommand
+set noautofocus " forbid websites to autofocus
+set autoupdategist " auto config update
+set cncpcompletion " ^N/^P completion
+set nativelinkorder " new tabs follow chrome logic
+set sortlinkhints " sort hints based on the distance from the top left corner
 
-let barposition = "bottom"
-let blacklists = ["http://www.typing.com/*"]
+let barposition = "bottom" " bar at bottom
+let blacklists = ["http://www.typing.com/*"] " ignore there websites
 let hintcharacters = "lpufyw;qntesiroa" " Colemak toprow/homerow
+let vimcommand = "mvim" " used to open files
 
+" add custom search engines
+let searchengine ddg = "https://duckduckgo.com/?q=%s"
+let searchengine google = "https://www.google.com/#q=%s"
+let searchengine yt = "https://www.youtube.com/results?search_query=%s"
+let searchengine gh = "https://github.com/search?q=%s"
+let searchengine imdb = "http://www.imdb.com/find?q=%s"
+let searchengine wa = "https://www.wolframalpha.com/input/?i=%s"
+let searchengine wen = "https://en.wikipedia.org/wiki/Special:Search?search=%s"
+let searchengine wfr = "https://fr.wikipedia.org/wiki/Special:Search?search=%s"
+let searchengine enfr = "http://www.wordreference.com/enfr/%s"
+let searchengine fren = "http://www.wordreference.com/fren/%s"
+let defaultengine = "google"
+
+" faster scroll
 map <C-d> scrollFullPageDown
 map <C-u> scrollFullPageUp
