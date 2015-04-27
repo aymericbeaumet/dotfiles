@@ -1,11 +1,6 @@
 <?xml version="1.0"?>
 <root>
 
-  <appdef>
-    <appname>MVIM</appname>
-    <equal>org.vim.MacVim</equal>
-  </appdef>
-
   <item>
 
     <name>[Custom] Modifiers</name>
@@ -15,8 +10,8 @@
       <name>PC Application to control / escape</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::PC_APPLICATION,
-          KeyCode::CONTROL_L,
-          KeyCode::ESCAPE,
+        KeyCode::CONTROL_L,
+        KeyCode::ESCAPE,
       </autogen>
     </item>
 
@@ -25,8 +20,8 @@
       <name>Return to control / return</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::RETURN,
-          KeyCode::CONTROL_R,
-          KeyCode::RETURN,
+        KeyCode::CONTROL_R,
+        KeyCode::RETURN,
       </autogen>
     </item>
 
@@ -35,13 +30,13 @@
       <name>Shifts to shifts / parenthesis</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::SHIFT_L, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
-          KeyCode::SHIFT_L,
-          KeyCode::KEY_9, ModifierFlag::SHIFT_L,
+        KeyCode::SHIFT_L,
+        KeyCode::KEY_9, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::SHIFT_R, ModifierFlag::SHIFT_R | ModifierFlag::NONE,
-          KeyCode::SHIFT_R,
-          KeyCode::KEY_0, ModifierFlag::SHIFT_R,
+        KeyCode::SHIFT_R,
+        KeyCode::KEY_0, ModifierFlag::SHIFT_R,
       </autogen>
     </item>
 
@@ -50,13 +45,268 @@
       <name>Commands to commands / curly braces</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::COMMAND_L, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
-          KeyCode::COMMAND_L,
-          KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_L,
+        KeyCode::COMMAND_L,
+        KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::COMMAND_R, ModifierFlag::COMMAND_R | ModifierFlag::NONE,
-          KeyCode::COMMAND_R,
-          KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R,
+        KeyCode::COMMAND_R,
+        KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R,
+      </autogen>
+    </item>
+
+  </item>
+
+  <item>
+
+    <name>[Custom] Hyper / HammerSpoon bindings</name>
+
+    <modifierdef>HYPER</modifierdef>
+
+    <item>
+      <identifier>remap.modifiers.tab_backslash_to_hyper_tab_backslash</identifier>
+      <name>Tab, Backslash to Hyper / Tab, Backslash</name>
+      <autogen>
+        __KeyOverlaidModifier__ KeyCode::TAB, ModifierFlag::NONE,
+        KeyCode::VK_MODIFIER_HYPER,
+        KeyCode::TAB,
+      </autogen>
+      <autogen>
+        __KeyOverlaidModifier__ KeyCode::BACKSLASH, ModifierFlag::NONE,
+        KeyCode::VK_MODIFIER_HYPER,
+        KeyCode::BACKSLASH,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_SHOW_HINTS</name>
+      <url>hammerspoon://showHints</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_space</identifier>
+      <name>Hyper + Space: show hints</name>
+      <autogen>
+        __KeyToKey__ KeyCode::SPACE, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_SHOW_HINTS,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_CHROMIUM</name>
+      <url>hammerspoon://launchOrFocusApplication?name=Chromium</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_c</identifier>
+      <name>Hyper + C: launch or focus Chromium</name>
+      <autogen>
+        __KeyToKey__ KeyCode::C, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_CHROMIUM,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_VIM</name>
+      <url>hammerspoon://launchOrFocusApplication?name=MacVim</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_v</identifier>
+      <name>Hyper + V: launch or focus MacVim</name>
+      <autogen>
+        __KeyToKey__ KeyCode::V, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_VIM,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ITERM</name>
+      <url>hammerspoon://launchOrFocusApplication?name=iTerm</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_i</identifier>
+      <name>Hyper + I: launch or focus iTerm</name>
+      <autogen>
+        __KeyToKey__ KeyCode::L, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ITERM,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_LEFT</name>
+      <url>hammerspoon://resizeFocusedApplication?to=left</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_h</identifier>
+      <name>Hyper + H: resize left</name>
+      <autogen>
+        __KeyToKey__ KeyCode::H, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_LEFT,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_BOTTOM</name>
+      <url>hammerspoon://resizeFocusedApplication?to=bottom</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_j</identifier>
+      <name>Hyper + J: resize down</name>
+      <autogen>
+        __KeyToKey__ KeyCode::Y, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_BOTTOM,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_TOP</name>
+      <url>hammerspoon://resizeFocusedApplication?to=top</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_k</identifier>
+      <name>Hyper + K: resize up</name>
+      <autogen>
+        __KeyToKey__ KeyCode::N, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_TOP,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_RIGHT</name>
+      <url>hammerspoon://resizeFocusedApplication?to=right</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_l</identifier>
+      <name>Hyper + L: resize left</name>
+      <autogen>
+        __KeyToKey__ KeyCode::U, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_RIGHT,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_MAXIMUM</name>
+      <url>hammerspoon://resizeFocusedApplication?to=maximum</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_m</identifier>
+      <name>Hyper + M: maximize</name>
+      <autogen>
+        __KeyToKey__ KeyCode::M, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_MAXIMUM,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE</name>
+      <url>hammerspoon://displayDate</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_d</identifier>
+      <name>Hyper + D: display date</name>
+      <autogen>
+        __KeyToKey__ KeyCode::G, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_TIME</name>
+      <url>hammerspoon://displayTime</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_t</identifier>
+      <name>Hyper + T: display time</name>
+      <autogen>
+        __KeyToKey__ KeyCode::F, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_TIME,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_WIFI_STATE</name>
+      <url>hammerspoon://displayWiFiState</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_w</identifier>
+      <name>Hyper + W: display WiFi state</name>
+      <autogen>
+        __KeyToKey__ KeyCode::W, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_WIFI_STATE,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_BATTERY_STATE</name>
+      <url>hammerspoon://displayBatteryState</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_/</identifier>
+     <name>Hyper + /: display Battery state</name>
+     <autogen>
+       __KeyToKey__ KeyCode::SLASH, ModifierFlag::HYPER | ModifierFlag::NONE,
+       KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_BATTERY_STATE,
+     </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION</name>
+      <url>hammerspoon://reloadConfiguration</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_r</identifier>
+      <name>Hyper + R: reload configuration</name>
+      <autogen>
+        __KeyToKey__ KeyCode::S, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.hyper_n</identifier>
+      <name>Hyper + N: next application</name>
+      <autogen>
+        __KeyToKey__ KeyCode::J, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::COMMAND_L,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.hyper_p</identifier>
+      <name>Hyper + P: previous application</name>
+      <autogen>
+        __KeyToKey__ KeyCode::R, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.hyper_f</identifier>
+      <name>Hyper + F: next window</name>
+      <autogen>
+        __KeyToKey__ KeyCode::E, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.hyper_b</identifier>
+      <name>Hyper + B: previous window</name>
+      <autogen>
+        __KeyToKey__ KeyCode::B, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
       </autogen>
     </item>
 
@@ -66,143 +316,209 @@
 
     <name>[Custom] Emacs bindings</name>
 
+    <appdef>
+      <appname>MVIM</appname>
+      <equal>org.vim.MacVim</equal>
+    </appdef>
+
     <item>
       <identifier>remap.emacs.control_a</identifier>
       <name>Control + A: beginning of line (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::A, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::A, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_b</identifier>
       <name>Control + B: left (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_LEFT</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_LEFT,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_b</identifier>
       <name>Alt + B: one word backward (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION, KeyCode::CURSOR_LEFT, ModifierFlag::OPTION_L</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+        KeyCode::CURSOR_LEFT, ModifierFlag::OPTION_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_d</identifier>
       <name>Control + D: forward delete (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::FORWARD_DELETE</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::FORWARD_DELETE,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_d</identifier>
       <name>Alt + D: delete word forward (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION, KeyCode::DELETE, ModifierFlag::FN, ModifierFlag::OPTION_L</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+        KeyCode::DELETE, ModifierFlag::FN, ModifierFlag::OPTION_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_e</identifier>
       <name>Control + E: end of line (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::K, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::K, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_f</identifier>
       <name>Control + F: right (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_RIGHT</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_RIGHT,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_f</identifier>
       <name>Alt + F: one word forward (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION, KeyCode::CURSOR_RIGHT, ModifierFlag::OPTION_L</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+        KeyCode::CURSOR_RIGHT, ModifierFlag::OPTION_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_h</identifier>
       <name>Control + H: delete (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::H, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::DELETE</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::H, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::DELETE,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_i</identifier>
       <name>Control + I: tab (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::TAB</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::TAB,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_k</identifier>
       <name>Control + K: delete until end of line (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::N, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::N, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_m</identifier>
       <name>Control + M: return (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::RETURN</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::RETURN,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_n</identifier>
       <name>Control + N: down (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::J, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_DOWN</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::J, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_DOWN,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_p</identifier>
       <name>Control + P: up (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_UP</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_UP,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_v</identifier>
       <name>Control + V: page down (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::V, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::CURSOR_DOWN, ModifierFlag::FN</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::V, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_DOWN, ModifierFlag::FN,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_v</identifier>
       <name>Alt + V: page up (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::V, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION, KeyCode::CURSOR_UP, ModifierFlag::FN</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::V, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+        KeyCode::CURSOR_UP, ModifierFlag::FN,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_w</identifier>
       <name>Control + W: delete word (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::DELETE, ModifierFlag::OPTION_L</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::DELETE, ModifierFlag::OPTION_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_y</identifier>
-      <name>Control + Y: delete word</name>
-      <autogen>__KeyToKey__ KeyCode::O, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL, KeyCode::V, ModifierFlag::COMMAND_L</autogen>
+      <name>Control + Y: system paste (not mvim/terminal)</name>
+      <not>MVIM, TERMINAL</not>
+      <autogen>
+        __KeyToKey__ KeyCode::O, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::V, ModifierFlag::COMMAND_L,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_less_than</identifier>
       <name>Alt + &lt;: home (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::COMMA, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION, KeyCode::CURSOR_LEFT, ModifierFlag::FN</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::COMMA, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+        KeyCode::CURSOR_LEFT, ModifierFlag::FN,
+      </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_greater_than</identifier>
       <name>Alt + &gt;: end (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
-      <autogen>__KeyToKey__ KeyCode::DOT, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION, KeyCode::CURSOR_RIGHT, ModifierFlag::FN</autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::DOT, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+        KeyCode::CURSOR_RIGHT, ModifierFlag::FN,
+      </autogen>
     </item>
 
   </item>
