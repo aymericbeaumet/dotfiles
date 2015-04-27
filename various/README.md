@@ -19,3 +19,13 @@ Same.
 ### Import
 
 Launch the script.
+
+# OSX
+
+### Export
+
+Nope.
+
+### Import
+
+Launch the script.
