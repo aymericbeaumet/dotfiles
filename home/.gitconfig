@@ -13,7 +13,6 @@
   dfc = diff --cached
   fe = fetch
   l = log
-  menf = merge --no-ff
   pl = pull
   ps = push
   rb = rebase
@@ -28,9 +27,6 @@
 
   ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
-
-  ; Find a file in the project
-  find = "!git ls-files | grep -i"
 
   ; Print a tree of the project
   tree = log --oneline --graph --decorate
