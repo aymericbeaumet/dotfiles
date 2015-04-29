@@ -2,6 +2,13 @@
 " Github: @aymericbeaumet/dotfiles
 
 
+" Skip initialization for vim-tiny or vim-small
+if !1 | finish | endif
+
+set nocompatible
+au!
+
+
 " {{{ 1. Helpers                                                 *vimrc-helpers*
 
 " https://github.com/EOL/cukestone/wiki/Vim-cleaning-trailing-whitespaces
@@ -48,17 +55,7 @@ endfunction
 " }}}
 
 
-" {{{ 2. Preliminary
-
-set nocompatible
-au!
-
-" }}}
-
-
-" {{{ 3. Plugins                                                 *vimrc-plugins*
-
-"    {{{ 3.1 NeoBundle
+" {{{ 2. Plugins                                                 *vimrc-plugins*
 
 let g:bundle_dir = resolve(expand('~/.vim/bundle/'))
 
@@ -79,9 +76,7 @@ NeoBundleFetch 'Shougo/neobundle.vim', {
 
 call neobundle#end()
 
-"    }}}
-
-"    {{{ 3.2 Languages
+"    {{{ 2.1 Languages
 
 " Docker
 
@@ -133,7 +128,7 @@ NeoBundle 'matchit.zip'
 
 "    }}}
 
-"    {{{ 3.3 Tools
+"    {{{ 2.2 Tools
 
 NeoBundle 'airblade/vim-gitgutter'
 let g:gitgutter_map_keys = 0
@@ -161,12 +156,14 @@ let g:winresizer_start_key = '<C-W><C-W>'
 
 NeoBundle 'Lokaltog/vim-easymotion'
 let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
-let g:EasyMotion_keys = "LPUFYW;QNTESIROA" " Colemak toprow/homerow
+let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
 let g:EasyMotion_smartcase = 1 " like Vim
 let bundle = neobundle#get('vim-easymotion')
 function! bundle.hooks.on_post_source(bundle)
-  unmap <Leader><Leader>
-  map <silent> <Leader>e <Plug>(easymotion-prefix)
+  silent! unmap <Leader><Leader>
+  nnoremap <silent> <Leader>e <Plug>(easymotion-prefix)
+  vnoremap <silent> <Leader>e <Plug>(easymotion-prefix)
+  onoremap <silent> <Leader>e <Plug>(easymotion-prefix)
 endfunction
 
 NeoBundle 'kien/ctrlp.vim'
@@ -235,17 +232,14 @@ NeoBundle 'Valloric/YouCompleteMe', {
 let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_seed_identifiers_with_syntax = 1
-set completeopt=longest,menuone
 let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+set completeopt=longest,menuone
 
 "    }}}
 
-" }}}
-
-
-" {{{ 4. Theme
+"    {{{ 2.3 Theme
 
 NeoBundle 'wombat256.vim'
 silent! colorscheme wombat256mod
@@ -270,10 +264,15 @@ function! bundle.hooks.on_post_source(bundle)
   match TrailingWhitespace /\s\+$/
 endfunction
 
+"     }}}
+
+NeoBundleCheck
+
 " }}}
 
 
-" {{{ 4. Options                                                 *vimrc-options*
+
+" {{{ 3. Options                                                 *vimrc-options*
 
 let g:netrw_dirhistmax = 0 " disable netrw
 
@@ -355,7 +354,10 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | exe 'normal! g
 " }}}
 
 
-" {{{ 5. Bindings                                               *vimrc-bindings*
+" {{{ 4. Bindings                                               *vimrc-bindings*
+
+" remap leader key
+let mapleader = '<Space>'
 
 " up and down are more logical with g
 nnoremap <silent> j gj
@@ -417,10 +419,6 @@ nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
 inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
 
-" use space as an alias of the leader key
-map <Space> <Leader>
-map <Space><Space> <Leader><Leader>
-
 " use control + space to enter a command
 nnoremap <C-Space> :
 vnoremap <C-Space> :
@@ -428,7 +426,7 @@ vnoremap <C-Space> :
 " }}}
 
 
-" {{{ 6. Languages specific configuration                      *vimrc-languages*
+" {{{ 5. Languages specific configuration                      *vimrc-languages*
 
 au FileType css        setl shiftwidth=4 softtabstop=4 tabstop=4 iskeyword+=- iskeyword+=# iskeyword+=.
 au FileType html       setl iskeyword+=- iskeyword+=# iskeyword+=.
@@ -439,14 +437,8 @@ au FileType markdown   setl omnifunc=htmlcomplete#CompleteTags formatoptions=tcr
 " }}}
 
 
-" {{{ 7. Various
-
 syntax enable
 filetype plugin indent on
 
-NeoBundleCheck
-
 " Call NeoBundle post source hooks again to support several consecutive `source ~/.vimrc`
 call neobundle#call_hook('on_post_source')
-
-" }}}
