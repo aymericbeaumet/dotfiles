@@ -1,6 +1,7 @@
 autoload -Uz add-zsh-hook
 autoload -Uz colors && colors
 autoload -Uz compinit && compinit
+autoload -Uz select-word-style
 autoload -Uz vcs_info
 
 ##################
@@ -24,11 +25,6 @@ is_macosx() { return $([ `uname -s` = Darwin ]); }
 # Check if the OS is *BSD
 # @return 0 if the OS is a BSD
 is_bsd() { return $([[ `uname -s` =~ .*bsd.* ]]); }
-
-# Check if a given command exists (as an alias or in the PATH)
-# @param string $1 The command to check
-# @return 0 if the command exists
-is_command() { return $(which "$1" &>/dev/null); }
 
 # Set the tab name
 # @param string $1 The desired tab name
@@ -73,6 +69,12 @@ bindkey -e
 # Fix delete key
 bindkey '^[[3~'  delete-char
 bindkey '^[3;5~' delete-char
+
+# Allow backward tab
+bindkey '^[[Z' reverse-menu-complete
+
+# Make ^W behave as in bash (delete until slash, not space)
+select-word-style bash
 
 ###############
 # Environment #
@@ -135,11 +137,8 @@ setopt HIST_NO_FUNCTIONS  # remove function definition from history
 # Allow arrow navigation
 zstyle ':completion:*' menu select
 
-# Ignore compiled files on vi/vim completion
-zstyle ':completion:*:*:(v|vi|vim|mvim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
-
 # Don't complete stuff already on the line
-zstyle ':completion::*:(v|vi|vim|mvim|rm):*' ignore-line true
+zstyle ':completion:*' ignore-line true
 
 # Don't complete directory we are already in
 zstyle ':completion:*' ignore-parents parent pwd
@@ -148,11 +147,17 @@ zstyle ':completion:*' ignore-parents parent pwd
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$HOME/.zsh/tmp/cache"
 
-# Ignore completion functions
-zstyle ':completion:*:functions' ignored-patterns '_*'
-
 # More complete output (not always)
 zstyle ':completion:*' verbose yes
+
+# Fix group name display
+zstyle ':completion:*' group-name ''
+
+# Case insensitive completion
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+# Ignore completion functions
+zstyle ':completion:*:functions' ignored-patterns '_*'
 
 # Explicitly write the type of what the autocomplete has found / was looking for
 zstyle ':completion:*:descriptions' format '%B%d%b'
@@ -164,14 +169,11 @@ zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 # Don't prompt for a huge list, menu it!
 zstyle ':completion:*:default' menu 'select=0'
 
-# Fix group name display
-zstyle ':completion:*' group-name ''
-
 # Separate man page sections
 zstyle ':completion:*:manuals' separate-sections true
 
-# Case insensitive completion
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+# Ignore compiled files on vim completion
+zstyle ':completion:*:*:(v|vi|vim|mvim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 
 setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
 setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
@@ -255,57 +257,28 @@ stty start undef
 ##################################
 
 ###
-# Docker
-###
-
-setup_docker_wrapper() {
-  # `docker_wrapper` (without arguments) will invoke `docker ps`
-  # `docker_wrapper ...` will invoke `docker ...`
-  docker_wrapper()
-  {
-    if (( $# == 0 )) ; then
-      command docker ps
-    else
-      command docker "$@"
-    fi
-  }
-
-  # Bind `d` and `docker` to `docker_wrapper` (disable globing to avoid problem
-  # with parameter containing extended globing characters, like '#' or '^')
-  alias d='noglob docker_wrapper'
-  alias docker='noglob docker_wrapper'
-
-  # Working completion
-  compdef d=docker
-  compdef docker_wrapper=docker
-}
-
-###
 # Git
 ###
 
-setup_git_wrapper() {
-  # `git_wrapper` (without argument) will invoke `git status -sb`
-  # `git_wrapper ...` will invoke `git ...`
-  git_wrapper()
-  {
-    if (( $# == 0 )) ; then
-      command git status -sb
-    else
-      command git "$@"
-    fi
-  }
-
-  # Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
-  # parameter containing extended globing characters, like '#' or '^')
-  alias g='noglob git_wrapper'
-  alias git='noglob git_wrapper'
-
-  # Working completion
-  compdef g=git
-  compdef git_wrapper=git
+# `git_wrapper` (without argument) will invoke `git status -sb`
+# `git_wrapper ...` will invoke `git ...`
+git_wrapper()
+{
+  if (( $# == 0 )) ; then
+    command git status -sb
+  else
+    command git "$@"
+  fi
 }
-setup_git_wrapper
+
+# Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
+# parameter containing extended globing characters, like '#' or '^')
+alias g='noglob git_wrapper'
+alias git='noglob git_wrapper'
+
+# Working completion
+compdef g=git
+compdef git_wrapper=git
 
 ###
 # du
@@ -317,11 +290,11 @@ alias du='du -h'
 # ls
 ###
 
-OS_SPECIFIC_LS_OPTIONS=''
-if is_linux ; then
-  OS_SPECIFIC_LS_OPTIONS='--color=auto'
-elif is_bsd || is_macosx ; then
+local OS_SPECIFIC_LS_OPTIONS=''
+if is_macosx || is_bsd ; then
   OS_SPECIFIC_LS_OPTIONS='-G'
+elif is_linux ; then
+  OS_SPECIFIC_LS_OPTIONS='--color=auto'
 fi
 alias ls="ls -p -F $OS_SPECIFIC_LS_OPTIONS"
 alias ll='ls -hl' ; compdef ll=ls
@@ -344,41 +317,34 @@ fi
 
 set_window_name "$(whoami)@$(hostname)"
 
-####################
-# External bundles #
-####################
+################
+# Lazy loading #
+################
 
-# Custom autoload
-fpath=("$HOME/.zsh/autoload" "${fpath[@]}")
+fpath=(
+  "$HOME/.zsh/autoload"
+  "$HOME/.zsh/completion"
+  "${fpath[@]}"
+)
 
-###
-# Homeshick
-###
-source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-fpath=("$HOME/.homesick/repos/homeshick/completions" "${fpath[@]}")
+# Boot2docker / Docker
+autoload -Uz boot2docker docker
 
-###
-# Boot2Docker
-###
-autoload -Uz deferred_boot2docker
-alias boot2docker='deferred_boot2docker && boot2docker'
-alias d='deferred_boot2docker && docker_wrapper'
-alias docker='deferred_boot2docker && docker_wrapper'
+# homeshick
+autoload -Uz homeshick
 
-###
-# NVM
-###
-autoload -Uz deferred_nvm
-alias nvm='deferred_nvm && nvm'
-alias node='deferred_nvm && node'
-alias npm='deferred_nvm && npm'
+# nvm / Node.js / npm
+autoload -Uz nvm node npm
 
-###
-# zsh-completion (https://github.com/zsh-users/zsh-completions)
-###
-fpath=("$HOME/.zsh/completion" "${fpath[@]}")
+# rbenv / Ruby
+autoload -Uz rbenv ruby
 
-###
-# zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
-###
+# pyenv / Python
+autoload -Uz pyenv python
+
+#######################
+# Synchronous loading #
+#######################
+
+# zsh-syntax-highlighting
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

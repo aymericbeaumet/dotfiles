@@ -1,7 +1,0 @@
-deferred_nvm() {
-  unalias nvm node npm &> /dev/null
-  unfunction deferred_nvm &> /dev/null
-
-  export NVM_DIR="$HOME/.nvm"
-  if which brew > /dev/null ; then source "$(brew --prefix nvm)/nvm.sh" ; fi
-}
