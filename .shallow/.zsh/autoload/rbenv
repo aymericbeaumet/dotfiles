@@ -1,0 +1,15 @@
+# Lazy loading (once)
+${__rbenv_loaded:-false} || {
+
+  export RBENV_ROOT="$HOME/.rbenv"
+  if which rbenv &> /dev/null ; then
+    eval "$(command rbenv init -)"
+  fi
+
+__rbenv_loaded=true }
+
+# Run
+case "$(type -p "$0")" in
+  *not\ found) "$0" "$@" ;;
+  *) command "$0" "$@" ;;
+esac

@@ -1,0 +1,15 @@
+# Lazy loading (once)
+${__nvm_loaded:-false} || {
+
+  export NVM_DIR="$HOME/.nvm"
+  if which brew &> /dev/null ; then
+    source "$(command brew --prefix nvm)/nvm.sh"
+  fi
+
+__nvm_loaded=true }
+
+# Run
+case "$(type -p "$0")" in
+  *not\ found) "$0" "$@" ;;
+  *) command "$0" "$@" ;;
+esac
