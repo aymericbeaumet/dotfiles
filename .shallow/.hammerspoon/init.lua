@@ -1,6 +1,7 @@
 handlers = {
 
   showHints = function()
+    hs.hints.style = "vimperator"
     hs.hints.windowHints(hs.window.allWindows())
   end,
 
@@ -12,15 +13,12 @@ handlers = {
     local win = hs.window.focusedWindow()
     local f = win:frame()
     local max = win:screen():frame()
-    f.x = max.x
-    f.y = max.y
-    f.w = max.w
-    f.h = max.h
-    if     params.to == 'maximum'    then                                           -- full screen
-    elseif params.to == 'left'       then f.w = max.w / 2                           -- left half
-    elseif params.to == 'bottom'     then f.y = max.y + max.h / 2 ; f.h = max.h / 2 -- lower half
-    elseif params.to == 'top'        then f.h = max.h / 2                           -- upper half
-    elseif params.to == 'right'      then f.x = max.x + max.w / 2 ; f.w = max.w / 2 -- right half
+    if false then
+      elseif params.to == 'maximum' then f.x = max.x ; f.y = max.y ; f.w = max.w ; f.h = max.h
+      elseif params.to == 'left'    then f.x = max.x ; f.w = max.w / 2
+      elseif params.to == 'bottom'  then f.y = max.y + max.h / 2 ; f.h = max.h / 2
+      elseif params.to == 'top'     then f.y = max.y ; f.h = max.h / 2
+      elseif params.to == 'right'   then f.x = max.x + max.w / 2 ; f.w = max.w / 2
     end
     win:setFrame(f)
   end,
@@ -65,4 +63,4 @@ hs.wifi.watcher.new(handlers.displayWiFiState):start()
 hs.pathwatcher.new(hs.configdir, handlers.reloadConfiguration):start()
 
 -- Notify when the configuration file has been successfully loaded
-hs.alert.show('Hammerspoon ✔')
+hs.notify.new({title="Hammerspoon", informativeText="Loaded"}):send():release()
