@@ -10,7 +10,7 @@
       <name>PC Application to control / escape</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::PC_APPLICATION,
-        KeyCode::CONTROL_L,
+        KeyCode::VK_LAZY_CONTROL_L,
         KeyCode::ESCAPE,
       </autogen>
     </item>
@@ -20,8 +20,8 @@
       <name>Return to control / return</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::RETURN,
-        KeyCode::CONTROL_R,
-        KeyCode::RETURN,
+        KeyCode::VK_LAZY_CONTROL_R,
+        KeyCode::ESCAPE,
       </autogen>
     </item>
 
@@ -30,12 +30,12 @@
       <name>Shifts to shifts / parenthesis</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::SHIFT_L, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
-        KeyCode::SHIFT_L,
+        KeyCode::VK_LAZY_SHIFT_L,
         KeyCode::KEY_9, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::SHIFT_R, ModifierFlag::SHIFT_R | ModifierFlag::NONE,
-        KeyCode::SHIFT_R,
+        KeyCode::VK_LAZY_SHIFT_R,
         KeyCode::KEY_0, ModifierFlag::SHIFT_R,
       </autogen>
     </item>
@@ -45,23 +45,15 @@
       <name>Commands to commands / curly braces</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::COMMAND_L, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
-        KeyCode::COMMAND_L,
+        KeyCode::VK_LAZY_COMMAND_L,
         KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::COMMAND_R, ModifierFlag::COMMAND_R | ModifierFlag::NONE,
-        KeyCode::COMMAND_R,
+        KeyCode::VK_LAZY_COMMAND_R,
         KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R,
       </autogen>
     </item>
-
-  </item>
-
-  <item>
-
-    <name>[Custom] Hyper / HammerSpoon bindings</name>
-
-    <modifierdef>HYPER</modifierdef>
 
     <item>
       <identifier>remap.modifiers.tab_backslash_to_hyper_tab_backslash</identifier>
@@ -78,6 +70,14 @@
       </autogen>
     </item>
 
+  </item>
+
+  <item>
+
+    <name>[Custom] Hyper / HammerSpoon bindings</name>
+
+    <modifierdef>HYPER</modifierdef>
+
     <vkopenurldef>
       <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_SHOW_HINTS</name>
       <url>hammerspoon://showHints</url>
@@ -89,6 +89,29 @@
       <autogen>
         __KeyToKey__ KeyCode::SPACE, ModifierFlag::HYPER | ModifierFlag::NONE,
         KeyCode::VK_OPEN_URL_HAMMERSPOON_SHOW_HINTS,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ALFRED</name>
+      <url>hammerspoon://launchOrFocusApplication?name=Alfred%202</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_a</identifier>
+      <name>Hyper + A: launch or focus Alfred</name>
+      <autogen>
+        __KeyToKey__ KeyCode::A, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ALFRED,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.hyper_b</identifier>
+      <name>Hyper + B: previous window</name>
+      <autogen>
+        __KeyToKey__ KeyCode::B, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
       </autogen>
     </item>
 
@@ -107,30 +130,25 @@
     </item>
 
     <vkopenurldef>
-      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_VIM</name>
-      <url>hammerspoon://launchOrFocusApplication?name=MacVim</url>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE</name>
+      <url>hammerspoon://displayDate</url>
       <background/>
     </vkopenurldef>
     <item>
-      <identifier>remap.hyper_v</identifier>
-      <name>Hyper + V: launch or focus MacVim</name>
+      <identifier>remap.hyper_d</identifier>
+      <name>Hyper + D: display date</name>
       <autogen>
-        __KeyToKey__ KeyCode::V, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_VIM,
+        __KeyToKey__ KeyCode::G, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE,
       </autogen>
     </item>
 
-    <vkopenurldef>
-      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ITERM</name>
-      <url>hammerspoon://launchOrFocusApplication?name=iTerm</url>
-      <background/>
-    </vkopenurldef>
     <item>
-      <identifier>remap.hyper_i</identifier>
-      <name>Hyper + I: launch or focus iTerm</name>
+      <identifier>remap.hyper_f</identifier>
+      <name>Hyper + F: next window</name>
       <autogen>
-        __KeyToKey__ KeyCode::L, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ITERM,
+        __KeyToKey__ KeyCode::E, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L,
       </autogen>
     </item>
 
@@ -145,6 +163,20 @@
       <autogen>
         __KeyToKey__ KeyCode::H, ModifierFlag::HYPER | ModifierFlag::NONE,
         KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_LEFT,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ITERM</name>
+      <url>hammerspoon://launchOrFocusApplication?name=iTerm</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_i</identifier>
+      <name>Hyper + I: launch or focus iTerm</name>
+      <autogen>
+        __KeyToKey__ KeyCode::L, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ITERM,
       </autogen>
     </item>
 
@@ -204,17 +236,35 @@
       </autogen>
     </item>
 
+    <item>
+      <identifier>remap.hyper_n</identifier>
+      <name>Hyper + N: next application</name>
+      <autogen>
+        __KeyToKey__ KeyCode::J, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::COMMAND_L,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.hyper_p</identifier>
+      <name>Hyper + P: previous application</name>
+      <autogen>
+        __KeyToKey__ KeyCode::R, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
+      </autogen>
+    </item>
+
     <vkopenurldef>
-      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE</name>
-      <url>hammerspoon://displayDate</url>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION</name>
+      <url>hammerspoon://reloadConfiguration</url>
       <background/>
     </vkopenurldef>
     <item>
-      <identifier>remap.hyper_d</identifier>
-      <name>Hyper + D: display date</name>
+      <identifier>remap.hyper_r</identifier>
+      <name>Hyper + R: reload configuration</name>
       <autogen>
-        __KeyToKey__ KeyCode::G, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE,
+        __KeyToKey__ KeyCode::S, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION,
       </autogen>
     </item>
 
@@ -229,6 +279,20 @@
       <autogen>
         __KeyToKey__ KeyCode::F, ModifierFlag::HYPER | ModifierFlag::NONE,
         KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_TIME,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_VIM</name>
+      <url>hammerspoon://launchOrFocusApplication?name=MacVim</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_v</identifier>
+      <name>Hyper + V: launch or focus MacVim</name>
+      <autogen>
+        __KeyToKey__ KeyCode::V, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_VIM,
       </autogen>
     </item>
 
@@ -258,56 +322,6 @@
        __KeyToKey__ KeyCode::SLASH, ModifierFlag::HYPER | ModifierFlag::NONE,
        KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_BATTERY_STATE,
      </autogen>
-    </item>
-
-    <vkopenurldef>
-      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION</name>
-      <url>hammerspoon://reloadConfiguration</url>
-      <background/>
-    </vkopenurldef>
-    <item>
-      <identifier>remap.hyper_r</identifier>
-      <name>Hyper + R: reload configuration</name>
-      <autogen>
-        __KeyToKey__ KeyCode::S, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_n</identifier>
-      <name>Hyper + N: next application</name>
-      <autogen>
-        __KeyToKey__ KeyCode::J, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::TAB, ModifierFlag::COMMAND_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_p</identifier>
-      <name>Hyper + P: previous application</name>
-      <autogen>
-        __KeyToKey__ KeyCode::R, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::TAB, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_f</identifier>
-      <name>Hyper + F: next window</name>
-      <autogen>
-        __KeyToKey__ KeyCode::E, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_b</identifier>
-      <name>Hyper + B: previous window</name>
-      <autogen>
-        __KeyToKey__ KeyCode::B, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
-      </autogen>
     </item>
 
   </item>
@@ -413,8 +427,11 @@
 
     <item>
       <identifier>remap.emacs.control_i</identifier>
-      <name>Control + I: tab (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + I: tab</name>
+      <autogen>
+        __KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::SHIFT_L,
+      </autogen>
       <autogen>
         __KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
         KeyCode::TAB,
@@ -435,6 +452,14 @@
       <identifier>remap.emacs.control_m</identifier>
       <name>Control + M: return (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
+      <autogen>
+        __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
+        KeyCode::RETURN, ModifierFlag::SHIFT_L,
+      </autogen>
+      <autogen>
+        __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | ModifierFlag::NONE,
+        KeyCode::RETURN, ModifierFlag::COMMAND_L,
+      </autogen>
       <autogen>
         __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
         KeyCode::RETURN,
@@ -458,6 +483,16 @@
       <autogen>
         __KeyToKey__ KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
         KeyCode::CURSOR_UP,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.emacs.control_u</identifier>
+      <name>Control + U: delete the entire line (not mvim/terminal)</name>
+      <not>MVIM, TERMINAL</not>
+      <autogen>
+        __KeyToKey__ KeyCode::I, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+        KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L, KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE,
       </autogen>
     </item>
 
