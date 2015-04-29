@@ -49,7 +49,7 @@ echo 'Disable hibernation (speeds up entering sleep mode)'
 sudo pmset -a hibernatemode 0
 
 echo 'Remove the sleep image file to save disk space'
-sudo rm /Private/var/vm/sleepimage
+sudo rm -f /Private/var/vm/sleepimage
 echo 'Create a zero-byte file instead...'
 sudo touch /Private/var/vm/sleepimage
 echo '...and make sure it can’t be rewritten'
