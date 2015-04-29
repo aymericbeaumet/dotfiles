@@ -1,7 +1,8 @@
-set noautofocus " forbid websites to autofocus
+set autohidecursor " auto hide cursor when scrolling
 set autoupdategist " auto config update
 set cncpcompletion " ^N/^P completion
 set nativelinkorder " new tabs follow chrome logic
+set noautofocus " forbid websites to autofocus
 set sortlinkhints " sort hints based on the distance from the top left corner
 
 let barposition = "bottom" " bar at bottom
@@ -10,18 +11,15 @@ let hintcharacters = "lpufyw;qntesiroa" " Colemak toprow/homerow
 let vimcommand = "mvim" " used to open files
 
 " add custom search engines
-let searchengine ddg = "https://duckduckgo.com/?q=%s"
-let searchengine google = "https://www.google.com/#q=%s"
-let searchengine yt = "https://www.youtube.com/results?search_query=%s"
-let searchengine gh = "https://github.com/search?q=%s"
-let searchengine imdb = "http://www.imdb.com/find?q=%s"
-let searchengine wa = "https://www.wolframalpha.com/input/?i=%s"
-let searchengine wen = "https://en.wikipedia.org/wiki/Special:Search?search=%s"
-let searchengine wfr = "https://fr.wikipedia.org/wiki/Special:Search?search=%s"
 let searchengine enfr = "http://www.wordreference.com/enfr/%s"
 let searchengine fren = "http://www.wordreference.com/fren/%s"
-let defaultengine = "google"
+let searchengine gh = "https://github.com/search?q=%s"
+let searchengine imdb = "http://www.imdb.com/find?q=%s"
+let searchengine npm = "https://www.npmjs.com/search?q=%s"
+let searchengine wa = "https://www.wolframalpha.com/input/?i=%s"
+let searchengine wk = "https://en.wikipedia.org/wiki/Special:Search?search=%s"
+let searchengine yt = "https://www.youtube.com/results?search_query=%s"
 
-" faster scroll
-map <C-d> scrollFullPageDown
-map <C-u> scrollFullPageUp
+" define the default search engine
+let searchengine google = "https://www.google.com/#q=%s"
+let defaultengine = "google"
