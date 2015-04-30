@@ -21,7 +21,7 @@
       <autogen>
         __KeyOverlaidModifier__ KeyCode::RETURN,
         KeyCode::VK_LAZY_CONTROL_R,
-        KeyCode::ESCAPE,
+        KeyCode::RETURN,
       </autogen>
     </item>
 
