@@ -45,12 +45,12 @@
       <name>Commands to commands / curly braces</name>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::COMMAND_L, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
-        KeyCode::VK_LAZY_COMMAND_L,
+        KeyCode::COMMAND_L,
         KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
         __KeyOverlaidModifier__ KeyCode::COMMAND_R, ModifierFlag::COMMAND_R | ModifierFlag::NONE,
-        KeyCode::VK_LAZY_COMMAND_R,
+        KeyCode::COMMAND_R,
         KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R,
       </autogen>
     </item>
@@ -265,6 +265,20 @@
       <autogen>
         __KeyToKey__ KeyCode::S, ModifierFlag::HYPER | ModifierFlag::NONE,
         KeyCode::VK_OPEN_URL_HAMMERSPOON_RELOAD_CONFIGURATION,
+      </autogen>
+    </item>
+
+    <vkopenurldef>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_SLACK</name>
+      <url>hammerspoon://launchOrFocusApplication?name=Slack</url>
+      <background/>
+    </vkopenurldef>
+    <item>
+      <identifier>remap.hyper_s</identifier>
+      <name>Hyper + S: launch or focus Slack</name>
+      <autogen>
+        __KeyToKey__ KeyCode::D, ModifierFlag::HYPER | ModifierFlag::NONE,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_SLACK,
       </autogen>
     </item>
 
