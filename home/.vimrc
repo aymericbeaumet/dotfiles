@@ -386,12 +386,6 @@ inoremap <silent> <F1> <Nop>
 nnoremap <silent> <C-C> <Nop>
 noremap <silent> <Del> <Nop>
 
-" center on movements
-nnoremap <silent> n nzz
-nnoremap <silent> N Nzz
-nnoremap <silent> * *zz
-nnoremap <silent> # #zz
-
 " reselect visual block after indent
 vnoremap <silent> < <gv
 vnoremap <silent> > >gv
@@ -410,11 +404,11 @@ vnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
 vnoremap <silent> <Leader>D "_D
 
-" [k]ill inactive buffers
-nnoremap <Leader>k :call DeleteInactiveBufs()<CR>
-
 " toggle [i]nvisible characters display
 nnoremap <silent> <Leader>i :set list! list?<CR>
+
+" [k]ill inactive buffers
+nnoremap <Leader>k :call DeleteInactiveBufs()<CR>
 
 " insert blank lines without entering insert mode
 nnoremap <silent> <Leader>O O<C-C>0"_D
@@ -423,17 +417,20 @@ nnoremap <silent> <Leader>o o<C-C>0"_D
 " toggle [p]aste mode
 nnoremap <silent> <Leader>p :set paste! paste?<CR>
 
+" [r]eload the configuration
+nnoremap <silent> <Leader>r :source ~/.vimrc<CR>
+
 " strip [t]railing whitespaces
 nnoremap <Leader>t :call StripTrailingWhitespaces()<CR>
+
+" quickly [w]rite the current buffer
+nnoremap <silent> <Leader>w :w<CR>
 
 " delete without altering the yanked stack (bis)
 nnoremap <silent> <Leader>x "_x
 vnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>X "_X
 vnoremap <silent> <Leader>X "_X
-
-" quickly [w]rite the current buffer
-nnoremap <silent> <Leader>w :w<CR>
 
 " }}}
 
