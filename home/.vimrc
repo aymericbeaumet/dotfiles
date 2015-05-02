@@ -7,7 +7,7 @@ if !1 | finish | endif
 
 set nocompatible
 au!
-
+let mapleader = "\<Space>" " remap leader key to space (before any bind)
 
 " {{{ 1. Helpers                                                 *vimrc-helpers*
 
@@ -161,13 +161,13 @@ let g:EasyMotion_smartcase = 1 " like Vim
 let bundle = neobundle#get('vim-easymotion')
 function! bundle.hooks.on_post_source(bundle)
   silent! unmap <Leader><Leader>
-  nnoremap <silent> <Leader>e <Plug>(easymotion-prefix)
-  vnoremap <silent> <Leader>e <Plug>(easymotion-prefix)
-  onoremap <silent> <Leader>e <Plug>(easymotion-prefix)
+  nmap <silent> <Leader>e <Plug>(easymotion-prefix)
+  vmap <silent> <Leader>e <Plug>(easymotion-prefix)
+  omap <silent> <Leader>e <Plug>(easymotion-prefix)
 endfunction
 
 NeoBundle 'kien/ctrlp.vim'
-let g:ctrlp_map = '<Leader>f'
+let g:ctrlp_map = '<Leader>o'
 let g:ctrlp_by_filename = 0 " search by filename and folder
 let g:ctrlp_switch_buffer = 'ET' " switch to any buffer in any tab
 let g:ctrlp_working_path_mode = 'ra' " set root as the nearest SCM ancestor
@@ -210,6 +210,13 @@ let g:UltiSnipsSnippetDirectories = ['snippet']
 let g:UltiSnipsExpandTrigger = '<C-J>'
 let g:UltiSnipsJumpForwardTrigger = '<C-J>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
+
+NeoBundle 'terryma/vim-expand-region'
+let bundle = neobundle#get('vim-expand-region')
+function! bundle.hooks.on_post_source(bundle)
+  vmap v <Plug>(expand_region_expand)
+  vmap <C-v> <Plug>(expand_region_shrink)
+endfunction
 
 NeoBundle 'tpope/vim-abolish'
 
@@ -264,7 +271,7 @@ function! bundle.hooks.on_post_source(bundle)
   match TrailingWhitespace /\s\+$/
 endfunction
 
-"     }}}
+"     }}
 
 NeoBundleCheck
 
@@ -356,9 +363,6 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | exe 'normal! g
 
 " {{{ 4. Bindings                                               *vimrc-bindings*
 
-" remap leader key
-let mapleader = '<Space>'
-
 " up and down are more logical with g
 nnoremap <silent> j gj
 vnoremap <silent> j gj
@@ -392,36 +396,44 @@ nnoremap <silent> # #zz
 vnoremap <silent> < <gv
 vnoremap <silent> > >gv
 
-" insert blank lines without entering insert mode
-nnoremap <silent> <Leader>O O<C-C>0"_D
-nnoremap <silent> <Leader>o o<C-C>0"_D
+" fix how ^E and ^Y behave in insert mode
+inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
+inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
+
+" use control + space to enter a command
+nnoremap <C-Space> :
+vnoremap <C-Space> :
 
 " delete without altering the yanked stack
 nnoremap <silent> <Leader>d "_d
 vnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
 vnoremap <silent> <Leader>D "_D
+
+" [k]ill inactive buffers
+nnoremap <Leader>k :call DeleteInactiveBufs()<CR>
+
+" toggle [i]nvisible characters display
+nnoremap <silent> <Leader>i :set list! list?<CR>
+
+" insert blank lines without entering insert mode
+nnoremap <silent> <Leader>O O<C-C>0"_D
+nnoremap <silent> <Leader>o o<C-C>0"_D
+
+" toggle [p]aste mode
+nnoremap <silent> <Leader>p :set paste! paste?<CR>
+
+" strip [t]railing whitespaces
+nnoremap <Leader>t :call StripTrailingWhitespaces()<CR>
+
+" delete without altering the yanked stack (bis)
 nnoremap <silent> <Leader>x "_x
 vnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>X "_X
 vnoremap <silent> <Leader>X "_X
 
-" display/hide invisible characters
-nnoremap <silent> <Leader>l :set list! list?<CR>
-
-" strip whitespaces
-nnoremap <Leader>w :call StripTrailingWhitespaces()<CR>
-
-" delete inactive buffers
-nnoremap <Leader>i :call DeleteInactiveBufs()<CR>
-
-" fix how ^Y and ^E behave in insert mode
-inoremap <expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
-inoremap <expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
-
-" use control + space to enter a command
-nnoremap <C-Space> :
-vnoremap <C-Space> :
+" quickly [w]rite the current buffer
+nnoremap <silent> <Leader>w :w<CR>
 
 " }}}
 
