@@ -23,3 +23,7 @@ let searchengine yt = "https://www.youtube.com/results?search_query=%s"
 " define the default search engine
 let searchengine google = "https://www.google.com/#q=%s"
 let defaultengine = "google"
+
+" custom mappings
+let mapleader = "<Space>"
+map <C-Space> :
