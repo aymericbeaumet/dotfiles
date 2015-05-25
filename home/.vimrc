@@ -88,13 +88,13 @@ if neobundle#load_cache()
 
   " Bundles dependencies
 
-  NeoBundleLazy 'Shougo/vimproc.vim', {
+  NeoBundle 'Shougo/vimproc.vim', {
   \   'build' : {
   \     'mac' : 'make -f make_mac.mak',
   \   },
   \ }
 
-  NeoBundleLazy 'Shougo/neomru.vim'
+  NeoBundle 'Shougo/neomru.vim'
 
   " NeoBundle
 
@@ -105,19 +105,11 @@ if neobundle#load_cache()
 
   " CSS
 
-  NeoBundleLazy 'JulesWang/css.vim', {
-  \   'autoload': {
-  \     'filetypes': ['css'],
-  \   },
-  \ }
+  NeoBundle 'JulesWang/css.vim'
 
   " Docker
 
-  NeoBundleLazy 'ekalinin/Dockerfile.vim', {
-  \   'autoload': {
-  \     'filetypes': ['Dockerfile'],
-  \   },
-  \ }
+  NeoBundle 'ekalinin/Dockerfile.vim'
 
   " Git
 
@@ -125,157 +117,72 @@ if neobundle#load_cache()
   \   'disabled': !executable('git'),
   \ }
 
-  NeoBundleLazy 'tpope/vim-git', {
+  NeoBundle 'tpope/vim-git', {
   \   'disabled': !executable('git'),
-  \   'autoload': {
-  \     'filetypes': ['git', 'gitcommit', 'gitconfig', 'gitrebase', 'gitsendemail'],
-  \   },
   \ }
 
-  NeoBundleLazy 'tpope/vim-fugitive', {
+  NeoBundle 'tpope/vim-fugitive', {
   \   'disabled': !executable('git'),
-  \   'autoload': {
-  \     'commands': ['Git', 'Gcd', 'Glcd', 'Gstatus', 'Gcommit', 'Gmerge', 'Gpull', 'Gpush', 'Gfetch', 'Ggrep', 'Glgrep', 'Glog', 'Gllog', 'Gedit', 'Gsplit', 'Gvsplit', 'Gtabedit', 'Gpedit', 'Gsplit', 'Gvsplit', 'Gtabedit', 'Gpedit', 'Gread', 'Gwrite', 'Gwq', 'Gdiff', 'Gsdiff', 'Gvdiff', 'Gmove', 'Gremove', 'Gblame', 'Gbrowse'],
-  \   },
-  \   'augroup': 'fugitive',
   \ }
 
   " HTML
 
-  NeoBundleLazy 'othree/html5.vim', {
-  \   'autoload': {
-  \     'filetypes': ['html'],
-  \   },
-  \ }
+  NeoBundle 'othree/html5.vim'
 
   " Interface
 
-  " the plugins having an integration in vim-airline cannot be lazy loaded
-  " (hence the explicit dependencies to force their loading before vim-airline)
   NeoBundle 'bling/vim-airline', {
   \   'depends': ['tpote/vim-fugitive', 'airblade/vim-gitgutter', 'scrooloose/syntastic', 'Shougo/unite.vim', 'chrisbra/NrrwRgn'],
   \   'vim_version': '7.2',
   \ }
 
-  NeoBundleLazy 'IndexedSearch', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['n'] + ['/', '?', 'n', 'N', '*', '#'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'IndexedSearch'
 
-  NeoBundleLazy 'jimsei/winresizer', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['n'] + values(b:winresizer.mappings),
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'jimsei/winresizer'
 
   " Jade
 
-  NeoBundleLazy 'digitaltoad/vim-jade', {
-  \   'autoload': {
-  \     'filetypes': ['jade'],
-  \   },
-  \ }
+  NeoBundle 'digitaltoad/vim-jade'
 
   " Javascript
 
-  NeoBundleLazy 'pangloss/vim-javascript', {
-  \   'autoload': {
-  \     'filetypes': ['javascript', 'html'],
-  \   },
-  \ }
+  NeoBundle 'pangloss/vim-javascript'
 
-  NeoBundleLazy 'jelera/vim-javascript-syntax', {
-  \   'autoload': {
-  \     'filetypes': ['javascript'],
-  \   },
-  \ }
+  NeoBundle 'jelera/vim-javascript-syntax'
 
-  NeoBundleLazy 'marijnh/tern_for_vim', {
+  NeoBundle 'marijnh/tern_for_vim', {
   \   'build': {
   \     'mac': 'npm install',
   \   },
-  \   'autoload': {
-  \     'filetypes': ['javascript'],
-  \   },
   \ }
 
-  NeoBundleLazy 'myhere/vim-nodejs-complete', {
-  \   'autoload': {
-  \     'filetypes': ['javascript'],
-  \   },
-  \ }
+  NeoBundle 'myhere/vim-nodejs-complete'
 
   " JSON
 
-  NeoBundleLazy 'elzr/vim-json', {
-  \   'autoload': {
-  \     'filetypes': ['json'],
-  \   },
-  \ }
+  NeoBundle 'elzr/vim-json'
 
   " Markdown
 
-  NeoBundleLazy 'tpope/vim-markdown', {
-  \   'autoload': {
-  \     'filetypes': ['markdown'],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-markdown'
 
   " Motion
 
-  NeoBundleLazy 'Lokaltog/vim-easymotion', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['nvo'] + values(b:vim_easymotion.mappings),
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'Lokaltog/vim-easymotion'
 
-  NeoBundleLazy 'matchit.zip', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['nv'] + ['%', 'g%'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'matchit.zip'
 
-  NeoBundleLazy 'terryma/vim-expand-region', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['v'] + values(b:vim_expand_region.mappings),
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'terryma/vim-expand-region'
 
-  NeoBundleLazy 'thinca/vim-visualstar', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['no', '*', '#', 'g*', 'g#'],
-  \       ['v', '*', '<kMultiply>', '<S-LeftMouse>', '#', 'g*', 'g<kMultiply>', 'g<S-LeftMouse>', 'g#'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'thinca/vim-visualstar'
 
   " Nginx
 
-  NeoBundleLazy 'nginx.vim', {
-  \   'autoload': {
-  \     'filetypes': ['nginx'],
-  \   },
-  \ }
+  NeoBundle 'nginx.vim'
 
   " Stylus
 
-  NeoBundleLazy 'wavded/vim-stylus', {
-  \   'autoload': {
-  \     'filetypes': ['stylus'],
-  \   },
-  \ }
+  NeoBundle 'wavded/vim-stylus'
 
   " Theme
 
@@ -285,147 +192,55 @@ if neobundle#load_cache()
 
   NeoBundle 'airblade/vim-rooter'
 
-  NeoBundleLazy 'chrisbra/NrrwRgn', {
-  \   'autoload': {
-  \     'commands': ['NR', 'NarrowRegion', 'NW', 'NarrowWindow', 'WidenRegion', 'NRV', 'NUD', 'NRPrepare', 'NRP', 'NRMulti', 'NRM', 'NRSyncOnWrite', 'NRS', 'NRNoSyncOnWrite', 'NRN', 'NRL'],
-  \     'mappings': [
-  \       ['nv'] + values(b:narrowregion.mappings),
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'chrisbra/NrrwRgn'
 
-  NeoBundleLazy 'editorconfig/editorconfig-vim', {
-  \   'autoload': {
-  \     'insert': 1,
-  \   },
-  \ }
+  NeoBundle 'editorconfig/editorconfig-vim'
 
-  NeoBundleLazy 'junegunn/vim-easy-align', {
-  \   'autoload': {
-  \     'commands': ['EasyAlign', 'LiveEasyAlign'],
-  \     'mappings': [
-  \       ['v', b:easyalign.mappings.align],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'junegunn/vim-easy-align'
 
   NeoBundle 'ntpeters/vim-better-whitespace'
 
-  NeoBundleLazy 'scrooloose/nerdcommenter', {
+  NeoBundle 'scrooloose/nerdcommenter', {
   \   'vim_version': '7',
-  \   'autoload': {
-  \     'commands': ['NERDComComment', 'NERDComNestedComment', 'NERDComToggleComment', 'NERDComMinimalComment', 'NERDComInvertComment', 'NERDComSexyComment', 'NERDComYankComment', 'NERDComEOLComment', 'NERDComAppendComment', 'NERDComInsertComment', 'NERDComAltDelim', 'NERDComAlignedComment', 'NERDComUncommentLine'],
-  \     'mappings': [
-  \       ['nv'] + ['<Leader>cc', '<Leader>cn', '<Leader>c', '<Leader>cm', '<Leader>ci', '<Leader>cs', '<Leader>cy', '<Leader>c$', '<Leader>cA', '<Leader>ca', '<Leader>cl', '<Leader>cb', '<Leader>cu'],
-  \     ],
-  \   },
   \ }
 
-  NeoBundleLazy 'scrooloose/syntastic', {
+  NeoBundle 'scrooloose/syntastic', {
   \   'build': {
   \     'mac': 'npm install -g ' . join(b:syntastic.linters.javascript, ' '),
   \   },
   \   'vim_version': '7',
   \   'disabled': !has('autocmd') || !has('eval') || !has('file_in_path') || !has('modify_fname') || !has('quickfix') || !has('reltime') || !has('user_commands'),
-  \   'autoload': {
-  \     'filetypes': keys(b:syntastic.linters),
-  \     'commands': ['Errors', 'SyntasticToggleMode', 'SyntasticCheck', 'SyntasticInfo', 'SyntasticReset', 'SyntasticSetLoclist'],
-  \     'mappings': [
-  \       ['n'] + values(b:syntastic.mappings),
-  \     ],
-  \   },
   \ }
 
-  NeoBundleLazy 'Shougo/unite.vim', {
+  NeoBundle 'Shougo/unite.vim', {
   \   'depends': ['Shougo/vimproc.vim', 'Shougo/neomru.vim'],
-  \   'autoload': {
-  \     'commands': ['Unite', 'UniteWithCurrentDir', 'UniteWithBufferDir', 'UniteWithProjectDir', 'UniteWithInput', 'UniteWithInputDirectory', 'UniteWithCursorWord', 'UniteResume', 'UniteClose', 'UniteNext', 'UnitePrevious', 'UniteFirst', 'UniteLast', 'UniteBookmarkAdd'],
-  \     'mappings': [
-  \       ['n'] + values(b:unite.mappings),
-  \     ],
-  \   },
   \ }
 
-  NeoBundleLazy 'terryma/vim-multiple-cursors', {
-  \   'autoload': {
-  \     'commands': ['MultipleCursorsFind'],
-  \     'mappings': [
-  \       ['n'] + ['<C-n>', '<C-p>', '<C-x>']
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'terryma/vim-multiple-cursors'
 
-  " This plugin cannot be lazily loaded
-  " See: https://github.com/SirVer/ultisnips/issues/280
   NeoBundle 'SirVer/ultisnips'
 
-  NeoBundleLazy 'tpope/vim-abolish', {
-  \   'autoload': {
-  \     'commands': ['Abolish', 'Subvert', 'S'],
-  \     'mappings': [
-  \       ['n'] + ['cr'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-abolish'
 
-  NeoBundleLazy 'tpope/vim-endwise', {
-  \   'autoload': {
-  \     'filetypes': ['lua', 'elixir', 'ruby', 'crystal', 'sh', 'zsh', 'vb', 'vbnet', 'aspvbs', 'vim', 'c', 'cpp', 'xdefaults', 'objc', 'matlab'],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-endwise'
 
-  NeoBundleLazy 'tpope/vim-eunuch', {
-  \   'autoload': {
-  \     'commands': ['Remove', 'Unlink', 'Move', 'Rename', 'Chmod', 'Mkdir', 'Find', 'Locate', 'SudoEdit', 'SudoWrite', 'Wall', 'W'],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-eunuch'
 
-  NeoBundleLazy 'tpope/vim-repeat', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['n'] + ['.', 'u', 'U', '<C-R>'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-repeat'
 
-  NeoBundleLazy 'tpope/vim-speeddating', {
-  \   'autoload': {
-  \     'commands': ['SpeedDatingFormat'],
-  \     'mappings': [
-  \       ['nv'] + ['<C-A>', '<C-X>'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-speeddating'
 
-  NeoBundleLazy 'tpope/vim-surround', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['n'] + ['ds', 'cs', 'cS', 'ys', 'yS', 'yss', 'ySs', 'ySS'],
-  \       ['x'] + ['S', 'gS'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-surround'
 
-  NeoBundleLazy 'tpope/vim-unimpaired', {
-  \   'autoload': {
-  \     'mappings': [
-  \       ['n'] + ['[a', ']a', '[A', ']A', '[b', ']b', '[B', ']B', '[l', ']l', '[L', ']L', '[<C-L>', ']<C-L>', '[q', ']q', '[Q', ']Q', '[<C-Q>', ']<C-Q>', '[t', ']t', '[T', ']T', '[f', ']f', '[n', ']n', '[<Space>', ']<Space>', '[e', ']e', '[ob', ']ob', 'cob', '[oc', ']oc', 'coc', '[od', ']od', 'cod', '[oh', ']oh', 'coh', '[oi', ']oi', 'coi', '[ol', ']ol', 'col', '[on', ']on', 'con', '[or', ']or', 'cor', '[os', ']os', 'cos', '[ou', ']ou', 'cou', '[ov', ']ov', 'cov', '[ow', ']ow', 'cow', '[ox', ']ox', 'cox', '>p', '>P', '<p', '<P', '=p', '=P', ']p', '[p', 'yo', 'yO', '[x', '[xx', ']x', ']xx', '[u', '[uu', ']u', ']uu', '[y', '[yy', ']y', ']yy'],
-  \       ['v'] + ['[x', ']x', '[u', ']u', '[y', ']y'],
-  \     ],
-  \   },
-  \ }
+  NeoBundle 'tpope/vim-unimpaired'
 
-  NeoBundleLazy 'Valloric/YouCompleteMe', {
+  NeoBundle 'Valloric/YouCompleteMe', {
   \   'install_process_timeout': 3600,
   \   'build': {
   \     'mac': './install.sh --clang-completer',
   \   },
   \   'vim_version': '7.3.584',
   \   'disabled': !has('python'),
-  \   'autoload': {
-  \     'filetypes': ['javascript'],
-  \   },
-  \   'augroup': 'youcompletemeStart',
   \ }
 
   NeoBundleSaveCache
@@ -490,11 +305,11 @@ function! bundle.hooks.on_post_source(bundle)
   call unite#filters#sorter_default#use(['sorter_rank'])
   call unite#filters#matcher_default#use(['matcher_fuzzy'])
   nnoremap [unite] <Nop>
-  execute 'nnoremap <silent> ' . b:unite.mappings.buffers        . ' :<C-U>Unite -buffer-name=buffers -quick-match buffer<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.files          . ' :<C-U>Unite -buffer-name=files -auto-resize file file_rec/async file_mru<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.grep           . ' :<C-U>Unite -buffer-name=grep grep:.<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.grep_in_buffer . ' :<C-U>Unite -buffer-name=grep_in_buffer line<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.history_yank   . ' :<C-U>Unite -buffer-name=history_yanks history/yank<CR>'
+  execute 'nnoremap <silent> ' . b:unite.mappings.buffers        . ' :<C-U>Unite -quick-match buffer<CR>'
+  execute 'nnoremap <silent> ' . b:unite.mappings.files          . ' :<C-U>Unite -auto-resize file file_rec/async file_mru<CR>'
+  execute 'nnoremap <silent> ' . b:unite.mappings.grep           . ' :<C-U>Unite grep:.<CR>'
+  execute 'nnoremap <silent> ' . b:unite.mappings.grep_in_buffer . ' :<C-U>Unite line<CR>'
+  execute 'nnoremap <silent> ' . b:unite.mappings.history_yank   . ' :<C-U>Unite history/yank<CR>'
 endfunction
 
 let bundle = neobundle#get('vim-airline')
@@ -680,9 +495,6 @@ nnoremap <silent> <Leader>r :source ~/.vimrc<CR>
 
 " [s]trip trailing whitespaces
 " <Leader>s
-
-" [t]ree (file explorer)
-" <Leader>t
 
 " [w]rite the current buffer
 nnoremap <silent> <Leader>w :w<CR>
