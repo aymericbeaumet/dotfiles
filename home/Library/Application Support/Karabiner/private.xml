@@ -26,36 +26,6 @@
     </item>
 
     <item>
-      <identifier>remap.modifiers.shifts_to_shifts_parenthesis</identifier>
-      <name>Shifts to shifts / parenthesis</name>
-      <autogen>
-        __KeyOverlaidModifier__ KeyCode::SHIFT_L, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
-        KeyCode::VK_LAZY_SHIFT_L,
-        KeyCode::KEY_9, ModifierFlag::SHIFT_L,
-      </autogen>
-      <autogen>
-        __KeyOverlaidModifier__ KeyCode::SHIFT_R, ModifierFlag::SHIFT_R | ModifierFlag::NONE,
-        KeyCode::VK_LAZY_SHIFT_R,
-        KeyCode::KEY_0, ModifierFlag::SHIFT_R,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.modifiers.commands_to_commands_curly_braces</identifier>
-      <name>Commands to commands / curly braces</name>
-      <autogen>
-        __KeyOverlaidModifier__ KeyCode::COMMAND_L, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
-        KeyCode::COMMAND_L,
-        KeyCode::BRACKET_LEFT, ModifierFlag::SHIFT_L,
-      </autogen>
-      <autogen>
-        __KeyOverlaidModifier__ KeyCode::COMMAND_R, ModifierFlag::COMMAND_R | ModifierFlag::NONE,
-        KeyCode::COMMAND_R,
-        KeyCode::BRACKET_RIGHT, ModifierFlag::SHIFT_R,
-      </autogen>
-    </item>
-
-    <item>
       <identifier>remap.modifiers.tab_backslash_to_hyper_tab_backslash</identifier>
       <name>Tab, Backslash to Hyper / Tab, Backslash</name>
       <autogen>
@@ -116,16 +86,16 @@
     </item>
 
     <vkopenurldef>
-      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_CHROMIUM</name>
-      <url>hammerspoon://launchOrFocusApplication?name=Chromium</url>
+      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_GOOGLE_CHROME</name>
+      <url>hammerspoon://launchOrFocusApplication?name=Google%20Chrome</url>
       <background/>
     </vkopenurldef>
     <item>
       <identifier>remap.hyper_c</identifier>
-      <name>Hyper + C: launch or focus Chromium</name>
+      <name>Hyper + C: launch or focus Google Chrome</name>
       <autogen>
         __KeyToKey__ KeyCode::C, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_CHROMIUM,
+        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_GOOGLE_CHROME,
       </autogen>
     </item>
 
@@ -511,62 +481,12 @@
     </item>
 
     <item>
-      <identifier>remap.emacs.control_v</identifier>
-      <name>Control + V: page down (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
-      <autogen>
-        __KeyToKey__ KeyCode::V, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_DOWN, ModifierFlag::FN,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.emacs.alt_v</identifier>
-      <name>Alt + V: page up (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
-      <autogen>
-        __KeyToKey__ KeyCode::V, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
-        KeyCode::CURSOR_UP, ModifierFlag::FN,
-      </autogen>
-    </item>
-
-    <item>
       <identifier>remap.emacs.control_w</identifier>
       <name>Control + W: delete word (not mvim/terminal)</name>
       <not>MVIM, TERMINAL</not>
       <autogen>
         __KeyToKey__ KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
         KeyCode::DELETE, ModifierFlag::OPTION_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.emacs.control_y</identifier>
-      <name>Control + Y: system paste (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
-      <autogen>
-        __KeyToKey__ KeyCode::O, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::V, ModifierFlag::COMMAND_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.emacs.alt_less_than</identifier>
-      <name>Alt + &lt;: home (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
-      <autogen>
-        __KeyToKey__ KeyCode::COMMA, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
-        KeyCode::CURSOR_LEFT, ModifierFlag::FN,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.emacs.alt_greater_than</identifier>
-      <name>Alt + &gt;: end (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
-      <autogen>
-        __KeyToKey__ KeyCode::DOT, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
-        KeyCode::CURSOR_RIGHT, ModifierFlag::FN,
       </autogen>
     </item>
 
