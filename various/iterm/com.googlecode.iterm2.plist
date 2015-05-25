@@ -53,13 +53,6 @@
 			<key>Text</key>
 			<string></string>
 		</dict>
-		<key>0x20-0x40000</key>
-		<dict>
-			<key>Action</key>
-			<integer>12</integer>
-			<key>Text</key>
-			<string>:</string>
-		</dict>
 		<key>0x7b-0x120000</key>
 		<dict>
 			<key>Action</key>
@@ -936,7 +929,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2015-04-17T18:35:36Z</date>
+	<date>2015-05-07T08:12:27Z</date>
 	<key>SavePasteHistory</key>
 	<true/>
 	<key>Show Toolbelt</key>
@@ -992,6 +985,6 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>2.0.0.20150412</string>
+	<string>2.1</string>
 </dict>
 </plist>
