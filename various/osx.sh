@@ -94,6 +94,9 @@ sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutio
 
 # Finder
 
+echo 'Finder: disallow quitting via ⌘ + Q'
+defaults write com.apple.finder QuitMenuItem -bool false
+
 echo 'Disable window animations and Get Info animations'
 defaults write com.apple.finder DisableAllAnimations -bool true
 
@@ -101,11 +104,11 @@ echo 'Set Home as the default location for new Finder windows'
 defaults write com.apple.finder NewWindowTarget -string 'PfLo'
 defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
-echo 'Show icons for hard drives, servers, and removable media on the desktop'
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
-defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
-defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
+echo 'Hide icons for hard drives, servers, and removable media on the desktop'
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
+defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
 
 echo 'Show all filename extensions'
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
@@ -176,8 +179,8 @@ defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
 echo 'Disable the warning before emptying the Trash'
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
-echo 'Empty Trash securely by default'
-defaults write com.apple.finder EmptyTrashSecurely -bool true
+echo 'Do not empty Trash securely by default'
+defaults write com.apple.finder EmptyTrashSecurely -bool false
 
 echo 'Enable AirDrop over Ethernet'
 defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
