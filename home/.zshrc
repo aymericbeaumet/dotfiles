@@ -336,12 +336,6 @@ autoload -Uz homeshick
 # nvm / Node.js / npm
 autoload -Uz nvm node npm
 
-# rbenv / Ruby
-autoload -Uz rbenv ruby
-
-# pyenv / Python
-autoload -Uz pyenv python
-
 #######################
 # Synchronous loading #
 #######################
