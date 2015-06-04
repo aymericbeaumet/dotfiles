@@ -6,7 +6,7 @@ set noautofocus " forbid websites to autofocus
 set sortlinkhints " sort hints based on the distance from the top left corner
 
 let barposition = 'bottom' " bar at bottom
-let blacklists = ['http://www.typing.com/*', 'http://www.memrise.com/'] " ignore there websites
+let blacklists = ['http://www.typing.com/*', 'http://www.memrise.com/', 'https://inbox.google.com'] " ignore there websites
 let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
 let vimcommand = 'mvim' " used to open files
 
