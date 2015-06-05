@@ -107,10 +107,6 @@ if is_macosx ; then
   alias updatedb='/usr/libexec/locate.updatedb'
 fi
 
-# Pipe standard output to common commands
-alias -g G=' | grep'
-alias -g L=' | less'
-
 ###########
 # History #
 ###########
@@ -331,7 +327,7 @@ fpath=(
 #######################
 
 # boot2docker
-$(command boot2docker shellinit 2>/dev/null)
+$(boot2docker shellinit 2>/dev/null)
 
 # homeshick
 fpath=(
@@ -342,9 +338,8 @@ source "$HOME/.homesick/repos/homeshick/homeshick.sh"
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
-if which brew &> /dev/null ; then
-  source "$(command brew --prefix nvm)/nvm.sh"
-fi
+which brew &> /dev/null && source "$(brew --prefix nvm)/nvm.sh"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 # zsh-syntax-highlighting
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
