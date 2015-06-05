@@ -1,12 +1,20 @@
 # Aymeric's dotfiles
 
-Only tested on OSX.
+Tested on OSX and Debian.
 
 ## Requirements
 
+### OSX
+
 ```bash
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install git
+brew install git vim zsh
+```
+
+### Debian
+
+```bash
+sudo apt-get install git vim zsh
 ```
 
 ## Installation
