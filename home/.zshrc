@@ -244,7 +244,7 @@ precmd_set_prompt()
   PROMPT="$PROMPT%(!.#.$) "
 
   # right prompt
-  RPROMPT=''
+  RPROMPT='%m'
 }
 add-zsh-hook precmd precmd_set_prompt
 
