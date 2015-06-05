@@ -90,7 +90,8 @@ if neobundle#load_cache()
 
   NeoBundle 'Shougo/vimproc.vim', {
   \   'build' : {
-  \     'mac' : 'make -f make_mac.mak',
+  \     'mac': 'make -f make_mac.mak',
+  \     'linux': 'make',
   \   },
   \ }
 
@@ -153,6 +154,7 @@ if neobundle#load_cache()
   NeoBundle 'marijnh/tern_for_vim', {
   \   'build': {
   \     'mac': 'npm install',
+  \     'linux': 'npm install',
   \   },
   \ }
 
@@ -207,6 +209,7 @@ if neobundle#load_cache()
   NeoBundle 'scrooloose/syntastic', {
   \   'build': {
   \     'mac': 'npm install -g ' . join(b:syntastic.linters.javascript, ' '),
+  \     'linux': 'npm install -g ' . join(b:syntastic.linters.javascript, ' '),
   \   },
   \   'vim_version': '7',
   \   'disabled': !has('autocmd') || !has('eval') || !has('file_in_path') || !has('modify_fname') || !has('quickfix') || !has('reltime') || !has('user_commands'),
@@ -218,7 +221,9 @@ if neobundle#load_cache()
 
   NeoBundle 'terryma/vim-multiple-cursors'
 
-  NeoBundle 'SirVer/ultisnips'
+  NeoBundle 'SirVer/ultisnips', {
+  \   'disabled': !has('python'),
+  \ }
 
   NeoBundle 'tpope/vim-abolish'
 
@@ -233,7 +238,7 @@ if neobundle#load_cache()
   NeoBundle 'tpope/vim-surround'
 
   NeoBundle 'tpope/vim-unimpaired'
-
+  if has('macunix') " only run on OSX workstation (not on Linux servers)
   NeoBundle 'Valloric/YouCompleteMe', {
   \   'install_process_timeout': 3600,
   \   'build': {
@@ -242,6 +247,7 @@ if neobundle#load_cache()
   \   'vim_version': '7.3.584',
   \   'disabled': !has('python'),
   \ }
+  endif
 
   NeoBundleSaveCache
 
@@ -410,6 +416,7 @@ function! bundle.hooks.on_post_source(bundle)
   hi ColorColumn ctermbg=0 guibg=black
 endfunction
 
+if neobundle#is_sourced('YouCompleteMe')
 let bundle = neobundle#get('YouCompleteMe')
 function! bundle.hooks.on_source(bundle)
   let g:ycm_complete_in_comments = 1
@@ -422,6 +429,7 @@ endfunction
 function! bundle.hooks.on_post_source(bundle)
   set completeopt=longest,menuone
 endfunction
+endif
 
 " End NeoBundle initialization
 
