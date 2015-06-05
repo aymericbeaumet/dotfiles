@@ -322,23 +322,29 @@ set_window_name "$(whoami)@$(hostname)"
 ################
 
 fpath=(
-  "$HOME/.zsh/autoload"
   "$HOME/.zsh/completion"
   "${fpath[@]}"
 )
 
-# Boot2docker / Docker
-autoload -Uz boot2docker docker
-
-# homeshick
-autoload -Uz homeshick
-
-# nvm / Node.js / npm
-autoload -Uz nvm node npm
-
 #######################
 # Synchronous loading #
 #######################
+
+# boot2docker
+$(command boot2docker shellinit 2>/dev/null)
+
+# homeshick
+fpath=(
+  "$HOME/.homesick/repos/homeshick/completions"
+  "${fpath[@]}"
+)
+source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+if which brew &> /dev/null ; then
+  source "$(command brew --prefix nvm)/nvm.sh"
+fi
 
 # zsh-syntax-highlighting
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
