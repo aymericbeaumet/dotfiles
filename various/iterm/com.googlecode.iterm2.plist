@@ -329,7 +329,7 @@
 			<key>Blur</key>
 			<false/>
 			<key>Blur Radius</key>
-			<real>2.6592154502868652</real>
+			<real>0.10000000149011612</real>
 			<key>Bold Color</key>
 			<dict>
 				<key>Blue Component</key>
@@ -894,6 +894,10 @@
 	</array>
 	<key>NoSyncNeverRemindPrefsChangesCopy</key>
 	<true/>
+	<key>NoSyncTimeOfLastPromo</key>
+	<real>453202526.223589</real>
+	<key>NoSyncTimeOfLastPromoDownload</key>
+	<real>455834371.29257601</real>
 	<key>OnlyWhenMoreTabs</key>
 	<false/>
 	<key>OpenArrangementAtStartup</key>
@@ -929,7 +933,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2015-05-07T08:12:27Z</date>
+	<date>2015-06-11T14:51:47Z</date>
 	<key>SavePasteHistory</key>
 	<true/>
 	<key>Show Toolbelt</key>
@@ -943,7 +947,7 @@
 	<key>SmartPlacement</key>
 	<true/>
 	<key>SplitPaneDimmingAmount</key>
-	<real>0.1964292973279953</real>
+	<real>0.36851713061332703</real>
 	<key>SwitchTabModifier</key>
 	<integer>4</integer>
 	<key>SwitchWindowModifier</key>
@@ -985,6 +989,6 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>2.1</string>
+	<string>2.1.1</string>
 </dict>
 </plist>
