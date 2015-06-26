@@ -10,13 +10,13 @@
   "browserify": true,
 
   "globals": {
-    "before": false,
-    "beforeEach": false,
-    "after": false,
-    "afterEach": false,
-    "describe": false,
-    "it": false,
-    "expect": false,
+    "before": true,
+    "beforeEach": true,
+    "after": true,
+    "afterEach": true,
+    "describe": true,
+    "it": true,
+    "expect": true,
     "sinon": true
   }
 }

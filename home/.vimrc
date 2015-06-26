@@ -19,18 +19,6 @@ let mapleader = ' '
 
 let b:tmp_directory = expand('~/.vim/tmp')
 
-let b:easyalign = {
-\   'mappings': {
-\     'align': '<Enter>',
-\   },
-\ }
-
-let b:narrowregion = {
-\   'mappings': {
-\     'narrow': '<Leader>nr',
-\   },
-\ }
-
 let b:syntastic = {
 \   'linters': {
 \     'javascript': ['jshint'],
@@ -40,25 +28,9 @@ let b:syntastic = {
 \   },
 \ }
 
-let b:unite = {
-\   'mappings': {
-\     'buffers':         '<Leader>b',
-\     'files':          '<Leader>f',
-\     'grep':           '<Leader>g',
-\     'grep_in_buffer': '<Leader>/',
-\     'history_yank':   '<Leader>y',
-\   },
-\ }
-
 let b:vim_easymotion = {
 \   'mappings': {
 \     'prefix': '<Leader>e',
-\   },
-\ }
-
-let b:vim_expand_region = {
-\   'mappings': {
-\     'expand': 'v',
 \   },
 \ }
 
@@ -88,14 +60,12 @@ if neobundle#load_cache()
 
   " Bundles dependencies
 
-  NeoBundle 'Shougo/vimproc.vim', {
+  NeoBundleLazy 'Shougo/vimproc.vim', {
   \   'build' : {
   \     'mac': 'make -f make_mac.mak',
   \     'linux': 'make',
   \   },
   \ }
-
-  NeoBundle 'Shougo/neomru.vim'
 
   " NeoBundle
 
@@ -126,10 +96,6 @@ if neobundle#load_cache()
   \   'disabled': !executable('git'),
   \ }
 
-  " HTML
-
-  NeoBundle 'othree/html5.vim'
-
   " Interface
 
   NeoBundle 'bling/vim-airline', {
@@ -137,13 +103,7 @@ if neobundle#load_cache()
   \   'vim_version': '7.2',
   \ }
 
-  NeoBundle 'IndexedSearch'
-
   NeoBundle 'jimsei/winresizer'
-
-  " Jade
-
-  NeoBundle 'digitaltoad/vim-jade'
 
   " Javascript
 
@@ -172,20 +132,6 @@ if neobundle#load_cache()
 
   NeoBundle 'Lokaltog/vim-easymotion'
 
-  NeoBundle 'matchit.zip'
-
-  NeoBundle 'terryma/vim-expand-region'
-
-  NeoBundle 'thinca/vim-visualstar'
-
-  " Nginx
-
-  NeoBundle 'nginx.vim'
-
-  " Stylus
-
-  NeoBundle 'wavded/vim-stylus'
-
   " Theme
 
   NeoBundle 'wombat256.vim'
@@ -194,11 +140,7 @@ if neobundle#load_cache()
 
   NeoBundle 'airblade/vim-rooter'
 
-  NeoBundle 'chrisbra/NrrwRgn'
-
   NeoBundle 'editorconfig/editorconfig-vim'
-
-  NeoBundle 'junegunn/vim-easy-align'
 
   NeoBundle 'ntpeters/vim-better-whitespace'
 
@@ -215,19 +157,11 @@ if neobundle#load_cache()
   \   'disabled': !has('autocmd') || !has('eval') || !has('file_in_path') || !has('modify_fname') || !has('quickfix') || !has('reltime') || !has('user_commands'),
   \ }
 
-  NeoBundle 'Shougo/unite.vim', {
-  \   'depends': ['Shougo/vimproc.vim', 'Shougo/neomru.vim'],
-  \ }
-
-  NeoBundle 'terryma/vim-multiple-cursors'
-
   NeoBundle 'SirVer/ultisnips', {
   \   'disabled': !has('python'),
   \ }
 
   NeoBundle 'tpope/vim-abolish'
-
-  NeoBundle 'tpope/vim-endwise'
 
   NeoBundle 'tpope/vim-eunuch'
 
@@ -238,6 +172,7 @@ if neobundle#load_cache()
   NeoBundle 'tpope/vim-surround'
 
   NeoBundle 'tpope/vim-unimpaired'
+
   if has('macunix') " only run on OSX workstation (not on Linux servers)
   NeoBundle 'Valloric/YouCompleteMe', {
   \   'install_process_timeout': 3600,
@@ -254,17 +189,6 @@ if neobundle#load_cache()
 endif
 
 " Setup plugins
-
-let bundle = neobundle#get('NrrwRgn')
-function! bundle.hooks.on_source(bundle)
-  let g:nrrw_rgn_nohl = 1 " disable highlighting
-  let g:nrrw_rgn_update_orig_win = 1 " update the cursor in the main buffer
-endfunction
-function! bundle.hooks.on_post_source(bundle)
-  map <Nop> <Plug>NrrwrgnDo
-  execute 'nnoremap <silent> ' . b:narrowregion.mappings.narrow . ' :NarrowRegion<CR>'
-  execute 'vnoremap <silent> ' . b:narrowregion.mappings.narrow . ' :NarrowRegion<CR>'
-endfunction
 
 let bundle = neobundle#get('syntastic')
 function! bundle.hooks.on_source(bundle)
@@ -290,34 +214,6 @@ function! bundle.hooks.on_source(bundle)
   let g:UltiSnipsJumpBackwardTrigger = '<C-K>'
 endfunction
 
-let bundle = neobundle#get('unite.vim')
-function! bundle.hooks.on_source(bundle)
-  let g:unite_data_directory = expand(b:tmp_directory . '/unite') " change the temporary directory
-  let g:unite_source_history_yank_enable = 1
-  let g:unite_enable_start_insert = 1
-  let g:unite_enable_short_source_names = 1
-  let g:unite_split_rule = 'botright'
-  let g:unite_update_time = 300
-  let g:unite_source_file_mru_limit = 100
-  let g:unite_prompt = '➜ '
-  let g:unite_source_session_enable_auto_save = 1
-  call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep', 'ignore_pattern', join([
-  \   '\.git/',
-  \   'node_modules/',
-  \   'bower_components/',
-  \ ], '\|'))
-endfunction
-function! bundle.hooks.on_post_source(bundle)
-  call unite#filters#sorter_default#use(['sorter_rank'])
-  call unite#filters#matcher_default#use(['matcher_fuzzy'])
-  nnoremap [unite] <Nop>
-  execute 'nnoremap <silent> ' . b:unite.mappings.buffers        . ' :<C-U>Unite -quick-match buffer<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.files          . ' :<C-U>Unite -auto-resize file file_rec/async file_mru<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.grep           . ' :<C-U>Unite grep:.<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.grep_in_buffer . ' :<C-U>Unite line<CR>'
-  execute 'nnoremap <silent> ' . b:unite.mappings.history_yank   . ' :<C-U>Unite history/yank<CR>'
-endfunction
-
 let bundle = neobundle#get('vim-airline')
 function! bundle.hooks.on_source(bundle)
   let g:airline_theme = 'badwolf' " specify theme
@@ -337,11 +233,6 @@ function! bundle.hooks.on_post_source(bundle)
   nnoremap <silent> <Leader>s :StripWhitespace<CR>
 endfunction
 
-let bundle = neobundle#get('vim-easy-align')
-function! bundle.hooks.on_source(bundle)
-  execute 'vmap <silent> ' . b:easyalign.mappings.align . ' <Plug>(EasyAlign)'
-endfunction
-
 let bundle = neobundle#get('vim-easymotion')
 function! bundle.hooks.on_source(bundle)
   let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
@@ -355,13 +246,6 @@ function! bundle.hooks.on_post_source(bundle)
   execute 'nmap <silent> ' . b:vim_easymotion.mappings.prefix . ' <Plug>(easymotion-prefix)'
   execute 'vmap <silent> ' . b:vim_easymotion.mappings.prefix . ' <Plug>(easymotion-prefix)'
   execute 'omap <silent> ' . b:vim_easymotion.mappings.prefix . ' <Plug>(easymotion-prefix)'
-endfunction
-
-let bundle = neobundle#get('vim-expand-region')
-function! bundle.hooks.on_post_source(bundle)
-  silent! unmap +
-  silent! unmap _
-  execute 'vmap <silent> ' . b:vim_expand_region.mappings.expand . ' <Plug>(expand_region_expand)'
 endfunction
 
 let bundle = neobundle#get('vim-gitgutter')
