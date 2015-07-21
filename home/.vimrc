@@ -21,7 +21,7 @@ let b:tmp_directory = expand('~/.vim/tmp')
 
 let b:syntastic = {
 \   'linters': {
-\     'javascript': ['jshint'],
+\     'javascript': ['eslint', 'jshint'],
 \   },
 \   'mappings': {
 \     'check': '<Leader>l',
@@ -99,7 +99,7 @@ if neobundle#load_cache()
   " Interface
 
   NeoBundle 'bling/vim-airline', {
-  \   'depends': ['tpote/vim-fugitive', 'airblade/vim-gitgutter', 'scrooloose/syntastic', 'Shougo/unite.vim', 'chrisbra/NrrwRgn'],
+  \   'depends': ['tpote/vim-fugitive', 'airblade/vim-gitgutter', 'scrooloose/syntastic'],
   \   'vim_version': '7.2',
   \ }
 
