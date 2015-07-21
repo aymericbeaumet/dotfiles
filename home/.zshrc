@@ -228,9 +228,9 @@ precmd_set_prompt()
 
   # left prompt
   if [ -n "$(jobs)" ] ; then
-    PROMPT="[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
+    PROMPT="    λ [%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
   else
-    PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
+    PROMPT="    λ %(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
   if [ -n "$vcs_info_msg_0_" ] ; then
     PROMPT="$PROMPT${vcs_info_msg_0_/|)/)} " # Replace '|)' by ')' for aestheticism purpose
