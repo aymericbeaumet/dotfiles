@@ -63,29 +63,6 @@
     </item>
 
     <vkopenurldef>
-      <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ALFRED</name>
-      <url>hammerspoon://launchOrFocusApplication?name=Alfred%202</url>
-      <background/>
-    </vkopenurldef>
-    <item>
-      <identifier>remap.hyper_a</identifier>
-      <name>Hyper + A: launch or focus Alfred</name>
-      <autogen>
-        __KeyToKey__ KeyCode::A, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_ALFRED,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_b</identifier>
-      <name>Hyper + B: previous window</name>
-      <autogen>
-        __KeyToKey__ KeyCode::B, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
-      </autogen>
-    </item>
-
-    <vkopenurldef>
       <name>KeyCode::VK_OPEN_URL_HAMMERSPOON_LAUNCH_OR_FOCUS_GOOGLE_CHROME</name>
       <url>hammerspoon://launchOrFocusApplication?name=Google%20Chrome</url>
       <background/>
@@ -110,15 +87,6 @@
       <autogen>
         __KeyToKey__ KeyCode::G, ModifierFlag::HYPER | ModifierFlag::NONE,
         KeyCode::VK_OPEN_URL_HAMMERSPOON_DISPLAY_DATE,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_f</identifier>
-      <name>Hyper + F: next window</name>
-      <autogen>
-        __KeyToKey__ KeyCode::E, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L,
       </autogen>
     </item>
 
@@ -203,24 +171,6 @@
       <autogen>
         __KeyToKey__ KeyCode::M, ModifierFlag::HYPER | ModifierFlag::NONE,
         KeyCode::VK_OPEN_URL_HAMMERSPOON_RESIZE_FOCUSED_APPLICATION_MAXIMUM,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_n</identifier>
-      <name>Hyper + N: next application</name>
-      <autogen>
-        __KeyToKey__ KeyCode::J, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::TAB, ModifierFlag::COMMAND_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.hyper_p</identifier>
-      <name>Hyper + P: previous application</name>
-      <autogen>
-        __KeyToKey__ KeyCode::R, ModifierFlag::HYPER | ModifierFlag::NONE,
-        KeyCode::TAB, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L,
       </autogen>
     </item>
 
