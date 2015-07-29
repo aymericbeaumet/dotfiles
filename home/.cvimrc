@@ -31,7 +31,7 @@ site '*://*google.*/*' {
 site '*://*memrise.com/*' {
   set autofocus
 }
-site '*://*wordreference.com' {
+site '*://*wordreference.com/*' {
   set autofocus
 }
 site '*://*wanikani.com/review/session' {
