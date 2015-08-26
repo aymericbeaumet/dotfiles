@@ -1,16 +1,20 @@
+" general
 set autohidecursor " auto hide cursor when scrolling
 set autoupdategist " auto config update
 set cncpcompletion " ^N/^P completion
 set nativelinkorder " new tabs follow chrome logic
 set noautofocus " forbid websites to autofocus
 set sortlinkhints " sort hints based on the distance from the top left corner
-
 let barposition = 'bottom' " bar at bottom
 let blacklists = ['https://inbox.google.com/*', 'https://gmail.com/*', 'https://outlook.office365.com/owa/*', 'https://www.typing.com/student/*'] " ignore these websites
-let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
 let vimcommand = 'mvim' " used to open files
 
-" add custom search engines
+" mapping
+let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
+map <C-o> goBack
+map <C-i> goForward
+
+" custom search engines
 let searchengine enfr = 'http://www.wordreference.com/enfr/%s'
 let searchengine fren = 'http://www.wordreference.com/fren/%s'
 let searchengine gh = 'https://github.com/search?q=%s'
@@ -20,20 +24,14 @@ let searchengine wa = 'https://www.wolframalpha.com/input/?i=%s'
 let searchengine wk = 'https://en.wikipedia.org/wiki/Special:Search?search=%s'
 let searchengine yt = 'https://www.youtube.com/results?search_query=%s'
 
-" define the default search engine
+" default search engine
 let searchengine google = 'https://www.google.com/#q=%s'
 let defaultengine = 'google'
 
-" explicitely allow autofocus on some websites
+" explicitly allow autofocus on some websites
 site '*://*google.*/*' {
   set autofocus
 }
-site '*://*memrise.com/*' {
-  set autofocus
-}
 site '*://*wordreference.com/*' {
-  set autofocus
-}
-site '*://*wanikani.com/review/session' {
   set autofocus
 }
