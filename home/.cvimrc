@@ -11,8 +11,6 @@ let vimcommand = 'mvim' " used to open files
 
 " mapping
 let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
-map <C-o> goBack
-map <C-i> goForward
 
 " custom search engines
 let searchengine enfr = 'http://www.wordreference.com/enfr/%s'
