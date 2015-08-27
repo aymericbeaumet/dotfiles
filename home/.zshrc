@@ -40,7 +40,6 @@ set_window_name() { printf "\e]2;$1\a" }
 
 # Directory
 setopt AUTO_CD           # change directory without cd (`..` goes up by one)
-setopt AUTO_PUSHD        # cd to pushd stack (useful for `cd -<tab>`)
 setopt PUSHD_IGNORE_DUPS # do not push dups to cd history
 
 # No beep
@@ -96,6 +95,9 @@ export PAGER=less
 #########
 # Alias #
 #########
+
+alias d=docker
+compdef d=docker
 
 # Colorful aliases
 alias grep='grep --color=auto'
@@ -247,6 +249,46 @@ add-zsh-hook precmd precmd_set_prompt
 # Disable flow control (^S / ^Q)
 stty stop undef
 stty start undef
+
+# perform an `ls -lA` when submitting an empty buffer
+ctrl_m() {
+  if [[ -z "$BUFFER" ]] ; then
+    BUFFER='ls -lA'
+  fi
+  zle accept-line
+}
+zle -N ctrl_m
+bindkey '^M' ctrl_m
+
+# previous/next location (between folders) navigation ala Vim with ^O ^I
+setopt AUTO_PUSHD PUSHD_MINUS PUSHD_SILENT PUSHD_TOHOME
+# previous location
+ctrl_o() {
+  if [[ -z "$BUFFER" ]] ; then
+    cd -1 > /dev/null && zle accept-line
+  else
+    zle accept-line-and-down-history # default behaviour for ^O
+  fi
+}
+zle -N ctrl_o
+bindkey '^O' ctrl_o
+# next location
+ctrl_i() {
+  if [[ -z "$BUFFER" ]] ; then
+    cd +0 > /dev/null && zle accept-line
+  else
+    zle expand-or-complete # default behaviour for ^I
+  fi
+}
+zle -N ctrl_i
+bindkey '^I' ctrl_i
+
+# bring the latest background app to foreground with ^Z
+ctrl_z() {
+  fg
+}
+zle -N ctrl_z
+bindkey '^Z' ctrl_z
 
 ##################################
 # Specific command configuration #
