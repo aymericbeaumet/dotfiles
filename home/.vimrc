@@ -17,28 +17,8 @@ au!
 " Remap leader key to space (need to be done before any other mapping)
 let mapleader = ' '
 
+" Define the temporary directory
 let b:tmp_directory = expand('~/.vim/tmp')
-
-let b:syntastic = {
-\   'linters': {
-\     'javascript': ['eslint', 'jshint'],
-\   },
-\   'mappings': {
-\     'check': '<Leader>l',
-\   },
-\ }
-
-let b:vim_easymotion = {
-\   'mappings': {
-\     'prefix': '<Leader>e',
-\   },
-\ }
-
-let b:winresizer = {
-\   'mappings': {
-\     'start_key': '<C-W><C-W>',
-\   },
-\ }
 
 " }}}
 
@@ -73,10 +53,6 @@ if neobundle#load_cache()
   \   'depends': ['Shougo/vimproc.vim'],
   \   'vim_version': '7.2.051',
   \ }
-
-  " CSS
-
-  NeoBundle 'JulesWang/css.vim'
 
   " Docker
 
@@ -142,17 +118,11 @@ if neobundle#load_cache()
 
   NeoBundle 'editorconfig/editorconfig-vim'
 
-  NeoBundle 'ntpeters/vim-better-whitespace'
-
   NeoBundle 'scrooloose/nerdcommenter', {
   \   'vim_version': '7',
   \ }
 
   NeoBundle 'scrooloose/syntastic', {
-  \   'build': {
-  \     'mac': 'npm install -g ' . join(b:syntastic.linters.javascript, ' '),
-  \     'linux': 'npm install -g ' . join(b:syntastic.linters.javascript, ' '),
-  \   },
   \   'vim_version': '7',
   \   'disabled': !has('autocmd') || !has('eval') || !has('file_in_path') || !has('modify_fname') || !has('quickfix') || !has('reltime') || !has('user_commands'),
   \ }
@@ -195,15 +165,15 @@ function! bundle.hooks.on_source(bundle)
   let g:syntastic_check_on_open = 1
   let g:syntastic_always_populate_loc_list = 1
   let g:syntastic_auto_loc_list = 2
-  let g:syntastic_javascript_checkers = b:syntastic.linters.javascript
+  let g:syntastic_javascript_checkers = ['eslint']
   let g:syntastic_mode_map = {
   \   'mode': 'passive',
-  \   'active_filetypes': keys(b:syntastic.linters),
+  \   'active_filetypes': ['javascript'],
   \   'passive_filetypes': [],
   \ }
 endfunction
 function! bundle.hooks.on_post_source(bundle)
-  execute 'nnoremap <silent> ' . b:syntastic.mappings.check . ' :SyntasticCheck<CR>'
+  execute 'nnoremap <silent> <Leader>l :SyntasticCheck<CR>'
 endfunction
 
 let bundle = neobundle#get('ultisnips')
@@ -228,11 +198,6 @@ function! bundle.hooks.on_post_source(bundle)
   set noshowmode " hide the duplicate mode in bottom status bar
 endfunction
 
-let bundle = neobundle#get('vim-better-whitespace')
-function! bundle.hooks.on_post_source(bundle)
-  nnoremap <silent> <Leader>s :StripWhitespace<CR>
-endfunction
-
 let bundle = neobundle#get('vim-easymotion')
 function! bundle.hooks.on_source(bundle)
   let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
@@ -243,9 +208,9 @@ function! bundle.hooks.on_source(bundle)
 endfunction
 function! bundle.hooks.on_post_source(bundle)
   silent! unmap <Leader><Leader>
-  execute 'nmap <silent> ' . b:vim_easymotion.mappings.prefix . ' <Plug>(easymotion-prefix)'
-  execute 'vmap <silent> ' . b:vim_easymotion.mappings.prefix . ' <Plug>(easymotion-prefix)'
-  execute 'omap <silent> ' . b:vim_easymotion.mappings.prefix . ' <Plug>(easymotion-prefix)'
+  execute 'nmap <silent> <Leader>e <Plug>(easymotion-prefix)'
+  execute 'vmap <silent> <Leader>e <Plug>(easymotion-prefix)'
+  execute 'omap <silent> <Leader>e <Plug>(easymotion-prefix)'
 endfunction
 
 let bundle = neobundle#get('vim-gitgutter')
@@ -279,7 +244,7 @@ endfunction
 
 let bundle = neobundle#get('winresizer')
 function! bundle.hooks.on_source(bundle)
-  let g:winresizer_start_key = b:winresizer.mappings.start_key
+  let g:winresizer_start_key = '<C-W><C-W>'
 endfunction
 
 let bundle = neobundle#get('wombat256.vim')
@@ -356,9 +321,6 @@ vnoremap <silent> > >gv
 inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
 inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 
-" [b]uffer search
-" <Leader>b
-
 " [c] NerdCommenter prefix
 " <Leader>c
 
@@ -370,37 +332,16 @@ nnoremap <silent> <Leader>D :bd!<CR>
 " [e]asymotion prefix
 " <Leader>e
 
-" [f]ile search
-" <Leader>f
-
-" [g]rep search
-" <Leader>g
-
-" [l]int file
-" <Leader>l
-
-" [n]arrow [r]egion
-" <Leader>nr
-
 " [r]eload the configuration
 nnoremap <silent> <Leader>r :source ~/.vimrc<CR>
-
-" [s]trip trailing whitespaces
-" <Leader>s
 
 " [w]rite the current buffer
 nnoremap <silent> <Leader>w :w<CR>
 nnoremap <silent> <Leader>W :w!<CR>
 
-" [y]ank history
-" <Leader>y
-
 " [q]uit the current buffer (uppercase trashes the modifications)
 nnoremap <silent> <Leader>q :q<CR>
 nnoremap <silent> <Leader>Q :q!<CR>
-
-" [/] fuzzy search in the current buffer
-" <Leader>/
 
 " }}}
 
@@ -491,6 +432,9 @@ au InsertLeave * setl hlsearch " ... and re-enable when leaving
 
 " remember last position in file (line and column)
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | execute 'normal! g`"' | endif
+
+" automatically remove trailing whitespace
+au BufWritePre * :%s/\s\+$//e
 
 " }}}
 
