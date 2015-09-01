@@ -29,6 +29,15 @@
   ; Show git aliases
   alias = "!git config -l | grep alias | cut -c 7- | sort"
 
+  ; Drop modifications on current branch, get the latest updates from the origin
+  ; remote (prune unneeded remote branches references), merge them into master,
+  ; delete useless local branches
+  master = "!set -ex \
+          && git reset --hard \
+          && git fetch --prune origin \
+          && git rebase origin/master master \
+          && git branch --delete -- $(git branch | grep -v '^* master$')"
+
   ; Print a tree of the project branches
   tree = log --oneline --graph --decorate
 
@@ -68,4 +77,7 @@
   email = aymeric@beaumet.me
 
 [github]
+  user = aymericbeaumet
+
+[bitbucket]
   user = aymericbeaumet
