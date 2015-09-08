@@ -250,12 +250,16 @@ add-zsh-hook precmd precmd_set_prompt
 stty stop undef
 stty start undef
 
-# perform an `ls -lA` when submitting an empty buffer
+# list files in the current directory when submitting an empty buffer
 ctrl_m() {
+  listFiles='ls -lA'
   if [[ -z "$BUFFER" ]] ; then
-    BUFFER='ls -lA'
+    if [[ "$(fc -ln -1)" == "$listFiles" ]] ; then
+      return
+    fi
+    BUFFER="$listFiles"
   fi
-  zle accept-line
+  zle accept-line # default behaviour for ^M
 }
 zle -N ctrl_m
 bindkey '^M' ctrl_m
@@ -339,16 +343,6 @@ alias ll='ls -hl' ; compdef ll=ls
 alias l='ll' ; compdef l=ls
 alias la='ll -A' ; compdef la=ls
 
-# nice ls colors (even on Mac OS X)
-unset LS_COLORS
-unset LSCOLORS
-if is_macosx || is_bsd ; then
-  export CLICOLOR=1
-  export LSCOLORS=ExGxxxdxCxDxDxxxaxExEx
-else
-  export CLICOLOR=0
-fi
-
 ###
 # Terminal
 ###
@@ -377,6 +371,9 @@ fpath=(
   "${fpath[@]}"
 )
 source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+
+# fzf
+[ -r "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
