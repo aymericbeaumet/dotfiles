@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$(uname -s)" != 'Darwin' ] ; then
+  echo 'Unsupported OS' >&2
+  exit 1
+fi
+
+which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew doctor
+brew update
+brew install git tmux zsh
+brew reinstall --HEAD macvim neovim vim
+
+HOMESHICK="$HOME/.homesick/repos/homeshick"
+[ -d "$HOMESHICK" ] || git clone git://github.com/andsens/homeshick.git "$HOMESHICK"
+which homeshick &>/dev/null || source "$HOMESHICK/homeshick.sh"
+[ -d "$(dirname "$HOMESHICK")/dotfiles" ] || (
+  homeshick clone git://github.com/aymericbeaumet/dotfiles.git
+  cd "$HOME" && homeshick link dotfiles
+)
+
+exit 0
