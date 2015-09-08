@@ -21,9 +21,9 @@ call plug#begin('~/.vim/bundle')
     let g:EasyMotion_smartcase = 1 " like Vim
     let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
     let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
-    nmap <silent> <Leader>e<Space> <Plug>(easymotion-s)
-    vmap <silent> <Leader>e<Space> <Plug>(easymotion-s)
-    omap <silent> <Leader>e<Space> <Plug>(easymotion-s)
+    nmap <silent> <Leader>es <Plug>(easymotion-s)
+    vmap <silent> <Leader>es <Plug>(easymotion-s)
+    omap <silent> <Leader>es <Plug>(easymotion-s)
     map  / <Plug>(easymotion-sn)
     omap / <Plug>(easymotion-tn)
     map  n <Plug>(easymotion-next)

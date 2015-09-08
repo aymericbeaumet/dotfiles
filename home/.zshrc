@@ -365,20 +365,15 @@ fpath=(
 # boot2docker
 $(boot2docker shellinit 2>/dev/null)
 
+# fzf
+[ -r "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
+
 # homeshick
 fpath=(
   "$HOME/.homesick/repos/homeshick/completions"
   "${fpath[@]}"
 )
 source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-
-# fzf
-[ -r "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-which brew &> /dev/null && source "$(brew --prefix nvm)/nvm.sh"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 # zsh-syntax-highlighting
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
