@@ -41,6 +41,14 @@
   ; Print a tree of the project branches
   tree = log --oneline --graph --decorate
 
+  ; Execute `git status -sb` every time a file in the directory change
+  ; Rely on: https://github.com/emcrisostomo/fswatch
+  watch = "!fswatch -o -e .git . | while read event \
+           ; do clear \
+             && echo \"$event file(s) changed - $(date)\" \
+             && git status -sb \
+           ; done"
+
   ; Print all the commiters for the project
   who = shortlog -sne
 
