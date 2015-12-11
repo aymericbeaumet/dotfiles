@@ -1,1 +1,0 @@
-../bundle/vim-jade/ftdetect/jade.vim
