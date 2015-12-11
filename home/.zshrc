@@ -1,6 +1,7 @@
 autoload -Uz add-zsh-hook
 autoload -Uz colors && colors
 autoload -Uz compinit && compinit
+autoload -Uz edit-command-line
 autoload -Uz select-word-style
 autoload -Uz vcs_info
 
@@ -65,6 +66,10 @@ unsetopt RM_STAR_WAIT # don't wait after `rm *`
 # Set Emacs-like bindings
 bindkey -e
 
+# Bash-like command editing Ctrl-x-e (http://stackoverflow.com/a/903973/1071486)
+zle -N edit-command-line
+bindkey '^Xe' edit-command-line
+
 # Fix delete key
 bindkey '^[[3~'  delete-char
 bindkey '^[3;5~' delete-char
@@ -82,7 +87,7 @@ select-word-style bash
 export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$PATH"
 
 export TERM=xterm-256color
-if [ -n "$TMUX" ] ; then
+if [[ -n "$TMUX" ]] ; then
   export TERM=screen-256color
 fi
 
@@ -95,9 +100,6 @@ export PAGER=less
 #########
 # Alias #
 #########
-
-alias d=docker
-compdef d=docker
 
 # Colorful aliases
 alias grep='grep --color=auto'
@@ -171,7 +173,7 @@ zstyle ':completion:*:default' menu 'select=0'
 zstyle ':completion:*:manuals' separate-sections true
 
 # Ignore compiled files on vim completion
-zstyle ':completion:*:*:(v|vi|vim|mvim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
+zstyle ':completion:*:*:(v|vi|vim|mvim|nvim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
 
 setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
 setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
@@ -229,17 +231,17 @@ precmd_set_prompt()
   vcs_info
 
   # left prompt
-  if [ -n "$(jobs)" ] ; then
-    PROMPT="    λ [%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
+  if [[ -n "$(jobs)" ]] ; then
+    PROMPT="[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] "
   else
-    PROMPT="    λ %(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
+    PROMPT="%(0?..[%{$fg_bold[green]%}%j%{$reset_color%}&:?%{$fg_bold[green]%}%?%{$reset_color%}] )"
   fi
-  if [ -n "$vcs_info_msg_0_" ] ; then
+  if [[ -n "$vcs_info_msg_0_" ]] ; then
     PROMPT="$PROMPT${vcs_info_msg_0_/|)/)} " # Replace '|)' by ')' for aestheticism purpose
   else
     PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%} "
   fi
-  PROMPT="$PROMPT%(!.#.$) "
+  PROMPT="$PROMPT%(!.Λ.λ) "
 
   # right prompt
   RPROMPT='%m'
@@ -252,12 +254,8 @@ stty start undef
 
 # list files in the current directory when submitting an empty buffer
 ctrl_m() {
-  listFiles='ls -lA'
   if [[ -z "$BUFFER" ]] ; then
-    if [[ "$(fc -ln -1)" == "$listFiles" ]] ; then
-      return
-    fi
-    BUFFER="$listFiles"
+    BUFFER="pwd && ls -lA" # leading space to not push in history
   fi
   zle accept-line # default behaviour for ^M
 }
@@ -297,6 +295,16 @@ bindkey '^Z' ctrl_z
 ##################################
 # Specific command configuration #
 ##################################
+
+###
+# Vim
+###
+
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
+alias nvim='nvim -p' # leverage zsh recursive acronyms
+alias mvim='mvim -p'
 
 ###
 # Git
@@ -349,31 +357,12 @@ alias la='ll -A' ; compdef la=ls
 
 set_window_name "$(whoami)@$(hostname)"
 
-################
-# Lazy loading #
-################
+###########
+# Plugins #
+###########
 
-fpath=(
-  "$HOME/.zsh/completion"
-  "${fpath[@]}"
-)
-
-#######################
-# Synchronous loading #
-#######################
-
-# boot2docker
-$(boot2docker shellinit 2>/dev/null)
-
-# fzf
+# fzf (cannot lazy load as it overloads shell bindings)
 [ -r "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
 
-# homeshick
-fpath=(
-  "$HOME/.homesick/repos/homeshick/completions"
-  "${fpath[@]}"
-)
-source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-
-# zsh-syntax-highlighting
+# zsh-syntax-highlighting (doesn't make sense to lazy load)
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

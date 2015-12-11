@@ -1,8 +1,10 @@
-# https://github.com/creationix/nvm/issues/539#issuecomment-110643090
-lazy_source () {
-  eval "\"$1\" () { [ -r \"$2\" ] && source \"$2\" && \"$1\" \"\$@\" }"
-}
+fpath=(
+  "$HOME/.zsh/completion"
+  "$HOME/.homesick/repos/homeshick/completions"
+  "${fpath[@]}"
+)
 
-# nvm
+source "$HOME/.homesick/repos/homeshick/homeshick.sh"
+
 export NVM_DIR="$HOME/.nvm"
-lazy_source nvm "$(brew --prefix nvm)/nvm.sh"
+source "$(/usr/local/bin/brew --prefix nvm)/nvm.sh"
