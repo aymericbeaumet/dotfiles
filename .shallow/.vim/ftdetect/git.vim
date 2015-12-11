@@ -1,1 +1,0 @@
-../bundle/vim-git/ftdetect/git.vim

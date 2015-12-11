@@ -1,1 +1,0 @@
-../bundle/vim-stylus/ftdetect/stylus.vim
