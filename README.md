@@ -1,9 +1,4 @@
-# Aymeric's dotfiles
-
-Mainly used on OSX. Include configuration files for:
-- Git
-- Vim (MacVim, Neovim)
-- Zsh
+# . files
 
 ## Install
 
