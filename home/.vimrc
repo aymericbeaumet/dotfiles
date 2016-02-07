@@ -30,13 +30,13 @@ let mapleader = ' '
       let g:UltiSnipsExpandTrigger = '<Tab>'
       let g:UltiSnipsJumpForwardTrigger = '<Tab>'
       let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-      let g:UltiSnipsSnippetDirectories = ['snippet']
+      let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
     Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
       let g:ycm_collect_identifiers_from_comments_and_strings = 1
       let g:ycm_collect_identifiers_from_tags_files = 1
       let g:ycm_complete_in_comments = 1
-      let g:ycm_key_list_previous_completion = ['<C-P>', '<Up>']
-      let g:ycm_key_list_select_completion = ['<C-N>', '<Down>']
+      let g:ycm_key_list_previous_completion = [ '<C-P>', '<Up>' ]
+      let g:ycm_key_list_select_completion = [ '<C-N>', '<Down>' ]
       let g:ycm_seed_identifiers_with_syntax = 1
       set completeopt=longest,menuone
     Plug 'airblade/vim-rooter'
@@ -44,16 +44,8 @@ let mapleader = ' '
       let g:rooter_disable_map = 1 " do not map any bindings
       let g:rooter_silent_chdir = 1 " do not notify when changing directory
       let g:rooter_use_lcd = 1 " change the cd on a per window basis
-    Plug 'bling/vim-airline'
-      let g:airline_exclude_preview = 1 " remove airline from preview window
-      let g:airline_left_sep = '' " remove left separator
-      let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
-      let g:airline_right_sep = '' " remove right separator
-      let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-      let g:airline_theme = 'solarized' " specify theme
-      set noshowmode " hide the duplicate mode in bottom status bar
     Plug 'editorconfig/editorconfig-vim'
-      let g:EditorConfig_exclude_patterns = ['scp://.*']
+      let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
     Plug 'jimsei/winresizer'
       let g:winresizer_start_key = '<C-W><C-W>'
     Plug 'luochen1990/rainbow'
@@ -69,6 +61,15 @@ let mapleader = ' '
       let g:surround_indent = 1 " reindent with `=` after surrounding
       let g:surround_no_insert_mappings = 1 " disable the default mapping
     Plug 'tpope/vim-unimpaired'
+    Plug 'vim-airline/vim-airline'
+      let g:airline_exclude_preview = 1 " remove airline from preview window
+      let g:airline_left_sep = '' " remove left separator
+      let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
+      let g:airline_right_sep = '' " remove right separator
+      let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+      let g:airline_theme = 'solarized' " specify theme
+      set noshowmode " hide the duplicate mode in bottom status bar
+    Plug 'vim-airline/vim-airline-themes'
 
     " Docker
     Plug 'ekalinin/Dockerfile.vim', { 'for': 'docker' }
