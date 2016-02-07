@@ -6,8 +6,7 @@ set nativelinkorder " new tabs follow chrome logic
 set noautofocus " forbid websites to autofocus
 set sortlinkhints " sort hints based on the distance from the top left corner
 let barposition = 'bottom' " bar at bottom
-let blacklists = ['https://inbox.google.com/*', 'https://gmail.com/*', 'https://outlook.office.com/owa/*', 'https://outlook.office365.com/owa/*', 'https://www.typing.com/student/*', 'https://feedly.com/*'] " ignore these websites
-let vimcommand = 'mvim' " used to open files
+let blacklists = [ 'https://inbox.google.com/*', 'https://gmail.com/*', 'https://outlook.office.com/owa/*', 'https://outlook.office365.com/owa/*', 'https://www.typing.com/student/*', 'https://feedly.com/*', 'http://www.memrise.com/course/*/*/garden/review/' ] " ignore these websites
 
 " mapping
 let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
