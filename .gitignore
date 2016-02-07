@@ -1,8 +1,9 @@
 bundle/
 tmp/
 
-.vim/.netrwhist
-.vim/spell/*.spl
+.VimballRecord
+.netrwhist
+*.spl
 
 *.spl
 *.pyc
