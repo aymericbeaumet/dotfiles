@@ -10,7 +10,7 @@ fi
 which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew doctor
 brew update
-brew install ag gawk git fswatch tmux z zsh
+brew install ag gawk git fswatch python python3 tmux z zsh
 brew reinstall --HEAD macvim neovim vim
 
 HOMESHICK="$HOME/.homesick/repos/homeshick"
@@ -18,7 +18,7 @@ HOMESHICK="$HOME/.homesick/repos/homeshick"
 which homeshick &>/dev/null || source "$HOMESHICK/homeshick.sh"
 [ -d "$(dirname "$HOMESHICK")/dotfiles" ] || (
   homeshick clone git://github.com/aymericbeaumet/dotfiles.git
-  cd "$HOME" && homeshick link dotfiles
+  homeshick link dotfiles
 )
 
 exit 0
