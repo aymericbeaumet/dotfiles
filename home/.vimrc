@@ -208,7 +208,7 @@ let mapleader = ' '
   set nofoldenable " disable folding
   set nostartofline " leave my cursor position alone!
   set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
-  set shell=zsh\ -l " shell for :sh
+  set shell=zsh\ -l" shell for :sh
   set shortmess=aoOsI " disable vim welcome message / enable shorter messages
   set showcmd " show (partial) command in the last line of the screen
   set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
