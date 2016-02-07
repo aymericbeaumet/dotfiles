@@ -80,6 +80,65 @@ bindkey '^[[Z' reverse-menu-complete
 # Make ^W behave as in bash (delete until slash, not space)
 select-word-style bash
 
+##################################
+# Specific command configuration #
+##################################
+
+###
+# Vim
+###
+
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
+alias nvim='nvim -p' # leverage zsh recursive acronyms
+alias mvim='mvim -p'
+
+###
+# Git
+###
+
+# `git_wrapper` (without argument) will invoke `git status -sb`
+# `git_wrapper ...` will invoke `git ...`
+git_wrapper()
+{
+  if (( $# == 0 )) ; then
+    command git status -sb
+  else
+    command git "$@"
+  fi
+}
+
+# Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
+# parameter containing extended globing characters, like '#' or '^')
+alias g='noglob git_wrapper'
+alias git='noglob git_wrapper'
+
+# Working completion
+compdef g=git
+compdef git_wrapper=git
+
+###
+# du
+###
+
+alias du='du -h'
+
+###
+# ls
+###
+
+local OS_SPECIFIC_LS_OPTIONS=''
+if is_macosx || is_bsd ; then
+  OS_SPECIFIC_LS_OPTIONS='-G'
+elif is_linux ; then
+  OS_SPECIFIC_LS_OPTIONS='--color=auto'
+fi
+alias ls="ls -p -F $OS_SPECIFIC_LS_OPTIONS"
+alias ll='ls -hl' ; compdef ll=ls
+alias l='ll' ; compdef l=ls
+alias la='ll -A' ; compdef la=ls
+
 ###############
 # Environment #
 ###############
@@ -255,35 +314,12 @@ stty start undef
 # list files in the current directory when submitting an empty buffer
 ctrl_m() {
   if [[ -z "$BUFFER" ]] ; then
-    BUFFER="pwd && ls -lA" # leading space to not push in history
+    BUFFER='pwd && ls -lhA'
   fi
   zle accept-line # default behaviour for ^M
 }
 zle -N ctrl_m
 bindkey '^M' ctrl_m
-
-# previous/next location (between folders) navigation ala Vim with ^O ^I
-setopt AUTO_PUSHD PUSHD_MINUS PUSHD_SILENT PUSHD_TOHOME
-# previous location
-ctrl_o() {
-  if [[ -z "$BUFFER" ]] ; then
-    cd -1 > /dev/null && zle accept-line
-  else
-    zle accept-line-and-down-history # default behaviour for ^O
-  fi
-}
-zle -N ctrl_o
-bindkey '^O' ctrl_o
-# next location
-ctrl_i() {
-  if [[ -z "$BUFFER" ]] ; then
-    cd +0 > /dev/null && zle accept-line
-  else
-    zle expand-or-complete # default behaviour for ^I
-  fi
-}
-zle -N ctrl_i
-bindkey '^I' ctrl_i
 
 # bring the latest background app to foreground with ^Z
 ctrl_z() {
@@ -291,65 +327,6 @@ ctrl_z() {
 }
 zle -N ctrl_z
 bindkey '^Z' ctrl_z
-
-##################################
-# Specific command configuration #
-##################################
-
-###
-# Vim
-###
-
-alias v='nvim'
-alias vi='nvim'
-alias vim='nvim'
-alias nvim='nvim -p' # leverage zsh recursive acronyms
-alias mvim='mvim -p'
-
-###
-# Git
-###
-
-# `git_wrapper` (without argument) will invoke `git status -sb`
-# `git_wrapper ...` will invoke `git ...`
-git_wrapper()
-{
-  if (( $# == 0 )) ; then
-    command git status -sb
-  else
-    command git "$@"
-  fi
-}
-
-# Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
-# parameter containing extended globing characters, like '#' or '^')
-alias g='noglob git_wrapper'
-alias git='noglob git_wrapper'
-
-# Working completion
-compdef g=git
-compdef git_wrapper=git
-
-###
-# du
-###
-
-alias du='du -h'
-
-###
-# ls
-###
-
-local OS_SPECIFIC_LS_OPTIONS=''
-if is_macosx || is_bsd ; then
-  OS_SPECIFIC_LS_OPTIONS='-G'
-elif is_linux ; then
-  OS_SPECIFIC_LS_OPTIONS='--color=auto'
-fi
-alias ls="ls -p -F $OS_SPECIFIC_LS_OPTIONS"
-alias ll='ls -hl' ; compdef ll=ls
-alias l='ll' ; compdef l=ls
-alias la='ll -A' ; compdef la=ls
 
 ###
 # Terminal
