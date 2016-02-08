@@ -14,6 +14,7 @@ else
   exit 1
 fi
 
+brew doctor
 brew update
 brew reinstall ag ctags fswatch gawk git htop nvm python python3 rsync tmux z zsh
 brew reinstall --HEAD neovim
