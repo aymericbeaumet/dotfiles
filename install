@@ -17,9 +17,10 @@ fi
 
 brew doctor
 brew update
-brew reinstall ag ctags fswatch gawk git htop nvm python python3 rsync tmux z zsh
-brew reinstall --HEAD neovim
-$osx && brew reinstall macvim
+$debian && brew tap homebrew/dupes
+brew reinstall ag ctags fswatch gawk git htop nvm python python3 tmux z zsh
+brew tap neovim/neovim && brew reinstall --HEAD neovim
+$osx && brew reinstall macvim rsync
 
 chsh -s "$(which zsh)"
 
