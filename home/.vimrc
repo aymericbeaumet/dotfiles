@@ -154,11 +154,6 @@ let mapleader = ' '
   nnoremap <silent> <C-L>      :nohl<CR>:redraw<CR>:checktime<CR><C-L>
   vnoremap <silent> <C-L> <C-C>:nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
 
-  " leverage The Silver Surfer for search
-  if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor
-  endif
-
   " delete the current buffer
   nnoremap <silent> <leader>d :delete<CR>
 
@@ -264,6 +259,11 @@ let mapleader = ' '
     set undolevels=1000
     set undoreload=10000
     let &undodir = b:tmp_directory . '/undo//'
+  endif
+
+  " leverage The Silver Surfer for search
+  if executable('ag')
+    set grepprg=ag\ --nogroup\ --nocolor
   endif
 
   " Avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
