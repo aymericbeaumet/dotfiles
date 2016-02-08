@@ -44,6 +44,12 @@ let mapleader = ' '
       let g:rooter_disable_map = 1 " do not map any bindings
       let g:rooter_silent_chdir = 1 " do not notify when changing directory
       let g:rooter_use_lcd = 1 " change the cd on a per window basis
+    Plug 'ctrlpvim/ctrlp.vim'
+      let g:ctrlp_map = '<Leader>f'
+      let g:ctrlp_max_files = 1000
+      let g:ctrlp_max_depth = 10
+      let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
+      let g:ctrlp_open_new_file = 'r'
     Plug 'editorconfig/editorconfig-vim'
       let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
     Plug 'jimsei/winresizer'
