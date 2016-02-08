@@ -1,4 +1,4 @@
-# . files
+# dotfiles
 
 Support for [OSX](http://www.apple.com/osx) and [Debian](https://www.debian.org)
 
