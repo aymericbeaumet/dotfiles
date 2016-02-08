@@ -8,16 +8,19 @@ if [ "$(uname -s)" != 'Darwin' ] ; then
 fi
 
 which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew doctor
 brew update
-brew install ag gawk git fswatch nvm python python3 tmux z zsh
+brew install ag ctags gawk git fswatch nvm python python3 tmux z zsh
 brew reinstall --HEAD macvim neovim vim
 
 HOMESHICK="$HOME/.homesick/repos/homeshick"
 [ -d "$HOMESHICK" ] || git clone git://github.com/andsens/homeshick.git "$HOMESHICK"
 which homeshick &>/dev/null || source "$HOMESHICK/homeshick.sh"
 [ -d "$(dirname "$HOMESHICK")/dotfiles" ] || (
-  homeshick clone git://github.com/aymericbeaumet/dotfiles.git
+  if [ -n "$ME" ] ; then
+    homeshick clone git@github.com/aymericbeaumet/dotfiles.git
+  else
+    homeshick clone git://github.com/aymericbeaumet/dotfiles.git
+  fi
   homeshick link dotfiles
 )
 
