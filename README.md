@@ -1,4 +1,4 @@
-# · files
+# . files
 
 - Support for [OSX](http://www.apple.com/osx) and [Debian](https://www.debian.org)
 - Leverage [homeshick](https://github.com/andsens/homeshick),
