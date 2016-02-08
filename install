@@ -2,26 +2,33 @@
 
 set -e
 
-if [ "$(uname -s)" != 'Darwin' ] ; then
-  echo 'Unsupported OS' >&2
+if [ "$(uname -s)" = 'Darwin' ] ; then
+  osx=true
+  which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+elif [ "$(uname -s)" = 'Linux' ] && [ -f /etc/debian_version ] ; then
+  debian=true
+  sudo apt-get install build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
+  which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+else
+  echo 'Unsupported OS!' >&2
   exit 1
 fi
 
-which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew update
-brew install ag ctags gawk git fswatch nvm python python3 tmux z zsh
-brew reinstall --HEAD macvim neovim vim
+brew reinstall ag ctags fswatch gawk git htop nvm python python3 rsync tmux z zsh
+brew reinstall --HEAD neovim
+$osx && brew reinstall macvim
+
+chsh -s "$(which zsh)"
 
 HOMESHICK="$HOME/.homesick/repos/homeshick"
 [ -d "$HOMESHICK" ] || git clone git://github.com/andsens/homeshick.git "$HOMESHICK"
 which homeshick &>/dev/null || source "$HOMESHICK/homeshick.sh"
 [ -d "$(dirname "$HOMESHICK")/dotfiles" ] || (
-  if [ -n "$ME" ] ; then
-    homeshick clone git@github.com/aymericbeaumet/dotfiles.git
-  else
-    homeshick clone git://github.com/aymericbeaumet/dotfiles.git
-  fi
+  homeshick clone git://github.com/aymericbeaumet/dotfiles.git
   homeshick link dotfiles
 )
+
+echo 'Installation finished!'
 
 exit 0
