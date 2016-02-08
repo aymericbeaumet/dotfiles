@@ -7,6 +7,7 @@ if [ "$(uname -s)" = 'Darwin' ] ; then
   which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 elif [ "$(uname -s)" = 'Linux' ] && [ -f /etc/debian_version ] ; then
   debian=true
+  sudo apt-get update
   sudo apt-get install build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
   which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
 else
