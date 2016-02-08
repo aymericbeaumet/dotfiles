@@ -50,12 +50,16 @@ let mapleader = ' '
       let g:ctrlp_max_depth = 10
       let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
       let g:ctrlp_open_new_file = 'r'
+      if executable('ag')
+        let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+      endif
     Plug 'editorconfig/editorconfig-vim'
       let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
     Plug 'jimsei/winresizer'
       let g:winresizer_start_key = '<C-W><C-W>'
     Plug 'luochen1990/rainbow'
       let g:rainbow_active = 1
+    Plug 'rking/ag.vim'
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
@@ -149,6 +153,11 @@ let mapleader = ' '
   " See: http://www.reddit.com/r/vim/comments/1vdrxg/space_is_a_big_key_what_do_you_map_it_to/ceri6yf
   nnoremap <silent> <C-L>      :nohl<CR>:redraw<CR>:checktime<CR><C-L>
   vnoremap <silent> <C-L> <C-C>:nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
+
+  " leverage The Silver Surfer for search
+  if executable('ag')
+    set grepprg=ag\ --nogroup\ --nocolor
+  endif
 
   " delete the current buffer
   nnoremap <silent> <leader>d :delete<CR>
