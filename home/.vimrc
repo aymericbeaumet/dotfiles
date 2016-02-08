@@ -51,7 +51,7 @@ let mapleader = ' '
       let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
       let g:ctrlp_open_new_file = 'r'
       if executable('ag')
-        let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+        let g:ctrlp_user_command = 'ag %s -l -g "" --nogroup --nocolor --hidden'
       endif
     Plug 'editorconfig/editorconfig-vim'
       let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
@@ -263,7 +263,7 @@ let mapleader = ' '
 
   " leverage The Silver Surfer for search
   if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor
+    set grepprg=ag\ --nogroup\ --nocolor\ --hidden
   endif
 
   " Avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
