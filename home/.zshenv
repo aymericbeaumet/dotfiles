@@ -1,21 +1,20 @@
-# Make sure brew is in the path
-export PATH="$HOME/.linuxbrew/bin:/usr/local/bin:$PATH"
-export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+BREW_DIR="$HOME/.brew"
+HOMESHICK_DIR="$HOME/.homesick/repos/homeshick"
 
-# Setup zsh completion
+# make sure brew is in the path
+export PATH="$BREW_DIR/bin:$PATH"
+export MANPATH="$BREW_DIR/share/man:$MANPATH"
+export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
+
+# setup zsh completion
 fpath=(
   "$HOME/.zsh/completion"
-  "$HOME/.homesick/repos/homeshick/completions"
+  "$HOMESHICK_DIR/completions"
   "${fpath[@]}"
 )
 
-# Setup homeshick
-source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-
-# Setup nvm
+# setup third-parties
+source "$HOMESHICK_DIR/homeshick.sh"
 export NVM_DIR="$HOME/.nvm"
 source "$(brew --prefix nvm)/nvm.sh"
-
-# Setup z
 source "$(brew --prefix)/etc/profile.d/z.sh"
