@@ -2,36 +2,42 @@
 
 set -e
 
+BREW_DIR="$HOME/.brew"
+REPOS_DIR="$HOME/.homesick/repos"
+HOMESHICK_DIR="$REPOS_DIR/homeshick"
+DOTFILES_DIR="$REPOS_DIR/dotfiles"
+
+# make sure brew is in the path
+export PATH="$BREW_DIR/bin:$PATH"
+export MANPATH="$BREW_DIR/share/man:$MANPATH"
+export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
+
+# infer OS and install homebrew
 if [ "$(uname -s)" = 'Darwin' ] ; then
   osx=true
-  which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-elif [ "$(uname -s)" = 'Linux' ] && [ -f /etc/debian_version ] ; then
-  debian=true
-  sudo apt-get update
-  sudo apt-get install build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
-  which brew &>/dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
-  export PATH="$HOME/.linuxbrew/bin:$PATH"
-  export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-  export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+  which brew &>/dev/null || git clone https://github.com/Homebrew/homebrew.git "$BREW_DIR"
 else
   echo 'Unsupported OS!' >&2
   exit 1
 fi
 
+# install third-parties
 brew doctor
 brew update
-$debian && brew tap homebrew/dupes
-brew reinstall ag ctags fswatch gawk git htop nvm python python3 tmux z zsh
-brew tap neovim/neovim && brew reinstall --HEAD neovim
-$osx && brew reinstall macvim rsync
+brew install ag ctags fswatch gawk git htop nvm python python3 tmux z zsh
+brew tap neovim/neovim && brew install --head neovim
+$osx && brew install macvim
 
+# set default shell
 chsh -s "$(which zsh)"
 
-HOMESHICK="$HOME/.homesick/repos/homeshick"
-[ -d "$HOMESHICK" ] || git clone git://github.com/andsens/homeshick.git "$HOMESHICK"
-which homeshick &>/dev/null || source "$HOMESHICK/homeshick.sh"
-[ -d "$(dirname "$HOMESHICK")/dotfiles" ] || (
-  homeshick clone git://github.com/aymericbeaumet/dotfiles.git
+# install homeshick
+[ -d "$HOMESHICK_DIR" ] || git clone https://github.com/andsens/homeshick.git "$HOMESHICK_DIR"
+source "$HOMESHICK_DIR/homeshick.sh"
+
+# install dotfiles
+[ -d "$DOTFILES_DIR" ] || (
+  homeshick clone https://github.com/aymericbeaumet/dotfiles.git
   homeshick link dotfiles
 )
 
