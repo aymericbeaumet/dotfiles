@@ -49,10 +49,7 @@ let mapleader = ' '
       let g:ctrlp_max_files = 1000
       let g:ctrlp_max_depth = 10
       let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
-      let g:ctrlp_open_new_file = 'r'
-      if executable('ag')
-        let g:ctrlp_user_command = 'ag %s -l -g "" --nogroup --nocolor --hidden'
-      endif
+      let g:ctrlp_open_new_file = 't'
     Plug 'editorconfig/editorconfig-vim'
       let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
     Plug 'jimsei/winresizer'
@@ -203,6 +200,7 @@ let mapleader = ' '
   set wildignore+=*.o,*.so,*.a,*.dylib,*.pyc " ignore compiled files
   set wildignore+=*.zip,*.gz,*.xz,*.tar " ignore compressed files
   set wildignore+=.*.sw*,*~ " ignore temporary files
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/* " ignore SCM
   set wildmenu " better command line completion menu
   set wildmode=full "  `-> ensure better completion
 
@@ -259,11 +257,6 @@ let mapleader = ' '
     set undolevels=1000
     set undoreload=10000
     let &undodir = b:tmp_directory . '/undo//'
-  endif
-
-  " leverage The Silver Surfer for search
-  if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor\ --hidden
   endif
 
   " Avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
