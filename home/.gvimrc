@@ -1,6 +1,6 @@
 " Set the font
 silent! set guifont=Monaco:h12
-silent! set guifont=Inconsolata:h14
+silent! set guifont=Hack:h13
 
 " Disable all the superfluous GUI stuff
 set guioptions=

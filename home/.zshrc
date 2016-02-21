@@ -150,7 +150,7 @@ if [[ -n "$TMUX" ]] ; then
   export TERM=screen-256color
 fi
 
-export EDITOR=`which vim`
+export EDITOR=vim
 export USE_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
 export VIEWER=open
