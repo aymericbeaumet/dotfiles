@@ -3,7 +3,7 @@
 
 if !1 | finish | endif " Skip initialization for vim-tiny or vim-small
 
-if &compatible | set nocompatible | endif " Disable Vi compatibility
+if &compatible | set nocompatible | endif " 21st century
 
 syntax enable
 filetype plugin indent on
@@ -14,29 +14,30 @@ let mapleader = ' '
   call plug#begin('~/.vim/bundle')
     " Theme
     Plug 'altercation/solarized', { 'rtp': 'vim-colors-solarized' }
+    Plug 'blueyed/vim-diminactive'
 
     " UI/UX
-    Plug 'Lokaltog/vim-easymotion', { 'on': '<Plug>(easymotion-s)' }
-      let g:EasyMotion_do_mapping = 0 " disable the default mapping
+    Plug 'Lokaltog/vim-easymotion'
+      let g:EasyMotion_do_mapping = 1 " disable the default mappings
       let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
       let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
       let g:EasyMotion_smartcase = 1 " like Vim
       let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
       let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
       nmap <silent> S <Plug>(easymotion-s)
-      vmap <silent> S <Plug>(easymotion-s)
+      xmap <silent> S <Plug>(easymotion-s)
       omap <silent> S <Plug>(easymotion-s)
     Plug 'SirVer/ultisnips'
       let g:UltiSnipsExpandTrigger = '<Tab>'
       let g:UltiSnipsJumpForwardTrigger = '<Tab>'
       let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
       let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
       let g:ycm_collect_identifiers_from_comments_and_strings = 1
       let g:ycm_collect_identifiers_from_tags_files = 1
       let g:ycm_complete_in_comments = 1
-      let g:ycm_key_list_previous_completion = [ '<C-P>', '<Up>' ]
-      let g:ycm_key_list_select_completion = [ '<C-N>', '<Down>' ]
+      let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
+      let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
       let g:ycm_seed_identifiers_with_syntax = 1
       set completeopt=longest,menuone
     Plug 'airblade/vim-rooter'
@@ -45,19 +46,14 @@ let mapleader = ' '
       let g:rooter_silent_chdir = 1 " do not notify when changing directory
       let g:rooter_use_lcd = 1 " change the cd on a per window basis
     Plug 'ctrlpvim/ctrlp.vim'
-      let g:ctrlp_map = '<Leader>f'
       let g:ctrlp_max_files = 1000
       let g:ctrlp_max_depth = 10
       let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
       let g:ctrlp_open_new_file = 't'
     Plug 'editorconfig/editorconfig-vim'
       let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
-    Plug 'jimsei/winresizer'
-      let g:winresizer_start_key = '<C-W><C-W>'
-    Plug 'luochen1990/rainbow'
-      let g:rainbow_active = 1
-    Plug 'rking/ag.vim'
     Plug 'scrooloose/nerdcommenter'
+      let g:NERDCreateDefaultMappings = 0
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
@@ -66,7 +62,9 @@ let mapleader = ' '
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
       let g:surround_indent = 1 " reindent with `=` after surrounding
-      let g:surround_no_insert_mappings = 1 " disable the default mapping
+      let g:surround_no_mappings = 1 " disable the default mappings
+      nmap ds <Plug>Dsurround
+      nmap cs <Plug>Csurround
     Plug 'tpope/vim-unimpaired'
     Plug 'vim-airline/vim-airline'
       let g:airline_exclude_preview = 1 " remove airline from preview window
@@ -79,24 +77,21 @@ let mapleader = ' '
     Plug 'vim-airline/vim-airline-themes'
 
     " Docker
-    Plug 'ekalinin/Dockerfile.vim', { 'for': 'docker' }
+    Plug 'ekalinin/Dockerfile.vim', { 'for': [ 'docker' ] }
 
     " Git
     Plug 'tpope/vim-git'
 
     " Javascript
-    Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+    Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
       let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
-    Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-    Plug 'marijnh/tern_for_vim', { 'for': 'javascript', 'do': 'npm install' }
-    Plug 'myhere/vim-nodejs-complete', { 'for': 'javascript' }
-      let g:nodejs_complete_config = { 'js_compl_fn': 'tern#Complete' }
+    Plug 'moll/vim-node'
 
      " JSON
-    Plug 'elzr/vim-json', { 'for': 'json' }
+    Plug 'elzr/vim-json', { 'for': [ 'json' ] }
 
     " Markdown
-    Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+    Plug 'tpope/vim-markdown', { 'for': [ 'markdown' ] }
   call plug#end()
 
 " Inlined plugins
@@ -132,37 +127,64 @@ let mapleader = ' '
   " somewhat unaccessible on a Colemak layout)
   nnoremap <silent> J mbJ`b
 
-  " disable useless/annoying keys
-  noremap <silent> <F1>  <Nop>
-  noremap <silent> <C-C> <Nop>
-  noremap <silent> <Del> <Nop>
-  noremap <silent> q:    <Nop>
+  " disable annoying mappings
+  noremap <silent> <F1>   <Nop>
+  noremap <silent> <C-c>  <Nop>
+  noremap <silent> <C-w>f <Nop>
+  noremap <silent> <Del>  <Nop>
+  noremap <silent> q:     <Nop>
 
   " reselect visual block after indent
   vnoremap <silent> < <gv
   vnoremap <silent> > >gv
 
   " fix how ^E and ^Y behave in insert mode
-  inoremap <silent><expr> <C-E> pumvisible() ? "\<C-y>\<C-e>" : "\<C-E>"
-  inoremap <silent><expr> <C-Y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-Y>"
+  inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
+  inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 
-  " hide last search matches, refresh screen, re-read current buffer
-  " See: http://www.reddit.com/r/vim/comments/1vdrxg/space_is_a_big_key_what_do_you_map_it_to/ceri6yf
-  nnoremap <silent> <C-L>      :nohl<CR>:redraw<CR>:checktime<CR><C-L>
-  vnoremap <silent> <C-L> <C-C>:nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
+" GUI Mappings (match the ones in ~/.gvimrc, but with <Leader> instead of <D>)
 
-  " delete the current buffer
-  nnoremap <silent> <leader>d :delete<CR>
+  " Switch to left/right pane
+  nnoremap <silent> <Leader>[ <C-w>h
+  nnoremap <silent> <Leader>] <C-w>l
 
-  " save the current buffer
-  nnoremap <silent> <leader>w :write<CR>
+  " Comment
+  nmap <silent> <Leader>/ <plug>NERDCommenterToggle
+  xmap <silent> <Leader>/ <plug>NERDCommenterToggle
 
-  " quit the current window
-  nnoremap <silent> <leader>q :quit<CR>
+  " Split vertically (tmux-ish)
+  nnoremap <silent> <Leader>d <C-w>v
 
-  " move tabs with ^K and ^J
-  nnoremap <silent> <C-J> :tabmove -1<CR>
-  nnoremap <silent> <C-K> :tabmove +1<CR>
+  " Split horizontally (tmux-ish)
+  nnoremap <silent> <Leader><S-d> <C-w>s
+
+  " Search
+  map <silent> <Leader>f /
+
+  " Fuzzy file explorer
+  nnoremap <silent> <Leader>o :CtrlP<CR>
+
+  " Quit
+  nnoremap <silent> <Leader>q :qa<CR>
+
+  " Reload file
+  nnoremap <silent> <Leader>r      :nohl<CR>:redraw<CR>:checktime<CR><C-l>
+  xnoremap <silent> <Leader>r <C-c>:nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+
+  " Save current buffer
+  nnoremap <silent> <Leader>s :write<CR>
+
+  " New tab
+  nnoremap <silent> <Leader>t :tabnew<CR>
+
+  " Quit current buffer
+  nnoremap <silent> <Leader>w :quit<CR>
+
+  " Cancel
+  nnoremap <silent> <Leader>z u
+
+  " Repeat
+  nnoremap <silent> <Leader><S-z> <C-R>
 
 " Settings
 
@@ -174,7 +196,7 @@ let mapleader = ' '
 
   " indentation
   set autoindent " auto-indentation
-  set backspace=2 " fix backspace (on some OS/term)
+  set backspace=2 " fix backspace (on some OS/terminals)
   set expandtab " replace tabs by spaces
   set shiftwidth=2 " n spaces when using <Tab>
   set smarttab " insert `shiftwidth` spaces instead of tabs
@@ -189,7 +211,6 @@ let mapleader = ' '
   set history=1000 " increase history size
 
   " performance
-  set lazyredraw " only redraw when needed
   set ttyfast " we have a fast terminal
 
   " search and replace behaviours
@@ -228,10 +249,11 @@ let mapleader = ' '
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
   set ttimeoutlen=0 " instant insert mode exit using escape
   set virtualedit=block " allow the cursor to go in to virtual places
+  set showtabline=2 " always show tabbar
 
   " vim
   let g:netrw_dirhistmax = 0 " disable netrw
-  let &viminfo = &viminfo + ',n' . b:tmp_directory . '/info' " change viminfo file path
+  let &viminfo = &viminfo + ',n' . b:tmp_directory . '/info//' " change viminfo file path
   set nobackup " disable backup files
   set noswapfile " disable swap files
 
@@ -249,6 +271,10 @@ let mapleader = ' '
   if !has('nvim')
     set spell
     set spellfile=~/.vim/spell/en.utf-8.add
+  endif
+
+  if !has('gui_macvim')
+    set lazyredraw " only redraw when needed
   endif
 
   " persistent undo
