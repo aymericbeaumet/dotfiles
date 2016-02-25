@@ -5,25 +5,21 @@ set cncpcompletion " ^N/^P completion
 set nativelinkorder " new tabs follow chrome logic
 set noautofocus " forbid websites to autofocus
 set sortlinkhints " sort hints based on the distance from the top left corner
-let barposition = 'bottom' " bar at bottom
 let blacklists = [ 'https://inbox.google.com/*', 'https://gmail.com/*', 'https://outlook.office.com/owa/*', 'https://outlook.office365.com/owa/*', 'https://www.typing.com/student/*', 'https://feedly.com/*', 'http://www.memrise.com/course/*/*/garden/review/', 'https://feedly.com/*' ] " ignore these websites
-
-" mapping
 let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
 
-" custom search engines
-let searchengine enfr = 'http://www.wordreference.com/enfr/%s'
-let searchengine fren = 'http://www.wordreference.com/fren/%s'
-let searchengine gh = 'https://github.com/search?q=%s'
-let searchengine imdb = 'http://www.imdb.com/find?q=%s'
-let searchengine npm = 'https://www.npmjs.com/search?q=%s'
-let searchengine wa = 'https://www.wolframalpha.com/input/?i=%s'
-let searchengine wk = 'https://en.wikipedia.org/wiki/Special:Search?search=%s'
-let searchengine yt = 'https://www.youtube.com/results?search_query=%s'
-
-" default search engine
-let searchengine google = 'https://www.google.com/#q=%s'
-let defaultengine = 'google'
+" mappings
+  " remove every default bindings
+unmapAll
+  " vim
+map <C-d> scrollPageDown
+map <C-u> scrollPageUp
+map gg scrollToTop
+map G scrollToBottom
+map <S-S> createHint
+  " same as in my vim config
+  " cvim specific
+map <C-S> createHint
 
 " explicitly allow autofocus on some websites
 site '*://*google.*/*' {
