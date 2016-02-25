@@ -85,16 +85,6 @@ select-word-style bash
 ##################################
 
 ###
-# Vim
-###
-
-alias v='nvim'
-alias vi='nvim'
-alias vim='nvim'
-alias nvim='nvim -p' # leverage zsh recursive acronyms
-alias mvim='mvim -p'
-
-###
 # Git
 ###
 
@@ -108,6 +98,22 @@ git_wrapper()
     command git "$@"
   fi
 }
+
+###
+# Vim
+###
+
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
+alias nvim='nvim -p' # leverage zsh recursive aliases
+alias mvim='mvim -p'
+
+###
+# Tree
+###
+
+alias t='tree'
 
 # Bind `g` and `git` to `git_wrapper` (disable globing to avoid problem with
 # parameter containing extended globing characters, like '#' or '^')
