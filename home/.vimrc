@@ -12,6 +12,7 @@ let mapleader = ' '
 " Plugins
 
   call plug#begin('~/.vim/bundle')
+
     " Theme
     Plug 'altercation/solarized', { 'rtp': 'vim-colors-solarized' }
     Plug 'blueyed/vim-diminactive'
@@ -33,8 +34,8 @@ let mapleader = ' '
       let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
       let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
     Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
-      let g:ycm_collect_identifiers_from_comments_and_strings = 1
-      let g:ycm_collect_identifiers_from_tags_files = 1
+      let g:ycm_collect_identifiers_from_comments_and_strings = 0
+      let g:ycm_collect_identifiers_from_tags_files = 0
       let g:ycm_complete_in_comments = 1
       let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
       let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
@@ -50,6 +51,19 @@ let mapleader = ' '
       let g:ctrlp_max_depth = 10
       let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
       let g:ctrlp_open_new_file = 't'
+      let g:ctrlp_prompt_mappings = {
+      \ 'PrtBS()':            [ '<bs>', '<C-]>', '<C-h>' ],
+      \ 'PrtDelete()':        [ '<del>', '<C-d>' ],
+      \ 'PrtSelectMove("j")': [ '<C-n>' ],
+      \ 'PrtSelectMove("k")': [ '<C-p>' ],
+      \ 'PrtCurLeft()':       [ '<C-b>' ],
+      \ 'PrtCurRight()':      [ '<C-f>' ],
+      \ 'PrtHistory(-1)':     [],
+      \ 'PrtHistory(1)':      [],
+      \ 'ToggleType(1)':      [],
+      \ 'ToggleType(-1)':     [],
+      \ }
+      let g:ctrlp_map = ''
     Plug 'editorconfig/editorconfig-vim'
       let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
     Plug 'scrooloose/nerdcommenter'
@@ -77,21 +91,23 @@ let mapleader = ' '
     Plug 'vim-airline/vim-airline-themes'
 
     " Docker
-    Plug 'ekalinin/Dockerfile.vim', { 'for': [ 'docker' ] }
+    Plug 'docker/docker', { 'rtp': 'contrib/syntax/vim' }
 
     " Git
-    Plug 'tpope/vim-git'
+    Plug 'tpope/vim-fugitive'
 
-    " Javascript
-    Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
-      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
+    " JavaScript
     Plug 'moll/vim-node'
+    Plug 'pangloss/vim-javascript'
+      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
 
      " JSON
-    Plug 'elzr/vim-json', { 'for': [ 'json' ] }
+    Plug 'elzr/vim-json'
 
     " Markdown
-    Plug 'tpope/vim-markdown', { 'for': [ 'markdown' ] }
+    Plug 'plasticboy/vim-markdown'
+      let g:vim_markdown_folding_disabled = 1
+
   call plug#end()
 
 " Inlined plugins
@@ -123,9 +139,8 @@ let mapleader = ' '
   " copy from the cursor to the end of line using Y (matches D behavior)
   nnoremap <silent> Y y$
 
-  " keep the cursor in place while joining lines (uses the `b` register,
-  " somewhat unaccessible on a Colemak layout)
-  nnoremap <silent> J mbJ`b
+  " keep the cursor in place while joining lines (uses the Z register)
+  nnoremap <silent> J mZJ`Z
 
   " disable annoying mappings
   noremap <silent> <F1>   <Nop>
@@ -142,7 +157,15 @@ let mapleader = ' '
   inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
   inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 
-" GUI Mappings (match the ones in ~/.gvimrc, but with <Leader> instead of <D>)
+  " Auto indent pasted text
+  nnoremap p p=`]<C-o>
+  nnoremap P P=`]<C-o>
+
+  " Clean screen and reload file
+  nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
+  xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+
+" GUI Mappings
 
   " Switch to left/right pane
   nnoremap <silent> <Leader>[ <C-w>h
@@ -159,32 +182,28 @@ let mapleader = ' '
   nnoremap <silent> <Leader><S-d> <C-w>s
 
   " Search
-  map <silent> <Leader>f /
+  nnoremap <silent> <Leader>f /
 
   " Fuzzy file explorer
-  nnoremap <silent> <Leader>o :CtrlP<CR>
+  nnoremap <silent> <Leader>o :<C-u>CtrlP<CR>
 
   " Quit
-  nnoremap <silent> <Leader>q :qa<CR>
-
-  " Reload file
-  nnoremap <silent> <Leader>r      :nohl<CR>:redraw<CR>:checktime<CR><C-l>
-  xnoremap <silent> <Leader>r <C-c>:nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+  nnoremap <silent> <Leader>q :<C-u>qall<CR>
 
   " Save current buffer
-  nnoremap <silent> <Leader>s :write<CR>
+  nnoremap <silent> <Leader>s :<C-u>write<CR>
 
   " New tab
-  nnoremap <silent> <Leader>t :tabnew<CR>
+  nnoremap <silent> <Leader>t :<C-u>tabnew<CR>
 
   " Quit current buffer
-  nnoremap <silent> <Leader>w :quit<CR>
+  nnoremap <silent> <Leader>w :<C-u>bdelete<CR>
 
   " Cancel
   nnoremap <silent> <Leader>z u
 
   " Repeat
-  nnoremap <silent> <Leader><S-z> <C-R>
+  nnoremap <silent> <Leader><S-z> <C-r>
 
 " Settings
 

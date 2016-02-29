@@ -20,48 +20,50 @@
   " Set the cursor as an underscore
   set guicursor+=a:hor8
 
-" Mappings
+" Mappings (matches the one in ~/.vimrc, but with Command instead of <Leader>)
+" `:e $VIMRUNTIME/menu.vim`
 
   " Switch to left/right pane
-  nnoremap <silent> <D-[> <C-w>h
-  nnoremap <silent> <D-]> <C-w>l
+  nmap <silent> <D-[> <Leader>[
+  nmap <silent> <D-]> <Leader>]
 
   " Comment
-  nmap <silent> <D-/> <plug>NERDCommenterToggle
-  xmap <silent> <D-/> <plug>NERDCommenterToggle
+  nmap <silent> <D-/> <Leader>/
+  xmap <silent> <D-/> <Leader>/
 
   " Split vertically (tmux-ish)
-  nnoremap <silent> <D-d> <C-w>v
+  nmap <silent> <D-d> <Leader>d
 
   " Split horizontally (tmux-ish)
-  nnoremap <silent> <D-D> <C-w>s
+  nmap <silent> <D-D> <Leader><S-d>
 
   " Search
   macmenu Edit.Find.Find\.\.\. key=<nop>
-  map <silent> <D-f> /
+  map <silent> <D-f> <Leader>f
 
   " Fuzzy file explorer
   macmenu File.Open\.\.\. key=<nop>
-  nnoremap <silent> <D-o> :CtrlP<CR>
+  nmap <silent> <D-o> <Leader>o
 
   " Quit
-  " <D-q> by default
-
-  " Reload file
-  nnoremap <silent> <D-r>      :nohl<CR>:redraw<CR>:checktime<CR><C-l>
-  xnoremap <silent> <D-r> <C-c>:nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+  " <D-q> by default, cannot be overriden
 
   " Save current buffer
-  " <D-s> by default
+  macmenu File.Save key=<nop>
+  nmap <silent> <D-s> <Leader>s
 
   " New tab
-  " <D-t> by default
+  macmenu File.New\ Tab key=<nop>
+  nmap <silent> <D-t> <Leader>t
 
   " Quit current buffer
-  " <D-w> by default
+  macmenu File.Close key=<nop>
+  nmap <silent> <D-w> <Leader>w
 
-  " Cancel
-  " <D-z> by default
+  " Undo
+  macmenu Edit.Undo key=<nop>
+  nmap <silent> <D-z> <Leader>z
 
-  " Repeat
-  " <D-Z> by default
+  " Redo
+  macmenu Edit.Redo key=<nop>
+  nmap <silent> <D-Z> <Leader><S-z>
