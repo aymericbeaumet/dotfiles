@@ -8,19 +8,6 @@ set sortlinkhints " sort hints based on the distance from the top left corner
 let blacklists = [ 'https://inbox.google.com/*', 'https://gmail.com/*', 'https://outlook.office.com/owa/*', 'https://outlook.office365.com/owa/*', 'https://www.typing.com/student/*', 'https://feedly.com/*', 'http://www.memrise.com/course/*/*/garden/review/', 'https://feedly.com/*' ] " ignore these websites
 let hintcharacters = 'lpufyw;qntesiroa' " Colemak toprow/homerow
 
-" mappings
-  " remove every default bindings
-unmapAll
-  " vim
-map <C-d> scrollPageDown
-map <C-u> scrollPageUp
-map gg scrollToTop
-map G scrollToBottom
-map <S-S> createHint
-  " same as in my vim config
-  " cvim specific
-map <C-S> createHint
-
 " explicitly allow autofocus on some websites
 site '*://*google.*/*' {
   set autofocus
