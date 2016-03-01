@@ -1,17 +1,42 @@
+<!--
+Note to future self: keep in mind Karabiner is also in charge of doing the
+Colemak binding. But when creating a new bind, the Qwerty position has to be
+used (as the Colemak bindings are not yet effective).
+
+e.g.: to bind ^P, one should bind ^R, because R on the Qwerty layout is a P on a
+Colemak layout
+-->
+
 <?xml version="1.0"?>
 <root>
+
+  <appdef>
+    <appname>ITERM</appname>
+    <equal>com.googlecode.iterm2</equal>
+  </appdef>
+
+  <appdef>
+    <appname>MVIM</appname>
+    <equal>org.vim.MacVim</equal>
+  </appdef>
+
+  <appdef>
+    <appname>SPOTIFY</appname>
+    <equal>com.spotify.client</equal>
+  </appdef>
 
   <item>
 
     <name>[Custom] Modifiers</name>
 
     <item>
-      <identifier>remap.modifiers.pc_application_to_control_escape</identifier>
-      <name>PC Application to control / escape</name>
+      <identifier>remap.modifiers.capslock_to_control_escape</identifier>
+      <name>Capslock to control / escape</name>
       <autogen>
-        __KeyOverlaidModifier__ KeyCode::PC_APPLICATION,
-        KeyCode::VK_LAZY_CONTROL_L,
-        KeyCode::ESCAPE,
+        __KeyOverlaidModifier__
+          KeyCode::PC_APPLICATION,
+          KeyCode::VK_LAZY_CONTROL_L,
+          KeyCode::ESCAPE,
       </autogen>
     </item>
 
@@ -19,9 +44,10 @@
       <identifier>remap.modifiers.return_to_control_return</identifier>
       <name>Return to control / return</name>
       <autogen>
-        __KeyOverlaidModifier__ KeyCode::RETURN,
-        KeyCode::VK_LAZY_CONTROL_R,
-        KeyCode::RETURN,
+        __KeyOverlaidModifier__
+          KeyCode::RETURN,
+          KeyCode::VK_LAZY_CONTROL_R,
+          KeyCode::RETURN,
       </autogen>
     </item>
 
@@ -31,98 +57,102 @@
 
     <name>[Custom] Emacs bindings</name>
 
-    <appdef>
-      <appname>MVIM</appname>
-      <equal>org.vim.MacVim</equal>
-    </appdef>
-
     <item>
       <identifier>remap.emacs.control_a</identifier>
-      <name>Control + A: beginning of line (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + A: beginning of line (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::A, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L,
+        __KeyToKey__
+          KeyCode::A, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_b</identifier>
-      <name>Control + B: left (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + B: left (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_LEFT,
+        __KeyToKey__
+          KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_LEFT,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_b</identifier>
-      <name>Alt + B: one word backward (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Alt + B: one word backward (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
-        KeyCode::CURSOR_LEFT, ModifierFlag::OPTION_L,
+        __KeyToKey__
+          KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+          KeyCode::CURSOR_LEFT, ModifierFlag::OPTION_L,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_d</identifier>
-      <name>Control + D: forward delete (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + D: forward delete (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::FORWARD_DELETE,
+        __KeyToKey__
+          KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::FORWARD_DELETE,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_d</identifier>
-      <name>Alt + D: delete word forward (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Alt + D: delete word forward (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
-        KeyCode::DELETE, ModifierFlag::FN, ModifierFlag::OPTION_L,
+        __KeyToKey__
+          KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+          KeyCode::DELETE, ModifierFlag::FN, ModifierFlag::OPTION_L,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_e</identifier>
-      <name>Control + E: end of line (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + E: end of line (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::K, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L,
+        __KeyToKey__
+          KeyCode::K, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_f</identifier>
-      <name>Control + F: right (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + F: right (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_RIGHT,
+        __KeyToKey__
+          KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_RIGHT,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.alt_f</identifier>
-      <name>Alt + F: one word forward (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Alt + F: one word forward (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
-        KeyCode::CURSOR_RIGHT, ModifierFlag::OPTION_L,
+        __KeyToKey__
+          KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
+          KeyCode::CURSOR_RIGHT, ModifierFlag::OPTION_L,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_h</identifier>
-      <name>Control + H: delete (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + H: delete (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::H, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::DELETE,
+        __KeyToKey__
+          KeyCode::H, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::DELETE,
       </autogen>
     </item>
 
@@ -130,80 +160,118 @@
       <identifier>remap.emacs.control_i</identifier>
       <name>Control + I: tab</name>
       <autogen>
-        __KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
-        KeyCode::TAB, ModifierFlag::SHIFT_L,
+        __KeyToKey__
+          KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
+          KeyCode::TAB, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
-        __KeyToKey__ KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::TAB,
+        __KeyToKey__
+          KeyCode::L, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::TAB,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_k</identifier>
-      <name>Control + K: delete until end of line (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + K: delete until end of line (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::N, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE,
+        __KeyToKey__
+          KeyCode::N, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_m</identifier>
-      <name>Control + M: return (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + M: return (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
-        KeyCode::RETURN, ModifierFlag::SHIFT_L,
+        __KeyToKey__
+          KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
+          KeyCode::RETURN, ModifierFlag::SHIFT_L,
       </autogen>
       <autogen>
-        __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | ModifierFlag::NONE,
-        KeyCode::RETURN, ModifierFlag::COMMAND_L,
+        __KeyToKey__
+          KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | ModifierFlag::NONE,
+          KeyCode::RETURN, ModifierFlag::COMMAND_L,
       </autogen>
       <autogen>
-        __KeyToKey__ KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::RETURN,
+        __KeyToKey__
+          KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::RETURN,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_n</identifier>
-      <name>Control + N: down (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + N: down (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::J, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_DOWN,
+        __KeyToKey__
+          KeyCode::J, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_DOWN,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_p</identifier>
-      <name>Control + P: up (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + P: up (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_UP,
+        __KeyToKey__
+          KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_UP,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_u</identifier>
-      <name>Control + U: delete the entire line (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + U: delete the entire line (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::I, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L, KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE,
+        __KeyToKey__
+          KeyCode::I, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::CURSOR_LEFT, ModifierFlag::COMMAND_L, KeyCode::CURSOR_RIGHT, ModifierFlag::COMMAND_L, ModifierFlag::SHIFT_L, KeyCode::DELETE,
       </autogen>
     </item>
 
     <item>
       <identifier>remap.emacs.control_w</identifier>
-      <name>Control + W: delete word (not mvim/terminal)</name>
-      <not>MVIM, TERMINAL</not>
+      <name>Control + W: delete word (not iterm/mvim)</name>
+      <not>ITERM, MVIM</not>
       <autogen>
-        __KeyToKey__ KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-        KeyCode::DELETE, ModifierFlag::OPTION_L,
+        __KeyToKey__
+          KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::DELETE, ModifierFlag::OPTION_L,
+      </autogen>
+    </item>
+
+  </item>
+
+  <item>
+
+    <name>[Custom] Standardize fullscreen bindings</name>
+
+    <item>
+      <identifier>remap.fullscreen.iterm</identifier>
+      <name>iTerm</name>
+      <only>ITERM</only>
+      <autogen>
+        __KeyToKey__
+          KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::RETURN, ModifierFlag::COMMAND_L,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.fullscreen.spotify</identifier>
+      <name>Spotify</name>
+      <only>SPOTIFY</only>
+      <autogen>
+        __KeyToKey__
+          KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::F, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L,
       </autogen>
     </item>
 
