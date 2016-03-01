@@ -89,6 +89,8 @@ let mapleader = ' '
       let g:airline_theme = 'solarized' " specify theme
       set noshowmode " hide the duplicate mode in bottom status bar
     Plug 'vim-airline/vim-airline-themes'
+    Plug 'simeji/winresizer'
+      let g:winresizer_start_key = '<C-W><C-W>'
 
     " Docker
     Plug 'docker/docker', { 'rtp': 'contrib/syntax/vim' }
@@ -197,7 +199,7 @@ let mapleader = ' '
   nnoremap <silent> <Leader>t :<C-u>tabnew<CR>
 
   " Quit current buffer
-  nnoremap <silent> <Leader>w :<C-u>bdelete<CR>
+  nnoremap <silent> <Leader>w :<C-u>quit<CR>
 
   " Cancel
   nnoremap <silent> <Leader>z u
