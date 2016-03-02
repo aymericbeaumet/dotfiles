@@ -7,7 +7,6 @@
   br = branch
   ci = commit
   cia = commit --amend
-  cl = clone
   co = checkout
   df = diff
   dfc = diff --cached
@@ -18,7 +17,6 @@
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
-  rbi = rebase --interactive
   rmc = rm --cached
   rs = reset
   rsh = reset --hard
@@ -34,11 +32,7 @@
 
   ; Execute `git status -sb` every time a file in the directory change
   ; Rely on: https://github.com/emcrisostomo/fswatch
-  watch = "!fswatch -o -e .git . | while read event \
-           ; do clear \
-             && echo \"$event file(s) changed - $(date)\" \
-             && git status -sb \
-           ; done"
+  watch = "!fswatch -o -e .git . | while read event ; do clear && echo \"$event file(s) changed - $(date)\" && git status -sb ; done"
 
   ; Print all the commiters for the project
   who = shortlog -sne
