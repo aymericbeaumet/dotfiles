@@ -24,8 +24,10 @@
 " `:e $VIMRUNTIME/menu.vim`
 
   " Switch to left/right pane
-  nmap <silent> <D-[> <Leader>[
-  nmap <silent> <D-]> <Leader>]
+  map <silent> <D-[> <Leader>[
+  imap <silent> <D-[> <C-u><D-[>
+  map <silent> <D-]> <Leader>]
+  imap <silent> <D-]> <C-u><D-]>
 
   " Comment
   nmap <silent> <D-/> <Leader>/
