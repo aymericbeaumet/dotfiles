@@ -19,3 +19,13 @@
 
   " Set the cursor as an underscore
   set guicursor+=a:hor8
+
+  " Make Command+W delete the current buffer
+  macmenu File.Close key=<nop>
+  nnoremap <silent> <D-w> :bdelete<CR>
+
+  " Navigate between buffers with Command+{ and Command+}
+  macmenu Window.Select\ Next\ Tab key=<nop>
+  macmenu Window.Select\ Previous\ Tab key=<nop>
+  nnoremap <silent> <D-{> :bprev<CR>
+  nnoremap <silent> <D-}> :bnext<CR>

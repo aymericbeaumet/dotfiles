@@ -9,10 +9,6 @@ snippet cl "console.log()" b
 console.log(${1:'$2'})${0:;}
 endsnippet
 
-snippet || "default assignment" b
-${1:identifier} = $1 || ${2:{}}${0:;}
-endsnippet
-
 ################################################################################
 # CommonJS
 
@@ -25,20 +21,7 @@ const ${1:module} = require('${2:${1/([a-z]+)([A-Z])?/$1(?2:-\l$2)/g}}')${0:;}
 endsnippet
 
 ################################################################################
-# ESLint
-
-snippet edl "ESLint disable line"
-// eslint-disable-line ${1:rule}
-endsnippet
-
-################################################################################
 # JSDoc
-
-snippet jd "JSDoc bloc" b
-/**
- * ${0:What/Why}
- */
-endsnippet
 
 snippet jc "JSDoc @const"
 @const {${1:type}}
@@ -54,35 +37,4 @@ endsnippet
 
 snippet jr "JSDoc @return"
 @return {${1:Type}}${2: - ${3:Description}}$0
-endsnippet
-
-snippet je "JSDoc @throws"
-@throws {${1:ExceptionName}}${2:, ${3:Description}}$0
-endsnippet
-
-################################################################################
-# Mocha
-
-snippet des "Mocha describe" b
-describe('${1:${2:function}()}', () => {
-  $3
-})${0:;}
-endsnippet
-
-snippet it "Mocha it" b
-it('${1:should ${2:...}}', ${3:()} => ${4:{
-  $5
-}})${0:;}
-endsnippet
-
-snippet aok "Assert truthy" b
-assert(${1:predicate})${0:;}
-endsnippet
-
-snippet ako "Assert falsy" b
-assert(!${1:(${2:predicate})})${0:;}
-endsnippet
-
-snippet aeq "Assert equal" b
-assert.deepEqual(${1:predicate1}, ${2:predicate2})${0:;}
 endsnippet
