@@ -2,26 +2,33 @@
 # Generic
 
 snippet us "strict mode" b
-'use strict'$0
+'use strict'${0:;}
 endsnippet
 
 snippet cl "console.log()" b
-console.log(${1:'$2'})$0
+console.log(${1:'$2'})${0:;}
 endsnippet
 
 snippet || "default assignment" b
-${1:identifier} = $1 || ${2:{}}$0
+${1:identifier} = $1 || ${2:{}}${0:;}
 endsnippet
 
 ################################################################################
 # CommonJS
 
 snippet me "module.exports" b
-module.exports${1: = ${2:export}}$0
+module.exports${1: = ${2:export}}${0:;}
 endsnippet
 
 snippet req "require()" b
-const ${1:module} = require('${2:${1/([a-z]+)([A-Z])?/$1(?2:-\l$2)/g}}')$0
+const ${1:module} = require('${2:${1/([a-z]+)([A-Z])?/$1(?2:-\l$2)/g}}')${0:;}
+endsnippet
+
+################################################################################
+# ESLint
+
+snippet edl "ESLint disable line"
+// eslint-disable-line ${1:rule}
 endsnippet
 
 ################################################################################
@@ -51,4 +58,31 @@ endsnippet
 
 snippet je "JSDoc @throws"
 @throws {${1:ExceptionName}}${2:, ${3:Description}}$0
+endsnippet
+
+################################################################################
+# Mocha
+
+snippet des "Mocha describe" b
+describe('${1:${2:function}()}', () => {
+  $3
+})${0:;}
+endsnippet
+
+snippet it "Mocha it" b
+it('${1:should ${2:...}}', ${3:()} => ${4:{
+  $5
+}})${0:;}
+endsnippet
+
+snippet aok "Assert truthy" b
+assert(${1:predicate})${0:;}
+endsnippet
+
+snippet ako "Assert falsy" b
+assert(!${1:(${2:predicate})})${0:;}
+endsnippet
+
+snippet aeq "Assert equal" b
+assert.deepEqual(${1:predicate1}, ${2:predicate2})${0:;}
 endsnippet
