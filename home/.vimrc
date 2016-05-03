@@ -14,101 +14,120 @@ let mapleader = ' '
   call plug#begin('~/.vim/bundle')
 
     " Theme
-    Plug 'altercation/solarized', { 'rtp': 'vim-colors-solarized' }
-    Plug 'blueyed/vim-diminactive'
+
+      Plug 'tomasr/molokai'
 
     " UI/UX
-    Plug 'Lokaltog/vim-easymotion'
-      let g:EasyMotion_do_mapping = 1 " disable the default mappings
-      let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
-      let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
-      let g:EasyMotion_smartcase = 1 " like Vim
-      let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
-      let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
-      nmap <silent> S <Plug>(easymotion-s)
-      xmap <silent> S <Plug>(easymotion-s)
-      omap <silent> S <Plug>(easymotion-s)
-    Plug 'SirVer/ultisnips'
-      let g:UltiSnipsExpandTrigger = '<Tab>'
-      let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-      let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-      let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
-      let g:ycm_collect_identifiers_from_comments_and_strings = 0
-      let g:ycm_collect_identifiers_from_tags_files = 0
-      let g:ycm_complete_in_comments = 1
-      let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
-      let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
-      let g:ycm_seed_identifiers_with_syntax = 1
-      set completeopt=longest,menuone
-    Plug 'airblade/vim-rooter'
-      let g:rooter_change_directory_for_non_project_files = 1 " chdir even when not in a project
-      let g:rooter_disable_map = 1 " do not map any bindings
-      let g:rooter_silent_chdir = 1 " do not notify when changing directory
-      let g:rooter_use_lcd = 1 " change the cd on a per window basis
-    Plug 'ctrlpvim/ctrlp.vim'
-      let g:ctrlp_max_files = 1000
-      let g:ctrlp_max_depth = 10
-      let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
-      let g:ctrlp_open_new_file = 't'
-      let g:ctrlp_prompt_mappings = {
-      \ 'PrtBS()':            [ '<bs>', '<C-]>', '<C-h>' ],
-      \ 'PrtDelete()':        [ '<del>', '<C-d>' ],
-      \ 'PrtSelectMove("j")': [ '<C-n>' ],
-      \ 'PrtSelectMove("k")': [ '<C-p>' ],
-      \ 'PrtCurLeft()':       [ '<C-b>' ],
-      \ 'PrtCurRight()':      [ '<C-f>' ],
-      \ 'PrtHistory(-1)':     [],
-      \ 'PrtHistory(1)':      [],
-      \ 'ToggleType(1)':      [],
-      \ 'ToggleType(-1)':     [],
-      \ }
-      let g:ctrlp_map = ''
-    Plug 'editorconfig/editorconfig-vim'
-      let g:EditorConfig_exclude_patterns = [ 'scp://.*' ]
-    Plug 'scrooloose/nerdcommenter'
-      let g:NERDCreateDefaultMappings = 0
-      let g:NERDCommentWholeLinesInVMode = 1
-      let g:NERDMenuMode = 0
-      let g:NERDSpaceDelims = 1
-    Plug 'tpope/vim-abolish'
-    Plug 'tpope/vim-eunuch'
-    Plug 'tpope/vim-repeat'
-    Plug 'tpope/vim-surround'
-      let g:surround_indent = 1 " reindent with `=` after surrounding
-      let g:surround_no_mappings = 1 " disable the default mappings
-      nmap ds <Plug>Dsurround
-      nmap cs <Plug>Csurround
-    Plug 'tpope/vim-unimpaired'
-    Plug 'vim-airline/vim-airline'
-      let g:airline_exclude_preview = 1 " remove airline from preview window
-      let g:airline_left_sep = '' " remove left separator
-      let g:airline_powerline_fonts = 0 " explicitly disable powerline fonts support
-      let g:airline_right_sep = '' " remove right separator
-      let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-      let g:airline_theme = 'solarized' " specify theme
-      set noshowmode " hide the duplicate mode in bottom status bar
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'simeji/winresizer'
-      let g:winresizer_start_key = '<C-W><C-W>'
 
-    " Docker
-    Plug 'docker/docker', { 'rtp': 'contrib/syntax/vim' }
+      Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
+        nmap <silent> S <Plug>(easymotion-s)
+        xmap <silent> S <Plug>(easymotion-s)
+        omap <silent> S <Plug>(easymotion-s)
+        let g:EasyMotion_do_mapping = 1 " disable the default mappings
+        let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
+        let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
+        let g:EasyMotion_smartcase = 1 " like Vim
+        let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
+        let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
 
-    " Git
-    Plug 'tpope/vim-fugitive'
+      Plug 'SirVer/ultisnips'
+        let g:UltiSnipsExpandTrigger = '<Tab>'
+        let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+        let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+        let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
 
-    " JavaScript
-    Plug 'moll/vim-node'
-    Plug 'pangloss/vim-javascript'
-      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
+      Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
+        let g:ycm_collect_identifiers_from_comments_and_strings = 0
+        let g:ycm_collect_identifiers_from_tags_files = 1
+        let g:ycm_complete_in_comments = 1
+        let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
+        let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
+        let g:ycm_seed_identifiers_with_syntax = 1
+        set completeopt=longest,menuone
 
-     " JSON
-    Plug 'elzr/vim-json'
+      Plug 'ctrlpvim/ctrlp.vim', { 'on': [ 'CtrlP', 'CtrlPMRU' ] }
+        nnoremap <silent> <leader>o :<C-u>CtrlP<CR>
+        nnoremap <silent> <leader>O :<C-u>CtrlPMRU<CR>
+        let g:ctrlp_map = ''
+        let g:ctrlp_max_files = 1000
+        let g:ctrlp_max_depth = 10
+        let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
+        let g:ctrlp_open_new_file = 'r'
+        let g:ctrlp_prompt_mappings = {
+        \   'PrtBS()':            [ '<bs>', '<C-]>', '<C-h>' ],
+        \   'PrtDelete()':        [ '<del>', '<C-d>' ],
+        \   'PrtSelectMove("j")': [ '<C-n>' ],
+        \   'PrtSelectMove("k")': [ '<C-p>' ],
+        \   'PrtCurLeft()':       [ '<C-b>' ],
+        \   'PrtCurRight()':      [ '<C-f>' ],
+        \   'PrtHistory(-1)':     [],
+        \   'PrtHistory(1)':      [],
+        \   'ToggleType(1)':      [],
+        \   'ToggleType(-1)':     [],
+        \ }
+        let g:ctrlp_working_path_mode = 'ra'
 
-    " Markdown
-    Plug 'plasticboy/vim-markdown'
-      let g:vim_markdown_folding_disabled = 1
+      Plug 'editorconfig/editorconfig-vim'
+
+      Plug 'scrooloose/nerdcommenter'
+        nmap <silent> <leader>/ <Plug>NERDCommenterToggle
+        xmap <silent> <leader>/ <Plug>NERDCommenterToggle
+        let g:NERDCreateDefaultMappings = 0
+        let g:NERDCommentWholeLinesInVMode = 1
+        let g:NERDMenuMode = 0
+        let g:NERDSpaceDelims = 1
+
+      Plug 'tpope/vim-abolish'
+
+      Plug 'tpope/vim-eunuch'
+
+      Plug 'tpope/vim-fugitive'
+
+      Plug 'tpope/vim-repeat'
+
+      Plug 'tpope/vim-surround', { 'on': [ '<Plug>Csurround', '<Plug>Dsurround' ] }
+        nmap <silent> cs <Plug>Csurround
+        nmap <silent> ds <Plug>Dsurround
+        let g:surround_no_mappings = 1 " disable the default mappings
+        let g:surround_indent = 1 " reindent with `=` after surrounding
+
+      Plug 'tpope/vim-unimpaired'
+
+      Plug 'vim-airline/vim-airline'
+      Plug 'vim-airline/vim-airline-themes'
+        let g:airline#extensions#disable_rtp_load = 1
+        let g:airline_extensions = [ 'branch', 'tabline', 'ycm' ]
+        let g:airline_exclude_preview = 1 " remove airline from preview window
+        let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+        set noshowmode " hide the duplicate mode in bottom status bar
+        if !has('gui_macvim')
+          let g:airline_theme = 'base16_monokai'
+          let g:airline_left_sep = ''
+          let g:airline_right_sep = ''
+        else
+          let g:airline_theme = 'molokai'
+          let g:airline_powerline_fonts = 1
+        endif
+
+      Plug 'simeji/winresizer'
+        let g:winresizer_start_key = '<C-W><C-W>'
+
+    " Languages
+
+      Plug 'docker/docker', { 'for': [ 'docker' ], 'rtp': 'contrib/syntax/vim' }
+
+      " `go get -u github.com/{jstemmer/gotags,nsf/gocode}`
+      Plug 'fatih/vim-go', { 'for': [ 'go' ] }
+
+      Plug 'moll/vim-node', { 'for': [ 'javascript' ] }
+
+      Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
+        let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
+
+      Plug 'elzr/vim-json', { 'for': [ 'json' ] }
+
+      Plug 'plasticboy/vim-markdown', { 'for': [ 'markdown' ] }
+        let g:vim_markdown_folding_disabled = 1
 
   call plug#end()
 
@@ -130,7 +149,7 @@ let mapleader = ' '
   " automatically remove trailing whitespace when saving
   au BufWritePre * :%s/\s\+$//e
 
-" Mappings
+" Enhanced mappings
 
   " better `j` and `k`
   nnoremap <silent> j gj
@@ -159,53 +178,9 @@ let mapleader = ' '
   inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
   inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 
-  " Auto indent pasted text
-  nnoremap p p=`]<C-o>
-  nnoremap P P=`]<C-o>
-
   " Clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
-
-" GUI Mappings
-
-  " Switch to left/right pane
-  nnoremap <silent> <Leader>[ <C-w>h
-  nnoremap <silent> <Leader>] <C-w>l
-
-  " Comment
-  nmap <silent> <Leader>/ <plug>NERDCommenterToggle
-  xmap <silent> <Leader>/ <plug>NERDCommenterToggle
-
-  " Split vertically (tmux-ish)
-  nnoremap <silent> <Leader>d <C-w>v
-
-  " Split horizontally (tmux-ish)
-  nnoremap <silent> <Leader><S-d> <C-w>s
-
-  " Search
-  nnoremap <silent> <Leader>f /
-
-  " Fuzzy file explorer
-  nnoremap <silent> <Leader>o :<C-u>CtrlP<CR>
-
-  " Quit
-  nnoremap <silent> <Leader>q :<C-u>qall<CR>
-
-  " Save current buffer
-  nnoremap <silent> <Leader>s :<C-u>write<CR>
-
-  " New tab
-  nnoremap <silent> <Leader>t :<C-u>tabnew<CR>
-
-  " Quit current buffer
-  nnoremap <silent> <Leader>w :<C-u>quit<CR>
-
-  " Cancel
-  nnoremap <silent> <Leader>z u
-
-  " Repeat
-  nnoremap <silent> <Leader><S-z> <C-r>
 
 " Settings
 
@@ -281,7 +256,7 @@ let mapleader = ' '
   " theme configuration
   set background=dark
   set colorcolumn=+1 " relative to text-width
-  colorscheme solarized
+  colorscheme molokai
 
   " mouse
   if has('mouse')
