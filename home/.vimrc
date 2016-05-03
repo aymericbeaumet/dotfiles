@@ -38,40 +38,18 @@ let mapleader = ' '
 
       Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --tern-completer' }
         let g:ycm_collect_identifiers_from_comments_and_strings = 0
-        let g:ycm_collect_identifiers_from_tags_files = 1
+        let g:ycm_collect_identifiers_from_tags_files = 0
         let g:ycm_complete_in_comments = 1
         let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
         let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
         let g:ycm_seed_identifiers_with_syntax = 1
         set completeopt=longest,menuone
 
-      Plug 'ctrlpvim/ctrlp.vim', { 'on': [ 'CtrlP', 'CtrlPMRU' ] }
-        nnoremap <silent> <leader>o :<C-u>CtrlP<CR>
-        nnoremap <silent> <leader>O :<C-u>CtrlPMRU<CR>
-        let g:ctrlp_map = ''
-        let g:ctrlp_max_files = 1000
-        let g:ctrlp_max_depth = 10
-        let g:ctrlp_custom_ignore = { 'dir': 'node_modules' }
-        let g:ctrlp_open_new_file = 'r'
-        let g:ctrlp_prompt_mappings = {
-        \   'PrtBS()':            [ '<bs>', '<C-]>', '<C-h>' ],
-        \   'PrtDelete()':        [ '<del>', '<C-d>' ],
-        \   'PrtSelectMove("j")': [ '<C-n>' ],
-        \   'PrtSelectMove("k")': [ '<C-p>' ],
-        \   'PrtCurLeft()':       [ '<C-b>' ],
-        \   'PrtCurRight()':      [ '<C-f>' ],
-        \   'PrtHistory(-1)':     [],
-        \   'PrtHistory(1)':      [],
-        \   'ToggleType(1)':      [],
-        \   'ToggleType(-1)':     [],
-        \ }
-        let g:ctrlp_working_path_mode = 'ra'
-
       Plug 'editorconfig/editorconfig-vim'
 
       Plug 'scrooloose/nerdcommenter'
-        nmap <silent> <leader>/ <Plug>NERDCommenterToggle
-        xmap <silent> <leader>/ <Plug>NERDCommenterToggle
+        nmap <silent> <leader>c <Plug>NERDCommenterToggle
+        xmap <silent> <leader>c <Plug>NERDCommenterToggle
         let g:NERDCreateDefaultMappings = 0
         let g:NERDCommentWholeLinesInVMode = 1
         let g:NERDMenuMode = 0
@@ -93,10 +71,9 @@ let mapleader = ' '
 
       Plug 'tpope/vim-unimpaired'
 
-      Plug 'vim-airline/vim-airline'
-      Plug 'vim-airline/vim-airline-themes'
+      Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
         let g:airline#extensions#disable_rtp_load = 1
-        let g:airline_extensions = [ 'branch', 'tabline', 'ycm' ]
+        let g:airline_extensions = [ 'branch', 'tabline', 'whitespace', 'ycm' ]
         let g:airline_exclude_preview = 1 " remove airline from preview window
         let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
         set noshowmode " hide the duplicate mode in bottom status bar
@@ -112,12 +89,27 @@ let mapleader = ' '
       Plug 'simeji/winresizer'
         let g:winresizer_start_key = '<C-W><C-W>'
 
+      Plug 'Shougo/neomru.vim' | Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/unite.vim'
+        nnoremap <silent> <C-p> :<C-u>UniteWithProjectDir -auto-preview -vertical-preview -hide-source-names -no-split buffer file_mru file_rec/async<CR>
+        nnoremap <silent> <C-n> :<C-u>Unite -direction=botright menu:shell<CR>
+        let g:unite_enable_auto_select = 0
+        let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
+        let g:unite_source_menu_menus.shell = {
+        \   'command_candidates': [
+        \     [ 'git status', 'Gstatus' ],
+        \   ]
+        \ }
+        autocmd FileType unite call s:unite_mappings()
+        function! s:unite_mappings()
+          imap <buffer> <Esc> <Plug>(unite_exit)
+          imap <buffer> <C-c> <Plug>(unite_exit)
+        endfunction
+
     " Languages
 
       Plug 'docker/docker', { 'for': [ 'docker' ], 'rtp': 'contrib/syntax/vim' }
 
-      " `go get -u github.com/{jstemmer/gotags,nsf/gocode}`
-      Plug 'fatih/vim-go', { 'for': [ 'go' ] }
+      Plug 'fatih/vim-go', { 'for': [ 'go' ], 'do': 'go get -u github.com/jstemmer/gotags github.com/nsf/gocode' }
 
       Plug 'moll/vim-node', { 'for': [ 'javascript' ] }
 
@@ -130,6 +122,12 @@ let mapleader = ' '
         let g:vim_markdown_folding_disabled = 1
 
   call plug#end()
+
+  " 'Shougo/unite.vim' (function calls -> has to happen after plugin's been loaded)
+    call unite#custom#profile('default', 'context', { 'silent': 1, 'start_insert': 1, 'unique': 1, 'wipe': 1 })
+    call unite#custom#source('file_mru', 'converters', 'converter_relative_word')
+    call unite#custom#source('file_rec/async', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
+    call unite#filters#matcher_default#use([ 'matcher_fuzzy' ])
 
 " Inlined plugins
 
@@ -165,7 +163,6 @@ let mapleader = ' '
 
   " disable annoying mappings
   noremap <silent> <F1>   <Nop>
-  noremap <silent> <C-c>  <Nop>
   noremap <silent> <C-w>f <Nop>
   noremap <silent> <Del>  <Nop>
   noremap <silent> q:     <Nop>
@@ -178,7 +175,7 @@ let mapleader = ' '
   inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
   inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 
-  " Clean screen and reload file
+  " clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
