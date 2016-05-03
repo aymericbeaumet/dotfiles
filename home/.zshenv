@@ -18,3 +18,7 @@ source "$HOMESHICK_DIR/homeshick.sh"
 export NVM_DIR="$HOME/.nvm"
 source "$(brew --prefix nvm)/nvm.sh"
 source "$(brew --prefix)/etc/profile.d/z.sh"
+
+# golang
+export GOPATH="$HOME/go"
+export PATH="$GOPATH/bin:$PATH"
