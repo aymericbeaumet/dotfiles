@@ -24,10 +24,10 @@ fi
 # install third-parties
 brew doctor
 brew update
-brew install ag ctags fswatch gawk git htop jq node nvm python python3 tmux z zsh
-brew tap neovim/neovim && brew install --head neovim
-$osx && brew install macvim
-brew cask install caskroom/fonts/font-hack
+brew reinstall ag ctags fswatch gawk git htop jq node nvm python python3 tmux z zsh
+brew tap neovim/neovim && brew reinstall --HEAD neovim
+$osx && brew reinstall macvim
+brew cask reinstall caskroom/fonts/font-hack
 
 # set default shell
 chsh -s "$(which zsh)"
