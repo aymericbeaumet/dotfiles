@@ -20,11 +20,6 @@ Colemak layout
     <equal>org.vim.MacVim</equal>
   </appdef>
 
-  <appdef>
-    <appname>SPOTIFY</appname>
-    <equal>com.spotify.client</equal>
-  </appdef>
-
   <item>
 
     <name>[Custom] Modifiers</name>
@@ -261,17 +256,6 @@ Colemak layout
         __KeyToKey__
           KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
           KeyCode::RETURN, ModifierFlag::COMMAND_L,
-      </autogen>
-    </item>
-
-    <item>
-      <identifier>remap.fullscreen.spotify</identifier>
-      <name>Spotify</name>
-      <only>SPOTIFY</only>
-      <autogen>
-        __KeyToKey__
-          KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
-          KeyCode::F, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L,
       </autogen>
     </item>
 
