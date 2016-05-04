@@ -77,7 +77,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
       Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
         let g:airline#extensions#disable_rtp_load = 1
-        let g:airline_extensions = [ 'branch', 'tabline', 'whitespace', 'ycm' ]
+        let g:airline_extensions = [ 'branch', 'tabline' ]
         let g:airline_exclude_preview = 1 " remove airline from preview window
         let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
         let g:airline_theme = 'wombat'
