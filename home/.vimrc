@@ -7,11 +7,15 @@ if &compatible | set nocompatible | endif " 21st century
 
 syntax enable
 filetype plugin indent on
+
 let mapleader = ' '
+let b:vim_directory = expand('~/.vim')
+let b:bundle_directory = b:vim_directory . '/bundle'
+let b:tmp_directory = b:vim_directory . '/tmp'
 
 " Plugins
 
-  call plug#begin('~/.vim/bundle')
+  call plug#begin(b:bundle_directory)
 
     " Theme
 
@@ -76,22 +80,44 @@ let mapleader = ' '
         let g:airline_extensions = [ 'branch', 'tabline', 'whitespace', 'ycm' ]
         let g:airline_exclude_preview = 1 " remove airline from preview window
         let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+        let g:airline_theme = 'wombat'
+        let g:airline_powerline_fonts = 1
         set noshowmode " hide the duplicate mode in bottom status bar
-        if !has('gui_macvim')
-          let g:airline_theme = 'base16_monokai'
-          let g:airline_left_sep = ''
-          let g:airline_right_sep = ''
-        else
-          let g:airline_theme = 'molokai'
-          let g:airline_powerline_fonts = 1
-        endif
 
       Plug 'simeji/winresizer'
         let g:winresizer_start_key = '<C-W><C-W>'
 
-      Plug 'Shougo/neomru.vim' | Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/unite.vim'
-        nnoremap <silent> <C-p> :<C-u>UniteWithProjectDir -auto-preview -vertical-preview -hide-source-names -no-split buffer file_mru file_rec/async<CR>
-        nnoremap <silent> <C-n> :<C-u>Unite -direction=botright menu:shell<CR>
+      Plug 'airblade/vim-gitgutter'
+        nmap [c <Plug>GitGutterPrevHunk
+        nmap ]c <Plug>GitGutterNextHunk
+        let g:gitgutter_map_keys = 0
+
+      Plug 'scrooloose/nerdtree'
+        nnoremap <silent> <Leader>f :<C-u>NERDTreeToggle<CR>
+        let g:NERDTreeShowHidden = 1
+        let g:NERDTreeWinSize = 35
+        let g:NERDTreeMinimalUI = 1
+        let g:NERDTreeAutoDeleteBuffer = 1
+        let g:NERDTreeMouseMode = 3
+        autocmd FileType nerdtree call s:on_nerdtree_buffer()
+        function! s:on_nerdtree_buffer()
+          nnoremap <silent><buffer> <Esc> :<C-u>NERDTreeClose<CR>
+        endfunction
+
+      Plug 'majutsushi/tagbar'
+        nnoremap <silent> <Leader>t :<C-u>TagbarToggle<CR>
+        let g:tagbar_width = 35
+        let g:tagbar_compact = 1
+        let g:tagbar_singleclick = 1
+        let g:tagbar_autofocus = 1
+        autocmd FileType tagbar call s:on_tagbar_buffer()
+        function! s:on_tagbar_buffer()
+          nnoremap <silent><buffer> <Esc> :<C-u>TagbarClose<CR>
+        endfunction
+
+      Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/unite.vim'
+        nnoremap <silent> <C-p> :<C-u>Unite -buffer-name=files -auto-preview -vertical-preview -no-split buffer file_rec/git<CR>
+        nnoremap <silent> <C-n> :<C-u>Unite -buffer-name=shell -direction=botright menu:shell<CR>
         let g:unite_enable_auto_select = 0
         let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
         let g:unite_source_menu_menus.shell = {
@@ -99,10 +125,10 @@ let mapleader = ' '
         \     [ 'git status', 'Gstatus' ],
         \   ]
         \ }
-        autocmd FileType unite call s:unite_mappings()
-        function! s:unite_mappings()
-          imap <buffer> <Esc> <Plug>(unite_exit)
-          imap <buffer> <C-c> <Plug>(unite_exit)
+        autocmd FileType unite call s:on_unite_buffer()
+        function! s:on_unite_buffer()
+          silent! GitGutterDisable
+          imap <silent><buffer> <Esc> i_<Plug>(unite_exit)
         endfunction
 
     " Languages
@@ -125,8 +151,7 @@ let mapleader = ' '
 
   " 'Shougo/unite.vim' (function calls -> has to happen after plugin's been loaded)
     call unite#custom#profile('default', 'context', { 'silent': 1, 'start_insert': 1, 'unique': 1, 'wipe': 1 })
-    call unite#custom#source('file_mru', 'converters', 'converter_relative_word')
-    call unite#custom#source('file_rec/async', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
+    call unite#custom#source('buffer,file_rec/git', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
     call unite#filters#matcher_default#use([ 'matcher_fuzzy' ])
 
 " Inlined plugins
@@ -181,8 +206,6 @@ let mapleader = ' '
 
 " Settings
 
-  let b:tmp_directory = expand('~/.vim/tmp') " define the temporary directory
-
   " encoding
   set encoding=utf-8 " ensure proper encoding
   set fileencodings=utf-8 " ensure proper encoding
@@ -204,6 +227,7 @@ let mapleader = ' '
   set history=1000 " increase history size
 
   " performance
+  set lazyredraw " only redraw when needed
   set ttyfast " we have a fast terminal
 
   " search and replace behaviours
@@ -231,7 +255,7 @@ let mapleader = ' '
   set nofoldenable " disable folding
   set nostartofline " leave my cursor position alone!
   set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
-  set shell=zsh\ -l" shell for :sh
+  set shell=zsh " shell for :sh
   set shortmess=aoOsI " disable vim welcome message / enable shorter messages
   set showcmd " show (partial) command in the last line of the screen
   set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
@@ -260,16 +284,6 @@ let mapleader = ' '
     set mouse=a
   endif
 
-  " spell checking (not supported in neovim yet)
-  if !has('nvim')
-    set spell
-    set spellfile=~/.vim/spell/en.utf-8.add
-  endif
-
-  if !has('gui_macvim')
-    set lazyredraw " only redraw when needed
-  endif
-
   " persistent undo
   if has('persistent_undo')
     set undofile
@@ -278,5 +292,43 @@ let mapleader = ' '
     let &undodir = b:tmp_directory . '/undo//'
   endif
 
-  " Avoid ~/.{vimrc,exrc} modification by autocmd, shell and write
+  " spell checking
+  if has('spell')
+    set spell
+  endif
+
+  " Avoid configuration files modification by autocmd, shell and write
   set secure
+
+" GUI settings
+
+  " MacVim (https://github.com/macvim-dev/macvim)
+  " - disable antialiasing with `!defaults write org.vim.MacVim AppleFontSmoothing -int 0`
+  if has('gui_macvim')
+    " Make Command+W delete the current buffer
+    macmenu File.Close key=<nop>
+    nnoremap <silent> <D-w> :bdelete<CR>
+    " Set the font
+    silent! set guifont=Monaco:h13 " fallback
+    silent! set guifont=Hack:h13 " preferred
+    " Disable superfluous GUI stuff
+    set guicursor=
+    set guioptions=
+    " Use console dialog instead of popup
+    set guioptions+=c
+    " Disable cursor blinking
+    set guicursor+=a:blinkon0
+    " Set the cursor as an underscore
+    set guicursor+=a:hor8
+  endif
+
+  " Neovim.app (https://github.com/neovim/neovim)
+  " - disable antialiasing with `!defaults write uk.foon.Neovim AppleFontSmoothing -int 0`
+  if exists('neovim_dot_app')
+    " Make Command+W delete the current buffer
+    call MacMenu('Window.Close Tab', '')
+    nnoremap <silent> <D-w> :bdelete<CR>
+    " Set the font
+    silent! call MacSetFont('Monaco', '13') " fallback
+    silent! call MacSetFont('Hack', '13') " preferred
+  endif
