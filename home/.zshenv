@@ -1,24 +1,26 @@
-BREW_DIR="$HOME/.brew"
-HOMESHICK_DIR="$HOME/.homesick/repos/homeshick"
+# Author: Aymeric Beaumet <aymeric@beaumet.me>
+# Github: @aymericbeaumet/dotfiles
 
-# make sure brew is in the path
-export PATH="$BREW_DIR/bin:$PATH"
-export MANPATH="$BREW_DIR/share/man:$MANPATH"
-export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
+# zsh
+fpath=("$HOME/.zsh/completion" $fpath)
 
-# setup zsh completion
-fpath=(
-  "$HOME/.zsh/completion"
-  "$HOMESHICK_DIR/completions"
-  "${fpath[@]}"
-)
+# brew
+local brew_dir="$HOME/.brew"
+export PATH="$brew_dir/bin:$PATH"
+export MANPATH="$brew_dir/share/man:$MANPATH"
+export INFOPATH="$brew_dir/share/info:$INFOPATH"
 
-# setup third-parties
-source "$HOMESHICK_DIR/homeshick.sh"
+# homeshick
+local homeshick_dir="$HOME/.homesick/repos/homeshick"
+fpath=("$homeshick_dir/completions" $fpath)
+source "$homeshick_dir/homeshick.sh"
+source "$(brew --prefix)/etc/profile.d/z.sh"
+
+# node
 export NVM_DIR="$HOME/.nvm"
 source "$(brew --prefix nvm)/nvm.sh"
-source "$(brew --prefix)/etc/profile.d/z.sh"
 
 # golang
 export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
+mkdir -p "$GOPATH"
