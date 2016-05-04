@@ -2,41 +2,29 @@
 
 set -e
 
+# install brew
 BREW_DIR="$HOME/.brew"
-REPOS_DIR="$HOME/.homesick/repos"
-HOMESHICK_DIR="$REPOS_DIR/homeshick"
-DOTFILES_DIR="$REPOS_DIR/dotfiles"
-
-# make sure brew is in the path
 export PATH="$BREW_DIR/bin:$PATH"
 export MANPATH="$BREW_DIR/share/man:$MANPATH"
 export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
-
-# infer OS and install homebrew
-if [ "$(uname -s)" = 'Darwin' ] ; then
-  osx=true
-  which brew &>/dev/null || git clone https://github.com/Homebrew/homebrew.git "$BREW_DIR"
-else
-  echo 'Unsupported OS!' >&2
-  exit 1
-fi
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # install third-parties
 brew doctor
+brew tap neovim/neovim rogual/neovim-dot-app
 brew update
 brew reinstall ag ctags fswatch gawk git htop jq node nvm python python3 tmux z zsh
-brew tap neovim/neovim && brew reinstall --HEAD neovim
-$osx && brew reinstall macvim
+brew reinstall --HEAD vim neovim macvim neovim-dot-app
 brew cask reinstall caskroom/fonts/font-hack
-
-# set default shell
 chsh -s "$(which zsh)"
 
-# install homeshick
-[ -d "$HOMESHICK_DIR" ] || git clone https://github.com/andsens/homeshick.git "$HOMESHICK_DIR"
+# install homeshick and dotfiles
+HOMESHICK_DIR="$HOME/.homeshick/repos/homeshick"
+[ -d "$HOMESHICK_DIR" ] || (
+  git clone https://github.com/andsens/homeshick.git "$HOMESHICK_DIR"
+)
 source "$HOMESHICK_DIR/homeshick.sh"
-
-# install dotfiles
+DOTFILES_DIR="$(dirname $HOMESHICK_DIR)/dotfiles"
 [ -d "$DOTFILES_DIR" ] || (
   homeshick clone https://github.com/aymericbeaumet/dotfiles.git
   homeshick link dotfiles
