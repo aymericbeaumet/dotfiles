@@ -1,11 +1,10 @@
+*.pyc
+*.spl
+*.spl
+*.sug
+.VimballRecord
 .config/
+.netrwhist
 bundle/
 shada/
 tmp/
-
-.VimballRecord
-.netrwhist
-*.spl
-
-*.spl
-*.pyc
