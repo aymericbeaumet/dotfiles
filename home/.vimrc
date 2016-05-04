@@ -99,10 +99,12 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:NERDTreeMinimalUI = 1
         let g:NERDTreeAutoDeleteBuffer = 1
         let g:NERDTreeMouseMode = 3
+        let g:NERDTreeIgnore = [ '\.git$', '\.hg$', '\.svn$' ]
         autocmd FileType nerdtree call s:on_nerdtree_buffer()
         function! s:on_nerdtree_buffer()
           nnoremap <silent><buffer> <Esc> :<C-u>NERDTreeClose<CR>
         endfunction
+        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
       Plug 'majutsushi/tagbar'
         nnoremap <silent> <Leader>t :<C-u>TagbarToggle<CR>
@@ -149,7 +151,9 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#end()
 
-  " 'Shougo/unite.vim' (function calls -> has to happen after plugin's been loaded)
+" Plugins (after loading)
+
+  " 'Shougo/unite.vim'
     call unite#custom#profile('default', 'context', { 'silent': 1, 'start_insert': 1, 'unique': 1, 'wipe': 1 })
     call unite#custom#source('buffer,file_rec/git', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
     call unite#filters#matcher_default#use([ 'matcher_fuzzy' ])
