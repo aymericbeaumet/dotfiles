@@ -14,10 +14,13 @@ Colemak layout
     <appname>ITERM</appname>
     <equal>com.googlecode.iterm2</equal>
   </appdef>
-
   <appdef>
     <appname>MVIM</appname>
     <equal>org.vim.MacVim</equal>
+  </appdef>
+  <appdef>
+    <appname>NEOVIM</appname>
+    <equal>uk.foon.Neovim</equal>
   </appdef>
 
   <item>
@@ -55,7 +58,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_a</identifier>
       <name>Control + A: beginning of line (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::A, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -66,7 +69,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_b</identifier>
       <name>Control + B: left (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -77,7 +80,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.alt_b</identifier>
       <name>Alt + B: one word backward (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::B, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
@@ -88,7 +91,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_d</identifier>
       <name>Control + D: forward delete (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -99,7 +102,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.alt_d</identifier>
       <name>Alt + D: delete word forward (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::G, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
@@ -110,7 +113,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_e</identifier>
       <name>Control + E: end of line (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::K, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -121,7 +124,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_f</identifier>
       <name>Control + F: right (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -132,7 +135,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.alt_f</identifier>
       <name>Alt + F: one word forward (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_OPTION | ModifierFlag::NONE,
@@ -143,7 +146,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_h</identifier>
       <name>Control + H: delete (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::H, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -169,7 +172,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_k</identifier>
       <name>Control + K: delete until end of line (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::N, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -180,7 +183,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_m</identifier>
       <name>Control + M: return (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::M, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_SHIFT | ModifierFlag::NONE,
@@ -201,7 +204,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_n</identifier>
       <name>Control + N: down (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::J, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -212,7 +215,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_p</identifier>
       <name>Control + P: up (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::R, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -223,7 +226,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_u</identifier>
       <name>Control + U: delete the entire line (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::I, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -234,7 +237,7 @@ Colemak layout
     <item>
       <identifier>remap.emacs.control_w</identifier>
       <name>Control + W: delete word (not iterm/mvim)</name>
-      <not>ITERM, MVIM</not>
+      <not>ITERM, MVIM, NEOVIM</not>
       <autogen>
         __KeyToKey__
           KeyCode::W, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
@@ -256,6 +259,17 @@ Colemak layout
         __KeyToKey__
           KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
           KeyCode::RETURN, ModifierFlag::COMMAND_L,
+      </autogen>
+    </item>
+
+    <item>
+      <identifier>remap.fullscreen.neovim</identifier>
+      <name>Neovim</name>
+      <only>NEOVIM</only>
+      <autogen>
+        __KeyToKey__
+          KeyCode::E, MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_COMMAND | MODIFIERFLAG_EITHER_LEFT_OR_RIGHT_CONTROL | ModifierFlag::NONE,
+          KeyCode::F, ModifierFlag::COMMAND_L,
       </autogen>
     </item>
 
