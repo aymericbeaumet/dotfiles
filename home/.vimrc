@@ -72,14 +72,11 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
         let g:ycm_seed_identifiers_with_syntax = 1
         let g:ycm_extra_conf_globlist = [ '~/*' ]
+        set completeopt=longest,menuone
 
       Plug 'editorconfig/editorconfig-vim'
 
       Plug 'scrooloose/nerdcommenter'
-        " [c]omment / uncomment the current line
-        nmap <silent> <Leader>c <Plug>NERDCommenterToggle
-        " [c]omment / uncomment the current selection
-        xmap <silent> <Leader>c <Plug>NERDCommenterToggle
         let g:NERDCreateDefaultMappings = 0
         let g:NERDCommentWholeLinesInVMode = 1
         let g:NERDMenuMode = 0
@@ -110,9 +107,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:airline_powerline_fonts = 1
         set noshowmode " hide the duplicate mode in bottom status bar
 
-      Plug 'simeji/winresizer'
-        let g:winresizer_start_key = '<C-W><C-W>'
-
       Plug 'airblade/vim-gitgutter'
         nmap [c <Plug>GitGutterPrevHunk
         nmap ]c <Plug>GitGutterNextHunk
@@ -120,23 +114,19 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:gitgutter_sign_column_always = 1
 
       Plug 'scrooloose/nerdtree'
-        " [f]ile explorer
-        nnoremap <silent> <Leader>f :<C-u>NERDTreeToggle<CR>
         let g:NERDTreeShowHidden = 1
         let g:NERDTreeWinSize = 35
         let g:NERDTreeMinimalUI = 1
         let g:NERDTreeAutoDeleteBuffer = 1
         let g:NERDTreeMouseMode = 3
-        let g:NERDTreeRespectWildIgnore = 1 " consider :wildignore
+        let g:NERDTreeRespectWildIgnore = 1 " :wildignore
         autocmd FileType nerdtree call s:on_nerdtree_buffer()
         function! s:on_nerdtree_buffer()
           nnoremap <silent><buffer> <Esc> :<C-u>NERDTreeClose<CR>
         endfunction
-        autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | quit! | endif
 
       Plug 'majutsushi/tagbar'
-        " [t]ags explorer
-        nnoremap <silent> <Leader>t :<C-u>TagbarToggle<CR>
         let g:tagbar_width = 35
         let g:tagbar_compact = 1
         let g:tagbar_singleclick = 1
@@ -147,20 +137,12 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         endfunction
 
       Plug 'benekastah/neomake', { 'do': 'go get -u github.com/golang/lint/golint ; npm install --global eslint jsonlint' }
-        autocmd FileType javascript,json autocmd BufEnter,BufWritePost * Neomake
+        autocmd FileType go,javascript,json autocmd BufEnter,BufWritePost * Neomake
         let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
         let g:neomake_javascript_enabled_makers = [ 'eslint' ]
         let g:neomake_json_enabled_makers = [ 'jsonlint' ]
 
       Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
-        " [b]uffers
-        nnoremap <silent> <Leader>b :<C-u>Unite -buffer-name=buffer -auto-preview -vertical-preview -no-split buffer<CR>
-        " [p]roject files
-        nnoremap <silent> <Leader>p :<C-u>Unite -buffer-name=project -auto-preview -vertical-preview -no-split file_rec/git<CR>
-        " [r]ecent files
-        nnoremap <silent> <Leader>r :<C-u>Unite -buffer-name=recent -auto-preview -vertical-preview -no-split file_mru<CR>
-        " [s]hell commands
-        nnoremap <silent> <Leader>s :<C-u>Unite -buffer-name=shell -direction=botright menu:shell<CR>
         let g:unite_enable_auto_select = 0
         let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
         let g:unite_source_menu_menus.shell = {
@@ -233,14 +215,39 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
-  " [d]elete the current buffer
-  nnoremap <silent> <Leader>d :bdelete!<CR>
+" Leader mappings
 
-  " [w]rite the current buffer
-  nnoremap <silent> <Leader>w :write!<CR>
+  " [b]uffers search
+  nnoremap <silent> <Leader>b :<C-u>Unite -buffer-name=buffer -auto-preview -vertical-preview -no-split buffer<CR>
+
+  " [c]omment / uncomment the current line
+  nmap     <silent> <Leader>c <Plug>NERDCommenterToggle
+  " [c]omment / uncomment the current selection
+  xmap     <silent> <Leader>c <Plug>NERDCommenterToggle
+
+  " [d]elete the current buffer
+  nnoremap <silent> <Leader>d :<C-u>bdelete!<CR>
+
+  " [f]iles explorer
+  nnoremap <silent> <Leader>f :<C-u>NERDTreeToggle<CR>
+
+  " [p]roject file search
+  nnoremap <silent> <Leader>p :<C-u>Unite -buffer-name=project -auto-preview -vertical-preview -no-split file_rec/git<CR>
 
   " [q]uit the current window
-  nnoremap <silent> <Leader>q :quit!<CR>
+  nnoremap <silent> <Leader>q :<C-u>quit!<CR>
+
+  " [r]ecent files/directories search (MRU)
+  nnoremap <silent> <Leader>r :<C-u>Unite -buffer-name=recent -auto-preview -vertical-preview -no-split file_mru directory_mru<CR>
+
+  " [s]hell commands search
+  nnoremap <silent> <Leader>s :<C-u>Unite -buffer-name=shell -direction=botright menu:shell<CR>
+
+  " [t]ags explorer
+  nnoremap <silent> <Leader>t :<C-u>TagbarToggle<CR>
+
+  " [w]rite the current buffer
+  nnoremap <silent> <Leader>w :<C-u>write!<CR>
 
 " Settings
 
@@ -257,9 +264,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   " command
   set history=1000 " increase history size
-
-  " completion
-  set completeopt=longest,menuone
 
   " encoding
   set encoding=utf-8 " ensure proper encoding
