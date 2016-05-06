@@ -72,7 +72,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
         let g:ycm_seed_identifiers_with_syntax = 1
         let g:ycm_extra_conf_globlist = [ '~/*' ]
-        set completeopt=longest,menuone
+        set completeopt=longest,menu,menuone
 
       Plug 'editorconfig/editorconfig-vim'
 
@@ -87,6 +87,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       Plug 'tpope/vim-eunuch'
 
       Plug 'tpope/vim-fugitive'
+        autocmd FileType gitcommit call s:on_gitcommit_buffer()
+        function! s:on_gitcommit_buffer()
+          nnoremap <silent><buffer> <Esc> <C-w>q
+        endfunction
 
       Plug 'tpope/vim-repeat'
 
@@ -107,10 +111,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:airline_powerline_fonts = 1
         set noshowmode " hide the duplicate mode in bottom status bar
 
+      let g:gitgutter_map_keys = 0
       Plug 'airblade/vim-gitgutter'
         nmap [c <Plug>GitGutterPrevHunk
         nmap ]c <Plug>GitGutterNextHunk
-        let g:gitgutter_map_keys = 0
         let g:gitgutter_sign_column_always = 1
 
       Plug 'scrooloose/nerdtree'
@@ -141,13 +145,17 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
         let g:neomake_javascript_enabled_makers = [ 'eslint' ]
         let g:neomake_json_enabled_makers = [ 'jsonlint' ]
+        let g:neomake_verbose = 0
 
       Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
         let g:unite_enable_auto_select = 0
         let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
         let g:unite_source_menu_menus.shell = {
         \   'command_candidates': [
-        \     [ 'git status', 'Gstatus' ],
+        \     [ '[git] git status', 'Gstatus' ],
+        \
+        \     [ '[vim] edit vimrc', 'edit $MYVIMRC' ],
+        \     [ '[vim] source vimrc', 'source $MYVIMRC' ],
         \   ]
         \ }
         autocmd FileType unite call s:on_unite_buffer()
@@ -207,10 +215,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   vnoremap <silent> < <gv
   vnoremap <silent> > >gv
 
-  " fix how ^E and ^Y behave in insert mode
-  inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
-  inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
-
   " clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
@@ -218,7 +222,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 " Leader mappings
 
   " [b]uffers search
-  nnoremap <silent> <Leader>b :<C-u>Unite -buffer-name=buffer -auto-preview -vertical-preview -no-split buffer<CR>
+  nnoremap <silent> <Leader>b :<C-u>Unite -auto-preview -vertical-preview -no-split buffer<CR>
 
   " [c]omment / uncomment the current line
   nmap     <silent> <Leader>c <Plug>NERDCommenterToggle
@@ -232,22 +236,28 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <Leader>f :<C-u>NERDTreeToggle<CR>
 
   " [p]roject file search
-  nnoremap <silent> <Leader>p :<C-u>Unite -buffer-name=project -auto-preview -vertical-preview -no-split file_rec/git<CR>
+  nnoremap <silent> <Leader>p :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/git<CR>
 
   " [q]uit the current window
   nnoremap <silent> <Leader>q :<C-u>quit!<CR>
 
-  " [r]ecent files/directories search (MRU)
-  nnoremap <silent> <Leader>r :<C-u>Unite -buffer-name=recent -auto-preview -vertical-preview -no-split file_mru directory_mru<CR>
+  " [r]ecent files search
+  nnoremap <silent> <Leader>r :<C-u>Unite -auto-preview -vertical-preview -no-split file_mru<CR>
 
-  " [s]hell commands search
-  nnoremap <silent> <Leader>s :<C-u>Unite -buffer-name=shell -direction=botright menu:shell<CR>
+  " [s]earch the project
+  nnoremap <silent> <Leader>s :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git<CR>
 
   " [t]ags explorer
   nnoremap <silent> <Leader>t :<C-u>TagbarToggle<CR>
 
+  " [u]tils commands search
+  nnoremap <silent> <Leader>u :<C-u>Unite -direction=botright menu:shell<CR>
+
   " [w]rite the current buffer
   nnoremap <silent> <Leader>w :<C-u>write!<CR>
+
+  " [z] recent directories search (rely on https://github.com/rupa/z)
+  nnoremap <silent> <Leader>z :<C-u>Unite -auto-preview -vertical-preview -no-split directory_mru<CR>
 
 " Settings
 
@@ -265,8 +275,14 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " command
   set history=1000 " increase history size
 
+  " completion
+  set pumheight=10 " completion window max size
+  " fix how ^E and ^Y behave in insert mode
+  inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
+  inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
+
   " encoding
-  set encoding=utf-8 " ensure proper encoding
+  if has('vim_starting') | set encoding=utf-8 | endif " ensure proper encoding
   set fileencodings=utf-8 " ensure proper encoding
 
   " error handling
