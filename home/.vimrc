@@ -26,143 +26,148 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#begin(b:bundle_directory)
 
-    " internals
-
-      " junegunn/vim-plug
+    " junegunn/vim-plug
       autocmd FileType vim-plug call s:on_vimplug_buffer()
       function! s:on_vimplug_buffer()
         nnoremap <silent><buffer> <Esc> <C-w>q
       endfunction
 
-    " theme
+    Plug 'tomasr/molokai' " can't lazy load
 
-      Plug 'tomasr/molokai'
+    Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
+      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
 
-    " filetypes
+    Plug 'elzr/vim-json', { 'for': [ 'json' ] }
 
-      Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
-        let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
+    Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
+      let g:EasyMotion_do_mapping = 0 " disable the default mappings
+      let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
+      let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
+      let g:EasyMotion_smartcase = 1 " like Vim
+      let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
+      let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
 
-      Plug 'elzr/vim-json', { 'for': [ 'json' ] }
+    Plug 'SirVer/ultisnips'
+      let g:UltiSnipsExpandTrigger = '<Tab>'
+      let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+      let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+      let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
 
-    " interface
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --tern-completer' }
+      let g:ycm_collect_identifiers_from_comments_and_strings = 0
+      let g:ycm_collect_identifiers_from_tags_files = 0
+      let g:ycm_complete_in_comments = 1
+      let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
+      let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
+      let g:ycm_seed_identifiers_with_syntax = 1
+      let g:ycm_extra_conf_globlist = [ '~/*' ]
+      set completeopt=longest,menu,menuone
 
-      Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
-        nmap <silent> S <Plug>(easymotion-s)
-        xmap <silent> S <Plug>(easymotion-s)
-        omap <silent> S <Plug>(easymotion-s)
-        let g:EasyMotion_do_mapping = 1 " disable the default mappings
-        let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
-        let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
-        let g:EasyMotion_smartcase = 1 " like Vim
-        let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
-        let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
+    Plug 'editorconfig/editorconfig-vim'
 
-      Plug 'SirVer/ultisnips'
-        let g:UltiSnipsExpandTrigger = '<Tab>'
-        let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-        let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-        let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
+    Plug 'scrooloose/nerdcommenter'
+      let g:NERDCreateDefaultMappings = 0
+      let g:NERDCommentWholeLinesInVMode = 1
+      let g:NERDMenuMode = 0
+      let g:NERDSpaceDelims = 1
 
-      Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --tern-completer' }
-        let g:ycm_collect_identifiers_from_comments_and_strings = 0
-        let g:ycm_collect_identifiers_from_tags_files = 0
-        let g:ycm_complete_in_comments = 1
-        let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
-        let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
-        let g:ycm_seed_identifiers_with_syntax = 1
-        let g:ycm_extra_conf_globlist = [ '~/*' ]
-        set completeopt=longest,menu,menuone
+    Plug 'tpope/vim-abolish'
 
-      Plug 'editorconfig/editorconfig-vim'
+    Plug 'tpope/vim-eunuch'
 
-      Plug 'scrooloose/nerdcommenter'
-        let g:NERDCreateDefaultMappings = 0
-        let g:NERDCommentWholeLinesInVMode = 1
-        let g:NERDMenuMode = 0
-        let g:NERDSpaceDelims = 1
+    Plug 'tpope/vim-fugitive'
+      autocmd FileType fugitiveblame,gitcommit call s:on_fugitive_buffer()
+      function! s:on_fugitive_buffer()
+        nnoremap <silent><buffer> <Esc> <C-w>q
+      endfunction
 
-      Plug 'tpope/vim-abolish'
+    Plug 'tpope/vim-repeat'
 
-      Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-surround', { 'on': [ '<Plug>Csurround', '<Plug>Dsurround' ] }
+      nmap <silent> cs <Plug>Csurround
+      nmap <silent> ds <Plug>Dsurround
+      let g:surround_no_mappings = 1 " disable the default mappings
+      let g:surround_indent = 1 " reindent with `=` after surrounding
 
-      Plug 'tpope/vim-fugitive'
-        autocmd FileType gitcommit call s:on_gitcommit_buffer()
-        function! s:on_gitcommit_buffer()
-          nnoremap <silent><buffer> <Esc> <C-w>q
-        endfunction
+    Plug 'tpope/vim-unimpaired'
 
-      Plug 'tpope/vim-repeat'
+    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline' " can't lazy load
+      let g:airline#extensions#disable_rtp_load = 1
+      let g:airline_extensions = [ 'branch', 'tabline' ]
+      let g:airline_exclude_preview = 1 " remove airline from preview window
+      let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+      let g:airline_theme = 'wombat'
+      let g:airline_powerline_fonts = 1
+      set noshowmode " hide the duplicate mode in bottom status bar
 
-      Plug 'tpope/vim-surround', { 'on': [ '<Plug>Csurround', '<Plug>Dsurround' ] }
-        nmap <silent> cs <Plug>Csurround
-        nmap <silent> ds <Plug>Dsurround
-        let g:surround_no_mappings = 1 " disable the default mappings
-        let g:surround_indent = 1 " reindent with `=` after surrounding
-
-      Plug 'tpope/vim-unimpaired'
-
-      Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
-        let g:airline#extensions#disable_rtp_load = 1
-        let g:airline_extensions = [ 'branch', 'tabline' ]
-        let g:airline_exclude_preview = 1 " remove airline from preview window
-        let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-        let g:airline_theme = 'wombat'
-        let g:airline_powerline_fonts = 1
-        set noshowmode " hide the duplicate mode in bottom status bar
-
+    Plug 'airblade/vim-gitgutter' " can't lazy load
+      nmap [c <Plug>GitGutterPrevHunk
+      nmap ]c <Plug>GitGutterNextHunk
       let g:gitgutter_map_keys = 0
-      Plug 'airblade/vim-gitgutter'
-        nmap [c <Plug>GitGutterPrevHunk
-        nmap ]c <Plug>GitGutterNextHunk
-        let g:gitgutter_sign_column_always = 1
+      let g:gitgutter_sign_column_always = 1
 
-      Plug 'scrooloose/nerdtree'
-        let g:NERDTreeShowHidden = 1
-        let g:NERDTreeWinSize = 35
-        let g:NERDTreeMinimalUI = 1
-        let g:NERDTreeAutoDeleteBuffer = 1
-        let g:NERDTreeMouseMode = 3
-        let g:NERDTreeRespectWildIgnore = 1 " :wildignore
-        autocmd FileType nerdtree call s:on_nerdtree_buffer()
-        function! s:on_nerdtree_buffer()
-          nnoremap <silent><buffer> <Esc> :<C-u>NERDTreeClose<CR>
-        endfunction
-        autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | quit! | endif
+    Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeCWD' ] }
+      let g:NERDTreeShowHidden = 1
+      let g:NERDTreeWinSize = 35
+      let g:NERDTreeMinimalUI = 1
+      let g:NERDTreeAutoDeleteBuffer = 1
+      let g:NERDTreeMouseMode = 3
+      let g:NERDTreeRespectWildIgnore = 1 " :wildignore
+      autocmd FileType nerdtree call s:on_nerdtree_buffer()
+      function! s:on_nerdtree_buffer()
+        nnoremap <silent><buffer> <Esc> :<C-u>NERDTreeClose<CR>
+      endfunction
+      autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | quit! | endif
 
-      Plug 'majutsushi/tagbar'
-        let g:tagbar_width = 35
-        let g:tagbar_compact = 1
-        let g:tagbar_singleclick = 1
-        let g:tagbar_autofocus = 1
-        autocmd FileType tagbar call s:on_tagbar_buffer()
-        function! s:on_tagbar_buffer()
-          nnoremap <silent><buffer> <Esc> :<C-u>TagbarClose<CR>
-        endfunction
+    Plug 'majutsushi/tagbar', { 'on': [ 'TagbarOpen' ] }
+      let g:tagbar_width = 35
+      let g:tagbar_compact = 1
+      let g:tagbar_singleclick = 1
+      let g:tagbar_autofocus = 1
+      autocmd FileType tagbar call s:on_tagbar_buffer()
+      function! s:on_tagbar_buffer()
+        nnoremap <silent><buffer> <Esc> :<C-u>TagbarClose<CR>
+      endfunction
 
-      Plug 'benekastah/neomake', { 'do': 'go get -u github.com/golang/lint/golint ; npm install --global eslint jsonlint' }
-        autocmd FileType go,javascript,json autocmd BufEnter,BufWritePost * Neomake
-        let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
-        let g:neomake_javascript_enabled_makers = [ 'eslint' ]
-        let g:neomake_json_enabled_makers = [ 'jsonlint' ]
-        let g:neomake_verbose = 0
+    Plug 'benekastah/neomake', { 'do': 'go get -u github.com/golang/lint/golint ; npm install --global eslint jsonlint' } " can't lazy load
+      autocmd FileType go,javascript,json autocmd BufEnter,BufWritePost * Neomake
+      let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
+      let g:neomake_javascript_enabled_makers = [ 'eslint' ]
+      let g:neomake_json_enabled_makers = [ 'jsonlint' ]
+      let g:neomake_verbose = 0
 
-      Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
-        let g:unite_enable_auto_select = 0
-        let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
-        let g:unite_source_menu_menus.shell = {
-        \   'command_candidates': [
-        \     [ '[git] git status', 'Gstatus' ],
-        \
-        \     [ '[vim] edit vimrc', 'edit $MYVIMRC' ],
-        \     [ '[vim] source vimrc', 'source $MYVIMRC' ],
-        \   ]
-        \ }
-        autocmd FileType unite call s:on_unite_buffer()
-        function! s:on_unite_buffer()
-          silent! GitGutterDisable
-          imap <silent><buffer> <Esc> i_<Plug>(unite_exit)
-        endfunction
+    Plug 'vim-scripts/BufOnly.vim', { 'on': [ 'BufOnly' ] }
+
+    Plug 'haya14busa/vim-asterisk', { 'on': [ '<Plug>(asterisk-z*)', '<Plug>(asterisk-z#)' ] }
+    map *  <Plug>(asterisk-z*)
+    map #  <Plug>(asterisk-z#)
+    let g:asterisk#keeppos = 1
+
+    Plug 'haya14busa/incsearch.vim', { 'on': [ '<Plug>(incsearch-forward)', '<Plug>(incsearch-backward)', '<Plug>(incsearch-stay)' ] }
+    map /  <Plug>(incsearch-forward)
+    map ?  <Plug>(incsearch-backward)
+    map g/ <Plug>(incsearch-stay)
+
+    Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
+      let g:unite_enable_auto_select = 0
+      let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
+      let g:unite_source_menu_menus.shell = {
+      \   'command_candidates': [
+      \     [ '[git] blame', 'Gblame' ],
+      \     [ '[git] status', 'Gstatus' ],
+      \
+      \     [ '[vimrc] edit', 'edit $MYVIMRC' ],
+      \     [ '[vimrc] reload | source', 'source $MYVIMRC' ],
+      \
+      \     [ '[vimplug] clean', 'PlugClean' ],
+      \     [ '[vimplug] install | update', 'PlugUpdate' ],
+      \   ]
+      \ }
+      autocmd FileType unite call s:on_unite_buffer()
+      function! s:on_unite_buffer()
+        silent! GitGutterDisable
+        imap <silent><buffer> <Esc> i_<Plug>(unite_exit)
+      endfunction
 
   call plug#end()
 
@@ -206,10 +211,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> J mZJ`Z
 
   " disable annoying mappings
-  noremap <silent> <F1>   <Nop>
-  noremap <silent> <C-w>f <Nop>
-  noremap <silent> <Del>  <Nop>
-  noremap <silent> q:     <Nop>
+  noremap  <silent> <F1>   <Nop>
+  noremap  <silent> <C-w>f <Nop>
+  noremap  <silent> <Del>  <Nop>
+  noremap  <silent> q:     <Nop>
 
   " reselect visual block after indent
   vnoremap <silent> < <gv
@@ -221,22 +226,33 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
 " Leader mappings
 
-  " [b]uffers search
+  " [b]uffer search by path
   nnoremap <silent> <Leader>b :<C-u>Unite -auto-preview -vertical-preview -no-split buffer<CR>
 
-  " [c]omment / uncomment the current line
+  " [c]omment toggling for the current line / selection
   nmap     <silent> <Leader>c <Plug>NERDCommenterToggle
-  " [c]omment / uncomment the current selection
   xmap     <silent> <Leader>c <Plug>NERDCommenterToggle
 
   " [d]elete the current buffer
   nnoremap <silent> <Leader>d :<C-u>bdelete!<CR>
 
-  " [f]iles explorer
-  nnoremap <silent> <Leader>f :<C-u>NERDTreeToggle<CR>
+  " [e]xplore filesystem
+  nnoremap <silent> <Leader>e :<C-u>NERDTreeCWD<CR>
 
-  " [p]roject file search
-  nnoremap <silent> <Leader>p :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/git<CR>
+  " [f]ind files in the current git project
+  nnoremap <silent> <Leader>f :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/git:/:--cached<CR>
+
+  " [F]ind files in the current working directory
+  nnoremap <silent> <Leader>F :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec<CR>
+
+  " [g]rep in the current git project
+  nnoremap <silent> <Leader>g :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git:/:--cached<CR>
+
+  " [G]rep in the current working directory
+  nnoremap <silent> <Leader>G :<C-u>Unite -auto-preview -vertical-preview -no-split grep<CR>
+
+  " [k]eep the current buffer (only)
+  nnoremap <silent> <Leader>k :<C-u>BufOnly<CR>
 
   " [q]uit the current window
   nnoremap <silent> <Leader>q :<C-u>quit!<CR>
@@ -244,13 +260,15 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [r]ecent files search
   nnoremap <silent> <Leader>r :<C-u>Unite -auto-preview -vertical-preview -no-split file_mru<CR>
 
-  " [s]earch the project
-  nnoremap <silent> <Leader>s :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git<CR>
+  " [s]earch in the current buffer
+  nmap     <silent> <Leader>s <Plug>(easymotion-s)
+  xmap     <silent> <Leader>s <Plug>(easymotion-s)
+  omap     <silent> <Leader>s <Plug>(easymotion-s)
 
   " [t]ags explorer
-  nnoremap <silent> <Leader>t :<C-u>TagbarToggle<CR>
+  nnoremap <silent> <Leader>t :<C-u>TagbarOpen fj<CR>
 
-  " [u]tils commands search
+  " [u]tils command search
   nnoremap <silent> <Leader>u :<C-u>Unite -direction=botright menu:shell<CR>
 
   " [w]rite the current buffer
@@ -357,7 +375,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   endif
 
   " system
-  set shell=zsh " shell for :sh
+  set shell=zsh\ -l
 
   " theme
   colorscheme molokai
