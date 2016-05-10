@@ -1,1 +1,2 @@
-source "$(brew --prefix)/etc/profile.d/z.sh"
+# Author: Aymeric Beaumet <aymeric@beaumet.me>
+# Github: @aymericbeaumet/dotfiles
