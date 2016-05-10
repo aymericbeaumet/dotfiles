@@ -24,20 +24,16 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
 " Plugins
 
+  autocmd FileType vim-plug call s:on_vimplug_buffer()
+  function! s:on_vimplug_buffer()
+    nnoremap <silent><buffer> <Esc> <C-w>q
+  endfunction
+
   call plug#begin(b:bundle_directory)
 
-    " junegunn/vim-plug
-      autocmd FileType vim-plug call s:on_vimplug_buffer()
-      function! s:on_vimplug_buffer()
-        nnoremap <silent><buffer> <Esc> <C-w>q
-      endfunction
+    Plug 'tomasr/molokai'
 
-    Plug 'tomasr/molokai' " can't lazy load
-
-    Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
-      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
-
-    Plug 'elzr/vim-json', { 'for': [ 'json' ] }
+    Plug 'Konfekt/FastFold'
 
     Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
       let g:EasyMotion_do_mapping = 0 " disable the default mappings
@@ -47,33 +43,15 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
       let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
 
-    Plug 'SirVer/ultisnips'
-      let g:UltiSnipsExpandTrigger = '<Tab>'
-      let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-      let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-      let g:UltiSnipsSnippetDirectories = [ 'snippet' ]
-
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --tern-completer' }
-      let g:ycm_collect_identifiers_from_comments_and_strings = 0
-      let g:ycm_collect_identifiers_from_tags_files = 0
-      let g:ycm_complete_in_comments = 1
-      let g:ycm_key_list_previous_completion = [ '<C-p>', '<Up>' ]
-      let g:ycm_key_list_select_completion = [ '<C-n>', '<Down>' ]
-      let g:ycm_seed_identifiers_with_syntax = 1
-      let g:ycm_extra_conf_globlist = [ '~/*' ]
-      set completeopt=longest,menu,menuone
-
     Plug 'editorconfig/editorconfig-vim'
 
-    Plug 'scrooloose/nerdcommenter'
+    Plug 'scrooloose/nerdcommenter' " can't lazy load (https://github.com/scrooloose/nerdcommenter/issues/176)
       let g:NERDCreateDefaultMappings = 0
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
 
-    Plug 'tpope/vim-abolish'
-
-    Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-eunuch', { 'on': [ 'Remove', 'Unlink', 'Move', 'Rename', 'Chmod', 'Mkdir', 'Find', 'Locate', 'Wall', 'SudoWrite', 'SudoEdit' ] }
 
     Plug 'tpope/vim-fugitive'
       autocmd FileType fugitiveblame,gitcommit call s:on_fugitive_buffer()
@@ -91,16 +69,16 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'tpope/vim-unimpaired'
 
-    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline' " can't lazy load
-      let g:airline#extensions#disable_rtp_load = 1
-      let g:airline_extensions = [ 'branch', 'tabline' ]
-      let g:airline_exclude_preview = 1 " remove airline from preview window
-      let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-      let g:airline_theme = 'wombat'
-      let g:airline_powerline_fonts = 1
-      set noshowmode " hide the duplicate mode in bottom status bar
+    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
+        let g:airline#extensions#disable_rtp_load = 1
+        let g:airline_extensions = [ 'branch', 'tabline' ]
+        let g:airline_exclude_preview = 1 " remove airline from preview window
+        let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
+        let g:airline_theme = 'badwolf'
+        let g:airline_powerline_fonts = 1
+        set noshowmode " hide the duplicate mode in bottom status bar
 
-    Plug 'airblade/vim-gitgutter' " can't lazy load
+    Plug 'airblade/vim-gitgutter'
       nmap [c <Plug>GitGutterPrevHunk
       nmap ]c <Plug>GitGutterNextHunk
       let g:gitgutter_map_keys = 0
@@ -129,53 +107,92 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         nnoremap <silent><buffer> <Esc> :<C-u>TagbarClose<CR>
       endfunction
 
-    Plug 'benekastah/neomake', { 'do': 'go get -u github.com/golang/lint/golint ; npm install --global eslint jsonlint' } " can't lazy load
-      autocmd FileType go,javascript,json autocmd BufEnter,BufWritePost * Neomake
+    Plug 'benekastah/neomake', { 'for': [ 'go', 'haskell', 'javascript', 'json' ], 'do': '
+    \   go get -u github.com/golang/lint/golint;
+    \   cabal update && cabal install ghc-mod hdevtools hlint;
+    \   npm install --global eslint;
+    \   npm install --global jsonlint;
+    \ ' }
+      autocmd FileType go,haskell,javascript,json autocmd BufEnter,BufWritePost * Neomake
       let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
+      let g:neomake_haskell_enabled_makers = [ 'ghcmod', 'hdevtools', 'hlint' ]
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
+        let g:neomake_javascript_eslint_args = [ '-f', 'compact', '--esnext' ]
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
       let g:neomake_verbose = 0
 
     Plug 'vim-scripts/BufOnly.vim', { 'on': [ 'BufOnly' ] }
 
-    Plug 'haya14busa/vim-asterisk', { 'on': [ '<Plug>(asterisk-z*)', '<Plug>(asterisk-z#)' ] }
-    map *  <Plug>(asterisk-z*)
-    map #  <Plug>(asterisk-z#)
-    let g:asterisk#keeppos = 1
+    Plug 'haya14busa/vim-asterisk', { 'on': [ '<Plug>(asterisk-*)', '<Plug>(asterisk-#)' ] }
+      map * <Plug>(asterisk-*)
+      map # <Plug>(asterisk-#)
+      let g:asterisk#keeppos = 1
 
-    Plug 'haya14busa/incsearch.vim', { 'on': [ '<Plug>(incsearch-forward)', '<Plug>(incsearch-backward)', '<Plug>(incsearch-stay)' ] }
-    map /  <Plug>(incsearch-forward)
-    map ?  <Plug>(incsearch-backward)
-    map g/ <Plug>(incsearch-stay)
+    Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+      Plug 'Shougo/vimshell', { 'on': [ 'VimShellCurrentDir', 'VimShellInteractive' ] }
+        let g:vimshell_prompt = ' λ '
+      Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
+        let g:unite_enable_auto_select = 0
+        let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
+        let g:unite_source_menu_menus.shell = {
+        \   'command_candidates': [
+        \     [ '[git] blame', 'Gblame' ],
+        \     [ '[git] status', 'Gstatus' ],
+        \
+        \     [ '[haskell] REPL', 'VimShellInteractive ghci' ],
+        \
+        \     [ '[nodejs] REPL', 'VimShellInteractive node' ],
+        \
+        \     [ '[vim] edit configuration', 'edit $MYVIMRC' ],
+        \     [ '[vim] reload/source configuration', 'source $MYVIMRC' ],
+        \     [ '[vim] clean plugins', 'PlugClean' ],
+        \     [ '[vim] install/update plugins', 'PlugUpdate' ],
+        \
+        \     [ '[shell] cwd', 'VimShellCurrentDir -buffer-name=shell -split' ],
+        \   ]
+        \ }
+        autocmd FileType unite call s:on_unite_buffer()
+        function! s:on_unite_buffer()
+          imap <silent><buffer> <Esc> i_<Plug>(unite_exit)
+        endfunction
 
-    Plug 'Shougo/vimproc.vim', { 'do': 'make' } | Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
-      let g:unite_enable_auto_select = 0
-      let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
-      let g:unite_source_menu_menus.shell = {
-      \   'command_candidates': [
-      \     [ '[git] blame', 'Gblame' ],
-      \     [ '[git] status', 'Gstatus' ],
-      \
-      \     [ '[vimrc] edit', 'edit $MYVIMRC' ],
-      \     [ '[vimrc] reload | source', 'source $MYVIMRC' ],
-      \
-      \     [ '[vimplug] clean', 'PlugClean' ],
-      \     [ '[vimplug] install | update', 'PlugUpdate' ],
-      \   ]
-      \ }
-      autocmd FileType unite call s:on_unite_buffer()
-      function! s:on_unite_buffer()
-        silent! GitGutterDisable
-        imap <silent><buffer> <Esc> i_<Plug>(unite_exit)
+    "  ```sh
+    "  pip2 install --upgrade neovim
+    "  pip3 install --upgrade neovim
+    "  ```
+    if has('nvim') && has('python3')
+      function! AfterDeoplete(arg)
+        UpdateRemotePlugins
       endfunction
+      Plug 'Shougo/deoplete.nvim', { 'do': function('AfterDeoplete') }
+        let g:deoplete#enable_at_startup = 1
+        let g:deoplete#auto_completion_start_length = 1
+        let g:deoplete#max_abbr_width = 0
+        let g:deoplete#max_menu_width = 0
+        autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+      Plug 'zchee/deoplete-go', { 'do': 'go get -u github.com/nsf/gocode ; make'}
+
+      Plug 'eagletmt/neco-ghc', { 'do': 'cabal update && cabal install ghc-mod' }
+        let g:haskellmode_completion_ghc = 0 " disable haskell-vim omnifunc
+
+      Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install --global tern' }
+    endif
+
+    Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
+      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
+
+    Plug 'elzr/vim-json', { 'for': [ 'json' ] }
+
+    Plug 'dag/vim2hs', { 'for': [ 'haskell' ] }
 
   call plug#end()
 
 " Plugins (after loading)
 
   " 'Shougo/unite.vim'
-    call unite#custom#profile('default', 'context', { 'silent': 1, 'start_insert': 1, 'unique': 1, 'wipe': 1 })
-    call unite#custom#source('buffer,file_rec/git,file_mru', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
+    call unite#custom#profile('default', 'context', { 'start_insert': 1, 'wipe': 1 })
+    call unite#custom#source('file_rec/async,file_rec/git,grep,grep/git', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
     call unite#filters#matcher_default#use([ 'matcher_fuzzy' ])
 
 " Inlined plugins
@@ -211,9 +228,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> J mZJ`Z
 
   " disable annoying mappings
-  noremap  <silent> <F1>   <Nop>
+  noremap  <silent> <C-c>  <Nop>
   noremap  <silent> <C-w>f <Nop>
   noremap  <silent> <Del>  <Nop>
+  noremap  <silent> <F1>   <Nop>
   noremap  <silent> q:     <Nop>
 
   " reselect visual block after indent
@@ -226,7 +244,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
 " Leader mappings
 
-  " [b]uffer search by path
+  " [b]uffer search
   nnoremap <silent> <Leader>b :<C-u>Unite -auto-preview -vertical-preview -no-split buffer<CR>
 
   " [c]omment toggling for the current line / selection
@@ -239,20 +257,20 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [e]xplore filesystem
   nnoremap <silent> <Leader>e :<C-u>NERDTreeCWD<CR>
 
-  " [f]ind files in the current git project
-  nnoremap <silent> <Leader>f :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/git:/:--cached<CR>
+  " [f]ind files in the current working directory
+  nnoremap <silent> <Leader>f :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/async<CR>
 
-  " [F]ind files in the current working directory
-  nnoremap <silent> <Leader>F :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec<CR>
+  " [F]ind files in the current git project
+  nnoremap <silent> <Leader>F :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/git:--cached<CR>
 
-  " [g]rep in the current git project
-  nnoremap <silent> <Leader>g :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git:/:--cached<CR>
+  " [g]rep files in the current working directory
+  nnoremap <silent> <Leader>g :<C-u>Unite -auto-preview -vertical-preview -no-split grep<CR>
 
-  " [G]rep in the current working directory
-  nnoremap <silent> <Leader>G :<C-u>Unite -auto-preview -vertical-preview -no-split grep<CR>
+  " [G]rep files in the current git project
+  nnoremap <silent> <Leader>G :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git:--cached<CR>
 
-  " [k]eep the current buffer (only)
-  nnoremap <silent> <Leader>k :<C-u>BufOnly<CR>
+  " [k]eep the current buffer only
+  nnoremap <silent> <Leader>k :<C-u>BufOnly!<CR>
 
   " [q]uit the current window
   nnoremap <silent> <Leader>q :<C-u>quit!<CR>
@@ -275,7 +293,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <Leader>w :<C-u>write!<CR>
 
   " [z] recent directories search (rely on https://github.com/rupa/z)
-  nnoremap <silent> <Leader>z :<C-u>Unite -auto-preview -vertical-preview -no-split directory_mru<CR>
+  nnoremap <silent> <Leader>z :<C-u>Unite -no-split z<CR>
 
 " Settings
 
@@ -292,12 +310,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   " command
   set history=1000 " increase history size
-
-  " completion
-  set pumheight=10 " completion window max size
-  " fix how ^E and ^Y behave in insert mode
-  inoremap <silent><expr> <C-e> pumvisible() ? "\<C-y>\<C-e>" : "\<C-e>"
-  inoremap <silent><expr> <C-y> pumvisible() ? "\<C-y>\<C-y>" : "\<C-y>"
 
   " encoding
   if has('vim_starting') | set encoding=utf-8 | endif " ensure proper encoding
