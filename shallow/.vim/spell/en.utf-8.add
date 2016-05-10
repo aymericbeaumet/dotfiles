@@ -172,6 +172,7 @@ src
 stackoverflow
 startup
 stringify
+symlink
 travis
 ui
 uri
@@ -190,4 +191,3 @@ wikipedia
 workflow
 workflows
 www
-symlink

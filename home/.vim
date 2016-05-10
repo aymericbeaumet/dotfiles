@@ -1,1 +1,1 @@
-../.shallow/.vim
+../shallow/.vim
