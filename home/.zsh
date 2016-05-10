@@ -1,1 +1,1 @@
-../.shallow/.zsh
+../shallow/.zsh
