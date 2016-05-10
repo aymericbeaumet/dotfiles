@@ -48,7 +48,7 @@ local tmp_directory="$zsh_directory/tmp"
 
   # ls
   export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
-  alias ls="ls -pFG"
+  alias ls="ls -pFGH"
   alias l='ls -hl' ; compdef l=ls
   alias ll='l' ; compdef l=ls
   alias la='ll -A' ; compdef la=ls
