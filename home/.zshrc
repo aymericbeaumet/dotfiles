@@ -105,10 +105,6 @@ local tmp_directory="$zsh_directory/tmp"
   # Set Emacs-like bindings
   bindkey -e
 
-  # Bash-like command editing Ctrl-x-e (http://stackoverflow.com/a/903973/1071486)
-  zle -N edit-command-line
-  bindkey '^Xe' edit-command-line
-
   # Fix delete key
   bindkey '^[[3~'  delete-char
   bindkey '^[3;5~' delete-char
