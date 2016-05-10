@@ -12,6 +12,9 @@ export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
 mkdir -p "$GOPATH"
 
+# haskell
+export PATH="$HOME/.cabal/bin:$PATH"
+
 # homeshick
 local homeshick_dir="$HOME/.homesick/repos/homeshick"
 fpath=("$homeshick_dir/completions" $fpath)
@@ -23,3 +26,6 @@ source "$(brew --prefix nvm)/nvm.sh"
 
 # zsh
 fpath=("$HOME/.zsh/completion" $fpath)
+
+# z
+source "$(brew --prefix)/etc/profile.d/z.sh"
