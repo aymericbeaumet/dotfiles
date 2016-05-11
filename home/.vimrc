@@ -117,7 +117,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
       let g:neomake_haskell_enabled_makers = [ 'ghcmod', 'hdevtools', 'hlint' ]
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
-        let g:neomake_javascript_eslint_args = [ '-f', 'compact', '--esnext' ]
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
       let g:neomake_verbose = 0
 
