@@ -83,6 +83,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       nmap ]c <Plug>GitGutterNextHunk
       let g:gitgutter_map_keys = 0
       let g:gitgutter_sign_column_always = 1
+      let g:gitgutter_git_executable = '/usr/local/bin/git'
 
     Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeCWD' ] }
       let g:NERDTreeShowHidden = 1
@@ -178,12 +179,18 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install --global tern' }
     endif
 
-    Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ] }
+    Plug 'pangloss/vim-javascript'
       let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
 
-    Plug 'elzr/vim-json', { 'for': [ 'json' ] }
+    Plug 'elzr/vim-json'
 
-    Plug 'dag/vim2hs', { 'for': [ 'haskell' ] }
+    Plug 'neovimhaskell/haskell-vim'
+      let g:haskell_enable_quantification = 1
+      let g:haskell_enable_recursivedo = 1
+      let g:haskell_enable_arrowsyntax = 1
+      let g:haskell_enable_pattern_synonyms = 1
+      let g:haskell_enable_typeroles = 1
+      let g:haskell_enable_static_pointers = 1
 
   call plug#end()
 
@@ -379,11 +386,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   set wildignore+=.DS_Store " ignore OS files
   set wildmenu " better command line completion menu
   set wildmode=full " ensure better completion
-
-  " spell checking
-  if has('spell')
-    set spell
-  endif
 
   " system
   set shell=zsh\ -l
