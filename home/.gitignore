@@ -4,52 +4,55 @@
 *~
 
 # OSX
-.DS_Store
 .AppleDouble
+.DS_Store
 .LSOverride
-._*
 .Spotlight-V100
 .Trashes
+._*
 
 # Vim
-.*.s[a-w][a-z]
 *.un~
-Session.vim
+.*.s[a-w][a-z]
 .netrwhist
+Session.vim
 
 # ctags / etags
-TAGS
 !TAGS/
-tags
 !tags/
+TAGS
+tags
 
 # Xcode
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
 !default.mode1v3
-*.mode2v3
 !default.mode2v3
-*.perspectivev3
+!default.pbxuser
 !default.perspectivev3
-xcuserdata
-*.xccheckout
+*.mode1v3
+*.mode2v3
 *.moved-aside
-DerivedData
+*.pbxuser
+*.perspectivev3
+*.xccheckout
 *.xcuserstate
+DerivedData
+build/
+xcuserdata
 
 # Node.js
 npm-debug.log
 
 # JetBrains IDEs
 *.iml
-.idea/
 *.ipr
 *.iws
-/out/
+.idea/
 .idea_modules/
+/out/
 atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
-crashlytics.properties
 crashlytics-build.properties
+crashlytics.properties
+
+# Haskell
+.hdevtools*
