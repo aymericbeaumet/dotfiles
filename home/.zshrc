@@ -143,7 +143,7 @@ local tmp_directory="$zsh_directory/tmp"
     # Separate man page sections
     zstyle ':completion:*:manuals' separate-sections true
     # Ignore compiled files on vim completion
-    zstyle ':completion:*:*:(v|vi|vim|mvim|nvim|gnvim):*:*files' ignored-patterns '*.(a|dylib|so|o)'
+    zstyle ':completion:*:*:(v|vi|vim|mvim|nvim|gnvim|ghc|ghci|runhaskell):*:*files' ignored-patterns '*.(a|dylib|so|o|hi)'
 
   # history
 
@@ -206,7 +206,7 @@ local tmp_directory="$zsh_directory/tmp"
       else
         PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%} "
       fi
-      PROMPT="$PROMPT%(!.Λ.λ) "
+      PROMPT="$PROMPT%(!.#.$) "
       # right prompt
       RPROMPT='%m'
     }
