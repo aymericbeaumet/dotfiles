@@ -5,6 +5,7 @@
 .VimballRecord
 .config/
 .netrwhist
+.stack/
 bundle/
 shada/
 tmp/
