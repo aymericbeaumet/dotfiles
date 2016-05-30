@@ -13,17 +13,6 @@ let b:vim_directory = expand('~/.vim')
 let b:bundle_directory = b:vim_directory . '/bundle'
 let b:tmp_directory = b:vim_directory . '/tmp'
 
-" Helpers {{{
-
-  " http://stackoverflow.com/a/3879737/1071486
-  function! SetupCommandAlias(from, to)
-    exec 'cnoreabbrev <expr> '.a:from
-    \ . ' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")'
-    \ . '? ("'.a:to.'") : ("'.a:from.'"))'
-  endfunction
-
-" }}}
-
 " Plugins {{{
 
   call plug#begin(b:bundle_directory)
@@ -43,7 +32,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     Plug 'editorconfig/editorconfig-vim'
 
     Plug 'scrooloose/nerdcommenter'
-      let g:NERDCReateDefaultMappings = 0
+      let g:NERDCreateDefaultMappings = 0
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
@@ -116,40 +105,50 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:asterisk#keeppos = 1
 
     Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-      Plug 'Shougo/vimshell', { 'on': [ 'VimShellCurrentDir', 'VimShellInteractive' ] }
-        let g:vimshell_prompt = '$ '
-      Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
-        let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
-        let g:unite_source_menu_menus.shell = {
-        \   'command_candidates': [
-        \     [ '[git] blame', 'Gblame' ],
-        \     [ '[git] status', 'Gstatus' ],
-        \
-        \     [ '[haskell] REPL', 'VimShellInteractive ghci' ],
-        \
-        \     [ '[nodejs] REPL', 'VimShellInteractive node' ],
-        \
-        \     [ '[vim] edit configuration', 'edit $MYVIMRC' ],
-        \     [ '[vim] source configuration', 'source $MYVIMRC' ],
-        \     [ '[vim] clean plugins', 'PlugClean' ],
-        \     [ '[vim] install plugins', 'PlugInstall' ],
-        \     [ '[vim] update plugins', 'PlugUpdate' ],
-        \     [ '[vim] kill all buffers', 'bufdo bdelete!' ],
-        \     [ '[vim] only keep this buffer', 'BufOnly!' ],
-        \
-        \     [ '[shell] cwd', 'VimShellCurrentDir -buffer-name=shell -split' ],
-        \   ]
-        \ }
-        augroup config_unite
-          autocmd!
-          autocmd FileType unite call s:on_unite_buffer()
-        augroup END
-        function! s:on_unite_buffer()
-          imap <silent><buffer> <C-b> <Plug>(unite_move_left)
-          imap <silent><buffer> <C-f> <Plug>(unite_move_right)
-          imap <silent><buffer> <ESC> <Plug>(unite_exit)
-          nmap <silent><buffer> <ESC> <Plug>(unite_exit)
-        endfunction
+
+    Plug 'Shougo/vimshell', { 'on': [ 'VimShellCurrentDir', 'VimShellInteractive' ] }
+      let g:vimshell_prompt = '$ '
+
+    " Unite sources
+    Plug 'Shougo/neomru.vim'
+    Plug 'Shougo/neoyank.vim'
+    Plug 'Shougo/unite-help'
+    Plug 'Shougo/unite-outline'
+    Plug 'aymericbeaumet/unite-alternate'
+    Plug 'aymericbeaumet/unite-z'
+
+    Plug 'Shougo/unite.vim'
+      let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
+      let g:unite_source_menu_menus.shell = {
+      \   'command_candidates': [
+      \     [ '[git] blame', 'Gblame' ],
+      \     [ '[git] status', 'Gstatus' ],
+      \
+      \     [ '[haskell] REPL', 'VimShellInteractive ghci' ],
+      \
+      \     [ '[nodejs] REPL', 'VimShellInteractive node' ],
+      \
+      \     [ '[vim] edit configuration', 'edit $MYVIMRC' ],
+      \     [ '[vim] source configuration', 'source $MYVIMRC' ],
+      \     [ '[vim] clean plugins', 'PlugClean' ],
+      \     [ '[vim] install plugins', 'PlugInstall' ],
+      \     [ '[vim] update plugins', 'PlugUpdate' ],
+      \     [ '[vim] kill all buffers', 'bufdo bdelete!' ],
+      \     [ '[vim] only keep this buffer', 'BufOnly!' ],
+      \
+      \     [ '[shell] cwd', 'VimShellCurrentDir -buffer-name=shell -split' ],
+      \   ]
+      \ }
+      augroup config_unite
+        autocmd!
+        autocmd FileType unite call s:on_unite_buffer()
+      augroup END
+      function! s:on_unite_buffer()
+        imap <silent><buffer> <C-b> <Plug>(unite_move_left)
+        imap <silent><buffer> <C-f> <Plug>(unite_move_right)
+        imap <silent><buffer> <ESC> <Plug>(unite_exit)
+        nmap <silent><buffer> <ESC> <Plug>(unite_exit)
+      endfunction
 
     "  ```sh
     "  pip2 install --upgrade neovim
@@ -311,11 +310,18 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [G]rep files in the current git project
   nnoremap <silent> <Leader>G :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git:--cached<CR>
 
+  " [h]elp search
+  nnoremap <silent> <Leader>h :<C-u>Unite -auto-preview -vertical-preview -no-split help<CR>
+
   " [m]enu
   nnoremap <silent> <Leader>m :<C-u>Unite -direction=botright menu:shell<CR>
 
-  " [p]ath of the current working directory
-  nnoremap <silent> <Leader>p :<C-u>pwd<CR>
+  " [o]utline navigation in file
+  nnoremap <silent> <Leader>o :<C-u>Unite -direction=botright outline<CR>
+
+  " [p]aste with yank history (support past before and after)
+  nnoremap <silent> <Leader>P :<C-u>Unite -no-split history/yank -default-action=insert<CR>
+  nnoremap <silent> <Leader>p :<C-u>Unite -no-split history/yank -default-action=append<CR>
 
   " [q]uit the current window
   nnoremap <silent> <Leader>q :<C-u>quit!<CR>
@@ -378,7 +384,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   set tabstop=2 " n spaces when using <TAB>
 
   " interface
-  call SetupCommandAlias('help', 'vertical help') " open help vertically
   let g:netrw_dirhistmax = 0 " disable netrw
   set fillchars="" " remove split separators
   set formatoptions=croqj " format option stuff (see :help fo-table)
@@ -482,4 +487,4 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     call MacSetFontShouldAntialias(1)
   endif
 
-" }}}
+  " }}}
