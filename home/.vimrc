@@ -13,7 +13,7 @@ let b:vim_directory = expand('~/.vim')
 let b:bundle_directory = b:vim_directory . '/bundle'
 let b:tmp_directory = b:vim_directory . '/tmp'
 
-" Helpers
+" Helpers {{{
 
   " http://stackoverflow.com/a/3879737/1071486
   function! SetupCommandAlias(from, to)
@@ -22,12 +22,9 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     \ . '? ("'.a:to.'") : ("'.a:from.'"))'
   endfunction
 
-" Plugins
+" }}}
 
-  autocmd FileType vim-plug call s:on_vimplug_buffer()
-  function! s:on_vimplug_buffer()
-    nnoremap <silent><buffer> <Esc> <C-w>q
-  endfunction
+" Plugins {{{
 
   call plug#begin(b:bundle_directory)
 
@@ -45,8 +42,8 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'editorconfig/editorconfig-vim'
 
-    Plug 'scrooloose/nerdcommenter' " can't lazy load (https://github.com/scrooloose/nerdcommenter/issues/176)
-      let g:NERDCreateDefaultMappings = 0
+    Plug 'scrooloose/nerdcommenter'
+      let g:NERDCReateDefaultMappings = 0
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
@@ -54,10 +51,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     Plug 'tpope/vim-eunuch', { 'on': [ 'Remove', 'Unlink', 'Move', 'Rename', 'Chmod', 'Mkdir', 'Find', 'Locate', 'Wall', 'SudoWrite', 'SudoEdit' ] }
 
     Plug 'tpope/vim-fugitive'
-      autocmd FileType fugitiveblame,gitcommit call s:on_fugitive_buffer()
-      function! s:on_fugitive_buffer()
-        nnoremap <silent><buffer> <Esc> <C-w>q
-      endfunction
 
     Plug 'tpope/vim-repeat'
 
@@ -92,21 +85,12 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:NERDTreeAutoDeleteBuffer = 1
       let g:NERDTreeMouseMode = 3
       let g:NERDTreeRespectWildIgnore = 1 " :wildignore
-      autocmd FileType nerdtree call s:on_nerdtree_buffer()
-      function! s:on_nerdtree_buffer()
-        nnoremap <silent><buffer> <Esc> :<C-u>NERDTreeClose<CR>
-      endfunction
-      autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | quit! | endif
 
     Plug 'majutsushi/tagbar', { 'on': [ 'TagbarOpen' ] }
       let g:tagbar_width = 35
       let g:tagbar_compact = 1
       let g:tagbar_singleclick = 1
       let g:tagbar_autofocus = 1
-      autocmd FileType tagbar call s:on_tagbar_buffer()
-      function! s:on_tagbar_buffer()
-        nnoremap <silent><buffer> <Esc> :<C-u>TagbarClose<CR>
-      endfunction
 
     Plug 'benekastah/neomake', { 'for': [ 'go', 'haskell', 'javascript', 'json' ], 'do': '
     \   go get -u github.com/golang/lint/golint;
@@ -114,7 +98,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     \   npm install --global eslint;
     \   npm install --global jsonlint;
     \ ' }
-      autocmd FileType go,haskell,javascript,json autocmd BufEnter,BufWritePost * Neomake
+      augroup config_neomake
+        autocmd!
+        autocmd FileType go,haskell,javascript,json autocmd! config_neomake BufEnter,BufWritePost * Neomake
+      augroup END
       let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
       let g:neomake_haskell_enabled_makers = [ 'ghcmod', 'hdevtools', 'hlint' ]
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
@@ -130,9 +117,8 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'Shougo/vimproc.vim', { 'do': 'make' }
       Plug 'Shougo/vimshell', { 'on': [ 'VimShellCurrentDir', 'VimShellInteractive' ] }
-        let g:vimshell_prompt = ' λ '
+        let g:vimshell_prompt = '$ '
       Plug 'Shougo/neomru.vim' | Plug 'Shougo/unite.vim'
-        let g:unite_enable_auto_select = 0
         let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
         let g:unite_source_menu_menus.shell = {
         \   'command_candidates': [
@@ -144,16 +130,25 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         \     [ '[nodejs] REPL', 'VimShellInteractive node' ],
         \
         \     [ '[vim] edit configuration', 'edit $MYVIMRC' ],
-        \     [ '[vim] reload/source configuration', 'source $MYVIMRC' ],
+        \     [ '[vim] source configuration', 'source $MYVIMRC' ],
         \     [ '[vim] clean plugins', 'PlugClean' ],
-        \     [ '[vim] install/update plugins', 'PlugUpdate' ],
+        \     [ '[vim] install plugins', 'PlugInstall' ],
+        \     [ '[vim] update plugins', 'PlugUpdate' ],
+        \     [ '[vim] kill all buffers', 'bufdo bdelete!' ],
+        \     [ '[vim] only keep this buffer', 'BufOnly!' ],
         \
         \     [ '[shell] cwd', 'VimShellCurrentDir -buffer-name=shell -split' ],
         \   ]
         \ }
-        autocmd FileType unite call s:on_unite_buffer()
+        augroup config_unite
+          autocmd!
+          autocmd FileType unite call s:on_unite_buffer()
+        augroup END
         function! s:on_unite_buffer()
-          imap <silent><buffer> <Esc> i_<Plug>(unite_exit)
+          imap <silent><buffer> <C-b> <Plug>(unite_move_left)
+          imap <silent><buffer> <C-f> <Plug>(unite_move_right)
+          imap <silent><buffer> <ESC> <Plug>(unite_exit)
+          nmap <silent><buffer> <ESC> <Plug>(unite_exit)
         endfunction
 
     "  ```sh
@@ -161,15 +156,20 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     "  pip3 install --upgrade neovim
     "  ```
     if has('nvim') && has('python3')
-      function! AfterDeoplete(arg)
+      Plug 'Shougo/neosnippet.vim'
+        let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
+        let g:neosnippet#snippets_directory = b:vim_directory . '/snippets'
+        if has('conceal') | set conceallevel=2 concealcursor=niv | endif
+
+      function! AfterDeoplete()
         UpdateRemotePlugins
       endfunction
       Plug 'Shougo/deoplete.nvim', { 'do': function('AfterDeoplete') }
         let g:deoplete#enable_at_startup = 1
-        let g:deoplete#auto_completion_start_length = 1
         let g:deoplete#max_abbr_width = 0
         let g:deoplete#max_menu_width = 0
-        autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+        let g:deoplete#file#enable_buffer_path = 1
+        set completeopt=menuone,noinsert
 
       Plug 'zchee/deoplete-go', { 'do': 'go get -u github.com/nsf/gocode ; make'}
 
@@ -177,6 +177,21 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:haskellmode_completion_ghc = 0 " disable haskell-vim omnifunc
 
       Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install --global tern' }
+
+      " redefine some mappings for a better integration with deoplete/neosnippet:
+      " - Tab inserts the snippet if recognized, otherwise inserts the completion if
+      "   the pum is visible, otherwise insert a tab
+      " - Enter always cancels the pum and goes to the next line
+      imap <silent><expr> <TAB>
+      \ neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)" :
+      \ pumvisible() ?
+      \ "\<C-y>" :
+      \ "\<TAB>"
+      imap <silent><expr> <CR>
+      \ pumvisible() ?
+      \ "\<C-e><CR>" :
+      \ "\<CR>"
     endif
 
     Plug 'pangloss/vim-javascript'
@@ -194,32 +209,37 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#end()
 
-" Plugins (after loading)
+" }}}
 
-  " 'Shougo/unite.vim'
+" Plugins (after loading) {{{
+
+  " Shougo/unite.vim
     call unite#custom#profile('default', 'context', { 'start_insert': 1, 'wipe': 1 })
-    call unite#custom#source('file_rec/async,file_rec/git,grep,grep/git', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/')
-    call unite#filters#matcher_default#use([ 'matcher_fuzzy' ])
+    call unite#custom#source('file_rec/async,grep', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/\|tmp/')
+    call unite#custom#source('file_rec/async,grep,file_rec/git,grep/git,buffer', 'matchers', [ 'matcher_fuzzy', 'matcher_hide_current_file' ])
+    call unite#filters#sorter_default#use([ 'sorter_rank' ])
 
-" Inlined plugins
+" }}}
 
-  " highlight search matches (except while being in insert mode)
-  au VimEnter * set hlsearch
-  au InsertEnter * setl nohlsearch
-  au InsertLeave * setl hlsearch
+" Inlined plugins {{{
 
-  " highlight cursor line (except while being in insert mode)
-  au VimEnter * set cursorline
-  au InsertEnter * setl nocursorline
-  au InsertLeave * setl cursorline
+  augroup config_inlined_plugins
+    autocmd!
+    " highlight search matches (except while being in insert mode)
+    autocmd VimEnter,InsertLeave * setl hlsearch
+    autocmd InsertEnter * setl nohlsearch
+    " highlight cursor line (except while being in insert mode)
+    autocmd VimEnter,InsertLeave * setl cursorline
+    autocmd InsertEnter * setl nocursorline
+    " remember last position in file (line and column)
+    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | execute 'normal! g`"' | endif
+    " automatically remove trailing whitespace when saving
+    autocmd BufWritePre * :%s/\s\+$//e
+  augroup END
 
-  " remember last position in file (line and column)
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | execute 'normal! g`"' | endif
+" }}}
 
-  " automatically remove trailing whitespace when saving
-  au BufWritePre * :%s/\s\+$//e
-
-" Enhanced mappings
+" Enhanced mappings {{{
 
   " better `j` and `k`
   nnoremap <silent> j gj
@@ -230,7 +250,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " copy from the cursor to the end of line using Y (matches D behavior)
   nnoremap <silent> Y y$
 
-  " keep the cursor in place while joining lines (uses the Z register)
+  " keep the cursor in place while joining lines
   nnoremap <silent> J mZJ`Z
 
   " disable annoying mappings
@@ -248,7 +268,23 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
-" Leader mappings
+  " some emacs mappings in insert mode
+  inoremap <silent> <C-b> <C-\><C-o>h
+  inoremap <silent> <C-f> <C-\><C-o>l
+  inoremap <silent> <M-b> <C-\><C-o>b
+  inoremap <silent> <M-f> <C-c>ea
+  inoremap <silent> <C-h> <BS>
+  inoremap <silent> <C-d> <Del>
+  inoremap <silent> <C-w> <C-\><C-o>"_db
+  inoremap <silent> <M-d> <C-\><C-o>"_de
+  inoremap <silent> <C-a> <C-\><C-o>^
+  inoremap <silent> <C-e> <C-\><C-o>$
+
+" }}}
+
+" Leader mappings {{{
+
+  " TODO: [a]lternate between source and test files
 
   " [b]uffer search
   nnoremap <silent> <Leader>b :<C-u>Unite -auto-preview -vertical-preview -no-split buffer<CR>
@@ -275,8 +311,11 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [G]rep files in the current git project
   nnoremap <silent> <Leader>G :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git:--cached<CR>
 
-  " [k]eep the current buffer only
-  nnoremap <silent> <Leader>k :<C-u>BufOnly!<CR>
+  " [m]enu
+  nnoremap <silent> <Leader>m :<C-u>Unite -direction=botright menu:shell<CR>
+
+  " [p]ath of the current working directory
+  nnoremap <silent> <Leader>p :<C-u>pwd<CR>
 
   " [q]uit the current window
   nnoremap <silent> <Leader>q :<C-u>quit!<CR>
@@ -292,16 +331,15 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [t]ags explorer
   nnoremap <silent> <Leader>t :<C-u>TagbarOpen fj<CR>
 
-  " [u]tils command search
-  nnoremap <silent> <Leader>u :<C-u>Unite -direction=botright menu:shell<CR>
-
   " [w]rite the current buffer
   nnoremap <silent> <Leader>w :<C-u>write!<CR>
 
-  " [z] recent directories search (rely on https://github.com/rupa/z)
-  nnoremap <silent> <Leader>z :<C-u>Unite -no-split z<CR>
+  " TODO: [z] recent directories search (rely on https://github.com/rupa/z)
+  " nnoremap <silent> <Leader>z :<C-u>Unite -no-split z<CR>
 
-" Settings
+" }}}
+
+" Settings {{{
 
   " buffer
   set autoread " watch for file changes by other programs
@@ -325,23 +363,22 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   set noerrorbells " turn off error bells
   set visualbell t_vb= " turn off error bells
 
-  " help
-  call SetupCommandAlias('help', 'vertical help') " open help vertically
-  autocmd FileType help call s:on_help_buffer()
-  function! s:on_help_buffer()
-    nmap <silent><buffer> <Esc> <C-w>q
-  endfunction
+  " folding
+  set nofoldenable
+  set foldmethod=marker
+  set foldlevelstart=99
 
   " indentation
   set autoindent " auto-indentation
   set backspace=2 " fix backspace (on some OS/terminals)
   set expandtab " replace tabs by spaces
-  set shiftwidth=2 " n spaces when using <Tab>
+  set shiftwidth=2 " n spaces when using <TAB>
   set smarttab " insert `shiftwidth` spaces instead of tabs
-  set softtabstop=2 " n spaces when using <Tab>
-  set tabstop=2 " n spaces when using <Tab>
+  set softtabstop=2 " n spaces when using <TAB>
+  set tabstop=2 " n spaces when using <TAB>
 
   " interface
+  call SetupCommandAlias('help', 'vertical help') " open help vertically
   let g:netrw_dirhistmax = 0 " disable netrw
   set fillchars="" " remove split separators
   set formatoptions=croqj " format option stuff (see :help fo-table)
@@ -377,7 +414,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   set incsearch " show matches as soon as possible
   set smartcase " smarter search case
   set wildignore= " remove default ignores
-  set wildignore+=*.o,*.obj,*.so,*.a,*.dylib,*.pyc " ignore compiled files
+  set wildignore+=*.o,*.obj,*.so,*.a,*.dylib,*.pyc,*.hi " ignore compiled files
   set wildignore+=*.zip,*.gz,*.xz,*.tar,*.rar " ignore compressed files
   set wildignore+=*/.git/*,*/.hg/*,*/.svn/* " ignore SCM files
   set wildignore+=*.png,*.jpg,*.jpeg,*.gif " ignore image files
@@ -407,11 +444,12 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " vim
   let &viminfo = &viminfo + ',n' . b:tmp_directory . '/info//' " change viminfo file path
   set nobackup " disable backup files
-  set nofoldenable " disable folding
   set noswapfile " disable swap files
   set secure " protect the configuration files
 
-" GUI settings
+" }}}
+
+" GUI settings {{{
 
   " MacVim (https://github.com/macvim-dev/macvim)
   " - disable antialiasing with `!defaults write org.vim.MacVim AppleFontSmoothing -int 0`
@@ -419,6 +457,8 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     " Set the font
     silent! set guifont=Monaco:h13 " fallback
     silent! set guifont=Hack:h13 " preferred
+    " Enable <M-...> mappings
+    set macmeta
     " Disable superfluous GUI stuff
     set guicursor=
     set guioptions=
@@ -436,4 +476,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     " Set the font
     silent! call MacSetFont('Monaco', '13') " fallback
     silent! call MacSetFont('Hack', '13') " preferred
+    " Enable <M-...> mappings
+    call MacSetOptionAsMeta(1)
+    " Enable anti-aliasing (see above to disable the ugly AA from OSX)
+    call MacSetFontShouldAntialias(1)
   endif
+
+" }}}

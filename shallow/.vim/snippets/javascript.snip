@@ -1,0 +1,59 @@
+snippet use-strict-mode
+alias us
+options head
+	'use strict'
+
+	${1}
+
+# commonjs
+
+snippet module-exports
+alias me
+options head
+	module.exports = ${1}
+
+snippet require
+alias req
+options word
+	require('${1:package}')
+
+# console
+
+snippet console-error
+alias ce
+options head
+	console.error(${1})
+
+snippet console-log
+alias cl
+options head
+	console.log(${1})
+
+snippet console-warn
+alias cw
+options head
+	console.warn(${1})
+
+# jsdoc
+
+snippet jsdoc-block
+alias jb
+  /**
+   * ${1:description}
+   */
+
+snippet jsdoc-const
+alias jc
+	@const {${1:type}}
+
+snippet jsdoc-type
+alias jt
+	@type {${1:type}}
+
+snippet jsdoc-param
+alias jp
+	@param {${1:type}} ${2:parameter} - ${3:description}
+
+snippet jsdoc-return
+alias jr
+	@return {${1:type}} - ${2:description}
