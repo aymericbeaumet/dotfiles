@@ -11,6 +11,9 @@ autoload -Uz vcs_info
 local zsh_directory="$HOME/.zsh"
 local bundle_directory="$zsh_directory/bundle"
 local tmp_directory="$zsh_directory/tmp"
+mkdir -p "$zsh_directory"    \
+         "$bundle_directory" \
+         "$tmp_directory"    \
 
 # Helpers
 
@@ -80,7 +83,6 @@ local tmp_directory="$zsh_directory/tmp"
 
   # Directory
   setopt AUTO_CD           # change directory without cd (`..` goes up by one)
-  setopt PUSHD_IGNORE_DUPS # do not push dups to cd history
 
   # No beep
   unsetopt BEEP      # no beep
