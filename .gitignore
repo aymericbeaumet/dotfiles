@@ -1,6 +1,5 @@
 *.pyc
 *.spl
-*.spl
 *.sug
 .VimballRecord
 .config/
