@@ -56,6 +56,10 @@ mkdir -p "$zsh_directory"    \
   alias ll='l' ; compdef l=ls
   alias la='ll -A' ; compdef la=ls
 
+  # tig
+  alias t='tig' ; compdef t=tig
+  alias ti='tig' ; compdef ti=tig
+
   # tmux
   export TERM=xterm-256color
   if [[ -n "$TMUX" ]] ; then
@@ -82,7 +86,7 @@ mkdir -p "$zsh_directory"    \
   export PAGER=less
 
   # Directory
-  setopt AUTO_CD           # change directory without cd (`..` goes up by one)
+  setopt AUTO_CD # change directory without cd (`..` goes up by one)
 
   # No beep
   unsetopt BEEP      # no beep
@@ -226,7 +230,7 @@ mkdir -p "$zsh_directory"    \
 
 # Mappings
 
-  # make ^W behave as in bash (delete until slash, not space)
+  # make ^W delete until slash, not space
   select-word-style bash
 
   # disable flow control (^S / ^Q)
