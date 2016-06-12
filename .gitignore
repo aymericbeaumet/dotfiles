@@ -2,7 +2,6 @@
 *.spl
 *.sug
 .VimballRecord
-.config/
 .netrwhist
 .stack/
 bundle/
