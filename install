@@ -13,7 +13,7 @@ export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
 brew doctor
 brew tap neovim/neovim rogual/neovim-dot-app
 brew update
-brew reinstall ag ctags fswatch gawk git htop jq node nvm python python3 tmux z zsh
+brew reinstall ag ctags fswatch gawk git git-extras htop jq node nvm python python3 tmux z zsh
 brew reinstall --HEAD vim neovim macvim neovim-dot-app
 brew cask reinstall caskroom/fonts/font-hack
 chsh -s "$(which zsh)"
