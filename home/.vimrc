@@ -19,6 +19,8 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'tomasr/molokai'
 
+    Plug 'wellle/targets.vim'
+
     Plug 'Konfekt/FastFold'
 
     Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
@@ -104,6 +106,8 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       map # <Plug>(asterisk-#)
       let g:asterisk#keeppos = 1
 
+    Plug 'dietsche/vim-lastplace'
+
     Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 
     Plug 'Shougo/vimshell', { 'on': [ 'VimShellCurrentDir', 'VimShellInteractive' ] }
@@ -182,10 +186,12 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       "   the pum is visible, otherwise insert a tab
       " - Enter always cancels the pum and goes to the next line
       imap <silent><expr> <TAB>
-      \ neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" :
+      \ neosnippet#expandable() ?
+      \ "\<Plug>(neosnippet_expand)" :
       \ pumvisible() ?
       \ "\<C-y>" :
+      \ neosnippet#jumpable() ?
+      \ "\<Plug>(neosnippet_jump)" :
       \ "\<TAB>"
       imap <silent><expr> <CR>
       \ pumvisible() ?
@@ -230,8 +236,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     " highlight cursor line (except while being in insert mode)
     autocmd VimEnter,InsertLeave * setl cursorline
     autocmd InsertEnter * setl nocursorline
-    " remember last position in file (line and column)
-    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line('$') | execute 'normal! g`"' | endif
     " automatically remove trailing whitespace when saving
     autocmd BufWritePre * :%s/\s\+$//e
   augroup END
