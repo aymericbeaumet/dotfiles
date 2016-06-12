@@ -67,7 +67,7 @@ mkdir -p "$zsh_directory"    \
   fi
 
   # tree
-  alias tree='tree -C'
+  alias tree='tree -aC'
 
   # vim
   alias v='nvim'
