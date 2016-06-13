@@ -5,7 +5,7 @@ set -e
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Configure the OS
-# $ ./make configure
+# $ ./setup.sh configure
 function __configure {
   case "$(uname)" in
     Darwin)
@@ -23,7 +23,7 @@ function __configure {
 }
 
 # Install/Update the dependencies (brew and submodules)
-# $ ./make install
+# $ ./setup.sh install
 function __install {
   . ./home/.zshenv # load brew
   brew analytics off
@@ -35,7 +35,7 @@ function __install {
 }
 
 # Create the symlinks in the $HOME directory
-# $ ./make symlink
+# $ ./setup.sh symlink
 function __symlink {
   from_directory="$(pwd)/home"
   find "$from_directory" -type file -o -type link | while read from ; do
