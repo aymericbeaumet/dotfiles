@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
 set -e
-
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Configure the OS
 # $ ./setup.sh configure
 function __configure {
-  case "$(uname)" in
+  case "$(uname -s)" in
     Darwin)
       # Change default shell
       chsh -s "$(which zsh)"
@@ -22,15 +21,16 @@ function __configure {
   esac
 }
 
-# Install/Update the dependencies (brew and submodules)
+# Install/Update the dependencies
 # $ ./setup.sh install
 function __install {
+  git submodule update --init
+  git submodule foreach git pull origin master
   . ./home/.zshenv # load brew
   brew analytics off
   brew tap homebrew/bundle
+  brew update
   brew bundle check || VIM="$HOME/.config/nvim" brew bundle
-  git submodule update --init
-  git submodule foreach git pull origin master
   "$(brew --prefix fzf)/install" --bin --no-update-rc
 }
 
@@ -49,11 +49,11 @@ function __symlink {
 
 for command in "${@}" ; do
   if [[ "$(type "__$command")" == *function* ]] ; then
-    echo -e "\e[94m$command...\e[0m"
+    printf "\e[94m$command...\e[0m"
     __$command
-    echo -e "\e[92mok\e[0m"
+    printf "\e[92mok\e[0m"
   else
-    echo -e "\e[91m-> skipping unknown command '$command'\e[0m" >&2
+    printf "\e[91m-> skipping unknown command '$command'\e[0m" >&2
   fi
 done
 
