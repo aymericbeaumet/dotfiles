@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+set -e
+
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Configure the OS
-# $ ./install.sh configure
+# $ ./make configure
 function __configure {
   case "$(uname)" in
     Darwin)
@@ -20,23 +22,20 @@ function __configure {
   esac
 }
 
-# Install the dependencies via brew
-# $ ./install.sh install
+# Install/Update the dependencies (brew and submodules)
+# $ ./make install
 function __install {
-  . ./home/.zshenv
-  brew tap caskroom/fonts
-  brew tap neovim/neovim
-  brew tap rogual/neovim-dot-app
-  brew update
-  brew reinstall ag cabal-install ctags fswatch fzf gawk ghc git git-extras go htop jq node nvm python python3 tig tmux z zsh
-  brew cask install font-hack xquartz
-  brew reinstall --HEAD vim macvim neovim
-  VIM="$HOME/.config/nvim" brew reinstall --HEAD neovim-dot-app
+  . ./home/.zshenv # load brew
+  brew analytics off
+  brew tap homebrew/bundle
+  brew bundle check || VIM="$HOME/.config/nvim" brew bundle
+  git submodule update --init
+  git submodule foreach git pull origin master
   "$(brew --prefix fzf)/install" --bin --no-update-rc
 }
 
 # Create the symlinks in the $HOME directory
-# $ ./install.sh symlink
+# $ ./make symlink
 function __symlink {
   from_directory="$(pwd)/home"
   find "$from_directory" -type file -o -type link | while read from ; do
