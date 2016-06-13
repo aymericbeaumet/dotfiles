@@ -15,6 +15,7 @@ brew 'gnu-sed'
 
 # CLI tools
 brew 'ag'
+brew 'bash'
 brew 'ctags'
 brew 'fswatch'
 brew 'fzf'
@@ -43,6 +44,9 @@ brew 'node'
 brew 'nvm'
 brew 'python'
 brew 'python3'
+brew 'ruby'
+brew 'rust'
+brew 'scala'
 
 # gui
 cask 'alfred'
