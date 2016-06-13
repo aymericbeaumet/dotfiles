@@ -15,10 +15,10 @@ export PATH="$GOPATH/bin:$PATH"
 
 # node
 export NVM_DIR="$HOME/.nvm"
-source "$(brew --prefix nvm)/nvm.sh"
+which brew &>/dev/null && source "$(brew --prefix nvm)/nvm.sh"
 
 # zsh
 fpath=("$HOME/.zsh/completion" $fpath)
 
 # z
-source "$(brew --prefix)/etc/profile.d/z.sh"
+which brew &>/dev/null && source "$(brew --prefix z)/etc/profile.d/z.sh"

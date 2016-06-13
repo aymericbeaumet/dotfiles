@@ -57,8 +57,8 @@ mkdir -p "$zsh_directory"    \
   alias la='ll -A' ; compdef la=ls
 
   # tig
-  alias t='tig' ; compdef t=tig
-  alias ti='tig' ; compdef ti=tig
+  alias t='tig'
+  alias ti='tig'
 
   # tmux
   export TERM=xterm-256color
