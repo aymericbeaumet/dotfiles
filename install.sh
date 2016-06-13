@@ -24,12 +24,15 @@ function __configure {
 # $ ./install.sh install
 function __install {
   . ./home/.zshenv
+  brew tap caskroom/fonts
   brew tap neovim/neovim
   brew tap rogual/neovim-dot-app
   brew update
-  brew reinstall ag ctags fswatch gawk git git-extras htop jq node nvm python python3 tmux z zsh
-  brew reinstall caskroom/cask/xquartz caskroom/fonts/font-hack
-  brew reinstall --HEAD vim macvim neovim neovim-dot-app
+  brew reinstall ag cabal-install ctags fswatch fzf gawk ghc git git-extras go htop jq node nvm python python3 tig tmux z zsh
+  brew cask install font-hack xquartz
+  brew reinstall --HEAD vim macvim neovim
+  VIM="$HOME/.config/nvim" brew reinstall --HEAD neovim-dot-app
+  "$(brew --prefix fzf)/install" --bin --no-update-rc
 }
 
 # Create the symlinks in the $HOME directory
