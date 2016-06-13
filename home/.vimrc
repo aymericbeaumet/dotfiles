@@ -67,7 +67,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       nmap ]c <Plug>GitGutterNextHunk
       let g:gitgutter_map_keys = 0
       let g:gitgutter_sign_column_always = 1
-      let g:gitgutter_git_executable = '/usr/local/bin/git'
+      let g:gitgutter_git_executable = 'git'
 
     Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeCWD' ] }
       let g:NERDTreeShowHidden = 1
