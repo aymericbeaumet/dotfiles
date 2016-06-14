@@ -4,7 +4,7 @@ Dotfiles for git, vim, zsh and more...
 
 ```bash
 git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.config/dotfiles"
-"$HOME/.config/dotfiles/setup.sh" symlink install configure
+"$HOME/.config/dotfiles/do.sh" symlink install configure
 ```
 
 ## License

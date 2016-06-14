@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Configure the OS
@@ -24,14 +23,11 @@ function __configure {
 # Install/Update the dependencies
 # $ ./setup.sh install
 function __install {
-  git submodule update --init
-  git submodule foreach git pull origin master
+  git submodule update --init --recursive
   . ./home/.zshenv # load brew
-  brew analytics off
   brew tap homebrew/bundle
-  brew update
-  brew bundle check || VIM="$HOME/.config/nvim" brew bundle
-  "$(brew --prefix fzf)/install" --bin --no-update-rc
+  brew bundle check || brew bundle
+  [ -x "$(brew --prefix fzf)/install" ] && "$(brew --prefix fzf)/install" --all
 }
 
 # Create the symlinks in the $HOME directory
@@ -47,13 +43,13 @@ function __symlink {
   done
 }
 
-for command in "${@}" ; do
-  if [[ "$(type "__$command")" == *function* ]] ; then
-    printf "\e[94m$command...\e[0m"
+for command in "$@" ; do
+  if [[ "$(type "__$command" 2>/dev/null)" == *function* ]] ; then
+    printf "\e[94m$command...\e[0m\n"
     __$command
-    printf "\e[92mok\e[0m"
+    printf "\e[92mok\e[0m\n"
   else
-    printf "\e[91m-> skipping unknown command '$command'\e[0m" >&2
+    printf "\e[91m-> skipping unknown command '$command'\e[0m\n" >&2
   fi
 done
 

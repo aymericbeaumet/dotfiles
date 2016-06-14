@@ -13,14 +13,13 @@ brew 'findutils'
 brew 'moreutils'
 brew 'gnu-sed'
 
-# CLI tools
+# tools
 brew 'ag'
 brew 'bash'
 brew 'ctags'
 brew 'fswatch'
 brew 'fzf'
 brew 'gawk'
-brew 'ghc'
 brew 'git'
 brew 'git-extras'
 brew 'htop'
@@ -31,14 +30,15 @@ brew 'tree'
 brew 'z'
 brew 'zsh'
 
-# vim family
-brew 'vim', args: [ 'HEAD' ]
-brew 'macvim', args: [ 'HEAD' ]
-brew 'neovim', args: [ 'HEAD' ]
-brew 'neovim-dot-app', args: [ 'HEAD' ]
+# vim
+brew 'vim'
+brew 'macvim'
+brew 'neovim'
+brew 'neovim-dot-app'
 
 # languages
 brew 'cabal-install'
+brew 'ghc'
 brew 'go'
 brew 'node'
 brew 'nvm'
