@@ -1,5 +1,5 @@
-[submodule "shallow/.brew"]
-	path = shallow/.brew
+[submodule "shallow/.homebrew"]
+	path = shallow/.homebrew
 	url = https://github.com/Homebrew/brew.git
 [submodule "shallow/.vim/autoload"]
 	path = shallow/.vim/autoload
