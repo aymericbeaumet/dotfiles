@@ -25,9 +25,13 @@ function __configure {
 function __install {
   git submodule update --init --recursive
   . ./home/.zshenv # load brew
+  # install brew dependencies
   brew tap homebrew/bundle
   brew bundle check || brew bundle
-  [ -x "$(brew --prefix fzf)/install" ] && "$(brew --prefix fzf)/install" --all
+  # install npm dependencies
+  npm install --global n
+  # install fzf dependencies
+  # [ -x "$(brew --prefix fzf 2>/dev/null)/install" ] && "$(brew --prefix fzf)/install" --all
 }
 
 # Create the symlinks in the $HOME directory
@@ -39,7 +43,7 @@ function __symlink {
     to_directory="$(dirname "$to")"
     rm -rf "$to"
     mkdir -p "$to_directory"
-    ln -shvf "$from" "$to"
+    ln -svf "$from" "$to"
   done
 }
 
