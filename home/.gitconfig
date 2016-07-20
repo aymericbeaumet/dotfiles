@@ -22,6 +22,7 @@
   rs = reset
   rsh = reset --hard
   sh = stash
+  sm = submodule
   st = status --short --branch
   sw = show
 
@@ -51,7 +52,7 @@
   viewer = less
 
 [push]
-  default = nothing
+  default = simple
 
 [user]
   name = Aymeric Beaumet
