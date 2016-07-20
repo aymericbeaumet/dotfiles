@@ -51,7 +51,7 @@ mkdir -p "$zsh_directory"    \
 
   # ls
   export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
-  alias ls="ls -pFGH"
+  alias ls="ls -pFH --color --group-directories-first"
   alias l='ls -hl' ; compdef l=ls
   alias ll='l' ; compdef l=ls
   alias la='ll -A' ; compdef la=ls
@@ -67,7 +67,7 @@ mkdir -p "$zsh_directory"    \
   fi
 
   # tree
-  alias tree='tree -aC'
+  alias tree='tree -a -C --dirsfirst'
 
   # vim
   alias v='nvim'
@@ -171,7 +171,6 @@ mkdir -p "$zsh_directory"    \
   # prompt
 
     setopt PROMPT_SUBST # allow substitutions in the prompts
-    setopt TRANSIENT_RPROMPT # remove the right prompt after accepting a command line
     zstyle ':vcs_info:*' enable git hg svn
     zstyle ':vcs_info:*' check-for-changes true
     zstyle ':vcs_info:*' formats "%r (%{$fg[cyan]%}%s%{$reset_color%}:%{$fg[yellow]%}%b%{$reset_color%}%m|%c%u%a) %{$fg_bold[blue]%}%S%{$reset_color%}"
@@ -213,8 +212,6 @@ mkdir -p "$zsh_directory"    \
         PROMPT="$PROMPT%{$fg_bold[blue]%}%30<...<%~%<<%{$reset_color%} "
       fi
       PROMPT="$PROMPT%(!.#.$) "
-      # right prompt
-      RPROMPT='%m'
     }
     add-zsh-hook precmd precmd_set_prompt
 
