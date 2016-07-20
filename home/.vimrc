@@ -21,7 +21,14 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'wellle/targets.vim'
 
+    Plug 'thinca/vim-ref'
+
     Plug 'Konfekt/FastFold'
+
+    Plug 'bronson/vim-trailing-whitespace'
+
+    Plug 'rizzatti/dash.vim'
+      nmap <silent> K <Plug>DashSearch
 
     Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
       let g:EasyMotion_do_mapping = 0 " disable the default mappings
@@ -66,7 +73,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       nmap [c <Plug>GitGutterPrevHunk
       nmap ]c <Plug>GitGutterNextHunk
       let g:gitgutter_map_keys = 0
-      let g:gitgutter_sign_column_always = 1
       let g:gitgutter_git_executable = 'git'
 
     Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeCWD' ] }
@@ -83,28 +89,19 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:tagbar_singleclick = 1
       let g:tagbar_autofocus = 1
 
-    Plug 'benekastah/neomake', { 'for': [ 'go', 'haskell', 'javascript', 'json' ], 'do': '
-    \   go get -u github.com/golang/lint/golint;
-    \   cabal update && cabal install ghc-mod hdevtools hlint;
+    Plug 'benekastah/neomake', { 'for': [ 'elixir', 'javascript', 'json' ], 'do': '
     \   npm install --global eslint;
     \   npm install --global jsonlint;
     \ ' }
       augroup config_neomake
         autocmd!
-        autocmd FileType go,haskell,javascript,json autocmd! config_neomake BufEnter,BufWritePost * Neomake
+        autocmd FileType elixir,javascript,json autocmd! config_neomake BufEnter,BufWritePost * Neomake
       augroup END
-      let g:neomake_go_enabled_makers = [ 'go', 'golint', 'govet' ]
-      let g:neomake_haskell_enabled_makers = [ 'ghcmod', 'hdevtools', 'hlint' ]
+      let g:neomake_elixir_enabled_makers = [ 'elixir' ]
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
-      let g:neomake_verbose = 0
 
     Plug 'vim-scripts/BufOnly.vim', { 'on': [ 'BufOnly' ] }
-
-    Plug 'haya14busa/vim-asterisk', { 'on': [ '<Plug>(asterisk-*)', '<Plug>(asterisk-#)' ] }
-      map * <Plug>(asterisk-*)
-      map # <Plug>(asterisk-#)
-      let g:asterisk#keeppos = 1
 
     Plug 'dietsche/vim-lastplace'
 
@@ -118,8 +115,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     Plug 'Shougo/neoyank.vim'
     Plug 'Shougo/unite-help'
     Plug 'Shougo/unite-outline'
-    Plug 'aymericbeaumet/unite-alternate'
-    Plug 'aymericbeaumet/unite-z'
 
     Plug 'Shougo/unite.vim'
       let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
@@ -128,10 +123,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       \     [ '[git] blame', 'Gblame' ],
       \     [ '[git] status', 'Gstatus' ],
       \
-      \     [ '[haskell] REPL', 'VimShellInteractive ghci' ],
-      \
-      \     [ '[nodejs] REPL', 'VimShellInteractive node' ],
-      \
       \     [ '[vim] edit configuration', 'edit $MYVIMRC' ],
       \     [ '[vim] source configuration', 'source $MYVIMRC' ],
       \     [ '[vim] clean plugins', 'PlugClean' ],
@@ -139,6 +130,9 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       \     [ '[vim] update plugins', 'PlugUpdate' ],
       \     [ '[vim] kill all buffers', 'bufdo bdelete!' ],
       \     [ '[vim] only keep this buffer', 'BufOnly!' ],
+      \
+      \     [ '[repl] elixir', 'VimShellInteractive iex' ],
+      \     [ '[repl] node', 'VimShellInteractive node' ],
       \
       \     [ '[shell] cwd', 'VimShellCurrentDir -buffer-name=shell -split' ],
       \   ]
@@ -153,6 +147,16 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         imap <silent><buffer> <ESC> <Plug>(unite_exit)
         nmap <silent><buffer> <ESC> <Plug>(unite_exit)
       endfunction
+
+    " Elixir
+    Plug 'elixir-lang/vim-elixir'
+
+    " JavaScript
+    Plug 'pangloss/vim-javascript'
+      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
+
+    " JSON
+    Plug 'elzr/vim-json'
 
     "  ```sh
     "  pip2 install --upgrade neovim
@@ -174,17 +178,15 @@ let b:tmp_directory = b:vim_directory . '/tmp'
         let g:deoplete#file#enable_buffer_path = 1
         set completeopt=menuone,noinsert
 
-      Plug 'zchee/deoplete-go', { 'do': 'go get -u github.com/nsf/gocode ; make'}
-
-      Plug 'eagletmt/neco-ghc', { 'do': 'cabal update && cabal install ghc-mod' }
-        let g:haskellmode_completion_ghc = 0 " disable haskell-vim omnifunc
+      Plug 'awetzel/elixir.nvim', { 'do': 'yes \| ./install.sh' }
 
       Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install --global tern' }
 
-      " redefine some mappings for a better integration with deoplete/neosnippet:
-      " - Tab inserts the snippet if recognized, otherwise inserts the completion if
-      "   the pum is visible, otherwise insert a tab
-      " - Enter always cancels the pum and goes to the next line
+      " Remap tab to perform the following actions in order of priority:
+      " - insert the snippet if recognized
+      " - insert the completion if the pum is visible
+      " - jump to the snippet placeholder
+      " - insert a tab
       imap <silent><expr> <TAB>
       \ neosnippet#expandable() ?
       \ "\<Plug>(neosnippet_expand)" :
@@ -193,24 +195,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       \ neosnippet#jumpable() ?
       \ "\<Plug>(neosnippet_jump)" :
       \ "\<TAB>"
-      imap <silent><expr> <CR>
-      \ pumvisible() ?
-      \ "\<C-e><CR>" :
-      \ "\<CR>"
     endif
-
-    Plug 'pangloss/vim-javascript'
-      let javascript_enable_domhtmlcss = 1 " enable HTML/CSS highlighting
-
-    Plug 'elzr/vim-json'
-
-    Plug 'neovimhaskell/haskell-vim'
-      let g:haskell_enable_quantification = 1
-      let g:haskell_enable_recursivedo = 1
-      let g:haskell_enable_arrowsyntax = 1
-      let g:haskell_enable_pattern_synonyms = 1
-      let g:haskell_enable_typeroles = 1
-      let g:haskell_enable_static_pointers = 1
 
   call plug#end()
 
@@ -219,10 +204,10 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 " Plugins (after loading) {{{
 
   " Shougo/unite.vim
-    call unite#custom#profile('default', 'context', { 'start_insert': 1, 'wipe': 1 })
-    call unite#custom#source('file_rec/async,grep', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/\|tmp/')
-    call unite#custom#source('file_rec/async,grep,file_rec/git,grep/git,buffer', 'matchers', [ 'matcher_fuzzy', 'matcher_hide_current_file' ])
-    call unite#filters#sorter_default#use([ 'sorter_rank' ])
+    silent! call unite#custom#profile('default', 'context', { 'start_insert': 1, 'wipe': 1 })
+    silent! call unite#custom#source('file_rec/async,grep', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/\|tmp/')
+    silent! call unite#custom#source('file_rec/async,grep,file_rec/git,grep/git,buffer', 'matchers', [ 'matcher_fuzzy', 'matcher_hide_current_file' ])
+    silent! call unite#filters#sorter_default#use([ 'sorter_rank' ])
 
 " }}}
 
@@ -236,8 +221,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     " highlight cursor line (except while being in insert mode)
     autocmd VimEnter,InsertLeave * setl cursorline
     autocmd InsertEnter * setl nocursorline
-    " automatically remove trailing whitespace when saving
-    autocmd BufWritePre * :%s/\s\+$//e
   augroup END
 
 " }}}
@@ -390,7 +373,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " interface
   let g:netrw_dirhistmax = 0 " disable netrw
   set fillchars="" " remove split separators
-  set formatoptions=croqj " format option stuff (see :help fo-table)
+  silent! set formatoptions=croqj " format option stuff (see :help fo-table)
   set laststatus=2 " always display status line
   set shortmess=aoOsI " disable vim welcome message / enable shorter messages
   set showcmd " show (partial) command in the last line of the screen
@@ -437,7 +420,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   set shell=zsh\ -l
 
   " theme
-  colorscheme molokai
+  silent! colorscheme molokai
   set background=dark
   set colorcolumn=+1 " relative to text-width
   set t_Co=256 " 256 colors

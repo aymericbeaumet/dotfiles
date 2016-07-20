@@ -1,3 +1,5 @@
+# ecmascript
+
 snippet use-strict-mode
 alias us
 options head
@@ -22,17 +24,17 @@ options word
 snippet console-error
 alias ce
 options head
-	console.error(${1})
+	console.error(${1}) // eslint-disable-line
 
 snippet console-log
 alias cl
 options head
-	console.log(${1})
+	console.log(${1}) // eslint-disable-line
 
 snippet console-warn
 alias cw
 options head
-	console.warn(${1})
+	console.warn(${1}) // eslint-disable-line
 
 # jsdoc
 
@@ -57,3 +59,13 @@ alias jp
 snippet jsdoc-return
 alias jr
 	@return {${1:type}} - ${2:description}
+
+# eslint
+
+snippet eslint-disable-line
+alias edl
+  // eslint-disable-line ${1:rule}
+
+snippet eslint-disable-next-line
+alias ednl
+  // eslint-disable-next-line ${1:rule}
