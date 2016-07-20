@@ -1,0 +1,26 @@
+{
+  "editor.fontFamily": "Hack",
+  "editor.fontSize": 13,
+  "editor.lineNumbers": false,
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/.nyc_output": true,
+    "**/.svn": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/typings": true,
+    "**/*.js": { "when": "$(basename).ts" },
+    "**/*?.js": { "when": "$(basename).tsx" },
+    "**/*??.jsx": { "when": "$(basename).tsx" },
+    "**/*.js.map": true
+  },
+  "telemetry.enableTelemetry": false,
+  "telemetry.enableCrashReporter": false,
+  "terminal.integrated.fontFamily": "Hack",
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.useCodeSnippetsOnMethodSuggest": true
+}
