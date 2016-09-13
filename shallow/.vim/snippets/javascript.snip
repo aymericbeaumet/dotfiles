@@ -1,42 +1,5 @@
-# ecmascript
-
-snippet use-strict-mode
-alias us
-options head
-	'use strict'
-
-	${1}
-
-# commonjs
-
-snippet module-exports
-alias me
-options head
-	module.exports = ${1}
-
-snippet require
-alias req
-options word
-	require('${1:package}')
-
-# console
-
-snippet console-error
-alias ce
-options head
-	console.error(${1}) // eslint-disable-line
-
-snippet console-log
-alias cl
-options head
-	console.log(${1}) // eslint-disable-line
-
-snippet console-warn
-alias cw
-options head
-	console.warn(${1}) // eslint-disable-line
-
-# jsdoc
+snippet us
+  'use strict'
 
 snippet jsdoc-block
 alias jb
@@ -46,26 +9,20 @@ alias jb
 
 snippet jsdoc-const
 alias jc
-	@const {${1:type}}
+  @const {${1:type}}
 
 snippet jsdoc-type
 alias jt
-	@type {${1:type}}
+  @type {${1:type}}
 
 snippet jsdoc-param
 alias jp
-	@param {${1:type}} ${2:parameter} - ${3:description}
+  @param {${1:type}} ${2:parameter} - ${3:description}
 
 snippet jsdoc-return
 alias jr
-	@return {${1:type}} - ${2:description}
-
-# eslint
+  @return {${1:type}} - ${2:description}
 
 snippet eslint-disable-line
 alias edl
   // eslint-disable-line ${1:rule}
-
-snippet eslint-disable-next-line
-alias ednl
-  // eslint-disable-next-line ${1:rule}
