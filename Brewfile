@@ -35,8 +35,6 @@ brew 'z'
 brew 'zsh'
 
 # languages
-brew 'elixir'
-brew 'flow'
 brew 'go'
 brew 'node'
 brew 'python'
@@ -51,19 +49,15 @@ brew 'neovim-dot-app', args: ['HEAD']
 # gui
 cask 'alfred'
 cask 'dash'
-cask 'dashlane'
 cask 'flux'
 cask 'font-hack'
-cask 'gitter'
 cask 'google-chrome'
 cask 'google-drive'
-cask 'google-photos-backup'
 cask 'istat-menus'
 cask 'iterm2-beta'
 cask 'karabiner'
 cask 'seil' # required by karabiner
 cask 'spectacle'
 cask 'transmission'
-cask 'visual-studio-code'
 cask 'vlc'
 cask 'xquartz'
