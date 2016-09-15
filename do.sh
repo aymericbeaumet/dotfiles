@@ -2,13 +2,19 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
+WHOAMI="$(whoami)"
+
 # Configure the OS
 # $ ./setup.sh configure
 function __configure {
   case "$(uname -s)" in
     Darwin)
+      # Fix zsh compinit
+      zsh -c 'compaudit | xargs chmod g-w'
+      # Fix /usr/local permissions
+      sudo chown -R "$WHOAMI:admin" /usr/local
       # Change default shell
-      chsh -s "$(which zsh)"
+      sudo chsh -s "$(which zsh)" "$WHOAMI"
       # Reduce resize time for windows (http://apple.stackexchange.com/a/142734/106194)
       defaults write NSGlobalDomain NSWindowResizeTime .001
       # Disable swipe (http://apple.stackexchange.com/a/80163/106194)
@@ -24,12 +30,11 @@ function __configure {
 # $ ./setup.sh install
 function __install {
   git submodule update --init --recursive
-  . ./home/.zshenv # load brew
   # install brew dependencies
   brew tap homebrew/bundle
   brew bundle check || brew bundle
-  # install npm dependencies
-  npm install --global n
+  # install latest node
+  n latest
   # install fzf dependencies
   # [ -x "$(brew --prefix fzf 2>/dev/null)/install" ] && "$(brew --prefix fzf)/install" --all
 }
