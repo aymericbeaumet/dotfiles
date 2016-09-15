@@ -36,7 +36,7 @@ brew 'zsh'
 
 # languages
 brew 'go'
-brew 'node'
+brew 'n'
 brew 'python'
 brew 'python3'
 
@@ -56,7 +56,9 @@ cask 'google-drive'
 cask 'istat-menus'
 cask 'iterm2-beta'
 cask 'karabiner'
+cask 'messenger'
 cask 'seil' # required by karabiner
+cask 'slack'
 cask 'spectacle'
 cask 'transmission'
 cask 'vlc'
