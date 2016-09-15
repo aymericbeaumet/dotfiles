@@ -1,6 +1,18 @@
 snippet us
   'use strict'
 
+snippet jasmine-describe
+alias des
+  describe('${1:...}', () => {
+    ${0}
+  })
+
+snippet jasmine-it
+alias it
+  it('should ${1:...}', () => {
+    ${0}
+  })
+
 snippet jsdoc-block
 alias jb
   /**
