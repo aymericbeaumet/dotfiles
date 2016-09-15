@@ -17,4 +17,4 @@ export PATH="$GOPATH/bin:$PATH"
 fpath=("$HOME/.zsh/completion" $fpath)
 
 # z
-[ -r "$(brew --prefix z 2>/dev/null)/etc/profile.d/z.sh" ] && source "$(brew --prefix z)/etc/profile.d/z.sh"
+source "$(brew --prefix z)/etc/profile.d/z.sh"
