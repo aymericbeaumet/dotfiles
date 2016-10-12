@@ -1,0 +1,16 @@
+{
+  "profiles" : [
+    {
+      "simple_modifications": {
+        "caps_lock": "left_control",
+        "return_or_enter": "right_control"
+      },
+      "standalone_modifiers": {
+        "left_control": "escape",
+        "right_control": "return_or_enter"
+      },
+      "name" : "Default profile",
+      "selected" : true
+    }
+  ]
+}
