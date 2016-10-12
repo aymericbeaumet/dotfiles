@@ -3,14 +3,17 @@ snippet us
 
 snippet jasmine-describe
 alias des
-  describe('${1:...}', () => {
-    ${0}
+  describe('${1:...}', () => {${0}
   })
 
 snippet jasmine-it
 alias it
-  it('should ${1:...}', () => {
-    ${0}
+  it('should ${1:...}', () => {${0}
+  })
+
+snippet jasmine-it-async
+alias ita
+  it('should ${1:...}', async function() {${0}
   })
 
 snippet jsdoc-block
@@ -31,7 +34,7 @@ snippet jsdoc-param
 alias jp
   @param {${1:type}} ${2:parameter} - ${3:description}
 
-snippet jsdoc-return
+snippet jsdoc-returns
 alias jr
   @return {${1:type}} - ${2:description}
 
