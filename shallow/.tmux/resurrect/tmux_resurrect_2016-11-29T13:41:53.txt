@@ -1,0 +1,5 @@
+pane	0	1	:tmux	1	:*	0	:/Users/ab	0	zsh	:
+pane	0	1	:tmux	1	:*	1	:/Users/ab	0	zsh	:
+pane	0	1	:tmux	1	:*	2	:/Users/ab	1	zsh	:
+window	0	1	1	:*	c796,178x55,0,0{89x55,0,0,0,88x55,90,0[88x27,90,0,1,88x27,90,28,3]}
+state	0	
