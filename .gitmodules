@@ -1,24 +1,6 @@
 [submodule "shallow/.vim/autoload"]
 	path = shallow/.vim/autoload
 	url = https://github.com/junegunn/vim-plug.git
-[submodule "shallow/.zsh/bundle/docker-zsh-completion"]
-	path = shallow/.zsh/bundle/docker-zsh-completion
-	url = https://github.com/felixr/docker-zsh-completion.git
-[submodule "shallow/.zsh/bundle/zsh-completion"]
-	path = shallow/.zsh/bundle/zsh-completion
-	url = https://github.com/zsh-users/zsh-completions.git
-[submodule "shallow/.zsh/bundle/zsh-syntax-highlighting"]
-	path = shallow/.zsh/bundle/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "shallow/.tmux/bundle/powerline"]
-	path = shallow/.tmux/bundle/powerline
-	url = https://github.com/powerline/powerline.git
-[submodule "shallow/.zsh/bundle/pure"]
-	path = shallow/.zsh/bundle/pure
-	url = https://github.com/sindresorhus/pure.git
-[submodule "shallow/.zsh/bundle/antigen"]
-	path = shallow/.zsh/bundle/antigen
-	url = https://github.com/zsh-users/antigen.git
 [submodule "shallow/.tmux/bundle/tpm"]
 	path = shallow/.tmux/bundle/tpm
 	url = https://github.com/tmux-plugins/tpm
