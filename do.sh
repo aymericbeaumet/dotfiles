@@ -5,7 +5,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 WHOAMI="$(whoami)"
 
 # Configure the OS
-# $ ./setup.sh configure
+# $ ./do.sh configure
 function __configure {
   case "$(uname -s)" in
     Darwin)
@@ -22,12 +22,12 @@ function __configure {
       # Better looking fonts by disable OS anti-aliasing (http://stackoverflow.com/a/32067365/1071486)
       defaults write org.vim.MacVim AppleFontSmoothing -int 0
       defaults write uk.foon.Neovim AppleFontSmoothing -int 0
-      ;;
+    ;;
   esac
 }
 
 # Install/Update the dependencies
-# $ ./setup.sh install
+# $ ./do.sh install
 function __install {
   git submodule update --init --recursive
   # install brew dependencies
@@ -35,12 +35,10 @@ function __install {
   brew bundle check || brew bundle
   # install latest node
   n latest
-  # install fzf dependencies
-  # [ -x "$(brew --prefix fzf 2>/dev/null)/install" ] && "$(brew --prefix fzf)/install" --all
 }
 
 # Create the symlinks in the $HOME directory
-# $ ./setup.sh symlink
+# $ ./do.sh symlink
 function __symlink {
   from_directory="$(pwd)/home"
   find "$from_directory" -type file -o -type link | while read from ; do

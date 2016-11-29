@@ -7,12 +7,6 @@ tap 'homebrew/core'
 tap 'neovim/neovim'
 tap 'rogual/neovim-dot-app'
 
-# gnu core utils
-brew 'coreutils'
-brew 'findutils'
-brew 'gnu-sed'
-brew 'moreutils'
-
 # tools
 brew 'ag'
 brew 'bash'
@@ -21,19 +15,23 @@ brew 'fswatch'
 brew 'fzf'
 brew 'gawk'
 brew 'git'
-brew 'git-extras'
 brew 'gpg'
 brew 'htop'
 brew 'jq'
-brew 'keybase'
-brew 'pandoc'
-brew 'tig'
+brew 'rainbarf'
+brew 'reattach-to-user-namespace'
+brew 'spark'
 brew 'tmux'
 brew 'tree'
 brew 'wget'
 brew 'xz'
-brew 'z'
 brew 'zsh'
+
+# tools (gnu core utils)
+brew 'coreutils'
+brew 'findutils'
+brew 'gnu-sed'
+brew 'moreutils'
 
 # languages
 brew 'go'
@@ -42,25 +40,17 @@ brew 'python'
 brew 'python3'
 
 # vim
-brew 'vim'
-brew 'macvim'
 brew 'neovim', args: ['HEAD']
 brew 'neovim-dot-app', args: ['HEAD']
 
 # gui
-cask 'alfred'
-cask 'dash'
-cask 'evernote'
-cask 'flux'
+cask 'calibre'
 cask 'font-hack'
-cask 'google-chrome'
-cask 'google-drive'
-cask 'hammerspoon'
 cask 'istat-menus'
-cask 'iterm2-beta'
-cask 'karabiner-elements'
 cask 'messenger'
 cask 'slack'
 cask 'transmission'
 cask 'vlc'
 cask 'xquartz'
+cask 'yacreader'
+cask 'whatsapp'
