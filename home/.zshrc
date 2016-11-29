@@ -1,6 +1,8 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com>
 # Github: @aymericbeaumet/dotfiles
 
+autoload -Uz compinit && compinit # compdef
+
 # Commands {{{
 
   # du
@@ -136,7 +138,6 @@
   # emacs style bindings
   bindkey -e
   autoload -U select-word-style && select-word-style bash
-  # WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
   # env
   if [[ -n "$TMUX" ]] ; then
@@ -152,27 +153,31 @@
 
 # Plugins {{{
 
-  ADOTDIR="$HOME/.zsh/bundle"
-  source "$ADOTDIR/antigen/antigen.zsh"
+  export ZPLUG_HOME="$HOME/.zsh/bundle"
+  source "$ZPLUG_HOME/zplug/init.zsh"
 
   # Plugins > Cosmetic {{{
 
-    antigen theme bhilburn/powerlevel9k powerlevel9k
+    zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
       POWERLEVEL9K_STATUS_VERBOSE=false
       POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs status)
       POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
 
-    antigen bundle zsh-users/zsh-syntax-highlighting
+    zplug zsh-users/zsh-syntax-highlighting
 
   # }}}
 
   # Plugins > UX {{{
 
-    antigen bundle rupa/z
+    zplug rupa/z
 
   # }}}
 
-  antigen apply
+  if ! zplug check ; then
+    zplug install
+  fi
+
+  zplug load
 
 # }}}
 

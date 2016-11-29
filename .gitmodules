@@ -22,3 +22,6 @@
 [submodule "shallow/.tmux/bundle/tpm"]
 	path = shallow/.tmux/bundle/tpm
 	url = https://github.com/tmux-plugins/tpm
+[submodule "shallow/.zsh/bundle/zplug"]
+	path = shallow/.zsh/bundle/zplug
+	url = https://github.com/zplug/zplug.git
