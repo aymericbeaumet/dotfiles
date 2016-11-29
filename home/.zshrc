@@ -61,6 +61,10 @@ autoload -Uz compinit && compinit # compdef
 
 # Settings {{{
 
+  # emacs style bindings
+  bindkey -e
+  autoload -U select-word-style && select-word-style bash
+
   # open files
   export EDITOR=nvim
   export USE_EDITOR="$EDITOR"
@@ -118,13 +122,14 @@ autoload -Uz compinit && compinit # compdef
   stty stop undef
   stty start undef
 
-  # make sure to only send non-empty buffer with ^M
-  on_ctrl_m() {
+  # make sure to only send non-empty buffer with ^M or ^O
+  on_ctrl_m_or_o() {
     if [[ -n "$BUFFER" ]] ; then
       zle accept-line
     fi
   }
-  zle -N on_ctrl_m ; bindkey '^M' on_ctrl_m
+  zle -N on_ctrl_m_or_o ; bindkey '^M' on_ctrl_m_or_o
+  zle -N on_ctrl_m_or_o ; bindkey '^O' on_ctrl_m_or_o
 
   # bring the latest background app to foreground with ^Z
   on_ctrl_z() {
@@ -134,10 +139,6 @@ autoload -Uz compinit && compinit # compdef
 
   # prompt
   setopt transient_rprompt
-
-  # emacs style bindings
-  bindkey -e
-  autoload -U select-word-style && select-word-style bash
 
   # env
   if [[ -n "$TMUX" ]] ; then
@@ -158,18 +159,20 @@ autoload -Uz compinit && compinit # compdef
 
   # Plugins > Cosmetic {{{
 
-    zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
+    zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
       POWERLEVEL9K_STATUS_VERBOSE=false
       POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs status)
       POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
 
-    zplug zsh-users/zsh-syntax-highlighting
+    zplug 'zsh-users/zsh-syntax-highlighting'
 
   # }}}
 
   # Plugins > UX {{{
 
-    zplug rupa/z
+    zplug 'junegunn/fzf', use:shell/key-bindings.zsh
+
+    zplug 'rupa/z', use:z.sh
 
   # }}}
 
@@ -178,11 +181,5 @@ autoload -Uz compinit && compinit # compdef
   fi
 
   zplug load
-
-# }}}
-
-# External scripts {{{
-
-source /usr/local/opt/fzf/shell/key-bindings.zsh
 
 # }}}
