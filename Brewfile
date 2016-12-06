@@ -9,6 +9,7 @@ tap 'rogual/neovim-dot-app'
 
 # tools
 brew 'ag'
+brew 'ansiweather'
 brew 'bash'
 brew 'curl'
 brew 'ctags'
@@ -20,11 +21,13 @@ brew 'gpg'
 brew 'htop'
 brew 'jq'
 brew 'reattach-to-user-namespace'
+brew 'm-cli'
 brew 'tmux'
 brew 'tree'
 brew 'wget'
 brew 'xz'
 brew 'zsh'
+brew 'z'
 
 # tools (gnu core utils)
 brew 'coreutils'

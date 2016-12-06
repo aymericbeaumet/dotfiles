@@ -17,6 +17,91 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#begin(b:bundle_directory)
 
+    Plug 'edkolev/tmuxline.vim'
+      let g:tmuxline_powerline_separators = 1
+      let g:tmuxline_separators = {
+      \   'left': '',
+      \   'left_alt': '',
+      \   'right': '' ,
+      \   'right_alt': '',
+      \   'space': ' ',
+      \ }
+      let g:tmuxline_preset = {
+      \   'a': [
+      \     '#h',
+      \     "#(uptime | awk '" . '{ print $3 " " $4 }' . "')",
+      \   ],
+      \   'b': [
+      \     '#(whoami)',
+      \   ],
+      \   'c': [
+      \     '#S',
+      \   ],
+      \   'win': [
+      \     '#I',
+      \     '#W',
+      \   ],
+      \   'cwin': [
+      \     '#I',
+      \     '#W',
+      \   ],
+      \   'x': [
+      \     "#(ansiweather -w false -h false -p false -d false -s true -a false -l Paris,FR | awk '" . '{ print $6 $7 " (" $4 ")" }' . "')",
+      \   ],
+      \   'y': [
+      \     "#(m battery status | awk -F '[;[:space:]]' '" . '/InternalBattery/ { print $4 " (" toupper(substr($6,1,1)) substr($6,2) ")" }' . "')",
+      \   ],
+      \   'z': [
+      \     '#(date "+%a %-d, %H:%M")',
+      \   ],
+      \   'options': {
+      \     'status-position': 'top',
+      \     'status-justify': 'centre',
+      \   },
+      \ }
+
+    Plug 'edkolev/promptline.vim'
+      let g:promptline_powerline_symbols = 1
+      let g:promptline_preset = {
+      \   'a': [
+      \     promptline#slices#host(),
+      \   ],
+      \   'b': [
+      \     promptline#slices#user(),
+      \   ],
+      \   'c': [
+      \     promptline#slices#cwd(),
+      \   ],
+      \   'y': [
+      \     promptline#slices#vcs_branch(),
+      \   ],
+      \   'warn': [
+      \     promptline#slices#last_exit_code(),
+      \   ],
+      \ }
+
+    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
+      set noshowmode " hide the duplicate mode in bottom status bar
+      let g:airline_theme = 'solarized'
+      let g:airline_powerline_fonts = 1
+      let g:airline#extensions#disable_rtp_load = 1
+      let g:airline_extensions = [ 'branch', 'promptline', 'tabline', 'tmuxline' ]
+      let g:airline#extensions#promptline#snapshot_file = '~/.zsh/status.sh'
+      let g:airline#extensions#tabline#show_tabs = 0
+      let g:airline#extensions#tabline#exclude_preview = 1
+      let g:airline#extensions#tabline#tab_nr_type = 2
+      let g:airline#extensions#tabline#show_tab_type = 0
+      let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+      let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/status.conf'
+      function! AirlineInit()
+        let g:airline_section_x = airline#section#create_right([ '%{&filetype}', '%{&fileencoding}', '%{&fileformat}' ])
+        let g:airline_section_y = airline#section#create_right([ '%p%%' ])
+        let g:airline_section_z = airline#section#create_right([ "\uE0A1%l:\uE0A3%c" ])
+      endfunction
+      autocmd User AirlineAfterInit call AirlineInit()
+
+    Plug 'scrooloose/nerdtree'
+
     Plug 'altercation/vim-colors-solarized'
 
     Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
@@ -35,6 +120,8 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
 
+    Plug 'bronson/vim-trailing-whitespace'
+
     Plug 'tpope/vim-eunuch', { 'on': [ 'Remove', 'Unlink', 'Move', 'Rename', 'Chmod', 'Mkdir', 'Find', 'Locate', 'Wall', 'SudoWrite', 'SudoEdit' ] }
 
     Plug 'tpope/vim-fugitive'
@@ -49,15 +136,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'tpope/vim-unimpaired'
 
-    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
-      let g:airline#extensions#disable_rtp_load = 1
-      let g:airline_extensions = [ 'branch', 'whitespace' ]
-      let g:airline_exclude_preview = 1 " remove airline from preview window
-      let g:airline_section_z = '%p%% L%l:C%c' " rearrange percentage/col/line section
-      let g:airline_theme = 'solarized'
-      let g:airline_powerline_fonts = 1
-      set noshowmode " hide the duplicate mode in bottom status bar
-
     Plug 'airblade/vim-gitgutter'
       nmap [c <Plug>GitGutterPrevHunk
       nmap ]c <Plug>GitGutterNextHunk
@@ -68,31 +146,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'dietsche/vim-lastplace'
 
-    Plug 'Shougo/unite.vim'
-      let g:unite_source_menu_menus = get(g:, 'unite_source_menu_menus', {})
-      let g:unite_source_menu_menus.launcher = {
-      \   'command_candidates': [
-      \     [ '[vim] source configuration', 'source $MYVIMRC' ],
-      \     [ '[vim] clean plugins', 'PlugClean' ],
-      \     [ '[vim] install plugins', 'PlugInstall | UpdateRemotePlugins' ],
-      \     [ '[vim] update plugins', 'PlugUpdate | UpdateRemotePlugins' ],
-      \     [ '[vim] kill all buffers', 'bufdo bdelete!' ],
-      \     [ '[vim] only keep this buffer', 'BufOnly!' ],
-      \     [ '[vim] disable spell checking', 'setlocal nospell' ],
-      \     [ '[vim] set spell checking to english', 'setlocal spell spelllang=en' ],
-      \     [ '[vim] set spell checking to french', 'setlocal spell spelllang=fr' ],
-      \   ]
-      \ }
-      augroup config_unite
-        autocmd!
-        autocmd FileType unite call s:on_unite_buffer()
-      augroup END
-      function! s:on_unite_buffer()
-        imap <silent><buffer> <C-b> <Plug>(unite_move_left)
-        imap <silent><buffer> <C-f> <Plug>(unite_move_right)
-        imap <silent><buffer> <ESC> <Plug>(unite_exit)
-        nmap <silent><buffer> <ESC> <Plug>(unite_exit)
-      endfunction
+    Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 
     Plug 'benekastah/neomake', { 'for': [ 'javascript', 'json' ], 'do': '
     \   npm install --global eslint;
@@ -100,20 +154,11 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     \ ' }
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
-      function! s:neomake_enable()
-        silent! Neomake
-        augroup config_neomake
-          autocmd!
-          autocmd FileType javascript,json autocmd! config_neomake BufReadPost,BufWritePost * Neomake
-        augroup END
-      endfunction
-      function! s:neomake_disable()
-        sign unplace *
-        augroup config_neomake
-          autocmd!
-        augroup END
-      endfunction
-      call s:neomake_enable()
+      silent! Neomake
+      augroup config_neomake
+        autocmd!
+        autocmd FileType javascript,json autocmd! config_neomake BufReadPost,BufWritePost * Neomake
+      augroup END
 
     " JavaScript
     Plug 'pangloss/vim-javascript'
@@ -165,12 +210,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#end()
 
-  " Shougo/unite.vim
-    silent! call unite#custom#profile('default', 'context', { 'start_insert': 1, 'wipe': 1 })
-    silent! call unite#custom#source('file_rec/async,grep', 'ignore_pattern', 'bower_components/\|coverage/\|docs/\|node_modules/\|tmp/')
-    silent! call unite#custom#source('file_rec/async,grep,file_rec/git,grep/git,buffer', 'matchers', [ 'matcher_fuzzy', 'matcher_hide_current_file' ])
-    silent! call unite#filters#sorter_default#use([ 'sorter_rank' ])
-
   " Inlined plugins
   augroup config_inlined_plugins
     autocmd!
@@ -193,6 +232,11 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   noremap  <silent> <F1>   <Nop>
   noremap  <silent> q:     <Nop>
 
+  " disable duplicated-for-convenience mappings, to learn the correct ones
+  noremap  <silent> <C-w><C-s> <Nop>
+  noremap  <silent> <C-w><C-v> <Nop>
+  noremap  <silent> <C-w><C-q> <Nop>
+
   " better `j` and `k`
   nnoremap <silent> j gj
   vnoremap <silent> j gj
@@ -213,31 +257,24 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
-" }}}
-
-" Leader mappings {{{
-
-  " [space] launcher
-  nnoremap <silent> <Leader><Space> :<C-u>Unite -direction=botright menu:launcher<CR>
+  " allow to search the history from the command line, zsh style
+  cnoremap <silent> <C-r> :<C-u>History:<CR>
 
   " [b]uffer search
-  nnoremap <silent> <Leader>b :<C-u>Unite -auto-preview -vertical-preview -no-split buffer<CR>
+  nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
 
   " [c]omment toggling for the current line / selection
   nmap     <silent> <Leader>c <Plug>NERDCommenterToggle
   xmap     <silent> <Leader>c <Plug>NERDCommenterToggle
 
   " [f]ind files in the current working directory
-  nnoremap <silent> <Leader>f :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/async<CR>
+  nnoremap <silent> <Leader>f :<C-u>Files<CR>
 
   " [F]ind files in the current git project
-  nnoremap <silent> <Leader>F :<C-u>Unite -auto-preview -vertical-preview -no-split file_rec/git:--cached<CR>
+  nnoremap <silent> <Leader>F :<C-u>GFiles<CR>
 
   " [g]rep files in the current working directory
-  nnoremap <silent> <Leader>g :<C-u>Unite -auto-preview -vertical-preview -no-split grep<CR>
-
-  " [G]rep files in the current git project
-  nnoremap <silent> <Leader>G :<C-u>Unite -auto-preview -vertical-preview -no-split grep/git:--cached<CR>
+  nnoremap <silent> <Leader>g :<C-u>Ag<CR>
 
   " [s]earch in the current buffer
   nmap     <silent> <Leader>s <Plug>(easymotion-s)
@@ -263,7 +300,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   set history=1000 " increase history size
 
   " encoding
-  if has('vim_starting') | set encoding=utf-8 | endif " ensure proper encoding
+  if has('vim_starting') | set encoding=utf8 | endif " ensure proper encoding
   set fileencodings=utf-8 " ensure proper encoding
 
   " error handling
@@ -384,3 +421,21 @@ if exists('neovim_dot_app')
   call MacSetFontShouldAntialias(1)
 endif
 " }}}
+
+fun! s:scroll()
+    let l:save = &scrolloff
+
+    set scrolloff=0 noscrollbind nowrap nofoldenable
+    botright vsplit
+
+    normal L
+    normal j
+    normal zt
+
+    setlocal scrollbind
+    exe "normal \<c-w>p"
+    setlocal scrollbind
+
+    let &scrolloff = l:save
+endfun
+command! Scroll call s:scroll()
