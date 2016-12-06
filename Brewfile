@@ -22,6 +22,7 @@ brew 'htop'
 brew 'jq'
 brew 'reattach-to-user-namespace'
 brew 'm-cli'
+brew 'mas'
 brew 'tmux'
 brew 'tree'
 brew 'wget'
@@ -47,7 +48,12 @@ brew 'neovim-dot-app', args: ['HEAD']
 
 # gui
 cask 'calibre'
+cask 'google-chrome'
+cask 'google-drive'
 cask 'istat-menus'
+cask 'iterm2'
+cask 'karabiner-elements'
+cask 'keyboard-maestro'
 cask 'messenger'
 cask 'slack'
 cask 'transmission'
@@ -55,3 +61,6 @@ cask 'vlc'
 cask 'xquartz'
 cask 'yacreader'
 cask 'whatsapp'
+
+# appstore
+mas 'wunderlist', id: 410628904

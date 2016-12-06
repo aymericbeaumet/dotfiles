@@ -146,9 +146,6 @@ autoload -Uz compinit && compinit # compdef
   else
     export TERM=xterm-256color
   fi
-  if [[ -n "$TMUX_PANE" ]] ; then
-    tmux rename-window -t${TMUX_PANE} 'zsh'
-  fi
 
 # }}}
 
@@ -157,13 +154,13 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  zplug 'zsh-users/zsh-syntax-highlighting'
+  zplug 'zsh-users/zsh-syntax-highlighting', from:github, use:zsh-syntax-highlighting.plugin.zsh
 
-  zplug '/usr/local/opt/fzf/shell/key-bindings.zsh', from:local
+  zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
 
-  zplug '/usr/local/opt/z/etc/profile.d/z.sh', from:local
+  zplug '/usr/local/opt/z/etc/profile.d', from:local, use:z.sh
 
-  zplug "$HOME/.zsh/status.sh", from:local
+  zplug "$HOME/.zsh", from:local, use:status.sh
 
   if ! zplug check ; then
     zplug install
