@@ -39,7 +39,7 @@ autoload -Uz compinit && compinit # compdef
   tmux_wrapper()
   {
     if (( $# == 0 )) ; then
-      command tmux attach || command tmux -2 -u
+      command tmux new-session -A -s main
     else
       command tmux "$@"
     fi
@@ -157,24 +157,13 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  # Plugins > Cosmetic {{{
+  zplug 'zsh-users/zsh-syntax-highlighting'
 
-    zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
-      POWERLEVEL9K_STATUS_VERBOSE=false
-      POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs status)
-      POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
+  zplug '/usr/local/opt/fzf/shell/key-bindings.zsh', from:local
 
-    zplug 'zsh-users/zsh-syntax-highlighting'
+  zplug '/usr/local/opt/z/etc/profile.d/z.sh', from:local
 
-  # }}}
-
-  # Plugins > UX {{{
-
-    zplug 'junegunn/fzf', use:shell/key-bindings.zsh
-
-    zplug 'rupa/z', use:z.sh
-
-  # }}}
+  zplug "$HOME/.zsh/status.sh", from:local
 
   if ! zplug check ; then
     zplug install
