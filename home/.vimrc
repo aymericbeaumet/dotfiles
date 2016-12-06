@@ -17,19 +17,17 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#begin(b:bundle_directory)
 
+    Plug 'airblade/vim-rooter'
+      let g:rooter_change_directory_for_non_project_files = 'current'
+      let g:rooter_use_lcd = 1
+      let g:rooter_silent_chdir = 1
+      let g:rooter_resolve_links = 1
+
     Plug 'edkolev/tmuxline.vim'
       let g:tmuxline_powerline_separators = 1
-      let g:tmuxline_separators = {
-      \   'left': '',
-      \   'left_alt': '',
-      \   'right': '' ,
-      \   'right_alt': '',
-      \   'space': ' ',
-      \ }
       let g:tmuxline_preset = {
       \   'a': [
       \     '#h',
-      \     "#(uptime | awk '" . '{ print $3 " " $4 }' . "')",
       \   ],
       \   'b': [
       \     '#(whoami)',
@@ -62,49 +60,27 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
     Plug 'edkolev/promptline.vim'
       let g:promptline_powerline_symbols = 1
-      let g:promptline_preset = {
-      \   'a': [
-      \     promptline#slices#host(),
-      \   ],
-      \   'b': [
-      \     promptline#slices#user(),
-      \   ],
-      \   'c': [
-      \     promptline#slices#cwd(),
-      \   ],
-      \   'y': [
-      \     promptline#slices#vcs_branch(),
-      \   ],
-      \   'warn': [
-      \     promptline#slices#last_exit_code(),
-      \   ],
-      \ }
-
-    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
-      set noshowmode " hide the duplicate mode in bottom status bar
-      let g:airline_theme = 'solarized'
-      let g:airline_powerline_fonts = 1
-      let g:airline#extensions#disable_rtp_load = 1
-      let g:airline_extensions = [ 'branch', 'promptline', 'tabline', 'tmuxline' ]
-      let g:airline#extensions#promptline#snapshot_file = '~/.zsh/status.sh'
-      let g:airline#extensions#tabline#show_tabs = 0
-      let g:airline#extensions#tabline#exclude_preview = 1
-      let g:airline#extensions#tabline#tab_nr_type = 2
-      let g:airline#extensions#tabline#show_tab_type = 0
-      let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-      let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/status.conf'
-      function! AirlineInit()
-        let g:airline_section_x = airline#section#create_right([ '%{&filetype}', '%{&fileencoding}', '%{&fileformat}' ])
-        let g:airline_section_y = airline#section#create_right([ '%p%%' ])
-        let g:airline_section_z = airline#section#create_right([ "\uE0A1%l:\uE0A3%c" ])
-      endfunction
-      autocmd User AirlineAfterInit call AirlineInit()
 
     Plug 'scrooloose/nerdtree'
+      let g:NERDTreeWinSize = 35
+      let g:NERDTreeMinimalUI = 1
+      let g:NERDTreeShowHidden = 1
+      let g:NERDTreeMouseMode = 3
+      let g:NERDTreeCascadeSingleChildDir = 1
+      let g:NERDTreeCascadeOpenSingleChildDir = 1
+      let g:NERDTreeAutoDeleteBuffer = 1
+      let g:NERDTreeDirArrowExpandable = ''
+      let g:NERDTreeDirArrowCollapsible = ''
+      let g:NERDTreeIgnore = [
+      \   '\.git$[[dir]]',
+      \   '\.gitmodules$[[file]]',
+      \   'node_modules$[[dir]]',
+      \ ]
+      autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
     Plug 'altercation/vim-colors-solarized'
 
-    Plug 'Lokaltog/vim-easymotion', { 'on': [ '<Plug>(easymotion-s)' ] }
+    Plug 'Lokaltog/vim-easymotion'
       let g:EasyMotion_do_mapping = 0 " disable the default mappings
       let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
       let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
@@ -120,15 +96,13 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
 
-    Plug 'bronson/vim-trailing-whitespace'
-
-    Plug 'tpope/vim-eunuch', { 'on': [ 'Remove', 'Unlink', 'Move', 'Rename', 'Chmod', 'Mkdir', 'Find', 'Locate', 'Wall', 'SudoWrite', 'SudoEdit' ] }
+    Plug 'tpope/vim-eunuch'
 
     Plug 'tpope/vim-fugitive'
 
     Plug 'tpope/vim-repeat'
 
-    Plug 'tpope/vim-surround', { 'on': [ '<Plug>Csurround', '<Plug>Dsurround' ] }
+    Plug 'tpope/vim-surround'
       nmap <silent> cs <Plug>Csurround
       nmap <silent> ds <Plug>Dsurround
       let g:surround_no_mappings = 1 " disable the default mappings
@@ -142,23 +116,19 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       let g:gitgutter_map_keys = 0
       let g:gitgutter_git_executable = 'git'
 
-    Plug 'vim-scripts/BufOnly.vim', { 'on': [ 'BufOnly' ] }
+    Plug 'vim-scripts/BufOnly.vim'
 
     Plug 'dietsche/vim-lastplace'
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
 
-    Plug 'benekastah/neomake', { 'for': [ 'javascript', 'json' ], 'do': '
+    Plug 'benekastah/neomake', { 'do': '
     \   npm install --global eslint;
     \   npm install --global jsonlint;
     \ ' }
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
-      silent! Neomake
-      augroup config_neomake
-        autocmd!
-        autocmd FileType javascript,json autocmd! config_neomake BufReadPost,BufWritePost * Neomake
-      augroup END
+      autocmd BufReadPost,BufWritePost * Neomake
 
     " JavaScript
     Plug 'pangloss/vim-javascript'
@@ -169,10 +139,9 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     " Markdown
     Plug 'gabrielelana/vim-markdown'
 
+    " pip3 install --upgrade neovim
     if has('nvim') && has('python3')
-      Plug 'Shougo/neosnippet.vim', { 'do': '
-      \   pip2 install --upgrade neovim && pip3 install --upgrade neovim
-      \ ' }
+      Plug 'Shougo/neosnippet.vim'
         let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
         let g:neosnippet#snippets_directory = b:vim_directory . '/snippets'
         if has('conceal') | set conceallevel=2 concealcursor=niv | endif
@@ -208,7 +177,76 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       \   "\<CR>"
     endif
 
+    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
+      set noshowmode " hide the duplicate mode in bottom status bar
+      let g:airline_theme = 'solarized'
+      let g:airline_powerline_fonts = 1
+      let g:airline_extensions = [
+      \   'branch',
+      \   'hunks',
+      \   'neomake',
+      \   'promptline',
+      \   'tmuxline',
+      \   'whitespace',
+      \ ]
+      let g:airline#extensions#promptline#snapshot_file = '~/.zsh/status.sh'
+      let g:airline#extensions#tabline#show_tab_type = 0
+      let g:airline#extensions#tabline#buffer_min_count = 0
+      let g:airline#extensions#tabline#exclude_preview = 1
+      let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+      let g:airline#extensions#tabline#show_buffers = 1
+      let g:airline#extensions#tabline#show_tabs = 0
+      let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/status.conf'
+      function! AirlineInit()
+        let g:airline_section_a = airline#section#create_left([
+        \   '%{simplify(expand("%:~"))}',
+        \ ])
+        let g:airline_section_b = airline#section#create_left([
+        \   'branch',
+        \   'hunks',
+        \ ])
+        let g:airline_section_c = airline#section#create_left([
+        \ ])
+        let g:airline_section_x = airline#section#create_right([
+        \   '%{&filetype}',
+        \ ])
+        let g:airline_section_y = airline#section#create_right([
+        \   '%{&fileencoding}',
+        \   '%{&fileformat}',
+        \ ])
+        let g:airline_section_z = airline#section#create_right([
+        \   '%p%%',
+        \   "\uE0A1%l:\uE0A3%c",
+        \ ])
+        let g:airline_section_warning = airline#section#create_right([
+        \   'whitespace',
+        \   'neomake_warning_count',
+        \ ])
+        let g:airline_section_error = airline#section#create_right([
+        \   'neomake_error_count',
+        \ ])
+      endfunction
+      autocmd User AirlineAfterInit call AirlineInit()
+
   call plug#end()
+
+  " Additional configuration
+    " edkolev/promptline.vim
+      let g:promptline_preset = {
+      \   'a': [
+      \     '%~',
+      \   ],
+      \   'b': [
+      \     promptline#slices#vcs_branch(),
+      \     promptline#slices#git_status(),
+      \   ],
+      \   'c': [
+      \     promptline#slices#jobs(),
+      \   ],
+      \   'warn': [
+      \     promptline#slices#last_exit_code(),
+      \   ],
+      \ }
 
   " Inlined plugins
   augroup config_inlined_plugins
@@ -280,6 +318,9 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nmap     <silent> <Leader>s <Plug>(easymotion-s)
   xmap     <silent> <Leader>s <Plug>(easymotion-s)
   omap     <silent> <Leader>s <Plug>(easymotion-s)
+
+  " [t]
+  nnoremap <silent> <Leader>t :NERDTreeToggle<CR>
 
 " }}}
 
@@ -421,21 +462,3 @@ if exists('neovim_dot_app')
   call MacSetFontShouldAntialias(1)
 endif
 " }}}
-
-fun! s:scroll()
-    let l:save = &scrolloff
-
-    set scrolloff=0 noscrollbind nowrap nofoldenable
-    botright vsplit
-
-    normal L
-    normal j
-    normal zt
-
-    setlocal scrollbind
-    exe "normal \<c-w>p"
-    setlocal scrollbind
-
-    let &scrolloff = l:save
-endfun
-command! Scroll call s:scroll()

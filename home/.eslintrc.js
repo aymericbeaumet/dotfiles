@@ -1,12 +1,13 @@
 module.exports = {
-  parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 7,
+    ecmaVersion: 8,
     sourceType: 'module',
     ecmaFeatures: {
-      impliedStrict: true,
       jsx: true,
       experimentalObjectRestSpread: true,
-    },
+    }
+  },
+  rules: {
+    semi: ['error', 'never'],
   },
 }
