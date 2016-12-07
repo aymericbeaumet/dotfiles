@@ -17,6 +17,24 @@ let b:tmp_directory = b:vim_directory . '/tmp'
 
   call plug#begin(b:bundle_directory)
 
+    Plug 'mhinz/vim-startify'
+      autocmd VimEnter * if !argc() || (argc() == 1 && isdirectory(argv(0))) | Startify | endif
+      let g:startify_bookmarks = [
+      \   '~/.vimrc',
+      \   '~/.zshrc',
+      \ ]
+      let g:startify_commands = [
+      \   [ '[vim] source configuration', 'source $MYVIMRC' ],
+      \   [ '[vim] clean plugins', 'PlugClean' ],
+      \   [ '[vim] install plugins', 'PlugInstall | UpdateRemotePlugins' ],
+      \   [ '[vim] update plugins', 'PlugUpdate | UpdateRemotePlugins' ],
+      \ ]
+      let g:startify_session_dir = '~/.vim/tmp/sessions'
+      let g:startify_session_persistence = 1
+      let g:startify_session_delete_buffers = 1
+      let g:startify_change_to_dir = 0
+      let g:startify_change_to_vcs_root = 0
+
     Plug 'airblade/vim-rooter'
       let g:rooter_change_directory_for_non_project_files = 'current'
       let g:rooter_use_lcd = 1
@@ -314,13 +332,28 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [g]rep files in the current working directory
   nnoremap <silent> <Leader>g :<C-u>Ag<CR>
 
-  " [s]earch in the current buffer
-  nmap     <silent> <Leader>s <Plug>(easymotion-s)
-  xmap     <silent> <Leader>s <Plug>(easymotion-s)
-  omap     <silent> <Leader>s <Plug>(easymotion-s)
+  " [G]rep files in the current git project
+  " TODO
 
-  " [t]
-  nnoremap <silent> <Leader>t :NERDTreeToggle<CR>
+  " [s]earch in the current buffer
+  nmap     <silent> <Leader>e <Plug>(easymotion-s)
+  xmap     <silent> <Leader>e <Plug>(easymotion-s)
+  omap     <silent> <Leader>e <Plug>(easymotion-s)
+
+  " [t]ree view
+  nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle<CR>
+
+  " [s]ession [s]ave/[q]uit
+  nnoremap <silent> <Leader>ss :<C-u>SSave<CR>
+  nnoremap <silent> <Leader>sq :<C-u>SClose<CR>
+
+  " [q]uit
+  nnoremap <silent> <Leader>q :<C-u>q!<CR>
+  nnoremap <silent> <Leader>Q :<C-u>qa!<CR>
+
+  " [w]rite
+  nnoremap <silent> <Leader>w :<C-u>w!<CR>
+  nnoremap <silent> <Leader>W :<C-u>wa!<CR>
 
 " }}}
 
