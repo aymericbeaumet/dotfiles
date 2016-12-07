@@ -9,18 +9,17 @@ syntax enable
 filetype plugin indent on
 
 let mapleader = ' '
-let b:vim_directory = expand('~/.vim')
-let b:bundle_directory = b:vim_directory . '/bundle'
-let b:tmp_directory = b:vim_directory . '/tmp'
 
 " Plugins {{{
 
-  call plug#begin(b:bundle_directory)
+  call plug#begin(expand('~/.vim/bundle'))
 
     Plug 'mhinz/vim-startify'
       autocmd VimEnter * if !argc() || (argc() == 1 && isdirectory(argv(0))) | Startify | endif
       let g:startify_bookmarks = [
+      \   '~/.gitconfig',
       \   '~/.vimrc',
+      \   '~/.tmux.conf',
       \   '~/.zshrc',
       \ ]
       let g:startify_commands = [
@@ -29,7 +28,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
       \   [ '[vim] install plugins', 'PlugInstall | UpdateRemotePlugins' ],
       \   [ '[vim] update plugins', 'PlugUpdate | UpdateRemotePlugins' ],
       \ ]
-      let g:startify_session_dir = '~/.vim/tmp/sessions'
+      let g:startify_session_dir = expand('~/.vim/tmp/sessions')
       let g:startify_session_persistence = 1
       let g:startify_session_delete_buffers = 1
       let g:startify_change_to_dir = 0
@@ -99,7 +98,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     Plug 'altercation/vim-colors-solarized'
 
     Plug 'Lokaltog/vim-easymotion'
-      let g:EasyMotion_do_mapping = 0 " disable the default mappings
       let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
       let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
       let g:EasyMotion_smartcase = 1 " like Vim
@@ -109,7 +107,6 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     Plug 'editorconfig/editorconfig-vim'
 
     Plug 'scrooloose/nerdcommenter'
-      let g:NERDCreateDefaultMappings = 0
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
@@ -161,7 +158,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     if has('nvim') && has('python3')
       Plug 'Shougo/neosnippet.vim'
         let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
-        let g:neosnippet#snippets_directory = b:vim_directory . '/snippets'
+        let g:neosnippet#snippets_directory = expand('~/.vim/snippets')
         if has('conceal') | set conceallevel=2 concealcursor=niv | endif
 
       Plug 'Shougo/deoplete.nvim'
@@ -313,15 +310,16 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
-  " allow to search the history from the command line, zsh style
+  " search the history from the command line, zsh style
   cnoremap <silent> <C-r> :<C-u>History:<CR>
 
   " [b]uffer search
   nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
 
-  " [c]omment toggling for the current line / selection
-  nmap     <silent> <Leader>c <Plug>NERDCommenterToggle
-  xmap     <silent> <Leader>c <Plug>NERDCommenterToggle
+  " [c]omment (nerdcommenter leader)
+
+  " [e]asymotion leader
+  map      <silent> <Leader>e <Plug>(easymotion-prefix)
 
   " [f]ind files in the current working directory
   nnoremap <silent> <Leader>f :<C-u>Files<CR>
@@ -335,15 +333,11 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   " [G]rep files in the current git project
   " TODO
 
-  " [s]earch in the current buffer
-  nmap     <silent> <Leader>e <Plug>(easymotion-s)
-  xmap     <silent> <Leader>e <Plug>(easymotion-s)
-  omap     <silent> <Leader>e <Plug>(easymotion-s)
-
   " [t]ree view
   nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle<CR>
 
   " [s]ession [s]ave/[q]uit
+  nnoremap <silent> <Leader>s :<C-u>Startify<CR>
   nnoremap <silent> <Leader>ss :<C-u>SSave<CR>
   nnoremap <silent> <Leader>sq :<C-u>SClose<CR>
 
@@ -352,7 +346,7 @@ let b:tmp_directory = b:vim_directory . '/tmp'
   nnoremap <silent> <Leader>Q :<C-u>qa!<CR>
 
   " [w]rite
-  nnoremap <silent> <Leader>w :<C-u>w!<CR>
+  nnoremap <silent> <Leader>w :<C-u>update!<CR>
   nnoremap <silent> <Leader>W :<C-u>wa!<CR>
 
 " }}}
@@ -455,11 +449,11 @@ let b:tmp_directory = b:vim_directory . '/tmp'
     set undofile
     set undolevels=1000
     set undoreload=10000
-    let &undodir = b:tmp_directory . '/undo//'
+    let &undodir = expand('~/.vim/tmp/undo//')
   endif
 
   " vim
-  let &viminfo = &viminfo + ',n' . b:tmp_directory . '/info//' " change viminfo file path
+  let &viminfo = &viminfo + ',n' + expand('~/.vim/tmp/info//')
   set nobackup " disable backup files
   set noswapfile " disable swap files
   set secure " protect the configuration files
