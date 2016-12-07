@@ -14,10 +14,12 @@ let mapleader = ' '
   call plug#begin(expand('~/.vim/bundle'))
 
     Plug 'benmills/vimux'
+
     Plug 'christoomey/vim-tmux-navigator'
+      let g:tmux_navigator_no_mappings = 1
 
     Plug 'mhinz/vim-startify'
-      autocmd VimEnter * if !argc() || (argc() == 1 && isdirectory(argv(0))) | Startify | endif
+      autocmd VimEnter * if !argc() || (argc() == 1 && isdirectory(argv(0))) | Startify | NERDTree | wincmd w | endif
       let g:startify_bookmarks = [
       \   '~/.gitconfig',
       \   '~/.vimrc',
@@ -95,7 +97,7 @@ let mapleader = ' '
       \   '\.gitmodules$[[file]]',
       \   'node_modules$[[dir]]',
       \ ]
-      autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+      autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
     Plug 'altercation/vim-colors-solarized'
 
@@ -132,8 +134,6 @@ let mapleader = ' '
       nmap ]c <Plug>GitGutterNextHunk
       let g:gitgutter_map_keys = 0
       let g:gitgutter_git_executable = 'git'
-
-    Plug 'vim-scripts/BufOnly.vim'
 
     Plug 'dietsche/vim-lastplace'
 
@@ -247,7 +247,7 @@ let mapleader = ' '
 
   call plug#end()
 
-  " Additional configuration
+  " Additional configuration (post loading)
     " edkolev/promptline.vim
       let g:promptline_preset = {
       \   'a': [
@@ -269,10 +269,10 @@ let mapleader = ' '
   augroup config_inlined_plugins
     autocmd!
     " highlight search matches (except while being in insert mode)
-    autocmd VimEnter,InsertLeave * setl hlsearch
+    autocmd VimEnter,BufReadPost,InsertLeave * setl hlsearch
     autocmd InsertEnter * setl nohlsearch
     " highlight cursor line (except while being in insert mode)
-    autocmd VimEnter,InsertLeave * setl cursorline
+    autocmd VimEnter,BufReadPost,InsertLeave * setl cursorline
     autocmd InsertEnter * setl nocursorline
   augroup END
 
@@ -313,7 +313,7 @@ let mapleader = ' '
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
   " search the history from the command line, zsh style
-  cnoremap <silent> <C-r> :<C-u>History:<CR>
+  cnoremap <silent> <C-r> <C-b>call fzf#vim#command_history({ 'options': '--query="<C-e>"' })<CR>
 
   " [b]uffer search
   nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
@@ -347,8 +347,8 @@ let mapleader = ' '
   nnoremap <silent> <Leader>sq :<C-u>SClose<CR>
 
   " [q]uit
-  nnoremap <silent> <Leader>q :<C-u>q!<CR>
-  nnoremap <silent> <Leader>Q :<C-u>qa!<CR>
+  nnoremap <silent> <Leader>q :<C-u>bd!<CR>
+  nnoremap <silent> <Leader>Q :<C-u>bufdo bd!<CR>
 
   " [w]rite
   nnoremap <silent> <Leader>w :<C-u>update!<CR>
@@ -458,7 +458,7 @@ let mapleader = ' '
   endif
 
   " vim
-  let &viminfo = &viminfo + ',n' + expand('~/.vim/tmp/info//')
+  set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/viminfo
   set nobackup " disable backup files
   set noswapfile " disable swap files
   set secure " protect the configuration files
