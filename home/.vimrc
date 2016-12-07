@@ -7,12 +7,14 @@ if exists('&compatible') | set nocompatible | endif " 21st century
 
 syntax enable
 filetype plugin indent on
-
 let mapleader = ' '
 
 " Plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
+
+    Plug 'benmills/vimux'
+    Plug 'christoomey/vim-tmux-navigator'
 
     Plug 'mhinz/vim-startify'
       autocmd VimEnter * if !argc() || (argc() == 1 && isdirectory(argv(0))) | Startify | endif
@@ -336,8 +338,11 @@ let mapleader = ' '
   " [t]ree view
   nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle<CR>
 
+  " [r]un shell commands ([t]est)
+  nnoremap <silent> <Leader>rt :<C-u>call VimuxRunCommand('clear ; npm test')<CR>
+
   " [s]ession [s]ave/[q]uit
-  nnoremap <silent> <Leader>s :<C-u>Startify<CR>
+  nnoremap <silent> <Leader>s<Space> :<C-u>Startify<CR>
   nnoremap <silent> <Leader>ss :<C-u>SSave<CR>
   nnoremap <silent> <Leader>sq :<C-u>SClose<CR>
 
