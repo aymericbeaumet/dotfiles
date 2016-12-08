@@ -154,13 +154,16 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  zplug 'zsh-users/zsh-syntax-highlighting', from:github, use:zsh-syntax-highlighting.plugin.zsh
+  zplug "$HOME/.zsh", from:local, use:status.sh
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
+    export FZF_DEFAULT_COMMAND='fzf-tmux'
+    export FZF_DEFAULT_OPTS='-d 30%'
 
-  zplug '/usr/local/opt/z/etc/profile.d', from:local, use:z.sh
+  zplug 'b4b4r07/enhancd', from:github, use:init.sh
+    export ENHANCD_FILTER="$FZF_DEFAULT_COMMAND"
 
-  zplug "$HOME/.zsh", from:local, use:status.sh
+  zplug 'zsh-users/zsh-syntax-highlighting', from:github, use:zsh-syntax-highlighting.plugin.zsh
 
   if ! zplug check ; then
     zplug install
