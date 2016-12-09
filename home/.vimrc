@@ -273,7 +273,7 @@
       let g:fzf_layout = {
       \   'down': '~40%',
       \ }
-      function! s:CommandHistory()
+      function! s:FzfCommandHistory()
         let s:INTERRUPT = "\u03\u0c" " <C-c><C-l>
         let s:SUBMIT = "\u0d" " <C-m>
         let s:cmdtype = getcmdtype()
@@ -288,7 +288,7 @@
           return ''
         endif
       endfunction
-      cnoremap <expr> <C-r> <SID>CommandHistory()
+      cnoremap <expr> <C-r> <SID>FzfCommandHistory()
 
   " }}}
 
