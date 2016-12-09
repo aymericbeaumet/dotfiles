@@ -274,16 +274,16 @@
       \   'down': '~40%',
       \ }
       function! s:CommandHistory()
-        let s:INTERRUPT_CODE = "\u03\u0c" " <C-c><C-l>
-        let s:ENTER_CODE = "\u0d" " <C-m>
+        let s:INTERRUPT = "\u03\u0c" " <C-c><C-l>
+        let s:SUBMIT = "\u0d" " <C-m>
         let s:cmdtype = getcmdtype()
         let s:args = string({
         \   "options": "--query=" . shellescape(getcmdline()),
         \ })
         if s:cmdtype == ':'
-          return s:INTERRUPT_CODE . ":keepp call fzf#vim#command_history(" .  s:args . ")" . s:ENTER_CODE
+          return s:INTERRUPT . ":keepp call fzf#vim#command_history(" .  s:args . ")" . s:SUBMIT
         elseif s:cmdtype == '/'
-          return s:INTERRUPT_CODE . ":keepp call fzf#vim#search_history(" .  s:args . ")" . s:ENTER_CODE
+          return s:INTERRUPT . ":keepp call fzf#vim#search_history(" .  s:args . ")" . s:SUBMIT
         else
           return ''
         endif
