@@ -273,6 +273,22 @@
       let g:fzf_layout = {
       \   'down': '~40%',
       \ }
+      function! s:CommandHistory()
+        let s:INTERRUPT_CODE = "\u03\u0c" " <C-c><C-l>
+        let s:ENTER_CODE = "\u0d" " <C-m>
+        let s:cmdtype = getcmdtype()
+        let s:args = string({
+        \   "options": "--query=" . shellescape(getcmdline()),
+        \ })
+        if s:cmdtype == ':'
+          return s:INTERRUPT_CODE . ":keepp call fzf#vim#command_history(" .  s:args . ")" . s:ENTER_CODE
+        elseif s:cmdtype == '/'
+          return s:INTERRUPT_CODE . ":keepp call fzf#vim#search_history(" .  s:args . ")" . s:ENTER_CODE
+        else
+          return ''
+        endif
+      endfunction
+      cnoremap <expr> <C-r> <SID>CommandHistory()
 
   " }}}
 
@@ -284,7 +300,7 @@
     \ ' }
       let g:neomake_javascript_enabled_makers = [ 'eslint' ]
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
-      augroup vimrc_neomaken
+      augroup vimrc_neomake
         autocmd!
         autocmd BufReadPost,BufWritePost * Neomake
       augroup END
@@ -426,12 +442,6 @@ set textwidth=80 " 80 characters line
   " clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
-
-  " search the history from the command line, zsh style
-  function! s:betterhistory()
-    return "\u03:History " . getcmdtype() . shellescape(getcmdline())
-  endfunction
-  cnoremap <expr> <C-r> <SID>betterhistory()
 
   " [R]eload configuration
   nnoremap <silent> <Leader>R  :<C-u>source $MYVIMRC<CR>:echom 'Vim configuration reloaded!'<CR>
