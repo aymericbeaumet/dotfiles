@@ -3,7 +3,7 @@
 
 autoload -Uz compinit && compinit # compdef
 
-# Commands {{{
+# commands {{{
 
   # du
   alias du='du -h'
@@ -59,7 +59,7 @@ autoload -Uz compinit && compinit # compdef
 
 # }}}
 
-# Settings {{{
+# settings {{{
 
   # emacs style bindings
   bindkey -e
@@ -133,7 +133,9 @@ autoload -Uz compinit && compinit # compdef
 
   # bring the latest background app to foreground with ^Z
   on_ctrl_z() {
-    fg
+    if [[ -n "$(jobs)" ]] ; then
+      fg
+    fi
   }
   zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
 
@@ -149,19 +151,18 @@ autoload -Uz compinit && compinit # compdef
 
 # }}}
 
-# Plugins {{{
+# plugins {{{
 
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  zplug "$HOME/.zsh", from:local, use:status.sh
+  zplug "$HOME/.zsh/tmp", from:local, use:promptline.sh
+
+  zplug '/usr/local/opt/z/etc/profile.d', from:local, use:z.sh
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
     export FZF_DEFAULT_COMMAND='fzf-tmux'
     export FZF_DEFAULT_OPTS='-d 30%'
-
-  zplug 'b4b4r07/enhancd', from:github, use:init.sh
-    export ENHANCD_FILTER="$FZF_DEFAULT_COMMAND"
 
   zplug 'zsh-users/zsh-syntax-highlighting', from:github, use:zsh-syntax-highlighting.plugin.zsh
 
