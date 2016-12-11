@@ -94,14 +94,14 @@
       \   'tmuxline',
       \   'whitespace',
       \ ]
-      let g:airline#extensions#promptline#snapshot_file = '~/.zsh/status.sh'
+      let g:airline#extensions#promptline#snapshot_file = '~/.zsh/tmp/promptline.sh'
       let g:airline#extensions#tabline#show_tab_type = 0
       let g:airline#extensions#tabline#buffer_min_count = 0
       let g:airline#extensions#tabline#exclude_preview = 1
       let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
       let g:airline#extensions#tabline#show_buffers = 1
       let g:airline#extensions#tabline#show_tabs = 0
-      let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/status.conf'
+      let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/tmp/tmuxline.conf'
       function! AirlineInit()
         let g:airline_section_a = airline#section#create_left([
         \   '%{simplify(expand("%:~"))}',
@@ -143,7 +143,7 @@
       let g:gitgutter_git_executable = 'git'
 
     Plug 'scrooloose/nerdtree'
-      nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle<CR>
+      nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle \| if &filetype ==# 'nerdtree' \| wincmd p \| endif<CR>
       let g:NERDTreeWinSize = 35
       let g:NERDTreeMinimalUI = 1
       let g:NERDTreeShowHidden = 1
