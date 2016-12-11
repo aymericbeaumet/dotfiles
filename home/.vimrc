@@ -1,7 +1,7 @@
 " Author: Aymeric Beaumet <hi@aymericbeaumet.com>>
 " Github: @aymericbeaumet/dotfiles
 
-" requirements {{{
+" init {{{
 
   if !1 | finish | endif " Skip initialization for vim-tiny or vim-small
 
@@ -10,6 +10,15 @@
   syntax enable
   filetype plugin indent on
   let mapleader = ' '
+
+" }}}
+
+" helpers {{{
+
+  " http://stackoverflow.com/questions/3878692/aliasing-a-command-in-vim
+  function! SetupCommandAlias(from, to)
+    exec 'cnoreabbrev <expr> ' . a:from  . ' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")' . '? ("' . a:to . '") : ("' . a:from . '"))'
+  endfun
 
 " }}}
 
@@ -151,8 +160,22 @@
       \ ]
       augroup vimrc_nerdtree
         autocmd!
-        autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        autocmd BufEnter * if (winnr('$') == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
       augroup END
+
+      Plug 'Xuyuanp/nerdtree-git-plugin'
+        let g:NERDTreeIndicatorMapCustom = {
+        \   "Staged"    : "●",
+        \   "Unmerged"  : "✗",
+        \   "Modified"  : "+",
+        \   "Clean"     : "✔",
+        \   "Untracked" : "…",
+        \
+        \   "Renamed"   : "➜",
+        \   "Deleted"   : "✖",
+        \   "Dirty"     : "✗",
+        \   "Unknown"   : "?",
+        \ }
 
   " }}}
 
@@ -206,27 +229,6 @@
 
     Plug 'edkolev/promptline.vim'
       let g:promptline_powerline_symbols = 1
-      function! PromptlineInit()
-        let g:promptline_preset = {
-        \   'a': [
-        \     '%~',
-        \   ],
-        \   'b': [
-        \     promptline#slices#vcs_branch(),
-        \     promptline#slices#git_status(),
-        \   ],
-        \   'c': [
-        \     promptline#slices#jobs(),
-        \   ],
-        \   'warn': [
-        \     promptline#slices#last_exit_code(),
-        \   ],
-        \ }
-      endfunction
-      augroup vimrc_promptline
-        autocmd!
-        autocmd VimEnter * call PromptlineInit()
-      augroup END
 
   " }}}
 
@@ -289,6 +291,9 @@
         endif
       endfunction
       cnoremap <expr> <C-r> <SID>FzfCommandHistory()
+
+    Plug 'qpkorr/vim-bufkill'
+      nnoremap <silent> <Leader>d :<C-u>BD<CR>
 
   " }}}
 
@@ -359,6 +364,22 @@
   " }}}
 
   call plug#end()
+
+  let g:promptline_preset = {
+  \   'a': [
+  \     '%~',
+  \   ],
+  \   'b': [
+  \     promptline#slices#vcs_branch(),
+  \     promptline#slices#git_status(),
+  \   ],
+  \   'c': [
+  \     promptline#slices#jobs(),
+  \   ],
+  \   'warn': [
+  \     promptline#slices#last_exit_code(),
+  \   ],
+  \ }
 
 " }}}
 
