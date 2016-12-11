@@ -47,6 +47,7 @@ brew 'neovim', args: ['HEAD']
 brew 'neovim-dot-app', args: ['HEAD']
 
 # gui
+cask 'atom'
 cask 'calibre'
 cask 'google-chrome'
 cask 'google-drive'
