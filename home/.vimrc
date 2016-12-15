@@ -13,15 +13,6 @@
 
 " }}}
 
-" helpers {{{
-
-  " http://stackoverflow.com/questions/3878692/aliasing-a-command-in-vim
-  function! SetupCommandAlias(from, to)
-    exec 'cnoreabbrev <expr> ' . a:from  . ' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")' . '? ("' . a:to . '") : ("' . a:from . '"))'
-  endfun
-
-" }}}
-
 " plugins {{{
 
   augroup vimrc_inlined_plugins
@@ -52,6 +43,8 @@
 
     Plug 'dietsche/vim-lastplace'
 
+    Plug 'aymericbeaumet/symlink.vim'
+
   " }}}
 
   " plugins > interface {{{
@@ -63,14 +56,15 @@
       nnoremap <silent> <Leader>Sq :<C-u>SClose<CR>
       let g:startify_bookmarks = [
       \   '~/.gitconfig',
-      \   '~/.vimrc',
       \   '~/.tmux.conf',
+      \   '~/.vimrc',
       \   '~/.zshrc',
       \ ]
       let g:startify_commands = [
-      \   [ '[vim] clean plugins', 'PlugClean' ],
-      \   [ '[vim] install plugins', 'PlugInstall | UpdateRemotePlugins' ],
-      \   [ '[vim] update plugins', 'PlugUpdate | UpdateRemotePlugins' ],
+      \   [ 'Install plugins', 'PlugInstall' ],
+      \   [ 'Update plugins', 'PlugUpdate' ],
+      \   [ 'Update remote plugins', 'UpdateRemotePlugins' ],
+      \   [ 'Clean plugins', 'PlugClean' ],
       \ ]
       let g:startify_session_dir = expand('~/.vim/tmp/sessions')
       let g:startify_session_persistence = 1
@@ -102,9 +96,10 @@
       let g:airline#extensions#tabline#show_buffers = 1
       let g:airline#extensions#tabline#show_tabs = 0
       let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/tmp/tmuxline.conf'
-      function! AirlineInit()
+      function! s:AirlineInit()
         let g:airline_section_a = airline#section#create_left([
-        \   '%{simplify(expand("%:~"))}',
+        \   '%{fugitive#is_git_dir(getcwd() . "/.git") ? "\uE4FB " . fnamemodify(getcwd(), ":t") : "\uE4FF " . getcwd()}',
+        \   '%{expand("%")}',
         \ ])
         let g:airline_section_b = airline#section#create_left([
         \   'branch',
@@ -133,7 +128,7 @@
       endfunction
       augroup vimrc_airline
         autocmd!
-        autocmd User AirlineAfterInit call AirlineInit()
+        autocmd User AirlineAfterInit call s:AirlineInit()
       augroup END
 
     Plug 'airblade/vim-gitgutter'
@@ -234,6 +229,11 @@
 
   " plugins > productivity {{{
 
+    Plug 'junegunn/vim-easy-align'
+
+    Plug 'aymericbeaumet/zshmappings.vim'
+      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
+
     Plug 'Lokaltog/vim-easymotion'
       map <silent> <Leader>e <Plug>(easymotion-prefix)
       let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
@@ -250,6 +250,7 @@
     Plug 'tpope/vim-eunuch'
 
     Plug 'tpope/vim-fugitive'
+      let g:fugitive_no_maps = 1
 
     Plug 'tpope/vim-repeat'
 
@@ -275,22 +276,6 @@
       let g:fzf_layout = {
       \   'down': '~40%',
       \ }
-      function! s:FzfCommandHistory()
-        let s:INTERRUPT = "\u03\u0c" " <C-c><C-l>
-        let s:SUBMIT = "\u0d" " <C-m>
-        let s:cmdtype = getcmdtype()
-        let s:args = string({
-        \   "options": "--query=" . shellescape(getcmdline()),
-        \ })
-        if s:cmdtype == ':'
-          return s:INTERRUPT . ":keepp call fzf#vim#command_history(" .  s:args . ")" . s:SUBMIT
-        elseif s:cmdtype == '/'
-          return s:INTERRUPT . ":keepp call fzf#vim#search_history(" .  s:args . ")" . s:SUBMIT
-        else
-          return ''
-        endif
-      endfunction
-      cnoremap <expr> <C-r> <SID>FzfCommandHistory()
 
     Plug 'qpkorr/vim-bufkill'
       nnoremap <silent> <Leader>d :<C-u>BD<CR>
@@ -414,7 +399,7 @@ set foldlevelstart=99
 set autoindent " auto-indentation
 set backspace=2 " fix backspace (on some OS/terminals)
 set expandtab " replace tabs by spaces
-set shiftwidth=2 " n spaces when using <TAB>
+set shiftwidth=0 " number of space to use for indent (0 means 'tabstop' spaces)
 set smarttab " insert `shiftwidth` spaces instead of tabs
 set softtabstop=2 " n spaces when using <TAB>
 set tabstop=2 " n spaces when using <TAB>
@@ -476,7 +461,7 @@ set modelines=1 " consider the first/last lines
 " mouse
 if has('mouse')
   set mouse=a
-  if exists('&ttyscroll') | set ttyscroll=3 | endif
+  if exists('&ttyscroll') | set ttyscroll=1 | endif
   if exists('&ttymouse') | set ttymouse=xterm2 | endif
 endif
 

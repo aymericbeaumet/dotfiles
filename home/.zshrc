@@ -46,6 +46,9 @@ autoload -Uz compinit && compinit # compdef
   }
   alias t='noglob tmux_wrapper' ; compdef t=tmux
   alias tmux='noglob tmux_wrapper'
+  if [[ -z "$TMUX" ]] ; then
+    t
+  fi
 
   # tree
   alias tree='tree -a -C --dirsfirst'

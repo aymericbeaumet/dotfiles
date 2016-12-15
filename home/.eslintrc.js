@@ -8,6 +8,7 @@ module.exports = {
     }
   },
   rules: {
-    semi: ['error', 'never'],
+    'comma-dangle': ['error', 'always'],
+    'semi': ['error', 'never'],
   },
 }
