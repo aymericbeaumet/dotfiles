@@ -1,4 +1,4 @@
-# Author: Aymeric Beaumet <hi@aymericbeaumet.com>
+# Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
 autoload -Uz compinit && compinit # compdef
@@ -138,7 +138,7 @@ autoload -Uz compinit && compinit # compdef
   on_ctrl_z() {
     if [[ -n "$(jobs)" ]] ; then
       fg
-    fi
+   fi
   }
   zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
 
@@ -160,8 +160,6 @@ autoload -Uz compinit && compinit # compdef
   source "$ZPLUG_HOME/zplug/init.zsh"
 
   zplug "$HOME/.zsh/tmp", from:local, use:promptline.sh
-
-  zplug '/usr/local/opt/z/etc/profile.d', from:local, use:z.sh
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
     export FZF_DEFAULT_COMMAND='fzf-tmux'

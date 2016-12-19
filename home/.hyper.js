@@ -1,7 +1,9 @@
 module.exports = {
   config: {
-    fontSize: 13,
-    fontFamily: 'Droid Sans Mono for Powerline Nerd Font Complete Mono',
+    bell: false,
+    copyOnSelect: true,
+    fontSize: 14,
+    fontFamily: '"Terminus (TTF)"',
     cursorShape: 'UNDERLINE',
   },
   plugins: [
