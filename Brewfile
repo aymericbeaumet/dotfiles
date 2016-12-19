@@ -21,6 +21,7 @@ brew 'git'
 brew 'gpg'
 brew 'htop'
 brew 'jq'
+brew 'lastpass-cli', args: [ '--with-pinentry' ]
 brew 'm-cli'
 brew 'mas'
 brew 'neovim'
