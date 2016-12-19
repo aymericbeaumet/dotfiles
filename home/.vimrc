@@ -1,5 +1,13 @@
-" Author: Aymeric Beaumet <hi@aymericbeaumet.com>>
+" Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 " Github: @aymericbeaumet/dotfiles
+
+" todo {{{
+"   - close vim-plug window after update
+"   - look into:
+"     * junegunn/vim-easy-align
+"     * sjl/gundo.vim
+"     * cohama/lexima.vim
+" }}}
 
 " init {{{
 
@@ -45,6 +53,8 @@
 
     Plug 'aymericbeaumet/symlink.vim'
 
+    Plug 'vitalk/vim-shebang'
+
   " }}}
 
   " plugins > interface {{{
@@ -52,8 +62,6 @@
     Plug 'altercation/vim-colors-solarized'
 
     Plug 'mhinz/vim-startify'
-      nnoremap <silent> <Leader>Ss :<C-u>SSave<CR>
-      nnoremap <silent> <Leader>Sq :<C-u>SClose<CR>
       let g:startify_bookmarks = [
       \   '~/.gitconfig',
       \   '~/.tmux.conf',
@@ -98,7 +106,7 @@
       let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/tmp/tmuxline.conf'
       function! s:AirlineInit()
         let g:airline_section_a = airline#section#create_left([
-        \   '%{fugitive#is_git_dir(getcwd() . "/.git") ? "\uE4FB " . fnamemodify(getcwd(), ":t") : "\uE4FF " . getcwd()}',
+        \   '%{isdirectory(getcwd() . "/.git") ? fnamemodify(getcwd(), ":t") : getcwd()}',
         \   '%{expand("%")}',
         \ ])
         let g:airline_section_b = airline#section#create_left([
@@ -131,6 +139,28 @@
         autocmd User AirlineAfterInit call s:AirlineInit()
       augroup END
 
+    Plug 'myusuf3/numbers.vim'
+
+    Plug 'nathanaelkane/vim-indent-guides'
+    let g:indent_guides_auto_colors = 0
+    let g:indent_guides_space_guides = 1
+    let g:indent_guides_tab_guides = 0
+    let g:indent_guides_enable_on_vim_startup = 1
+    let g:indent_guides_exclude_filetypes = [
+    \   'help',
+    \   'nerdtree',
+    \ ]
+    let g:indent_guides_default_mapping = 0
+    augroup vimrc_indent_guides
+      autocmd!
+      autocmd VimEnter,Colorscheme * highlight! IndentGuidesOdd  ctermfg=8 ctermbg=8
+      autocmd VimEnter,Colorscheme * highlight! IndentGuidesEven ctermfg=8 ctermbg=0
+    augroup END
+
+    Plug 'henrik/vim-indexed-search'
+
+    Plug 'luochen1990/rainbow'
+
     Plug 'airblade/vim-gitgutter'
       nmap [c <Plug>GitGutterPrevHunk
       nmap ]c <Plug>GitGutterNextHunk
@@ -139,6 +169,7 @@
 
     Plug 'scrooloose/nerdtree'
       nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle \| if &filetype ==# 'nerdtree' \| wincmd p \| endif<CR>
+      let g:netrw_dirhistmax = 0
       let g:NERDTreeWinSize = 35
       let g:NERDTreeMinimalUI = 1
       let g:NERDTreeShowHidden = 1
@@ -158,19 +189,7 @@
         autocmd BufEnter * if (winnr('$') == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
       augroup END
 
-      Plug 'Xuyuanp/nerdtree-git-plugin'
-        let g:NERDTreeIndicatorMapCustom = {
-        \   "Staged"    : "●",
-        \   "Unmerged"  : "✗",
-        \   "Modified"  : "+",
-        \   "Clean"     : "✔",
-        \   "Untracked" : "…",
-        \
-        \   "Renamed"   : "➜",
-        \   "Deleted"   : "✖",
-        \   "Dirty"     : "✗",
-        \   "Unknown"   : "?",
-        \ }
+    Plug 'Xuyuanp/nerdtree-git-plugin'
 
   " }}}
 
@@ -229,7 +248,13 @@
 
   " plugins > productivity {{{
 
-    Plug 'junegunn/vim-easy-align'
+    Plug 'terryma/vim-multiple-cursors'
+
+    Plug 'tpope/vim-speeddating'
+
+    Plug 'terryma/vim-expand-region'
+      vmap <silent> v <Plug>(expand_region_expand)
+      vmap <silent> V <Plug>(expand_region_shrink)
 
     Plug 'aymericbeaumet/zshmappings.vim'
       let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
@@ -264,13 +289,26 @@
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
       command! -bang -nargs=* GGrep call fzf#vim#grep('git grep --line-number ' . shellescape(<q-args>), 0, <bang>0)
+      command! -bang -nargs=* Z call fzf#run({
+      \   'down': '~40%',
+      \   'source': 'z -x | awk ' . shellescape('{ print $2 }'),
+      \   'options': join([
+      \     '--no-sort',
+      \     '--prompt=' . shellescape('Z> '),
+      \     '--query=' . shellescape(<q-args>),
+      \     '--tac',
+      \   ], ' '),
+      \   'sink': 'cd',
+      \ })
       nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
       nnoremap <silent> <Leader>f :<C-u>Files<CR>
       nnoremap <silent> <Leader>F :<C-u>GFiles<CR>
       nnoremap <silent> <Leader>g :<C-u>Ag<CR>
       nnoremap <silent> <Leader>G :<C-u>GGrep<CR>
+      nnoremap <silent> <Leader>z :<C-u>Z<CR>
       let g:fzf_action = {
       \   'ctrl-s': 'split',
+      \   'ctrl-t': 'tab split',
       \   'ctrl-v': 'vsplit',
       \ }
       let g:fzf_layout = {
@@ -278,6 +316,7 @@
       \ }
 
     Plug 'qpkorr/vim-bufkill'
+      let g:BufKillCreateMappings = 0
       nnoremap <silent> <Leader>d :<C-u>BD<CR>
 
   " }}}
@@ -295,52 +334,44 @@
         autocmd BufReadPost,BufWritePost * Neomake
       augroup END
 
-    Plug 'Shougo/neosnippet.vim'
-      let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
-      let g:neosnippet#snippets_directory = expand('~/.vim/snippets')
-      if has('conceal') | set conceallevel=2 concealcursor=niv | endif
+    Plug 'SirVer/ultisnips'
 
     if has('nvim') && has('python3')
       Plug 'Shougo/deoplete.nvim', { 'do': '
       \    pip2 install --upgrade neovim;
       \    pip3 install --upgrade neovim;
       \ ' }
+        set completeopt=longest,menuone,preview
         let g:deoplete#enable_at_startup = 1
         let g:deoplete#max_abbr_width = 0
         let g:deoplete#max_menu_width = 0
         let g:deoplete#file#enable_buffer_path = 1
-        set completeopt=menuone,noinsert
-        " Remap tab to perform the following actions in order of priority:
-        " - insert the snippet if recognized
-        " - insert the completion if the pum is visible
-        " - jump to the snippet placeholder
-        " - insert a tab
-        imap <silent><expr> <TAB>
-        \ neosnippet#expandable() ?
-        \   "\<Plug>(neosnippet_expand)" :
-        \ pumvisible() ?
-        \   "\<C-y>" :
-        \ neosnippet#jumpable() ?
-        \   "\<Plug>(neosnippet_jump)" :
-        \   "\<TAB>"
-        " Make Enter close the pum first (if any) before inserting a new line
-        imap <silent><expr> <CR>
-        \ pumvisible() ?
-        \   "\<C-e><CR>" :
-        \   "\<CR>"
+        let g:deoplete#enable_refresh_always = 1
+        let g:deoplete#auto_complete_delay = 100 " ms
+        augroup vimrc_deoplete
+          autocmd!
+          autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+        augroup END
     endif
+
+    Plug 'tpope/vim-endwise'
 
     " javascript
     Plug 'pangloss/vim-javascript'
     Plug 'carlitux/deoplete-ternjs', { 'do': '
     \   npm install --global tern;
     \ ' }
+      let g:tern#command = [ 'tern' ]
+      let g:tern#arguments = [ '--persistent' ]
 
     " json
     Plug 'elzr/vim-json'
 
     " markdown
     Plug 'gabrielelana/vim-markdown'
+      let g:markdown_enable_mappings = 0
+      let g:markdown_enable_spell_checking = 1
+      let g:markdown_enable_conceal = 1
 
     " vimscript
     Plug 'Shougo/neco-vim'
@@ -381,6 +412,7 @@ set virtualedit=block " allow the cursor to go in to virtual places
 
 " command
 set history=1000 " increase history size
+set shell=zsh
 
 " encoding
 if has('vim_starting') | set encoding=utf8 | endif " ensure proper encoding
@@ -399,13 +431,12 @@ set foldlevelstart=99
 set autoindent " auto-indentation
 set backspace=2 " fix backspace (on some OS/terminals)
 set expandtab " replace tabs by spaces
-set shiftwidth=0 " number of space to use for indent (0 means 'tabstop' spaces)
+set shiftwidth=2 " number of space to use for indent
 set smarttab " insert `shiftwidth` spaces instead of tabs
 set softtabstop=2 " n spaces when using <TAB>
 set tabstop=2 " n spaces when using <TAB>
 
 " interface
-let g:netrw_dirhistmax = 0 " disable netrw
 set colorcolumn=+1 " relative to text-width
 set fillchars="" " remove split separators
 silent! set formatoptions=croqj " format option stuff (see :help fo-table)
@@ -448,6 +479,9 @@ set textwidth=80 " 80 characters line
   " clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+
+  " [s]ort
+  vnoremap <silent> <Leader>s :sort<CR>
 
   " [R]eload configuration
   nnoremap <silent> <Leader>R  :<C-u>source $MYVIMRC<CR>:echom 'Vim configuration reloaded!'<CR>
@@ -508,8 +542,8 @@ set secure " protect the configuration files
 if has('gui_macvim')
   " Disable antialiasing with `!defaults write org.vim.MacVim AppleFontSmoothing -int 0`
   " Set the font
-  silent! set guifont=Monaco:h13 " fallback
-  silent! set guifont=Hack:h13 " preferred
+  silent! set guifont=Monaco:h12 " fallback
+  silent! set guifont=FiraCode-Light:h12 " preferred
   " Disable superfluous GUI stuff
   set guicursor=
   set guioptions=
@@ -526,8 +560,8 @@ endif
 if exists('neovim_dot_app')
   " Disable antialiasing with `!defaults write uk.foon.Neovim AppleFontSmoothing -int 0`
   " Set the font
-  silent! call MacSetFont('Monaco', 13) " fallback
-  silent! call MacSetFont('Hack', 13) " preferred
+  silent! call MacSetFont('Monaco', 12) " fallback
+  silent! call MacSetFont('FiraCode-Light', 12) " preferred
   " Enable anti-aliasing (see above to disable the ugly AA from OSX)
   call MacSetFontShouldAntialias(1)
 endif
