@@ -1,4 +1,5 @@
 # tap sources
+tap 'aymericbeaumet/formulae'
 tap 'caskroom/cask'
 tap 'caskroom/fonts'
 tap 'caskroom/versions'
@@ -11,8 +12,8 @@ tap 'rogual/neovim-dot-app'
 brew 'ag'
 brew 'ansiweather'
 brew 'bash'
-brew 'curl'
 brew 'ctags'
+brew 'curl'
 brew 'fswatch'
 brew 'fzf'
 brew 'gawk'
@@ -20,15 +21,18 @@ brew 'git'
 brew 'gpg'
 brew 'htop'
 brew 'jq'
-brew 'reattach-to-user-namespace'
 brew 'm-cli'
 brew 'mas'
+brew 'neovim'
+brew 'neovim-dot-app'
+brew 'reattach-to-user-namespace'
 brew 'tmux'
 brew 'tree'
+brew 'vim'
 brew 'wget'
 brew 'xz'
-brew 'zsh'
 brew 'z'
+brew 'zsh'
 
 # tools (gnu core utils)
 brew 'coreutils'
@@ -41,10 +45,6 @@ brew 'go'
 brew 'n'
 brew 'python'
 brew 'python3'
-
-# vim
-brew 'neovim', args: ['HEAD']
-brew 'neovim-dot-app', args: ['HEAD']
 
 # gui
 cask 'atom'
