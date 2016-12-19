@@ -2,11 +2,12 @@
 " Github: @aymericbeaumet/dotfiles
 
 " todo {{{
-"   - close vim-plug window after update
 "   - look into:
 "     * junegunn/vim-easy-align
 "     * sjl/gundo.vim
 "     * cohama/lexima.vim
+"   - configure ultisnips
+"   - fix filename relative to cwd (sometime going crazy)
 " }}}
 
 " init {{{
@@ -68,12 +69,6 @@
       \   '~/.vimrc',
       \   '~/.zshrc',
       \ ]
-      let g:startify_commands = [
-      \   [ 'Install plugins', 'PlugInstall' ],
-      \   [ 'Update plugins', 'PlugUpdate' ],
-      \   [ 'Update remote plugins', 'UpdateRemotePlugins' ],
-      \   [ 'Clean plugins', 'PlugClean' ],
-      \ ]
       let g:startify_session_dir = expand('~/.vim/tmp/sessions')
       let g:startify_session_persistence = 1
       let g:startify_session_delete_buffers = 1
@@ -88,21 +83,7 @@
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'solarized'
       let g:airline_powerline_fonts = 1
-      let g:airline_extensions = [
-      \   'branch',
-      \   'hunks',
-      \   'neomake',
-      \   'promptline',
-      \   'tmuxline',
-      \   'whitespace',
-      \ ]
       let g:airline#extensions#promptline#snapshot_file = '~/.zsh/tmp/promptline.sh'
-      let g:airline#extensions#tabline#show_tab_type = 0
-      let g:airline#extensions#tabline#buffer_min_count = 0
-      let g:airline#extensions#tabline#exclude_preview = 1
-      let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-      let g:airline#extensions#tabline#show_buffers = 1
-      let g:airline#extensions#tabline#show_tabs = 0
       let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/tmp/tmuxline.conf'
       function! s:AirlineInit()
         let g:airline_section_a = airline#section#create_left([
@@ -116,11 +97,11 @@
         let g:airline_section_c = airline#section#create_left([
         \ ])
         let g:airline_section_x = airline#section#create_right([
-        \   '%{&filetype}',
         \ ])
         let g:airline_section_y = airline#section#create_right([
-        \   '%{&fileencoding}',
-        \   '%{&fileformat}',
+        \   '%{empty(&filetype) ? "(no type)" : &filetype}',
+        \   '%{empty(&fileencoding) ? "(no encoding)" : &fileencoding}',
+        \   '%{empty(&fileformat) ? "(no format)" : &fileformat}',
         \ ])
         let g:airline_section_z = airline#section#create_right([
         \   '%p%%',
@@ -149,6 +130,7 @@
     let g:indent_guides_exclude_filetypes = [
     \   'help',
     \   'nerdtree',
+    \   'startify',
     \ ]
     let g:indent_guides_default_mapping = 0
     augroup vimrc_indent_guides
@@ -196,11 +178,13 @@
   " plugins > tmux {{{
 
     Plug 'benmills/vimux'
-      nnoremap <silent> <Leader>r: :<C-u>call VimuxPromptCommand()<CR>
-      nnoremap <silent> <Leader>rd :<C-u>call VimuxRunCommand('clear ; npm run dev')<CR>
-      nnoremap <silent> <Leader>ri :<C-u>call VimuxRunCommand('clear ; npm install')<CR>
-      nnoremap <silent> <Leader>rl :<C-u>call VimuxRunLastCommand<CR>
-      nnoremap <silent> <Leader>rt :<C-u>call VimuxRunCommand('clear ; npm test')<CR>
+      let g:VimuxPromptString = ':!'
+      nnoremap <silent> <Leader>r<Space> :<C-u>call VimuxRunLastCommand<CR>
+      nnoremap <silent> <Leader>r:!      :<C-u>call VimuxPromptCommand()<CR>
+      nnoremap <silent> <Leader>rq       :<C-u>call VimuxCloseRunner()<CR>
+      nnoremap <silent> <Leader>rd       :<C-u>call VimuxRunCommand('clear ; npm run dev')<CR>
+      nnoremap <silent> <Leader>ri       :<C-u>call VimuxRunCommand('clear ; npm install')<CR>
+      nnoremap <silent> <Leader>rt       :<C-u>call VimuxRunCommand('clear ; npm test')<CR>
 
     Plug 'edkolev/tmuxline.vim'
       let g:tmuxline_powerline_separators = 1
@@ -289,6 +273,25 @@
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
       command! -bang -nargs=* GGrep call fzf#vim#grep('git grep --line-number ' . shellescape(<q-args>), 0, <bang>0)
+      command! -bang -nargs=* CommandLauncher call fzf#run({
+      \    'down': '~40%',
+      \    'source': [
+      \      'edit $HOME/Workspace/github.com/aymericbeaumet/dotfiles/Brewfile " [brew] update Brewfile ',
+      \      'UpdateRemotePlugins                                              " [vim] update the plugins',
+      \      'edit $MYVIMRC                                                    " [vim] edit .vimrc',
+      \      'source $MYVIMRC                                                  " [vim] source .vimrc',
+      \      'PlugClean                                                        " [vim-plug] clean the plugins',
+      \      'PlugInstall                                                      " [vim-plug] install the plugins',
+      \      'PlugUpdate                                                       " [vim-plug] update the plugins',
+      \    ],
+      \   'options': join([
+      \     '--no-sort',
+      \     '--prompt=' . shellescape('Command> '),
+      \     '--query=' . shellescape(<q-args>),
+      \     '--tac',
+      \   ], ' '),
+      \   'sink': 'exec',
+      \ })
       command! -bang -nargs=* Z call fzf#run({
       \   'down': '~40%',
       \   'source': 'z -x | awk ' . shellescape('{ print $2 }'),
@@ -298,8 +301,9 @@
       \     '--query=' . shellescape(<q-args>),
       \     '--tac',
       \   ], ' '),
-      \   'sink': 'cd',
+      \   'sink': 'lcd',
       \ })
+      nnoremap <silent> <Leader>: :<C-u>CommandLauncher<CR>
       nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
       nnoremap <silent> <Leader>f :<C-u>Files<CR>
       nnoremap <silent> <Leader>F :<C-u>GFiles<CR>
@@ -371,7 +375,6 @@
     Plug 'gabrielelana/vim-markdown'
       let g:markdown_enable_mappings = 0
       let g:markdown_enable_spell_checking = 1
-      let g:markdown_enable_conceal = 1
 
     " vimscript
     Plug 'Shougo/neco-vim'
@@ -533,7 +536,11 @@ if has('persistent_undo')
 endif
 
 " vim
-set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/viminfo
+if has('nvim')
+  set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/nviminfo
+else
+  set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/viminfo
+endif
 set nobackup " disable backup files
 set noswapfile " disable swap files
 set secure " protect the configuration files
