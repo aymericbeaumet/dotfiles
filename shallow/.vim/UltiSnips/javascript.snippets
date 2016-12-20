@@ -1,0 +1,83 @@
+snippet us "use strict" b
+'use strict'$0
+endsnippet
+
+# debug
+
+snippet cl "console.log()" b
+console.log(${1:'$2'})$0
+endsnippet
+
+# commonjs modules
+
+snippet req "require()" b
+const $1 = require('${2:path}')$0
+endsnippet
+
+snippet me "module.exports" b
+module.exports${1: = $2}$0
+endsnippet
+
+# es6 modules
+
+snippet imp "import" b
+import $1 from '${2:path}'$0
+endsnippet
+
+snippet ex "export" b
+export ${1:name}
+endsnippet
+
+snippet exd "export default" b
+export default ${1:expression}
+endsnippet
+
+# eslint
+
+snippet edl "eslint-disable-line" b
+// eslint-disable-line ${1:rule}$0
+endsnippet
+
+# jasmine
+
+snippet des "jasmine-describe" b
+describe('${1:...}', () => ${2:{
+  $0
+}})
+endsnippet
+
+snippet it "jasmine-it" b
+it('should ${1:...}', () => ${2:{
+  $0
+}})
+endsnippet
+
+snippet ita "jasmine-it-async" b
+it('should ${1:...}', async () => ${2:{
+  $0
+}})
+endsnippet
+
+# jsdoc
+
+snippet j "jsdoc-block" b
+/**
+ * ${1:description}
+ */$0
+endsnippet
+
+snippet jc "JSDoc @const"
+@const {${1:type}}$0
+endsnippet
+
+snippet jt "JSDoc @type"
+@type {${1:type}}$0
+endsnippet
+
+snippet jp "JSDoc @param"
+@param {${1:type}} ${2:name}${3: - ${4:Description}}$0
+endsnippet
+
+snippet jr "JSDoc @return"
+@return {${1:type}}${2: - ${3:Description}}$0
+endsnippet

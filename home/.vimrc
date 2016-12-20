@@ -6,7 +6,6 @@
 "     * junegunn/vim-easy-align
 "     * sjl/gundo.vim
 "     * cohama/lexima.vim
-"   - configure ultisnips
 "   - fix filename relative to cwd (sometime going crazy)
 " }}}
 
@@ -29,9 +28,6 @@
     " highlight search matches (except while being in insert mode)
     autocmd VimEnter,BufReadPost,InsertLeave * setl hlsearch
     autocmd InsertEnter * setl nohlsearch
-    " highlight cursor line (except while being in insert mode)
-    autocmd VimEnter,BufReadPost,InsertLeave * setl cursorline
-    autocmd InsertEnter * setl nocursorline
   augroup END
 
   call plug#begin(expand('~/.vim/bundle'))
@@ -119,6 +115,12 @@
         autocmd!
         autocmd User AirlineAfterInit call s:AirlineInit()
       augroup END
+
+    Plug 'mtth/cursorcross.vim'
+      let g:cursorcross_dynamic = 'lw'
+      let g:cursorcross_mappings = 0
+      let g:cursorcross_no_map_CR = 1
+      let g:cursorcross_no_map_BS = 1
 
     Plug 'myusuf3/numbers.vim'
 
@@ -273,25 +275,6 @@
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
       command! -bang -nargs=* GGrep call fzf#vim#grep('git grep --line-number ' . shellescape(<q-args>), 0, <bang>0)
-      command! -bang -nargs=* CommandLauncher call fzf#run({
-      \    'down': '~40%',
-      \    'source': [
-      \      'edit $HOME/Workspace/github.com/aymericbeaumet/dotfiles/Brewfile " [brew] update Brewfile ',
-      \      'UpdateRemotePlugins                                              " [vim] update the plugins',
-      \      'edit $MYVIMRC                                                    " [vim] edit .vimrc',
-      \      'source $MYVIMRC                                                  " [vim] source .vimrc',
-      \      'PlugClean                                                        " [vim-plug] clean the plugins',
-      \      'PlugInstall                                                      " [vim-plug] install the plugins',
-      \      'PlugUpdate                                                       " [vim-plug] update the plugins',
-      \    ],
-      \   'options': join([
-      \     '--no-sort',
-      \     '--prompt=' . shellescape('Command> '),
-      \     '--query=' . shellescape(<q-args>),
-      \     '--tac',
-      \   ], ' '),
-      \   'sink': 'exec',
-      \ })
       command! -bang -nargs=* Z call fzf#run({
       \   'down': '~40%',
       \   'source': 'z -x | awk ' . shellescape('{ print $2 }'),
@@ -303,7 +286,6 @@
       \   ], ' '),
       \   'sink': 'lcd',
       \ })
-      nnoremap <silent> <Leader>: :<C-u>CommandLauncher<CR>
       nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
       nnoremap <silent> <Leader>f :<C-u>Files<CR>
       nnoremap <silent> <Leader>F :<C-u>GFiles<CR>
@@ -335,38 +317,32 @@
       let g:neomake_json_enabled_makers = [ 'jsonlint' ]
       augroup vimrc_neomake
         autocmd!
-        autocmd BufReadPost,BufWritePost * Neomake
+        autocmd BufWinEnter,BufWritePost * Neomake
       augroup END
 
-    Plug 'SirVer/ultisnips'
-
     if has('nvim') && has('python3')
-      Plug 'Shougo/deoplete.nvim', { 'do': '
-      \    pip2 install --upgrade neovim;
-      \    pip3 install --upgrade neovim;
-      \ ' }
-        set completeopt=longest,menuone,preview
-        let g:deoplete#enable_at_startup = 1
-        let g:deoplete#max_abbr_width = 0
-        let g:deoplete#max_menu_width = 0
-        let g:deoplete#file#enable_buffer_path = 1
-        let g:deoplete#enable_refresh_always = 1
-        let g:deoplete#auto_complete_delay = 100 " ms
-        augroup vimrc_deoplete
-          autocmd!
-          autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-        augroup END
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+      set completeopt=longest,menuone
+      let g:deoplete#enable_at_startup = 1
+      let g:deoplete#max_abbr_width = 0
+      let g:deoplete#max_menu_width = 0
+      let g:deoplete#file#enable_buffer_path = 1
     endif
 
-    Plug 'tpope/vim-endwise'
+    if has('python3')
+    Plug 'SirVer/ultisnips'
+      let g:UltiSnipsExpandTrigger = '<Tab>'
+      let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+      let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+      let g:UltiSnipsListSnippets = '<Nop>'
+      let g:UltiSnipsEnableSnipMate = 0
+    endif
 
     " javascript
     Plug 'pangloss/vim-javascript'
     Plug 'carlitux/deoplete-ternjs', { 'do': '
     \   npm install --global tern;
     \ ' }
-      let g:tern#command = [ 'tern' ]
-      let g:tern#arguments = [ '--persistent' ]
 
     " json
     Plug 'elzr/vim-json'
@@ -377,8 +353,8 @@
       let g:markdown_enable_spell_checking = 1
 
     " vimscript
-    Plug 'Shougo/neco-vim'
     Plug 'Shougo/neco-syntax'
+    Plug 'Shougo/neco-vim'
 
   " }}}
 
@@ -436,8 +412,8 @@ set backspace=2 " fix backspace (on some OS/terminals)
 set expandtab " replace tabs by spaces
 set shiftwidth=2 " number of space to use for indent
 set smarttab " insert `shiftwidth` spaces instead of tabs
-set softtabstop=2 " n spaces when using <TAB>
-set tabstop=2 " n spaces when using <TAB>
+set softtabstop=2 " n spaces when using <Tab>
+set tabstop=2 " n spaces when using <Tab>
 
 " interface
 set colorcolumn=+1 " relative to text-width
@@ -537,9 +513,9 @@ endif
 
 " vim
 if has('nvim')
-  set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/nviminfo
+set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/nviminfo
 else
-  set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/viminfo
+set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/viminfo
 endif
 set nobackup " disable backup files
 set noswapfile " disable swap files
@@ -547,29 +523,29 @@ set secure " protect the configuration files
 
 " MacVim (https://github.com/macvim-dev/macvim) {{{
 if has('gui_macvim')
-  " Disable antialiasing with `!defaults write org.vim.MacVim AppleFontSmoothing -int 0`
-  " Set the font
-  silent! set guifont=Monaco:h12 " fallback
-  silent! set guifont=FiraCode-Light:h12 " preferred
-  " Disable superfluous GUI stuff
-  set guicursor=
-  set guioptions=
-  " Use console dialog instead of popup
-  set guioptions+=c
-  " Disable cursor blinking
-  set guicursor+=a:blinkon0
-  " Set the cursor as an underscore
-  set guicursor+=a:hor8
+" Disable antialiasing with `!defaults write org.vim.MacVim AppleFontSmoothing -int 0`
+" Set the font
+silent! set guifont=Monaco:h12 " fallback
+silent! set guifont=FiraCode-Light:h12 " preferred
+" Disable superfluous GUI stuff
+set guicursor=
+set guioptions=
+" Use console dialog instead of popup
+set guioptions+=c
+" Disable cursor blinking
+set guicursor+=a:blinkon0
+" Set the cursor as an underscore
+set guicursor+=a:hor8
 endif
 " }}}
 
 " Neovim.app (https://github.com/neovim/neovim) {{{
 if exists('neovim_dot_app')
-  " Disable antialiasing with `!defaults write uk.foon.Neovim AppleFontSmoothing -int 0`
-  " Set the font
-  silent! call MacSetFont('Monaco', 12) " fallback
-  silent! call MacSetFont('FiraCode-Light', 12) " preferred
-  " Enable anti-aliasing (see above to disable the ugly AA from OSX)
-  call MacSetFontShouldAntialias(1)
+" Disable antialiasing with `!defaults write uk.foon.Neovim AppleFontSmoothing -int 0`
+" Set the font
+silent! call MacSetFont('Monaco', 12) " fallback
+silent! call MacSetFont('FiraCode-Light', 12) " preferred
+" Enable anti-aliasing (see above to disable the ugly AA from OSX)
+call MacSetFontShouldAntialias(1)
 endif
 " }}}

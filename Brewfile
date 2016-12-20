@@ -46,6 +46,7 @@ brew 'go'
 brew 'n'
 brew 'python'
 brew 'python3'
+brew 'rust'
 
 # gui
 cask 'atom'
