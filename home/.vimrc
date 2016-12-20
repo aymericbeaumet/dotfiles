@@ -2,10 +2,6 @@
 " Github: @aymericbeaumet/dotfiles
 
 " todo {{{
-"   - look into:
-"     * junegunn/vim-easy-align
-"     * sjl/gundo.vim
-"     * cohama/lexima.vim
 "   - fix filename relative to cwd (sometime going crazy)
 " }}}
 
@@ -116,6 +112,20 @@
         autocmd User AirlineAfterInit call s:AirlineInit()
       augroup END
 
+    Plug 'vim-scripts/YankRing.vim'
+      nnoremap <silent> <Leader>y :<C-u>silent! YRShow<CR>
+      let g:yankring_window_use_horiz = 0
+      let g:yankring_window_width = 45
+      let g:yankring_window_use_right = 0
+      let g:yankring_default_menu_mode = 0
+
+    Plug 'sjl/gundo.vim'
+      nnoremap <silent> <Leader>u :<C-u>GundoToggle<CR>
+      let g:gundo_width = 45
+      let g:gundo_preview_height = 20
+      let g:gundo_help = 0
+      let g:gundo_close_on_revert = 1
+
     Plug 'mtth/cursorcross.vim'
       let g:cursorcross_dynamic = 'lw'
       let g:cursorcross_mappings = 0
@@ -152,15 +162,16 @@
       let g:gitgutter_git_executable = 'git'
 
     Plug 'scrooloose/nerdtree'
-      nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle \| if &filetype ==# 'nerdtree' \| wincmd p \| endif<CR>
+      nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle<CR>
       let g:netrw_dirhistmax = 0
-      let g:NERDTreeWinSize = 35
+      let g:NERDTreeWinSize = 45
       let g:NERDTreeMinimalUI = 1
       let g:NERDTreeShowHidden = 1
       let g:NERDTreeMouseMode = 3
       let g:NERDTreeCascadeSingleChildDir = 1
       let g:NERDTreeCascadeOpenSingleChildDir = 1
       let g:NERDTreeAutoDeleteBuffer = 1
+      let g:NERDTreeQuitOnOpen = 1
       let g:NERDTreeDirArrowExpandable = ''
       let g:NERDTreeDirArrowCollapsible = ''
       let g:NERDTreeIgnore = [
@@ -233,6 +244,8 @@
   " }}}
 
   " plugins > productivity {{{
+
+    Plug 'junegunn/vim-easy-align'
 
     Plug 'terryma/vim-multiple-cursors'
 
