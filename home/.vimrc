@@ -54,29 +54,10 @@
 
     Plug 'altercation/vim-colors-solarized'
 
-    Plug 'mhinz/vim-startify'
-      let g:startify_bookmarks = [
-      \   '~/.gitconfig',
-      \   '~/.tmux.conf',
-      \   '~/.vimrc',
-      \   '~/.zshrc',
-      \ ]
-      let g:startify_session_dir = expand('~/.vim/tmp/sessions')
-      let g:startify_session_persistence = 1
-      let g:startify_session_delete_buffers = 1
-      let g:startify_change_to_dir = 0
-      let g:startify_change_to_vcs_root = 0
-      augroup vimrc_startify
-        autocmd!
-        autocmd VimEnter * if !argc() || (argc() == 1 && isdirectory(argv(0))) | Startify | NERDTree | wincmd w | endif
-      augroup END
-
     Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'solarized'
       let g:airline_powerline_fonts = 1
-      let g:airline#extensions#promptline#snapshot_file = '~/.zsh/tmp/promptline.sh'
-      let g:airline#extensions#tmuxline#snapshot_file = '~/.tmux/tmp/tmuxline.conf'
       function! s:AirlineInit()
         let g:airline_section_a = airline#section#create_left([
         \   '%{isdirectory(getcwd() . "/.git") ? fnamemodify(getcwd(), ":t") : getcwd()}',
@@ -112,127 +93,7 @@
         autocmd User AirlineAfterInit call s:AirlineInit()
       augroup END
 
-    Plug 'vim-scripts/YankRing.vim'
-      nnoremap <silent> <Leader>y :<C-u>silent! YRShow<CR>
-      let g:yankring_window_use_horiz = 0
-      let g:yankring_window_width = 45
-      let g:yankring_window_use_right = 0
-      let g:yankring_default_menu_mode = 0
-
-    Plug 'sjl/gundo.vim'
-      nnoremap <silent> <Leader>u :<C-u>GundoToggle<CR>
-      let g:gundo_width = 45
-      let g:gundo_preview_height = 20
-      let g:gundo_help = 0
-      let g:gundo_close_on_revert = 1
-
-    Plug 'mtth/cursorcross.vim'
-      let g:cursorcross_dynamic = 'lw'
-      let g:cursorcross_mappings = 0
-      let g:cursorcross_no_map_CR = 1
-      let g:cursorcross_no_map_BS = 1
-
-    Plug 'myusuf3/numbers.vim'
-
-    Plug 'nathanaelkane/vim-indent-guides'
-    let g:indent_guides_auto_colors = 0
-    let g:indent_guides_space_guides = 1
-    let g:indent_guides_tab_guides = 0
-    let g:indent_guides_enable_on_vim_startup = 1
-    let g:indent_guides_exclude_filetypes = [
-    \   'help',
-    \   'nerdtree',
-    \   'startify',
-    \ ]
-    let g:indent_guides_default_mapping = 0
-    augroup vimrc_indent_guides
-      autocmd!
-      autocmd VimEnter,Colorscheme * highlight! IndentGuidesOdd  ctermfg=8 ctermbg=8
-      autocmd VimEnter,Colorscheme * highlight! IndentGuidesEven ctermfg=8 ctermbg=0
-    augroup END
-
-    Plug 'henrik/vim-indexed-search'
-
     Plug 'luochen1990/rainbow'
-
-    Plug 'airblade/vim-gitgutter'
-      nmap [c <Plug>GitGutterPrevHunk
-      nmap ]c <Plug>GitGutterNextHunk
-      let g:gitgutter_map_keys = 0
-      let g:gitgutter_git_executable = 'git'
-
-    Plug 'scrooloose/nerdtree'
-      nnoremap <silent> <Leader>t :<C-u>NERDTreeToggle<CR>
-      let g:netrw_dirhistmax = 0
-      let g:NERDTreeWinSize = 45
-      let g:NERDTreeMinimalUI = 1
-      let g:NERDTreeShowHidden = 1
-      let g:NERDTreeMouseMode = 3
-      let g:NERDTreeCascadeSingleChildDir = 1
-      let g:NERDTreeCascadeOpenSingleChildDir = 1
-      let g:NERDTreeAutoDeleteBuffer = 1
-      let g:NERDTreeQuitOnOpen = 1
-      let g:NERDTreeDirArrowExpandable = ''
-      let g:NERDTreeDirArrowCollapsible = ''
-      let g:NERDTreeIgnore = [
-      \   '\.git$[[dir]]',
-      \   '\.gitmodules$[[file]]',
-      \   'node_modules$[[dir]]',
-      \ ]
-      augroup vimrc_nerdtree
-        autocmd!
-        autocmd BufEnter * if (winnr('$') == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-      augroup END
-
-    Plug 'Xuyuanp/nerdtree-git-plugin'
-
-  " }}}
-
-  " plugins > tmux {{{
-
-    Plug 'benmills/vimux'
-      let g:VimuxPromptString = ':!'
-      nnoremap <silent> <Leader>r<Space> :<C-u>call VimuxRunLastCommand<CR>
-      nnoremap <silent> <Leader>r:!      :<C-u>call VimuxPromptCommand()<CR>
-      nnoremap <silent> <Leader>rq       :<C-u>call VimuxCloseRunner()<CR>
-      nnoremap <silent> <Leader>rd       :<C-u>call VimuxRunCommand('clear ; npm run dev')<CR>
-      nnoremap <silent> <Leader>ri       :<C-u>call VimuxRunCommand('clear ; npm install')<CR>
-      nnoremap <silent> <Leader>rt       :<C-u>call VimuxRunCommand('clear ; npm test')<CR>
-
-    Plug 'edkolev/tmuxline.vim'
-      let g:tmuxline_powerline_separators = 1
-      let g:tmuxline_preset = {
-      \   'a': [
-      \     '#h',
-      \   ],
-      \   'b': [
-      \     '#(whoami)',
-      \   ],
-      \   'c': [
-      \     '#S',
-      \   ],
-      \   'win': [
-      \     '#I',
-      \     '#W',
-      \   ],
-      \   'cwin': [
-      \     '#I',
-      \     '#W',
-      \   ],
-      \   'x': [
-      \     "#(ansiweather -w false -h false -p false -d false -s true -a false -l Paris,FR | awk '" . '{ print $6 $7 " (" $4 ")" }' . "')",
-      \   ],
-      \   'y': [
-      \     "#(m battery status | awk -F '[;[:space:]]' '" . '/InternalBattery/ { print $4 " (" toupper(substr($6,1,1)) substr($6,2) ")" }' . "')",
-      \   ],
-      \   'z': [
-      \     '#(date "+%a %-d, %H:%M")',
-      \   ],
-      \   'options': {
-      \     'status-position': 'top',
-      \     'status-justify': 'centre',
-      \   },
-      \ }
 
   " }}}
 
@@ -244,16 +105,6 @@
   " }}}
 
   " plugins > productivity {{{
-
-    Plug 'junegunn/vim-easy-align'
-
-    Plug 'terryma/vim-multiple-cursors'
-
-    Plug 'tpope/vim-speeddating'
-
-    Plug 'terryma/vim-expand-region'
-      vmap <silent> v <Plug>(expand_region_expand)
-      vmap <silent> V <Plug>(expand_region_shrink)
 
     Plug 'aymericbeaumet/zshmappings.vim'
       let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
@@ -513,7 +364,7 @@ set wildmenu " better command line completion menu
 set wildmode=full " ensure better completion
 
 " theme
-set background=dark
+set background=light
 colorscheme solarized
 
 " undo

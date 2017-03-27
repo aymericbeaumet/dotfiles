@@ -8,6 +8,24 @@ tap 'homebrew/core'
 tap 'neovim/neovim'
 tap 'rogual/neovim-dot-app'
 
+# appstore
+mas 'wunderlist', id: 410628904
+mas 'xcode', id: 497799835
+
+# gui
+cask 'atom'
+cask 'calibre'
+cask 'font-fira-code'
+cask 'franz'
+cask 'google-chrome'
+cask 'google-drive'
+cask 'istat-menus'
+cask 'iterm2'
+cask 'transmission'
+cask 'vlc'
+cask 'xquartz'
+cask 'yacreader'
+
 # tools
 brew 'ag'
 brew 'ansiweather'
@@ -47,23 +65,3 @@ brew 'n'
 brew 'python'
 brew 'python3'
 brew 'rust'
-
-# gui
-cask 'atom'
-cask 'calibre'
-cask 'google-chrome'
-cask 'google-drive'
-cask 'istat-menus'
-cask 'iterm2'
-cask 'karabiner-elements'
-cask 'keyboard-maestro'
-cask 'messenger'
-cask 'slack'
-cask 'transmission'
-cask 'vlc'
-cask 'xquartz'
-cask 'yacreader'
-cask 'whatsapp'
-
-# appstore
-mas 'wunderlist', id: 410628904
