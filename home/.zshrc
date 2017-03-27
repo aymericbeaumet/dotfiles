@@ -36,19 +36,6 @@ autoload -Uz compinit && compinit # compdef
   # tmux
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
-  tmux_wrapper()
-  {
-    if (( $# == 0 )) ; then
-      command tmux new-session -A -s main
-    else
-      command tmux "$@"
-    fi
-  }
-  alias t='noglob tmux_wrapper' ; compdef t=tmux
-  alias tmux='noglob tmux_wrapper'
-  if [[ -z "$TMUX" ]] ; then
-    t
-  fi
 
   # tree
   alias tree='tree -a -C --dirsfirst'
@@ -159,7 +146,7 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  zplug "$HOME/.zsh/tmp", from:local, use:promptline.sh
+  zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
     export FZF_DEFAULT_COMMAND='fzf-tmux'
