@@ -39,6 +39,7 @@ brew 'git'
 brew 'gpg'
 brew 'htop'
 brew 'jq'
+brew 'keybase'
 brew 'lastpass-cli', args: [ '--with-pinentry' ]
 brew 'm-cli'
 brew 'mas'

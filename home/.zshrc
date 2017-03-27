@@ -147,6 +147,9 @@ autoload -Uz compinit && compinit # compdef
   source "$ZPLUG_HOME/zplug/init.zsh"
 
   zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
+    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
+    POWERLEVEL9K_COLOR_SCHEME='light'
+    POWERLEVEL9K_DISABLE_RPROMPT=true
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
     export FZF_DEFAULT_COMMAND='fzf-tmux'
