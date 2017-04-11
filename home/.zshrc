@@ -9,16 +9,14 @@ autoload -Uz compinit && compinit # compdef
   alias du='du -h'
 
   # git
-  git_wrapper()
+  git()
   {
     if (( $# == 0 )) ; then
-      command git status -sb
+      command hub status -sb
     else
-      command git "$@"
+      command hub "$@"
     fi
   }
-  alias g='noglob git_wrapper' ; compdef g=git
-  alias git='noglob git_wrapper'
 
   # grep
   alias grep='grep --color=auto'
@@ -146,14 +144,16 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
+  zplug 'zsh-users/zsh-completions'
+
+  zplug 'plugins/gitfast', from:oh-my-zsh
+
   zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
     POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
     POWERLEVEL9K_COLOR_SCHEME='light'
     POWERLEVEL9K_DISABLE_RPROMPT=true
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
-    export FZF_DEFAULT_COMMAND='fzf-tmux'
-    export FZF_DEFAULT_OPTS='-d 30%'
 
   zplug 'zsh-users/zsh-syntax-highlighting', from:github, use:zsh-syntax-highlighting.plugin.zsh
 
