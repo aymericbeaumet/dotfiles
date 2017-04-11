@@ -28,6 +28,11 @@
   sm = submodule
   st = status --short --branch
   sw = show
+  ; Hub aliases
+  cs = ci-status
+  cmp = compare
+  open = browse
+  pr = pull-request
 
 [color]
   branch = auto
@@ -55,7 +60,7 @@
   viewer = less
 
 [push]
-  default = simple
+  default = current
 
 [user]
   name = Aymeric Beaumet
@@ -66,3 +71,6 @@
 
 [bitbucket]
   user = aymericbeaumet
+
+[commit]
+  gpgsign = true
