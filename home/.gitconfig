@@ -26,6 +26,7 @@
   rsh = reset --hard
   sh = stash
   sm = submodule
+  smg = submodule foreach git
   st = status --short --branch
   sw = show
   ; Hub aliases
