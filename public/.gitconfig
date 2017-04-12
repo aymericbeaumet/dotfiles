@@ -5,7 +5,6 @@
   statusHints = false
 
 [alias]
-  ; Fast access aliases
   a = add
   br = branch
   ci = commit
@@ -75,3 +74,6 @@
 
 [commit]
   gpgsign = true
+
+[include]
+  path = ~/.gitconfig.secret
