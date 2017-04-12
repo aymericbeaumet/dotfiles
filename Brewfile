@@ -9,7 +9,6 @@ tap 'neovim/neovim'
 tap 'rogual/neovim-dot-app'
 
 # appstore
-mas 'wunderlist', id: 410628904
 mas 'xcode', id: 497799835
 
 # gui
