@@ -5,7 +5,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 WHOAMI="$(whoami)"
 
 # Configure the OS
-# $ ./do.sh configure
+# $ ./make configure
 function __configure {
   case "$(uname -s)" in
     Darwin)
@@ -27,7 +27,7 @@ function __configure {
 }
 
 # Install/Update the dependencies
-# $ ./do.sh install
+# $ ./make install
 function __install {
   git submodule update --init --recursive
   # install brew dependencies
@@ -37,16 +37,23 @@ function __install {
   n latest
 }
 
-# Create the symlinks in the $HOME directory
-# $ ./do.sh symlink
+# Create the symlinks in the $HOME directory from the public and the private
+# directories
+# $ ./make symlink
 function __symlink {
-  from_directory="$(pwd)/home"
-  find "$from_directory" -type file -o -type link | while read from ; do
-    to="$HOME/${from##"$from_directory/"}"
-    to_directory="$(dirname "$to")"
-    rm -rf "$to"
-    mkdir -p "$to_directory"
-    ln -svf "$from" "$to"
+  from_directories=(
+    "public"
+    "private"
+  )
+  for from_directory in ${from_directories[@]} ; do
+    resolved_from_directory="$(readlink -f "$(pwd)/$from_directory")"
+    find "$resolved_from_directory" -type file -o -type link | while read from ; do
+      to="$HOME/${from##"$resolved_from_directory/"}"
+      to_directory="$(dirname "$to")"
+      rm -rf "$to"
+      mkdir -p "$to_directory"
+      ln -svf "$from" "$to"
+    done
   done
 }
 
