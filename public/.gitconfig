@@ -15,6 +15,7 @@
   dfc = diff --cached
   fe = fetch
   l = log
+  me = merge
   pl = pull
   ps = push
   rb = rebase
