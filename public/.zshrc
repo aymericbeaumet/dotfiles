@@ -144,20 +144,21 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
+  # pure dependency
+  zplug 'mafredri/zsh-async'
+
   zplug 'zsh-users/zsh-completions'
 
   zplug 'plugins/gitfast', from:oh-my-zsh
 
-  zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
-    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
-    POWERLEVEL9K_COLOR_SCHEME='light'
-    POWERLEVEL9K_DISABLE_RPROMPT=true
-
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
 
-  zplug 'zsh-users/zsh-syntax-highlighting', from:github, use:zsh-syntax-highlighting.plugin.zsh
+  zplug 'intelfx/pure'
+    PURE_PROMPT_SYMBOL='λ'
 
-  if ! zplug check ; then
+  zplug 'zsh-users/zsh-syntax-highlighting', defer:2
+
+  if ! zplug check --verbose ; then
     zplug install
   fi
 
