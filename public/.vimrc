@@ -364,7 +364,7 @@ set wildmenu " better command line completion menu
 set wildmode=full " ensure better completion
 
 " theme
-set background=light
+set background=dark
 colorscheme solarized
 
 " undo
