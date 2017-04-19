@@ -144,7 +144,7 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  # pure dependency
+  # dependency for the following plugins: pure
   zplug 'mafredri/zsh-async'
 
   zplug 'zsh-users/zsh-completions'
@@ -155,6 +155,7 @@ autoload -Uz compinit && compinit # compdef
 
   zplug 'intelfx/pure'
     PURE_PROMPT_SYMBOL='λ'
+    PURE_CMD_MAX_EXEC_TIME=1
 
   zplug 'zsh-users/zsh-syntax-highlighting', defer:2
 
