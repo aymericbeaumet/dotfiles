@@ -106,9 +106,6 @@
 
   " plugins > productivity {{{
 
-    Plug 'aymericbeaumet/zshmappings.vim'
-      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
-
     Plug 'Lokaltog/vim-easymotion'
       map <silent> <Leader>e <Plug>(easymotion-prefix)
       let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
@@ -137,76 +134,16 @@
 
     Plug 'tpope/vim-unimpaired'
 
-    Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-      command! -bang -nargs=* GGrep call fzf#vim#grep('git grep --line-number ' . shellescape(<q-args>), 0, <bang>0)
-      command! -bang -nargs=* Z call fzf#run({
-      \   'down': '~40%',
-      \   'source': 'z -x | awk ' . shellescape('{ print $2 }'),
-      \   'options': join([
-      \     '--no-sort',
-      \     '--prompt=' . shellescape('Z> '),
-      \     '--query=' . shellescape(<q-args>),
-      \     '--tac',
-      \   ], ' '),
-      \   'sink': 'lcd',
-      \ })
-      nnoremap <silent> <Leader>b :<C-u>Buffers<CR>
-      nnoremap <silent> <Leader>f :<C-u>Files<CR>
-      nnoremap <silent> <Leader>F :<C-u>GFiles<CR>
-      nnoremap <silent> <Leader>g :<C-u>Ag<CR>
-      nnoremap <silent> <Leader>G :<C-u>GGrep<CR>
-      nnoremap <silent> <Leader>z :<C-u>Z<CR>
-      let g:fzf_action = {
-      \   'ctrl-s': 'split',
-      \   'ctrl-t': 'tab split',
-      \   'ctrl-v': 'vsplit',
-      \ }
-      let g:fzf_layout = {
-      \   'down': '~40%',
-      \ }
-
     Plug 'qpkorr/vim-bufkill'
       let g:BufKillCreateMappings = 0
       nnoremap <silent> <Leader>d :<C-u>BD<CR>
 
   " }}}
 
-  " plugins > code {{{
-
-    Plug 'benekastah/neomake', { 'do': '
-    \   npm install --global eslint standard xo;
-    \   npm install --global jsonlint;
-    \ ' }
-      let g:neomake_javascript_enabled_makers = [ 'eslint' ]
-      let g:neomake_json_enabled_makers = [ 'jsonlint' ]
-      augroup vimrc_neomake
-        autocmd!
-        autocmd BufWinEnter,BufWritePost * Neomake
-      augroup END
-
-    if has('nvim') && has('python3')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-      set completeopt=longest,menuone
-      let g:deoplete#enable_at_startup = 1
-      let g:deoplete#max_abbr_width = 0
-      let g:deoplete#max_menu_width = 0
-      let g:deoplete#file#enable_buffer_path = 1
-    endif
-
-    if has('python3')
-    Plug 'SirVer/ultisnips'
-      let g:UltiSnipsExpandTrigger = '<Tab>'
-      let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-      let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-      let g:UltiSnipsListSnippets = '<Nop>'
-      let g:UltiSnipsEnableSnipMate = 0
-    endif
+  " plugins > syntax {{{
 
     " javascript
     Plug 'pangloss/vim-javascript'
-    Plug 'carlitux/deoplete-ternjs', { 'do': '
-    \   npm install --global tern;
-    \ ' }
 
     " json
     Plug 'elzr/vim-json'
@@ -215,10 +152,6 @@
     Plug 'gabrielelana/vim-markdown'
       let g:markdown_enable_mappings = 0
       let g:markdown_enable_spell_checking = 1
-
-    " vimscript
-    Plug 'Shougo/neco-syntax'
-    Plug 'Shougo/neco-vim'
 
   " }}}
 
@@ -284,7 +217,6 @@ set colorcolumn=+1 " relative to text-width
 set fillchars="" " remove split separators
 silent! set formatoptions=croqj " format option stuff (see :help fo-table)
 set laststatus=2 " always display status line
-set list " show invisible characters
 set nospell " disable spell checking
 set number " show the line numbers
 set shortmess=aoOsI " disable vim welcome message / enable shorter messages
