@@ -3,6 +3,7 @@
 *.sug
 .VimballRecord
 .netrwhist
+.yarnrc
 bundle/
 shada/
 tmp/
