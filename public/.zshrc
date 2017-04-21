@@ -26,7 +26,7 @@ autoload -Uz compinit && compinit # compdef
 
   # ls
   eval "$(dircolors "$HOME/.dir_colors")" # https://github.com/seebi/dircolors-solarized
-  alias ls="ls -pFH --color --group-directories-first"
+  alias ls='ls -pFH --color --group-directories-first'
   alias l='ls -hl' ; compdef l=ls
   alias ll='l' ; compdef ll=ls
   alias la='ll -A' ; compdef la=ls
@@ -63,7 +63,7 @@ autoload -Uz compinit && compinit # compdef
   # directory
   setopt AUTO_CD # change directory without cd (`..` goes up by one)
 
-  # history
+  # history (http://zsh.sourceforge.net/Doc/Release/Options.html)
   export HISTFILE="$HOME/.zsh/tmp/history"
   export SAVEHIST=10000
   export HISTSIZE=10000
@@ -71,11 +71,10 @@ autoload -Uz compinit && compinit # compdef
   setopt INC_APPEND_HISTORY   # write after each command
   setopt SHARE_HISTORY        # share history between multiple shell sessions
   setopt EXTENDED_HISTORY     # more information in history (begin time, elapsed time, command)
-  setopt HIST_IGNORE_DUPS     # avoid duplicate command lines in history
+  setopt HIST_IGNORE_ALL_DUPS # avoid duplicate command lines in history
+  setopt HIST_FIND_NO_DUPS    # do not display duplicate in search
   setopt HIST_REDUCE_BLANKS   # remove superfluous blanks from history
   setopt HIST_IGNORE_SPACE    # do not store a command in history if it begins with a space
-  setopt HIST_NO_STORE        # do not store the `history` command
-  setopt HIST_NO_FUNCTIONS    # remove function definition from history
 
   # autocomplete
   setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
@@ -110,15 +109,6 @@ autoload -Uz compinit && compinit # compdef
   stty stop undef
   stty start undef
 
-  # make sure to only send non-empty buffer with ^M or ^O
-  on_ctrl_m_or_o() {
-    if [[ -n "$BUFFER" ]] ; then
-      zle accept-line
-    fi
-  }
-  zle -N on_ctrl_m_or_o ; bindkey '^M' on_ctrl_m_or_o
-  zle -N on_ctrl_m_or_o ; bindkey '^O' on_ctrl_m_or_o
-
   # bring the latest background app to foreground with ^Z
   on_ctrl_z() {
     if [[ -n "$(jobs)" ]] ; then
@@ -127,15 +117,10 @@ autoload -Uz compinit && compinit # compdef
   }
   zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
 
-  # prompt
-  setopt transient_rprompt
-
-  # env
-  if [[ -n "$TMUX" ]] ; then
-    export TERM=screen-256color
-  else
-    export TERM=xterm-256color
-  fi
+  # right prompt
+  setopt TRANSIENT_RPROMPT
+  setopt PROMPT_SUBST
+  RPROMPT='%F{green}node:$(node --version | sed s/^v//)'
 
 # }}}
 
@@ -144,12 +129,18 @@ autoload -Uz compinit && compinit # compdef
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
 
-  # dependency for the following plugins: pure
-  zplug 'mafredri/zsh-async'
+  zplug 'mafredri/zsh-async' # dependency for: pure
+
+  zplug 'plugins/colored-man-pages', from:oh-my-zsh
+  zplug 'plugins/docker', from:oh-my-zsh
+  zplug 'plugins/encode64', from:oh-my-zsh
+  zplug 'plugins/extract', from:oh-my-zsh
+  zplug 'plugins/gitfast', from:oh-my-zsh
+  zplug 'plugins/history', from:oh-my-zsh
+  zplug 'plugins/osx', from:oh-my-zsh
+  zplug 'plugins/yarn', from:oh-my-zsh
 
   zplug 'zsh-users/zsh-completions'
-
-  zplug 'plugins/gitfast', from:oh-my-zsh
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
 
@@ -159,7 +150,7 @@ autoload -Uz compinit && compinit # compdef
 
   zplug 'zsh-users/zsh-syntax-highlighting', defer:2
 
-  if ! zplug check --verbose ; then
+  if ! zplug check ; then
     zplug install
   fi
 
