@@ -31,6 +31,9 @@ autoload -Uz compinit && compinit # compdef
   alias ll='l' ; compdef ll=ls
   alias la='ll -A' ; compdef la=ls
 
+  # tig
+  alias t=tig
+
   # tmux
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
