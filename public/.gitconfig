@@ -25,6 +25,8 @@
   rs = reset
   rsh = reset --hard
   sh = stash
+  shl = stash list
+  shp = stash pop
   sm = submodule
   smfg = submodule foreach git
   st = status --short --branch
@@ -32,7 +34,7 @@
   ; Hub aliases
   cs = ci-status
   cmp = compare
-  open = browse
+  gh = browse
   pr = pull-request
 
 [color]
