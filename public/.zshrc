@@ -107,6 +107,8 @@ autoload -Uz compinit && compinit # compdef
   zstyle ':completion:*:manuals' separate-sections true
   # Ignore compiled files on vim completion
   zstyle ':completion:*:*:(v|vi|vim|mvim|nvim|gnvim|ghc|ghci|runhaskell):*:*files' ignored-patterns '*.(a|dylib|so|o|hi)'
+  # allow shift-TAB to backward complete
+  bindkey '^[[Z' reverse-menu-complete
 
   # disable flow control (^S / ^Q)
   stty stop undef
@@ -149,7 +151,6 @@ autoload -Uz compinit && compinit # compdef
 
   zplug 'intelfx/pure'
     PURE_PROMPT_SYMBOL='λ'
-    PURE_CMD_MAX_EXEC_TIME=1
 
   zplug 'zsh-users/zsh-syntax-highlighting', defer:2
 
