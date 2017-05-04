@@ -47,7 +47,9 @@
             },
             "standalone_keys": {
                 "caps_lock": "escape",
-                "return_or_enter": "return_or_enter"
+                "left_command": "spacebar",
+                "return_or_enter": "return_or_enter",
+                "right_command": "spacebar"
             },
             "virtual_hid_keyboard": {
                 "caps_lock_delay_milliseconds": 0,
