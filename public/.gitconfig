@@ -36,6 +36,10 @@
   cmp = compare
   gh = browse
   pr = pull-request
+  ; Secret aliases
+  sr = secret reveal -f
+  ; Convenience
+  flush = !git remote prune origin && git branch --merged master | grep -v '^ *master$' | xargs git branch -d
 
 [color]
   branch = auto
