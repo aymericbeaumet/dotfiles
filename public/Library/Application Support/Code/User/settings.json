@@ -1,6 +1,6 @@
 {
-  "editor.fontFamily": "Hack",
-  "editor.fontSize": 13,
+  "editor.fontFamily": "Fira Code",
+  "editor.fontSize": 14,
   "editor.lineNumbers": false,
   "editor.tabSize": 2,
   "files.exclude": {
@@ -22,5 +22,11 @@
   "telemetry.enableCrashReporter": false,
   "terminal.integrated.fontFamily": "Hack",
   "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.useCodeSnippetsOnMethodSuggest": true
+  "typescript.useCodeSnippetsOnMethodSuggest": true,
+  "workbench.welcome.enabled": false,
+  "vim.disableAnnoyingNeovimMessage": true,
+  "workbench.colorTheme": "Solarized Dark",
+  "workbench.iconTheme": "vs-seti",
+  "editor.cursorStyle": "underline-thin",
+  "workbench.activityBar.visible": false
 }
