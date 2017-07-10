@@ -9,5 +9,14 @@ export PATH="$BREW_DIR/opt/coreutils/libexec/gnubin:$BREW_DIR/bin:$PATH:/usr/sbi
 export MANPATH="$BREW_DIR/opt/coreutils/libexec/gnuman:$BREW_DIR/share/man:$MANPATH"
 export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
 
+# android studio
+export ANDROID_HOME="${HOME}/Library/Android/sdk"
+export PATH="${PATH}:${ANDROID_HOME}/tools"
+export PATH="${PATH}:${ANDROID_HOME}/platform-tools"
+
+# go
+export GOPATH="$HOME/Workspace"
+export PATH="$PATH:$GOPATH/bin"
+
 # Sourced here to make it available in login shells
 source '/usr/local/opt/z/etc/profile.d/z.sh'

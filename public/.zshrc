@@ -58,6 +58,7 @@ autoload -Uz compinit && compinit # compdef
 
   # open files
   export EDITOR=nvim
+  export REACT_EDITOR=atom
   export USE_EDITOR="$EDITOR"
   export VISUAL="$EDITOR"
   export VIEWER=open
@@ -137,7 +138,6 @@ autoload -Uz compinit && compinit # compdef
   zplug 'mafredri/zsh-async' # dependency for: pure
 
   zplug 'plugins/colored-man-pages', from:oh-my-zsh
-  zplug 'plugins/docker', from:oh-my-zsh
   zplug 'plugins/encode64', from:oh-my-zsh
   zplug 'plugins/extract', from:oh-my-zsh
   zplug 'plugins/gitfast', from:oh-my-zsh
@@ -149,7 +149,8 @@ autoload -Uz compinit && compinit # compdef
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
 
-  zplug 'intelfx/pure'
+  zplug 'mafredri/zsh-async', from:github
+  zplug 'sindresorhus/pure', use:pure.zsh, from:github, as:theme
     PURE_PROMPT_SYMBOL='λ'
 
   zplug 'zsh-users/zsh-syntax-highlighting', defer:2
