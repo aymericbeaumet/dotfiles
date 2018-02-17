@@ -18,5 +18,14 @@ export PATH="${PATH}:${ANDROID_HOME}/platform-tools"
 export GOPATH="$HOME/Workspace"
 export PATH="$PATH:$GOPATH/bin"
 
+# keybase
+export GPG_TTY=$(tty)
+
+# miniconda
+export PATH="/usr/local/miniconda3/bin:$PATH"
+
+# rust
+export PATH="$PATH:$HOME/.cargo/bin"
+
 # Sourced here to make it available in login shells
 source '/usr/local/opt/z/etc/profile.d/z.sh'

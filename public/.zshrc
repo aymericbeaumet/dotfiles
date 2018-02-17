@@ -128,14 +128,19 @@ autoload -Uz compinit && compinit # compdef
   setopt PROMPT_SUBST
   RPROMPT='%F{green}node:$(node --version | sed s/^v//)'
 
+  # set window title to be the current directory
+  precmd() {
+    if [ -n "$ITERM_SESSION_ID" ] ; then
+      echo -ne "\e]1;${PWD##*/}\a"
+    fi
+  }
+
 # }}}
 
 # plugins {{{
 
   export ZPLUG_HOME="$HOME/.zsh/bundle"
   source "$ZPLUG_HOME/zplug/init.zsh"
-
-  zplug 'mafredri/zsh-async' # dependency for: pure
 
   zplug 'plugins/colored-man-pages', from:oh-my-zsh
   zplug 'plugins/encode64', from:oh-my-zsh
@@ -145,15 +150,16 @@ autoload -Uz compinit && compinit # compdef
   zplug 'plugins/osx', from:oh-my-zsh
   zplug 'plugins/yarn', from:oh-my-zsh
 
-  zplug 'zsh-users/zsh-completions'
+  zplug 'zsh-users/zsh-completions', from:github
 
   zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
 
   zplug 'mafredri/zsh-async', from:github
   zplug 'sindresorhus/pure', use:pure.zsh, from:github, as:theme
+    EMACS=notempty # to forbid pure to set the title bar
     PURE_PROMPT_SYMBOL='λ'
 
-  zplug 'zsh-users/zsh-syntax-highlighting', defer:2
+  zplug 'zsh-users/zsh-syntax-highlighting', from:github, defer:2
 
   if ! zplug check ; then
     zplug install

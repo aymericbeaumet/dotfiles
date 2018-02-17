@@ -6,45 +6,307 @@
     },
     "profiles": [
         {
-            "devices": [],
-            "fn_function_keys": {
-                "f1": "display_brightness_decrement",
-                "f10": "mute",
-                "f11": "volume_decrement",
-                "f12": "volume_increment",
-                "f2": "display_brightness_increment",
-                "f3": "mission_control",
-                "f4": "launchpad",
-                "f5": "illumination_decrement",
-                "f6": "illumination_increment",
-                "f7": "rewind",
-                "f8": "play_or_pause",
-                "f9": "fastforward"
+            "complex_modifications": {
+                "parameters": {
+                    "basic.to_delayed_action_delay_milliseconds": 500,
+                    "basic.to_if_alone_timeout_milliseconds": 1000,
+                    "basic.to_if_held_down_threshold_milliseconds": 500
+                },
+                "rules": [
+                    {
+                        "description": "Post left_ctrl when return_or_enter is hold.",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "return_or_enter",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "right_control"
+                                    }
+                                ],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "return_or_enter"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Post escape if caps is pressed alone, left_ctrl otherwise",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "left_control"
+                                    }
+                                ],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
             },
+            "devices": [],
+            "fn_function_keys": [
+                {
+                    "from": {
+                        "key_code": "f1"
+                    },
+                    "to": {
+                        "key_code": "display_brightness_decrement"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f2"
+                    },
+                    "to": {
+                        "key_code": "display_brightness_increment"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f3"
+                    },
+                    "to": {
+                        "key_code": "mission_control"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f4"
+                    },
+                    "to": {
+                        "key_code": "launchpad"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f5"
+                    },
+                    "to": {
+                        "key_code": "illumination_decrement"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f6"
+                    },
+                    "to": {
+                        "key_code": "illumination_increment"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f7"
+                    },
+                    "to": {
+                        "key_code": "rewind"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f8"
+                    },
+                    "to": {
+                        "key_code": "play_or_pause"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f9"
+                    },
+                    "to": {
+                        "key_code": "fastforward"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f10"
+                    },
+                    "to": {
+                        "key_code": "mute"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f11"
+                    },
+                    "to": {
+                        "key_code": "volume_decrement"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f12"
+                    },
+                    "to": {
+                        "key_code": "volume_increment"
+                    }
+                }
+            ],
             "name": "Colemak",
             "one_to_many_mappings": {},
             "selected": true,
-            "simple_modifications": {
-                "caps_lock": "left_control",
-                "d": "s",
-                "e": "f",
-                "f": "t",
-                "g": "d",
-                "i": "u",
-                "j": "n",
-                "k": "e",
-                "l": "i",
-                "n": "k",
-                "o": "y",
-                "p": "semicolon",
-                "r": "p",
-                "return_or_enter": "right_control",
-                "s": "r",
-                "semicolon": "o",
-                "t": "g",
-                "u": "l",
-                "y": "j"
-            },
+            "simple_modifications": [
+                {
+                    "from": {
+                        "key_code": "d"
+                    },
+                    "to": {
+                        "key_code": "s"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "e"
+                    },
+                    "to": {
+                        "key_code": "f"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f"
+                    },
+                    "to": {
+                        "key_code": "t"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "g"
+                    },
+                    "to": {
+                        "key_code": "d"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "i"
+                    },
+                    "to": {
+                        "key_code": "u"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "j"
+                    },
+                    "to": {
+                        "key_code": "n"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "k"
+                    },
+                    "to": {
+                        "key_code": "e"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "l"
+                    },
+                    "to": {
+                        "key_code": "i"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "n"
+                    },
+                    "to": {
+                        "key_code": "k"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "o"
+                    },
+                    "to": {
+                        "key_code": "y"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "p"
+                    },
+                    "to": {
+                        "key_code": "semicolon"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "r"
+                    },
+                    "to": {
+                        "key_code": "p"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "s"
+                    },
+                    "to": {
+                        "key_code": "r"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "semicolon"
+                    },
+                    "to": {
+                        "key_code": "o"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "t"
+                    },
+                    "to": {
+                        "key_code": "g"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "u"
+                    },
+                    "to": {
+                        "key_code": "l"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "y"
+                    },
+                    "to": {
+                        "key_code": "j"
+                    }
+                }
+            ],
             "standalone_keys": {
                 "caps_lock": "escape",
                 "return_or_enter": "return_or_enter"
@@ -56,25 +318,117 @@
             }
         },
         {
-            "devices": [],
-            "fn_function_keys": {
-                "f1": "display_brightness_decrement",
-                "f10": "mute",
-                "f11": "volume_decrement",
-                "f12": "volume_increment",
-                "f2": "display_brightness_increment",
-                "f3": "mission_control",
-                "f4": "launchpad",
-                "f5": "illumination_decrement",
-                "f6": "illumination_increment",
-                "f7": "rewind",
-                "f8": "play_or_pause",
-                "f9": "fastforward"
+            "complex_modifications": {
+                "parameters": {
+                    "basic.to_delayed_action_delay_milliseconds": 500,
+                    "basic.to_if_alone_timeout_milliseconds": 1000,
+                    "basic.to_if_held_down_threshold_milliseconds": 500
+                },
+                "rules": []
             },
+            "devices": [],
+            "fn_function_keys": [
+                {
+                    "from": {
+                        "key_code": "f1"
+                    },
+                    "to": {
+                        "key_code": "display_brightness_decrement"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f2"
+                    },
+                    "to": {
+                        "key_code": "display_brightness_increment"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f3"
+                    },
+                    "to": {
+                        "key_code": "mission_control"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f4"
+                    },
+                    "to": {
+                        "key_code": "launchpad"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f5"
+                    },
+                    "to": {
+                        "key_code": "illumination_decrement"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f6"
+                    },
+                    "to": {
+                        "key_code": "illumination_increment"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f7"
+                    },
+                    "to": {
+                        "key_code": "rewind"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f8"
+                    },
+                    "to": {
+                        "key_code": "play_or_pause"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f9"
+                    },
+                    "to": {
+                        "key_code": "fastforward"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f10"
+                    },
+                    "to": {
+                        "key_code": "mute"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f11"
+                    },
+                    "to": {
+                        "key_code": "volume_decrement"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f12"
+                    },
+                    "to": {
+                        "key_code": "volume_increment"
+                    }
+                }
+            ],
             "name": "Default",
             "one_to_many_mappings": {},
             "selected": false,
-            "simple_modifications": {},
+            "simple_modifications": [],
             "standalone_keys": {},
             "virtual_hid_keyboard": {
                 "caps_lock_delay_milliseconds": 0,

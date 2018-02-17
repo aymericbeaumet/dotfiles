@@ -57,3 +57,6 @@ crashlytics.properties
 
 # Haskell
 .hdevtools*
+
+# Visual Studio Code
+.vscode

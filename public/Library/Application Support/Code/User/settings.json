@@ -1,32 +1,72 @@
 {
   "editor.fontFamily": "Fira Code",
   "editor.fontSize": 14,
-  "editor.lineNumbers": false,
   "editor.tabSize": 2,
-  "files.exclude": {
-    "**/.DS_Store": true,
-    "**/.git": true,
-    "**/.nyc_output": true,
-    "**/.svn": true,
-    "**/build": true,
-    "**/coverage": true,
-    "**/dist": true,
-    "**/node_modules": true,
-    "**/typings": true,
-    "**/*.js": { "when": "$(basename).ts" },
-    "**/*?.js": { "when": "$(basename).tsx" },
-    "**/*??.jsx": { "when": "$(basename).tsx" },
-    "**/*.js.map": true
-  },
   "telemetry.enableTelemetry": false,
   "telemetry.enableCrashReporter": false,
-  "terminal.integrated.fontFamily": "Hack",
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.useCodeSnippetsOnMethodSuggest": true,
-  "workbench.welcome.enabled": false,
-  "vim.disableAnnoyingNeovimMessage": true,
-  "workbench.colorTheme": "Solarized Dark",
-  "workbench.iconTheme": "vs-seti",
-  "editor.cursorStyle": "underline-thin",
-  "workbench.activityBar.visible": false
+  "workbench.colorTheme": "Gruvbox Dark (Medium Contrast)",
+  "workbench.startupEditor": "none",
+  "editor.minimap.enabled": false,
+  "workbench.iconTheme": "vscode-icons",
+  "vsicons.presets.foldersAllDefaultIcon": true,
+  "editor.renderIndentGuides": false,
+  "workbench.editor.enablePreview": false,
+  "editor.rulers": [
+    80
+  ],
+  "editor.fontLigatures": true,
+  "editor.cursorBlinking": "solid",
+  "editor.glyphMargin": false,
+  "editor.folding": false,
+  "editor.dragAndDrop": false,
+  "workbench.editor.tabCloseButton": "off",
+  "workbench.editor.showIcons": true,
+  "workbench.activityBar.visible": false,
+  "window.title": "${folderName}",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/coverage/**": true
+  },
+  "window.zoomLevel": 0,
+  "vsicons.dontShowNewVersionMessage": true,
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.fontFamily": "Fira Code",
+  "typescript.npm": "/usr/local/bin/npm",
+  "explorer.confirmDragAndDrop": false,
+  "search.useIgnoreFiles": true,
+  "extensions.ignoreRecommendations": false,
+  "editor.formatOnSave": true,
+  "prettier.eslintIntegration": true,
+  "eslint.run": "onType",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "typescriptHero.resolver.organizeOnSave": true,
+  "typescriptHero.resolver.insertSemicolons": false,
+  "typescriptHero.resolver.insertSpaceBeforeAndAfterImportBraces": true,
+  "typescriptHero.resolver.stringQuoteStyle": "'",
+  "[dockerfile]": {
+    "editor.formatOnSave": false
+  },
+  "[yaml]": {
+    "editor.formatOnSave": false
+  },
+  "cSpell.userWords": [
+    "brigad",
+    "proxying"
+  ],
+  "vim.easymotion": true,
+  "vim.easymotionKeys": "arstneio",
+  "vim.foldfix": true,
+  "explorerExcludedFiles.patterns": [
+    "file://.gitignore",
+    "file:///Users/aymericbeaumet/.gitignore"
+  ]
 }
