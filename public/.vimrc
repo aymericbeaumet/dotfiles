@@ -1,10 +1,6 @@
 " Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 " Github: @aymericbeaumet/dotfiles
 
-" todo {{{
-"   - fix filename relative to cwd (sometime going crazy)
-" }}}
-
 " init {{{
 
   if !1 | finish | endif " Skip initialization for vim-tiny or vim-small
@@ -19,100 +15,16 @@
 
 " plugins {{{
 
-  augroup vimrc_inlined_plugins
-    autocmd!
-    " highlight search matches (except while being in insert mode)
-    autocmd VimEnter,BufReadPost,InsertLeave * setl hlsearch
-    autocmd InsertEnter * setl nohlsearch
-  augroup END
-
   call plug#begin(expand('~/.vim/bundle'))
 
-  " plugins > configuration {{{
-
-    Plug 'embear/vim-localvimrc'
-      let g:localvimrc_sandbox = 0
-      let g:localvimrc_ask = 0
-
-    Plug 'airblade/vim-rooter'
-      let g:rooter_change_directory_for_non_project_files = 'current'
-      let g:rooter_use_lcd = 1
-      let g:rooter_silent_chdir = 1
-      let g:rooter_resolve_links = 1
+    Plug 'morhetz/gruvbox'
 
     Plug 'editorconfig/editorconfig-vim'
 
-    Plug 'dietsche/vim-lastplace'
-
-    Plug 'aymericbeaumet/symlink.vim'
-
-    Plug 'vitalk/vim-shebang'
-
-  " }}}
-
-  " plugins > interface {{{
-
-    Plug 'altercation/vim-colors-solarized'
-
-    Plug 'vim-airline/vim-airline-themes' | Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
-      let g:airline_theme = 'solarized'
+      let g:airline_theme = 'gruvbox'
       let g:airline_powerline_fonts = 1
-      function! s:AirlineInit()
-        let g:airline_section_a = airline#section#create_left([
-        \   '%{isdirectory(getcwd() . "/.git") ? fnamemodify(getcwd(), ":t") : getcwd()}',
-        \   '%{expand("%")}',
-        \ ])
-        let g:airline_section_b = airline#section#create_left([
-        \   'branch',
-        \   'hunks',
-        \ ])
-        let g:airline_section_c = airline#section#create_left([
-        \ ])
-        let g:airline_section_x = airline#section#create_right([
-        \ ])
-        let g:airline_section_y = airline#section#create_right([
-        \   '%{empty(&filetype) ? "(no type)" : &filetype}',
-        \   '%{empty(&fileencoding) ? "(no encoding)" : &fileencoding}',
-        \   '%{empty(&fileformat) ? "(no format)" : &fileformat}',
-        \ ])
-        let g:airline_section_z = airline#section#create_right([
-        \   '%p%%',
-        \   "\uE0A1%l:\uE0A3%c",
-        \ ])
-        let g:airline_section_warning = airline#section#create_right([
-        \   'whitespace',
-        \   'neomake_warning_count',
-        \ ])
-        let g:airline_section_error = airline#section#create_right([
-        \   'neomake_error_count',
-        \ ])
-      endfunction
-      augroup vimrc_airline
-        autocmd!
-        autocmd User AirlineAfterInit call s:AirlineInit()
-      augroup END
-
-    Plug 'luochen1990/rainbow'
-
-  " }}}
-
-  " plugins > zsh {{{
-
-    Plug 'edkolev/promptline.vim'
-      let g:promptline_powerline_symbols = 1
-
-  " }}}
-
-  " plugins > productivity {{{
-
-    Plug 'Lokaltog/vim-easymotion'
-      map <silent> <Leader>e <Plug>(easymotion-prefix)
-      let g:EasyMotion_keys = 'LPUFYW;QNTESIROA' " Colemak toprow/homerow
-      let g:EasyMotion_off_screen_search = 1 " do not search outside of screen
-      let g:EasyMotion_smartcase = 1 " like Vim
-      let g:EasyMotion_use_smartsign_us = 1 " ! and 1 are treated as the same
-      let g:EasyMotion_use_upper = 1 " recognize both upper and lowercase keys
 
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
@@ -120,9 +32,6 @@
       let g:NERDSpaceDelims = 1
 
     Plug 'tpope/vim-eunuch'
-
-    Plug 'tpope/vim-fugitive'
-      let g:fugitive_no_maps = 1
 
     Plug 'tpope/vim-repeat'
 
@@ -132,46 +41,15 @@
       let g:surround_no_mappings = 1 " disable the default mappings
       let g:surround_indent = 1 " reindent with `=` after surrounding
 
-    Plug 'tpope/vim-unimpaired'
-
-    Plug 'qpkorr/vim-bufkill'
-      let g:BufKillCreateMappings = 0
-      nnoremap <silent> <Leader>d :<C-u>BD<CR>
-
-  " }}}
-
-  " plugins > syntax {{{
-
-    " javascript
     Plug 'pangloss/vim-javascript'
 
-    " json
     Plug 'elzr/vim-json'
 
-    " markdown
     Plug 'gabrielelana/vim-markdown'
       let g:markdown_enable_mappings = 0
       let g:markdown_enable_spell_checking = 1
 
-  " }}}
-
   call plug#end()
-
-  let g:promptline_preset = {
-  \   'a': [
-  \     '%~',
-  \   ],
-  \   'b': [
-  \     promptline#slices#vcs_branch(),
-  \     promptline#slices#git_status(),
-  \   ],
-  \   'c': [
-  \     promptline#slices#jobs(),
-  \   ],
-  \   'warn': [
-  \     promptline#slices#last_exit_code(),
-  \   ],
-  \ }
 
 " }}}
 
@@ -297,7 +175,7 @@ set wildmode=full " ensure better completion
 
 " theme
 set background=dark
-colorscheme solarized
+colorscheme gruvbox
 
 " undo
 if has('persistent_undo')
@@ -306,42 +184,3 @@ if has('persistent_undo')
   set undoreload=10000
   let &undodir = expand('~/.vim/tmp/undo//')
 endif
-
-" vim
-if has('nvim')
-set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/nviminfo
-else
-set viminfo=%,<800,'10,/50,:100,h,f0,n~/.vim/tmp/viminfo
-endif
-set nobackup " disable backup files
-set noswapfile " disable swap files
-set secure " protect the configuration files
-
-" MacVim (https://github.com/macvim-dev/macvim) {{{
-if has('gui_macvim')
-" Disable antialiasing with `!defaults write org.vim.MacVim AppleFontSmoothing -int 0`
-" Set the font
-silent! set guifont=Monaco:h12 " fallback
-silent! set guifont=FiraCode-Light:h12 " preferred
-" Disable superfluous GUI stuff
-set guicursor=
-set guioptions=
-" Use console dialog instead of popup
-set guioptions+=c
-" Disable cursor blinking
-set guicursor+=a:blinkon0
-" Set the cursor as an underscore
-set guicursor+=a:hor8
-endif
-" }}}
-
-" Neovim.app (https://github.com/neovim/neovim) {{{
-if exists('neovim_dot_app')
-" Disable antialiasing with `!defaults write uk.foon.Neovim AppleFontSmoothing -int 0`
-" Set the font
-silent! call MacSetFont('Monaco', 12) " fallback
-silent! call MacSetFont('FiraCode-Light', 12) " preferred
-" Enable anti-aliasing (see above to disable the ugly AA from OSX)
-call MacSetFontShouldAntialias(1)
-endif
-" }}}
