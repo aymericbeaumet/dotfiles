@@ -16,7 +16,6 @@
   ],
   "editor.fontLigatures": true,
   "editor.cursorBlinking": "solid",
-  "editor.glyphMargin": false,
   "editor.folding": false,
   "editor.dragAndDrop": false,
   "workbench.editor.tabCloseButton": "off",
@@ -39,34 +38,29 @@
   "explorer.confirmDragAndDrop": false,
   "search.useIgnoreFiles": true,
   "extensions.ignoreRecommendations": false,
-  "editor.formatOnSave": true,
-  "prettier.eslintIntegration": true,
-  "eslint.run": "onType",
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  "typescriptHero.resolver.organizeOnSave": true,
-  "typescriptHero.resolver.insertSemicolons": false,
-  "typescriptHero.resolver.insertSpaceBeforeAndAfterImportBraces": true,
-  "typescriptHero.resolver.stringQuoteStyle": "'",
-  "[dockerfile]": {
-    "editor.formatOnSave": false
-  },
-  "[yaml]": {
-    "editor.formatOnSave": false
-  },
-  "cSpell.userWords": [
-    "brigad",
-    "proxying"
-  ],
   "vim.easymotion": true,
   "vim.easymotionKeys": "arstneio",
   "vim.foldfix": true,
   "explorerExcludedFiles.patterns": [
     "file://.gitignore",
     "file:///Users/aymericbeaumet/.gitignore"
-  ]
+  ],
+  "eslint.enable": false,
+  "editor.formatOnSave": false,
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "[rust]": {
+    "editor.formatOnSave": true
+  },
+  "[terraform]": {
+    "editor.formatOnSave": true
+  },
+  "editor.trimAutoWhitespace": true,
+  "files.trimTrailingWhitespace": true,
+  "workbench.statusBar.feedback.visible": false,
+  "debug.hideActionBar": true,
+  "rust.all_features": true,
+  "rust.build_on_save": true,
+  "explorer.confirmDelete": false
 }

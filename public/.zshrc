@@ -1,7 +1,13 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
-autoload -Uz compinit && compinit # compdef
+# https://gist.github.com/ctechols/ca1035271ad134841284
+autoload -Uz compinit 
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+	compinit
+else
+	compinit -C
+fi
 
 # commands {{{
 
@@ -17,6 +23,7 @@ autoload -Uz compinit && compinit # compdef
       command hub "$@"
     fi
   }
+  alias g=git ; compdef g=git
 
   # grep
   alias grep='grep --color=auto'
@@ -75,10 +82,13 @@ autoload -Uz compinit && compinit # compdef
   setopt INC_APPEND_HISTORY   # write after each command
   setopt SHARE_HISTORY        # share history between multiple shell sessions
   setopt EXTENDED_HISTORY     # more information in history (begin time, elapsed time, command)
+  setopt HIST_IGNORE_DUPS
   setopt HIST_IGNORE_ALL_DUPS # avoid duplicate command lines in history
   setopt HIST_FIND_NO_DUPS    # do not display duplicate in search
   setopt HIST_REDUCE_BLANKS   # remove superfluous blanks from history
   setopt HIST_IGNORE_SPACE    # do not store a command in history if it begins with a space
+  setopt HIST_EXPIRE_DUPS_FIRST
+  setopt HIST_SAVE_NO_DUPS
 
   # autocomplete
   setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
@@ -123,10 +133,8 @@ autoload -Uz compinit && compinit # compdef
   }
   zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
 
-  # right prompt
-  setopt TRANSIENT_RPROMPT
-  setopt PROMPT_SUBST
-  RPROMPT='%F{green}node:$(node --version | sed s/^v//)'
+  # left prompt
+  PROMPT='λ '
 
   # set window title to be the current directory
   precmd() {
@@ -139,32 +147,34 @@ autoload -Uz compinit && compinit # compdef
 
 # plugins {{{
 
-  export ZPLUG_HOME="$HOME/.zsh/bundle"
-  source "$ZPLUG_HOME/zplug/init.zsh"
+ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 
-  zplug 'plugins/colored-man-pages', from:oh-my-zsh
-  zplug 'plugins/encode64', from:oh-my-zsh
-  zplug 'plugins/extract', from:oh-my-zsh
-  zplug 'plugins/gitfast', from:oh-my-zsh
-  zplug 'plugins/history', from:oh-my-zsh
-  zplug 'plugins/osx', from:oh-my-zsh
-  zplug 'plugins/yarn', from:oh-my-zsh
+antibody_bundle()
+{
+  cat >"$ANTIBODY_BUNDLE_FILE" <<EOF
+$(antibody bundle mafredri/zsh-async)
+$(antibody bundle sindresorhus/pure)
+  EMACS=__notempty__ # forbid pure to set the title bar
+  PURE_PROMPT_SYMBOL='λ'
 
-  zplug 'zsh-users/zsh-completions', from:github
+$(antibody bundle robbyrussell/oh-my-zsh folder:plugins/colored-man-pages)
 
-  zplug '/usr/local/opt/fzf/shell', from:local, use:key-bindings.zsh
+source /usr/local/opt/fzf/shell/key-bindings.zsh
 
-  zplug 'mafredri/zsh-async', from:github
-  zplug 'sindresorhus/pure', use:pure.zsh, from:github, as:theme
-    EMACS=notempty # to forbid pure to set the title bar
-    PURE_PROMPT_SYMBOL='λ'
+$(antibody bundle zsh-users/zsh-autosuggestions)
 
-  zplug 'zsh-users/zsh-syntax-highlighting', from:github, defer:2
+# (must be the last plugin to be loaded)
+$(antibody bundle zsh-users/zsh-syntax-highlighting)
+EOF
+}
 
-  if ! zplug check ; then
-    zplug install
-  fi
-
-  zplug load
+if [ ! -r "$ANTIBODY_BUNDLE_FILE" ]; then
+  antibody_bundle
+fi
+source "$ANTIBODY_BUNDLE_FILE"
 
 # }}}
+
+# tabtab source for electron-forge package
+# uninstall by removing these lines or running `tabtab uninstall electron-forge`
+[[ -f /Users/aymericbeaumet/.config/yarn/global/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/aymericbeaumet/.config/yarn/global/node_modules/tabtab/.completions/electron-forge.zsh
