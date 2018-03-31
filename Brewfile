@@ -32,7 +32,7 @@ cask 'vlc'
 cask 'xquartz'
 cask 'yacreader'
 
-# tools
+# cli
 brew 'ag'
 brew 'ansiweather'
 brew 'awscli'
@@ -72,6 +72,7 @@ brew 'xz'
 brew 'yarn'
 brew 'z'
 brew 'zsh'
+brew 'getantibody/tap/antibody'
 
 # tools (gnu core utils)
 brew 'coreutils'

@@ -21,9 +21,6 @@ export PATH="$PATH:$GOPATH/bin"
 # keybase
 export GPG_TTY=$(tty)
 
-# miniconda
-export PATH="/usr/local/miniconda3/bin:$PATH"
-
 # rust
 export PATH="$PATH:$HOME/.cargo/bin"
 

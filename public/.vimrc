@@ -96,7 +96,6 @@ set fillchars="" " remove split separators
 silent! set formatoptions=croqj " format option stuff (see :help fo-table)
 set laststatus=2 " always display status line
 set nospell " disable spell checking
-set number " show the line numbers
 set shortmess=aoOsI " disable vim welcome message / enable shorter messages
 set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
