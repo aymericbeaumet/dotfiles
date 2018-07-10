@@ -23,15 +23,14 @@
   "workbench.activityBar.visible": false,
   "window.title": "${folderName}",
   "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/coverage/**": true
+    "**/.git": false,
+    "**/.svn": false,
+    "**/.hg": false,
+    "**/CVS": false,
+    "**/.DS_Store": false,
+    "**/coverage/**": false
   },
   "window.zoomLevel": 0,
-  "vsicons.dontShowNewVersionMessage": true,
   "terminal.integrated.fontSize": 14,
   "terminal.integrated.fontFamily": "Fira Code",
   "typescript.npm": "/usr/local/bin/npm",
@@ -41,13 +40,12 @@
   "vim.easymotion": true,
   "vim.easymotionKeys": "arstneio",
   "vim.foldfix": true,
-  "explorerExcludedFiles.patterns": [
-    "file://.gitignore",
-    "file:///Users/aymericbeaumet/.gitignore"
-  ],
-  "eslint.enable": false,
+  "eslint.enable": true,
   "editor.formatOnSave": false,
   "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
     "editor.formatOnSave": true
   },
   "[rust]": {
@@ -56,11 +54,26 @@
   "[terraform]": {
     "editor.formatOnSave": true
   },
+  "[yaml]": {
+    "editor.formatOnSave": true
+  },
   "editor.trimAutoWhitespace": true,
   "files.trimTrailingWhitespace": true,
   "workbench.statusBar.feedback.visible": false,
   "debug.hideActionBar": true,
-  "rust.all_features": true,
-  "rust.build_on_save": true,
-  "explorer.confirmDelete": false
+  "explorer.confirmDelete": false,
+  "rust.rustup": {
+    "toolchain": "stable-x86_64-apple-darwin",
+    "nightlyToolchain": "nightly-x86_64-apple-darwin"
+  },
+  "rust.mode": "rls",
+  "rust.rls": {
+    "useRustfmt": true
+  },
+  "prettier.eslintIntegration": true,
+  "files.autoSave": "onFocusChange",
+  "files.hotExit": "off",
+  "workbench.tree.horizontalScrolling": true,
+  "editor.codeLens": false,
+  "vsicons.dontShowNewVersionMessage": true
 }
