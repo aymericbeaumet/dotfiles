@@ -2,7 +2,7 @@
 # Github: @aymericbeaumet/dotfiles
 
 # https://gist.github.com/ctechols/ca1035271ad134841284
-autoload -Uz compinit 
+autoload -Uz compinit
 if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
 	compinit
 else
@@ -155,7 +155,6 @@ antibody_bundle()
 $(antibody bundle mafredri/zsh-async)
 $(antibody bundle sindresorhus/pure)
   EMACS=__notempty__ # forbid pure to set the title bar
-  PURE_PROMPT_SYMBOL='λ'
 
 $(antibody bundle robbyrussell/oh-my-zsh folder:plugins/colored-man-pages)
 
@@ -172,9 +171,3 @@ if [ ! -r "$ANTIBODY_BUNDLE_FILE" ]; then
   antibody_bundle
 fi
 source "$ANTIBODY_BUNDLE_FILE"
-
-# }}}
-
-# tabtab source for electron-forge package
-# uninstall by removing these lines or running `tabtab uninstall electron-forge`
-[[ -f /Users/aymericbeaumet/.config/yarn/global/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/aymericbeaumet/.config/yarn/global/node_modules/tabtab/.completions/electron-forge.zsh
