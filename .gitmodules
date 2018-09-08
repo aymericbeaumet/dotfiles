@@ -1,3 +1,6 @@
 [submodule "shallow/.vim/autoload"]
 	path = shallow/.vim/autoload
 	url = https://github.com/junegunn/vim-plug.git
+[submodule "shallow/.tmux/bundle/tpm"]
+	path = shallow/.tmux/bundle/tpm
+	url = https://github.com/tmux-plugins/tpm

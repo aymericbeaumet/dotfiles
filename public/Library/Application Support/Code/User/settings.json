@@ -11,10 +11,8 @@
   "vsicons.presets.foldersAllDefaultIcon": true,
   "editor.renderIndentGuides": false,
   "workbench.editor.enablePreview": false,
-  "editor.rulers": [
-    80
-  ],
-  "editor.fontLigatures": true,
+  "editor.rulers": [80],
+  "editor.fontLigatures": false,
   "editor.cursorBlinking": "solid",
   "editor.folding": false,
   "editor.dragAndDrop": false,
@@ -37,11 +35,8 @@
   "explorer.confirmDragAndDrop": false,
   "search.useIgnoreFiles": true,
   "extensions.ignoreRecommendations": false,
-  "vim.easymotion": true,
-  "vim.easymotionKeys": "arstneio",
-  "vim.foldfix": true,
   "eslint.enable": true,
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "[javascript]": {
     "editor.formatOnSave": true
   },
@@ -60,20 +55,16 @@
   "editor.trimAutoWhitespace": true,
   "files.trimTrailingWhitespace": true,
   "workbench.statusBar.feedback.visible": false,
-  "debug.hideActionBar": true,
   "explorer.confirmDelete": false,
-  "rust.rustup": {
-    "toolchain": "stable-x86_64-apple-darwin",
-    "nightlyToolchain": "nightly-x86_64-apple-darwin"
-  },
-  "rust.mode": "rls",
-  "rust.rls": {
-    "useRustfmt": true
-  },
   "prettier.eslintIntegration": true,
-  "files.autoSave": "onFocusChange",
   "files.hotExit": "off",
   "workbench.tree.horizontalScrolling": true,
   "editor.codeLens": false,
-  "vsicons.dontShowNewVersionMessage": true
+  "vsicons.dontShowNewVersionMessage": true,
+  "vim.leader": "<space>",
+  "vim.easymotion": true,
+  "vim.easymotionKeys": "asdfjkl;",
+  "editor.formatOnPaste": true,
+  "breadcrumbs.enabled": false,
+  "javascript.updateImportsOnFileMove.enabled": "always"
 }

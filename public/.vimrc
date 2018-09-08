@@ -25,11 +25,14 @@
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'gruvbox'
       let g:airline_powerline_fonts = 1
+      let g:airline#extensions#tabline#enabled = 1
 
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
+
+    Plug 'tpope/vim-unimpaired'
 
     Plug 'tpope/vim-eunuch'
 
@@ -41,13 +44,13 @@
       let g:surround_no_mappings = 1 " disable the default mappings
       let g:surround_indent = 1 " reindent with `=` after surrounding
 
-    Plug 'pangloss/vim-javascript'
-
     Plug 'elzr/vim-json'
 
-    Plug 'gabrielelana/vim-markdown'
-      let g:markdown_enable_mappings = 0
-      let g:markdown_enable_spell_checking = 1
+    Plug 'easymotion/vim-easymotion'
+
+    Plug 'wincent/terminus'
+
+    Plug 'farmergreg/vim-lastplace'
 
   call plug#end()
 
@@ -63,6 +66,8 @@ set nostartofline " leave my cursor alone
 set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
 set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
 set virtualedit=block " allow the cursor to go in to virtual places
+set cul " highlight the current line
+autocmd VimLeave * set guicursor=a:ver100
 
 " command
 set history=1000 " increase history size
@@ -132,24 +137,11 @@ set textwidth=80 " 80 characters line
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
-  " [s]ort
-  vnoremap <silent> <Leader>s :sort<CR>
-
-  " [R]eload configuration
-  nnoremap <silent> <Leader>R  :<C-u>source $MYVIMRC<CR>:echom 'Vim configuration reloaded!'<CR>
-
 " }}}
 
 " modeline
 set modeline " enable modelines for per file configuration
 set modelines=1 " consider the first/last lines
-
-" mouse
-if has('mouse')
-  set mouse=a
-  if exists('&ttyscroll') | set ttyscroll=1 | endif
-  if exists('&ttymouse') | set ttymouse=xterm2 | endif
-endif
 
 " performance
 set lazyredraw " only redraw when needed

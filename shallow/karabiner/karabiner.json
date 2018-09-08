@@ -70,7 +70,7 @@
             },
             "devices": [
                 {
-                    "disable_built_in_keyboard_if_exists": false,
+                    "disable_built_in_keyboard_if_exists": true,
                     "fn_function_keys": [],
                     "identifiers": {
                         "is_keyboard": true,
@@ -114,6 +114,32 @@
                             }
                         }
                     ]
+                },
+                {
+                    "disable_built_in_keyboard_if_exists": false,
+                    "fn_function_keys": [],
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": false,
+                        "product_id": 34304,
+                        "vendor_id": 1452
+                    },
+                    "ignore": true,
+                    "manipulate_caps_lock_led": false,
+                    "simple_modifications": []
+                },
+                {
+                    "disable_built_in_keyboard_if_exists": false,
+                    "fn_function_keys": [],
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": false,
+                        "product_id": 631,
+                        "vendor_id": 1452
+                    },
+                    "ignore": false,
+                    "manipulate_caps_lock_led": false,
+                    "simple_modifications": []
                 }
             ],
             "fn_function_keys": [
