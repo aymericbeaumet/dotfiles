@@ -59,10 +59,6 @@ fi
 
 # settings {{{
 
-  # emacs style bindings
-  bindkey -e
-  autoload -U select-word-style && select-word-style bash
-
   # open files
   export EDITOR=nvim
   export REACT_EDITOR=atom
@@ -133,15 +129,19 @@ fi
   }
   zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
 
-  # left prompt
-  PROMPT='λ '
-
   # set window title to be the current directory
   precmd() {
     if [ -n "$ITERM_SESSION_ID" ] ; then
       echo -ne "\e]1;${PWD##*/}\a"
     fi
   }
+
+  # set cursor
+  echo -ne "\e[6 q"
+
+  # emacs style bindings
+  bindkey -e
+  autoload -U select-word-style && select-word-style bash
 
 # }}}
 
@@ -155,6 +155,7 @@ antibody_bundle()
 $(antibody bundle mafredri/zsh-async)
 $(antibody bundle sindresorhus/pure)
   EMACS=__notempty__ # forbid pure to set the title bar
+  PURE_PROMPT_SYMBOL='λ'
 
 $(antibody bundle robbyrussell/oh-my-zsh folder:plugins/colored-man-pages)
 
@@ -165,6 +166,12 @@ $(antibody bundle zsh-users/zsh-autosuggestions)
 # (must be the last plugin to be loaded)
 $(antibody bundle zsh-users/zsh-syntax-highlighting)
 EOF
+}
+
+antibody_refresh()
+{
+  rm -f "$ANTIBODY_BUNDLE_FILE"
+  antibody_bundle
 }
 
 if [ ! -r "$ANTIBODY_BUNDLE_FILE" ]; then
