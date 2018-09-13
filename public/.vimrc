@@ -26,6 +26,7 @@
       let g:airline_theme = 'gruvbox'
       let g:airline_powerline_fonts = 1
       let g:airline#extensions#tabline#enabled = 1
+      let g:airline#extensions#tabline#buffer_min_count =2
 
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
@@ -66,7 +67,6 @@ set nostartofline " leave my cursor alone
 set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
 set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
 set virtualedit=block " allow the cursor to go in to virtual places
-set cul " highlight the current line
 autocmd VimLeave * set guicursor=a:ver100
 
 " command
