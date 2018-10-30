@@ -24,7 +24,7 @@ window:
   # Units are physical pixels; this is not DPI aware.
   # (change requires restart)
   padding:
-    x: 0
+    x: 5
     y: 0
 
   # Window decorations
@@ -43,19 +43,19 @@ font:
   normal:
     family: Fira Code
     # Style can be specified to pick a specific face.
-    # style: Regular
+    style: Retina
 
   # The bold font face
   bold:
     family: Fira Code
     # Style can be specified to pick a specific face.
-    # style: Bold
+    style: Retina
 
   # The italic font face
   italic:
     family: Fira Code
     # Style can be specified to pick a specific face.
-    # style: Italic
+    style: Retina
 
   # Point size of the font
   size: 14
@@ -386,7 +386,7 @@ key_bindings:
   - { key: Key3,      mods: Alt,       chars: "\x1b3"                       }
   - { key: Key4,      mods: Alt,       chars: "\x1b4"                       }
   - { key: Key5,      mods: Alt,       chars: "\x1b5"                       }
-  - { key: Key6,      mods: Alt,       chars: "\x1b6"                       }
+  - { key: Key6,      mods: Alt,       chars: "\x1b^"                       }
   - { key: Key7,      mods: Alt,       chars: "\x1b7"                       }
   - { key: Key8,      mods: Alt,       chars: "\x1b8"                       }
   - { key: Key9,      mods: Alt,       chars: "\x1b9"                       }

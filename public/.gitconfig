@@ -36,8 +36,6 @@
   cis = ci-status
   cmp = compare
   pr = pull-request
-  ; Convenience
-  flush = !git fetch origin && git remote prune origin && git branch --merged master | grep -v '^ *master$' | xargs git branch -d
 
 [color]
   branch = auto
