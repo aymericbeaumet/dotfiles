@@ -17,13 +17,13 @@
 
   call plug#begin(expand('~/.vim/bundle'))
 
-    Plug 'morhetz/gruvbox'
+    Plug 'tomasiser/vim-code-dark'
 
     Plug 'editorconfig/editorconfig-vim'
 
     Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
-      let g:airline_theme = 'gruvbox'
+      let g:airline_theme = 'codedark'
       let g:airline_powerline_fonts = 1
       let g:airline#extensions#tabline#enabled = 1
       let g:airline#extensions#tabline#buffer_min_count =2
@@ -48,6 +48,8 @@
     Plug 'elzr/vim-json'
 
     Plug 'easymotion/vim-easymotion'
+      let g:EasyMotion_smartcase = 1
+      let g:EasyMotion_use_smartsign_us = 1
 
     Plug 'wincent/terminus'
 
@@ -106,6 +108,7 @@ set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
 set splitright " split right
 set textwidth=80 " 80 characters line
+set number " display line numbers
 
 " mappings {{{
 
@@ -165,8 +168,10 @@ set wildmenu " better command line completion menu
 set wildmode=full " ensure better completion
 
 " theme
+set t_Co=256
+set t_ut=
 set background=dark
-colorscheme gruvbox
+colorscheme codedark
 
 " undo
 if has('persistent_undo')

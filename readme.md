@@ -7,6 +7,10 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.config/
 "$HOME/.config/dotfiles/make" install symlink configure
 ```
 
+## Weechat
+
+`pip install websocket-client`
+
 ## License
 
 [![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)

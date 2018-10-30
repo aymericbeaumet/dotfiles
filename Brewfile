@@ -73,6 +73,7 @@ brew 'yarn'
 brew 'z'
 brew 'zsh'
 brew 'getantibody/tap/antibody'
+brew 'weechat', args: ['--with-aspell', '--with-curl', '--with-lua', '--with-perl', '--with-python@2', '--with-ruby']
 
 # tools (gnu core utils)
 brew 'coreutils'

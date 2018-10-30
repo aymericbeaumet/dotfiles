@@ -4,7 +4,6 @@
   "editor.tabSize": 2,
   "telemetry.enableTelemetry": false,
   "telemetry.enableCrashReporter": false,
-  "workbench.colorTheme": "Gruvbox Dark (Medium Contrast)",
   "workbench.startupEditor": "none",
   "editor.minimap.enabled": false,
   "workbench.iconTheme": "vscode-icons",
@@ -63,8 +62,14 @@
   "vsicons.dontShowNewVersionMessage": true,
   "vim.leader": "<space>",
   "vim.easymotion": true,
-  "vim.easymotionKeys": "asdfjkl;",
   "editor.formatOnPaste": true,
   "breadcrumbs.enabled": false,
-  "javascript.updateImportsOnFileMove.enabled": "always"
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "vim.easymotionMarkerFontFamily": "Fira Code",
+  "vim.easymotionMarkerForegroundColorOneChar": "black",
+  "vim.easymotionMarkerForegroundColorTwoChar": "black",
+  "vim.easymotionMarkerBackgroundColor": "orange",
+  "vim.easymotionKeys": "fjdkslaghrueiwoqptyvmcxzbn",
+  "yaml.format.enable": false,
+  "scm.diffDecorations": "none"
 }
