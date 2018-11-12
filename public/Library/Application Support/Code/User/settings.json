@@ -71,5 +71,8 @@
   "vim.easymotionMarkerBackgroundColor": "orange",
   "vim.easymotionKeys": "fjdkslaghrueiwoqptyvmcxzbn",
   "yaml.format.enable": false,
-  "scm.diffDecorations": "none"
+  "scm.diffDecorations": "none",
+  "rust-client.updateOnStartup": true,
+  "rust.clippy_preference": "on",
+  "rust.goto_def_racer_fallback": true
 }
