@@ -7,9 +7,12 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.config/
 "$HOME/.config/dotfiles/make" install symlink configure
 ```
 
-## Weechat
+## rust
 
-`pip install websocket-client`
+```
+rustup update && rustup component add rls-preview rust-analysis rust-src
+pip3 install neovim
+```
 
 ## License
 
