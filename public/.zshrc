@@ -61,9 +61,9 @@ fi
 
   # open files
   export EDITOR=nvim
-  export REACT_EDITOR=atom
   export USE_EDITOR="$EDITOR"
   export VISUAL="$EDITOR"
+  export REACT_EDITOR=code
   export VIEWER=open
   export PAGER=less
 

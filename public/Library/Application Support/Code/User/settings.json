@@ -13,7 +13,6 @@
   "editor.rulers": [80],
   "editor.fontLigatures": false,
   "editor.cursorBlinking": "solid",
-  "editor.folding": false,
   "editor.dragAndDrop": false,
   "workbench.editor.tabCloseButton": "off",
   "workbench.editor.showIcons": true,
@@ -40,6 +39,9 @@
     "editor.formatOnSave": true
   },
   "[javascriptreact]": {
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
     "editor.formatOnSave": true
   },
   "[rust]": {
@@ -74,5 +76,7 @@
   "scm.diffDecorations": "none",
   "rust-client.updateOnStartup": true,
   "rust.clippy_preference": "on",
-  "rust.goto_def_racer_fallback": true
+  "rust.goto_def_racer_fallback": true,
+  "eslint.packageManager": "yarn",
+  "typescript.updateImportsOnFileMove.enabled": "always"
 }

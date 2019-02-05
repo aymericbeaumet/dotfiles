@@ -10,7 +10,7 @@
                 "parameters": {
                     "basic.simultaneous_threshold_milliseconds": 50,
                     "basic.to_delayed_action_delay_milliseconds": 500,
-                    "basic.to_if_alone_timeout_milliseconds": 1000,
+                    "basic.to_if_alone_timeout_milliseconds": 250,
                     "basic.to_if_held_down_threshold_milliseconds": 500
                 },
                 "rules": [
@@ -240,10 +240,147 @@
                     }
                 }
             ],
-            "name": "Programming",
+            "name": "Enhanced",
             "one_to_many_mappings": {},
             "selected": true,
-            "simple_modifications": [],
+            "simple_modifications": [
+                {
+                    "from": {
+                        "key_code": "d"
+                    },
+                    "to": {
+                        "key_code": "s"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "e"
+                    },
+                    "to": {
+                        "key_code": "f"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "f"
+                    },
+                    "to": {
+                        "key_code": "t"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "i"
+                    },
+                    "to": {
+                        "key_code": "u"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "j"
+                    },
+                    "to": {
+                        "key_code": "n"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "k"
+                    },
+                    "to": {
+                        "key_code": "e"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "l"
+                    },
+                    "to": {
+                        "key_code": "i"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "n"
+                    },
+                    "to": {
+                        "key_code": "k"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "o"
+                    },
+                    "to": {
+                        "key_code": "y"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "p"
+                    },
+                    "to": {
+                        "key_code": "semicolon"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "r"
+                    },
+                    "to": {
+                        "key_code": "p"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "s"
+                    },
+                    "to": {
+                        "key_code": "r"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "semicolon"
+                    },
+                    "to": {
+                        "key_code": "o"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "t"
+                    },
+                    "to": {
+                        "key_code": "g"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "u"
+                    },
+                    "to": {
+                        "key_code": "l"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "y"
+                    },
+                    "to": {
+                        "key_code": "j"
+                    }
+                },
+                {
+                    "from": {
+                        "key_code": "g"
+                    },
+                    "to": {
+                        "key_code": "d"
+                    }
+                }
+            ],
             "virtual_hid_keyboard": {
                 "caps_lock_delay_milliseconds": 0,
                 "country_code": 0,
