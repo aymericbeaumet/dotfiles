@@ -4,6 +4,14 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 WHOAMI="$(whoami)"
 
+function readlink {
+  if which greadlink &> /dev/null ; then
+    command greadlink "$@"
+  else
+    command readlink "$@"
+  fi
+}
+
 # Configure the OS
 # $ ./make configure
 function __configure {
@@ -11,17 +19,10 @@ function __configure {
     Darwin)
       # Fix zsh compinit
       zsh -c 'compaudit | xargs chmod g-w'
-      # Fix /usr/local permissions
-      sudo chown -R "$WHOAMI:admin" /usr/local
       # Change default shell
       sudo chsh -s "$(which zsh)" "$WHOAMI"
       # Reduce resize time for windows (http://apple.stackexchange.com/a/142734/106194)
       defaults write NSGlobalDomain NSWindowResizeTime .001
-      # Disable swipe (http://apple.stackexchange.com/a/80163/106194)
-      defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool FALSE
-      # Better looking fonts by disable OS anti-aliasing (http://stackoverflow.com/a/32067365/1071486)
-      defaults write org.vim.MacVim AppleFontSmoothing -int 0
-      defaults write uk.foon.Neovim AppleFontSmoothing -int 0
     ;;
   esac
 }
@@ -33,8 +34,6 @@ function __install {
   # install brew dependencies
   brew tap homebrew/bundle
   brew bundle check || brew bundle
-  # install latest node
-  n latest
 }
 
 # Create the symlinks in the $HOME directory from the public and the private
@@ -42,8 +41,8 @@ function __install {
 # $ ./make symlink
 function __symlink {
   from_directories=(
-    "public"
-    "private"
+    "deep"
+    "shallow"
   )
   for from_directory in ${from_directories[@]} ; do
     resolved_from_directory="$(readlink -f "$(pwd)/$from_directory")"
