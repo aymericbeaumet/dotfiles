@@ -51,8 +51,6 @@
       let g:EasyMotion_smartcase = 1
       let g:EasyMotion_use_smartsign_us = 1
 
-    Plug 'wincent/terminus'
-
     Plug 'farmergreg/vim-lastplace'
 
   call plug#end()
