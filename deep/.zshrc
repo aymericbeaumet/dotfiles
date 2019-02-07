@@ -157,7 +157,7 @@ $(antibody bundle sindresorhus/pure)
   EMACS=__notempty__ # forbid pure to set the title bar
   PURE_PROMPT_SYMBOL='λ'
 
-$(antibody bundle robbyrussell/oh-my-zsh folder:plugins/colored-man-pages)
+$(antibody bundle robbyrussell/oh-my-zsh path:plugins/colored-man-pages)
 
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 

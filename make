@@ -42,7 +42,6 @@ function __install {
 function __symlink {
   from_directories=(
     "deep"
-    "shallow"
   )
   for from_directory in ${from_directories[@]} ; do
     resolved_from_directory="$(readlink -f "$(pwd)/$from_directory")"

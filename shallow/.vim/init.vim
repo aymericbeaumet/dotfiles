@@ -1,1 +1,1 @@
-../../public/.vimrc
+../../deep/.vimrc
