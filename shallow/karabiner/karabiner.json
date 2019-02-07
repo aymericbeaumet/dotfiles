@@ -270,6 +270,14 @@
                 },
                 {
                     "from": {
+                        "key_code": "g"
+                    },
+                    "to": {
+                        "key_code": "d"
+                    }
+                },
+                {
+                    "from": {
                         "key_code": "i"
                     },
                     "to": {
@@ -370,14 +378,6 @@
                     },
                     "to": {
                         "key_code": "j"
-                    }
-                },
-                {
-                    "from": {
-                        "key_code": "g"
-                    },
-                    "to": {
-                        "key_code": "d"
                     }
                 }
             ],

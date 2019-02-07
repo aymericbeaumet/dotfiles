@@ -5,7 +5,7 @@ setopt noglobalrcs
 
 # homebrew
 export BREW_DIR='/usr/local'
-export PATH="$BREW_DIR/opt/coreutils/libexec/gnubin:$BREW_DIR/bin:$PATH:/usr/sbin:/sbin"
+export PATH="$BREW_DIR/opt/gnu-sed/libexec/gnubin:$BREW_DIR/opt/coreutils/libexec/gnubin:$BREW_DIR/bin:$PATH:/usr/sbin:/sbin"
 export MANPATH="$BREW_DIR/opt/coreutils/libexec/gnuman:$BREW_DIR/share/man:$MANPATH"
 export INFOPATH="$BREW_DIR/share/info:$INFOPATH"
 
