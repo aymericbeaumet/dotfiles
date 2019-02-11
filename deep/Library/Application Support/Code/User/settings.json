@@ -7,15 +7,15 @@
   "workbench.startupEditor": "none",
   "editor.minimap.enabled": false,
   "workbench.iconTheme": "vscode-icons",
-  "vsicons.presets.foldersAllDefaultIcon": true,
   "editor.renderIndentGuides": false,
   "workbench.editor.enablePreview": false,
-  "editor.rulers": [80],
+  "editor.rulers": [
+    80
+  ],
   "editor.fontLigatures": false,
   "editor.cursorBlinking": "solid",
   "editor.dragAndDrop": false,
   "workbench.editor.tabCloseButton": "off",
-  "workbench.editor.showIcons": true,
   "workbench.activityBar.visible": false,
   "window.title": "${folderName}",
   "files.exclude": {
@@ -78,5 +78,9 @@
   "rust.clippy_preference": "on",
   "rust.goto_def_racer_fallback": true,
   "eslint.packageManager": "yarn",
-  "typescript.updateImportsOnFileMove.enabled": "always"
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "files.associations": {
+    "*.rustpeg": "peg"
+  },
+  "workbench.colorTheme": "Default Dark+"
 }
