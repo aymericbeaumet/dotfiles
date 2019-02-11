@@ -21,6 +21,7 @@ keyboard.registerBindings(
   },
   -- Window manager
   {
+    {{"cmd", "alt"}, "s", windowManager.moveFocusedWindowToNextScreen},
     {{"cmd", "alt"}, "space", utils.bind(windowManager.resizeFocusedWindow, 0, 0, 1, 1)}, -- fullscreen
     {{"cmd", "alt"}, "1", utils.bind(windowManager.resizeFocusedWindow, 0, 0, 0.5, 0.5)}, -- upper left 1/4
     {{"cmd", "alt"}, "2", utils.bind(windowManager.resizeFocusedWindow, 0.5, 0, 0.5, 0.5)}, -- upper right 1/4
@@ -35,7 +36,6 @@ keyboard.registerBindings(
   {
     {{"cmd", "alt"}, "l", windowManager.lockScreen},
     {{"cmd", "alt"}, "r", hs.reload},
-    {{"cmd", "alt"}, "s", windowManager.moveFocusedWindowToNextScreen},
     {{"cmd", "alt"}, "v", keyboard.typePasteboard} -- useful to bypass antipaste protections
   },
   -- Emacs-like
