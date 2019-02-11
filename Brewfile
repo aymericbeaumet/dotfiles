@@ -14,10 +14,12 @@ cask 'dash'
 cask 'docker'
 cask 'font-fira-code'
 cask 'google-drive-file-stream'
+cask 'hammerspoon'
 cask 'istat-menus'
 cask 'iterm2'
 cask 'keybase'
 cask 'slack'
+cask 'transmission'
 cask 'vlc'
 
 # cli
