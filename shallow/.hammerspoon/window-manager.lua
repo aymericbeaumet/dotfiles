@@ -1,18 +1,5 @@
 local module = {}
 
-function module.lockScreen()
-  hs.osascript.applescript(
-    [[
-      tell application "System Events"
-        tell process "Finder"
-          click menu item "Lock Screen" of menu "Apple" of menu bar 1
-        end tell
-      end tell
-    ]]
-  )
-end
-
--- (takes care of resizing the window if it doesn't fit in the target screen)
 function module.moveFocusedWindowToNextScreen()
   local currentWindow = hs.window.focusedWindow()
   local currentScreen = currentWindow:screen()

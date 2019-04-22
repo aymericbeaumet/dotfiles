@@ -11,6 +11,9 @@ fi
 
 # commands {{{
 
+  # cat
+  alias cat='bat --plain --paging=never'
+
   # du
   alias du='du -h'
 
@@ -37,6 +40,9 @@ fi
   alias l='ls -hl' ; compdef l=ls
   alias ll='l' ; compdef ll=ls
   alias la='ll -A' ; compdef la=ls
+
+  # mkdir
+  alias mkdir='mkdir -p'
 
   # tig
   alias t=tig
@@ -142,6 +148,55 @@ fi
   # emacs style bindings
   bindkey -e
   autoload -U select-word-style && select-word-style bash
+
+# }}}
+
+# helpers {{{
+
+# docker
+
+wipe_docker() {
+  docker stop $(docker ps -aq) || echo no running containers, skipping...
+  docker system prune --all --volumes --force
+}
+
+# fzf
+
+gbr() {
+  local branches branch
+  branches=$(git branch) &&
+  branch=$(echo "$branches" | fzf +m) &&
+  git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+}
+
+gbra() {
+  local branches branch
+  branches=$(git branch; git branch -r) &&
+  branch=$(echo "$branches" | fzf +m) &&
+  git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+}
+
+gco() {
+  local tags branches target
+  tags=$(
+    git tag | awk '{print "\x1b[31;1mtag\x1b[m\t" $1}') || return
+  branches=$(
+    git branch --all | grep -v HEAD             |
+    sed "s/.* //"    | sed "s#remotes/[^/]*/##" |
+    sort -u          | awk '{print "\x1b[34;1mbranch\x1b[m\t" $1}') || return
+  target=$(
+    (echo "$tags"; echo "$branches") |
+    fzf-tmux -l30 -- --no-hscroll --ansi +m -d "\t" -n 2) || return
+  git checkout $(echo "$target" | awk '{print $2}')
+}
+
+# z
+
+unalias z 2> /dev/null
+z() {
+  [ $# -gt 0 ] && _z "$*" && return
+  cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
 
 # }}}
 

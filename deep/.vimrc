@@ -107,6 +107,7 @@ set splitbelow " slit below
 set splitright " split right
 set textwidth=80 " 80 characters line
 set number " display line numbers
+set mouse=a " enable mouse support
 
 " mappings {{{
 

@@ -24,5 +24,8 @@ export GPG_TTY=$(tty)
 # rust
 export PATH="$PATH:$HOME/.cargo/bin"
 
+# ripgrep
+export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rc
+
 # Sourced here to make it available in login shells
 source '/usr/local/opt/z/etc/profile.d/z.sh'

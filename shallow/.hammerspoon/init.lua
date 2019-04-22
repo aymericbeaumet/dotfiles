@@ -4,24 +4,10 @@ local utils = require("utils")
 local windowManager = require("window-manager")
 
 keyboard.registerBindings(
-  -- Prevent mistakes
-  {
-    {{"cmd"}, "m", utils.noop}
-  },
-  -- Applications
-  {
-    {{"cmd", "ctrl"}, "a", utils.bind(hs.application.launchOrFocus, "Alacritty")},
-    {{"cmd", "ctrl"}, "d", utils.bind(hs.application.launchOrFocus, "Dash")},
-    {{"cmd", "ctrl"}, "g", utils.bind(hs.application.launchOrFocus, "Google Chrome")},
-    {{"cmd", "ctrl"}, "n", utils.bind(hs.application.launchOrFocus, "Notion")},
-    {{"cmd", "ctrl"}, "p", utils.bind(hs.application.launchOrFocus, "Pritunl")},
-    {{"cmd", "ctrl"}, "s", utils.bind(hs.application.launchOrFocus, "Safari")},
-    {{"cmd", "ctrl"}, "k", utils.bind(hs.application.launchOrFocus, "Slack")},
-    {{"cmd", "ctrl"}, "v", utils.bind(hs.application.launchOrFocus, "Visual Studio Code")}
-  },
   -- Window manager
   {
-    {{"cmd", "alt"}, "s", windowManager.moveFocusedWindowToNextScreen},
+    {{"cmd", "alt"}, "c", utils.bind(windowManager.resizeFocusedWindow, 0.25, 0.25, 0.5, 0.5)}, -- center
+    {{"cmd", "alt"}, "s", windowManager.moveFocusedWindowToNextScreen}, -- move to next screen
     {{"cmd", "alt"}, "space", utils.bind(windowManager.resizeFocusedWindow, 0, 0, 1, 1)}, -- fullscreen
     {{"cmd", "alt"}, "1", utils.bind(windowManager.resizeFocusedWindow, 0, 0, 0.5, 0.5)}, -- upper left 1/4
     {{"cmd", "alt"}, "2", utils.bind(windowManager.resizeFocusedWindow, 0.5, 0, 0.5, 0.5)}, -- upper right 1/4
@@ -34,34 +20,9 @@ keyboard.registerBindings(
   },
   -- Convenience
   {
-    {{"cmd", "alt"}, "l", windowManager.lockScreen},
-    {{"cmd", "alt"}, "r", hs.reload},
     {{"cmd", "alt"}, "v", keyboard.typePasteboard} -- useful to bypass antipaste protections
   },
-  -- Emacs-like
-  {
-    {{"ctrl"}, "b", utils.bind(hs.eventtap.keyStroke, {}, "left")},
-    {{"ctrl"}, "f", utils.bind(hs.eventtap.keyStroke, {}, "right")},
-    {{"ctrl"}, "h", utils.bind(hs.eventtap.keyStroke, {}, "delete")},
-    {{"ctrl"}, "i", utils.bind(hs.eventtap.keyStroke, {}, "tab")},
-    {{"ctrl"}, "m", utils.bind(hs.eventtap.keyStroke, {}, "padenter")},
-    {{"ctrl"}, "n", utils.bind(hs.eventtap.keyStroke, {}, "down")},
-    {{"ctrl"}, "p", utils.bind(hs.eventtap.keyStroke, {}, "up")}
-  },
-  -- Emacs-like (except in Alacritty)
-  {
-    blacklist = {"Alacritty"},
-    {{"ctrl"}, "a", utils.bind(hs.eventtap.keyStroke, {"cmd"}, "left")},
-    {{"ctrl"}, "d", utils.bind(hs.eventtap.keyStroke, {}, "forwarddelete")},
-    {{"ctrl"}, "e", utils.bind(hs.eventtap.keyStroke, {"cmd"}, "right")},
-    -- {{"ctrl"}, "k", typeKeyStrokeFunctions({"shift"}, "end", {}, "delete")},
-    {{"ctrl"}, "u", utils.bind(hs.eventtap.keyStroke, {"cmd"}, "delete")},
-    {{"ctrl"}, "w", utils.bind(hs.eventtap.keyStroke, {"alt"}, "delete")},
-    {{"alt"}, "b", utils.bind(hs.eventtap.keyStroke, {"alt"}, "left")},
-    {{"alt"}, "d", utils.bind(hs.eventtap.keyStroke, {"alt"}, "forwarddelete")},
-    {{"alt"}, "f", utils.bind(hs.eventtap.keyStroke, {"alt"}, "right")}
-  },
-  -- Safari improvements
+  -- Safari only
   {
     whitelist = {"Safari"},
     {{"cmd"}, "b", safari.toggleBookmarks},
