@@ -1,0 +1,6 @@
+--type-add
+rs:*.rs
+
+--follow
+
+--smart-case
