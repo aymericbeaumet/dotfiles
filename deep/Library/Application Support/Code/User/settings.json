@@ -86,5 +86,7 @@
   "workbench.sideBar.location": "left",
   "liveshare.featureSet": "insiders",
   "gitblame.commitUrl": "Blame guess",
-  "gitblame.ignoreWhitespace": true
+  "gitblame.ignoreWhitespace": true,
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue"
 }
