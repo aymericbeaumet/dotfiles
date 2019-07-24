@@ -135,13 +135,6 @@ fi
   }
   zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
 
-  # set window title to be the current directory
-  precmd() {
-    if [ -n "$ITERM_SESSION_ID" ] ; then
-      echo -ne "\e]1;${PWD##*/}\a"
-    fi
-  }
-
   # set cursor
   echo -ne "\e[6 q"
 
@@ -209,7 +202,6 @@ antibody_bundle()
   cat >"$ANTIBODY_BUNDLE_FILE" <<EOF
 $(antibody bundle mafredri/zsh-async)
 $(antibody bundle sindresorhus/pure)
-  EMACS=__notempty__ # forbid pure to set the title bar
   PURE_PROMPT_SYMBOL='λ'
 
 $(antibody bundle robbyrussell/oh-my-zsh path:plugins/colored-man-pages)

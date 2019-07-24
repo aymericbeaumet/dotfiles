@@ -8,9 +8,7 @@
   "editor.minimap.enabled": false,
   "editor.renderIndentGuides": false,
   "workbench.editor.enablePreview": false,
-  "editor.rulers": [
-    80
-  ],
+  "editor.rulers": [80],
   "editor.fontLigatures": true,
   "editor.cursorBlinking": "solid",
   "editor.dragAndDrop": false,
@@ -37,7 +35,8 @@
     "editor.formatOnSave": true
   },
   "[javascriptreact]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescript]": {
     "editor.formatOnSave": true
@@ -72,7 +71,9 @@
   "eslint.packageManager": "yarn",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "files.associations": {
-    "*.rustpeg": "peg"
+    "*.rustpeg": "peg",
+    "*.ho": "go",
+    "*.bo": "go"
   },
   "workbench.colorTheme": "Default Dark+",
   "files.insertFinalNewline": true,
@@ -88,5 +89,22 @@
   "gitblame.commitUrl": "Blame guess",
   "gitblame.ignoreWhitespace": true,
   "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue"
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "editor.snippetSuggestions": "none",
+  "go.autocompleteUnimportedPackages": true,
+  "go.gotoSymbol.includeImports": true,
+  "go.useLanguageServer": false,
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "go.useCodeSnippetsOnFunctionSuggest": true,
+  "go.formatTool": "goimports",
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

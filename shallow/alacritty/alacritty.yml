@@ -24,7 +24,7 @@ window:
   # Units are physical pixels; this is not DPI aware.
   # (change requires restart)
   padding:
-    x: 5
+    x: 0
     y: 0
 
   # Window decorations
@@ -110,24 +110,6 @@ visual_bell:
 # Background opacity
 background_opacity: 1.0
 
-# Mouse bindings
-#
-# Currently doesn't support modifiers. Both the `mouse` and `action` fields must
-# be specified.
-#
-# Values for `mouse`:
-# - Middle
-# - Left
-# - Right
-# - Numeric identifier such as `5`
-#
-# Values for `action`:
-# - Paste
-# - PasteSelection
-# - Copy (TODO)
-mouse_bindings:
-  - { mouse: Middle, action: PasteSelection }
-
 mouse:
   # Click settings
   #
@@ -152,7 +134,7 @@ selection:
 
 dynamic_title: true
 
-mouse.hide_when_typing: false
+mouse.hide_when_typing: true
 
 # Style of the cursor
 #
@@ -174,9 +156,13 @@ live_config_reload: true
 # Entries in shell.args are passed unmodified as arguments to the shell.
 #
 # shell:
-#   program: /bin/bash
-#   args:
-#     - --login
+  # program: /usr/local/bin/zsh
+  # args:
+    # - --login
+    # - -c
+    # - 'tmux attach || tmux new'
+
+alt_send_esc: true
 
 # Key bindings
 #
