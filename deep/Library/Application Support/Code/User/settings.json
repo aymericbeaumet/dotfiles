@@ -63,7 +63,7 @@
   "editor.formatOnPaste": true,
   "breadcrumbs.enabled": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "vim.easymotionKeys": "fjdkslaghrueiwoqptyvmcxzbn",
+  "vim.easymotionKeys": "tnseriaodhplfuwyq;gjvmc,x.z/bk",
   "yaml.format.enable": false,
   "scm.diffDecorations": "none",
   "rust-client.updateOnStartup": true,
@@ -106,5 +106,13 @@
   "go.formatTool": "goimports",
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "vim.easymotionMarkerFontFamily": "Fira Code",
+  "vim.easymotionMarkerForegroundColorOneChar": "red",
+  "vim.easymotionMarkerForegroundColorTwoChar": "yellow",
+  "vim.easymotionMarkerBackgroundColor": "black",
+  "vim.easymotionMarkerYOffset": 3,
+  "vim.easymotionMarkerFontWeight": "bold",
+  "vim.easymotionMarkerHeight": 18,
+  "vim.easymotionMarkerWidthPerChar": 7
 }

@@ -215,9 +215,10 @@ $(antibody bundle zsh-users/zsh-syntax-highlighting)
 EOF
 }
 
-antibody_refresh()
+antibody_update()
 {
   rm -f "$ANTIBODY_BUNDLE_FILE"
+  antibody update
   antibody_bundle
 }
 
