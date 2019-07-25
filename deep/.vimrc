@@ -25,8 +25,6 @@
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'nord'
       let g:airline_powerline_fonts = 1
-      let g:airline#extensions#tabline#enabled = 1
-      let g:airline#extensions#tabline#buffer_min_count = 1
 
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
