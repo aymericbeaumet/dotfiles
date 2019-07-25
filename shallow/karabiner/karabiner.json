@@ -54,6 +54,25 @@
             ]
           },
           {
+            "description": "Activate Slack",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "s",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "~/.config/yabai/activate.sh 'Slack'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Activate Visual Studio Code",
             "manipulators": [
               {
@@ -225,6 +244,44 @@
             ]
           },
           {
+            "description": "[Yabai] Make floating window fill screen",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "spacebar",
+                  "modifiers": {
+                    "mandatory": ["option"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "/usr/local/bin/yabai -m window --toggle zoom-fullscreen"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Yabai] Balance all windows",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "equal_sign",
+                  "modifiers": {
+                    "mandatory": ["option"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "/usr/local/bin/yabai -m space --balance"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "[Yabai] Create desktop and follow focus",
             "manipulators": [
               {
@@ -339,120 +396,6 @@
             ]
           },
           {
-            "description": "[Yabai] Focus space 4",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "4",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 4"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 5",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "5",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 5"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 6",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "6",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 6"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 7",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "7",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 7"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 8",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "8",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 8"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 9",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "9",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 9"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
             "description": "[Yabai] Move window to space 1",
             "manipulators": [
               {
@@ -503,120 +446,6 @@
                 "to": [
                   {
                     "shell_command": "/usr/local/bin/yabai -m window --space 3 && /usr/local/bin/yabai -m space --focus 3"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 4",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "4",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 4 && /usr/local/bin/yabai -m space --focus 4"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 5",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "5",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 5 && /usr/local/bin/yabai -m space --focus 5"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 6",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "6",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 6 && /usr/local/bin/yabai -m space --focus 6"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 7",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "7",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 7 && /usr/local/bin/yabai -m space --focus 7"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 8",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "8",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 8 && /usr/local/bin/yabai -m space --focus 8"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 9",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "9",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 9 && /usr/local/bin/yabai -m space --focus 9"
                   }
                 ],
                 "type": "basic"

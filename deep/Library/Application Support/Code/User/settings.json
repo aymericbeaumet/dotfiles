@@ -75,7 +75,7 @@
     "*.ho": "go",
     "*.bo": "go"
   },
-  "workbench.colorTheme": "Default Dark+",
+  "workbench.colorTheme": "Nord",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "workbench.activityBar.visible": false,

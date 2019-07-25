@@ -4,3 +4,6 @@
 [submodule "shallow/.tmux/bundle/tpm"]
 	path = shallow/.tmux/bundle/tpm
 	url = https://github.com/tmux-plugins/tpm
+[submodule "shallow/nord-dircolors"]
+	path = shallow/nord-dircolors
+	url = https://github.com/arcticicestudio/nord-dircolors.git

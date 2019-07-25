@@ -17,16 +17,16 @@
 
   call plug#begin(expand('~/.vim/bundle'))
 
-    Plug 'tomasiser/vim-code-dark'
+    Plug 'arcticicestudio/nord-vim'
 
     Plug 'editorconfig/editorconfig-vim'
 
     Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
-      let g:airline_theme = 'codedark'
+      let g:airline_theme = 'nord'
       let g:airline_powerline_fonts = 1
       let g:airline#extensions#tabline#enabled = 1
-      let g:airline#extensions#tabline#buffer_min_count =2
+      let g:airline#extensions#tabline#buffer_min_count = 1
 
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
@@ -108,6 +108,8 @@ set splitright " split right
 set textwidth=80 " 80 characters line
 set number " display line numbers
 set mouse=a " enable mouse support
+set list " display invisible chars
+set listchars=tab:>·,trail:· " specifically tabs and trailing spaces
 
 " mappings {{{
 
@@ -170,7 +172,7 @@ set wildmode=full " ensure better completion
 set t_Co=256
 set t_ut=
 set background=dark
-colorscheme codedark
+colorscheme nord
 
 " undo
 if has('persistent_undo')

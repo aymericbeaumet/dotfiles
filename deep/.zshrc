@@ -4,29 +4,29 @@
 # https://gist.github.com/ctechols/ca1035271ad134841284
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
-	compinit
+  compinit
 else
-	compinit -C
+  compinit -C
 fi
 
 # commands {{{
 
   # cat
   alias cat='bat --plain --paging=never'
+  BAT_THEME='1337'
 
   # du
   alias du='du -h'
 
   # git
-  git()
-  {
+  git() {
     if (( $# == 0 )) ; then
       command hub status -sb
     else
       command hub "$@"
     fi
   }
-  alias g=git ; compdef g=git
+  alias g=git
 
   # grep
   alias grep='grep --color=auto'
@@ -44,9 +44,6 @@ fi
   # mkdir
   alias mkdir='mkdir -p'
 
-  # tig
-  alias t=tig
-
   # tmux
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
@@ -63,6 +60,46 @@ fi
 
 # }}}
 
+# helpers {{{
+
+# docker
+
+docker_wipe() {
+  docker stop $(docker ps -aq)
+  docker system prune --all --volumes --force
+}
+
+# tmux session manager
+
+t() {
+  if [[ -n "$TMUX" ]]; then
+    session_regexp="^$(tmux display-message -p '#S'):"
+    subcommand='switch'
+  else
+    session_regexp='^$'
+    subcommand='attach'
+  fi
+  # Try to attach/switch to the session name (create if needed)
+  if [ -n "$1" ]; then
+    tmux new-session -d -s "$1" &> /dev/null # pessimistic approach
+    tmux "$subcommand" -t "$1"
+  # Fallback to fzf
+  else
+    session="$(tmux ls | grep -v "$session_regexp" | fzf --height 40% --reverse --inline-info | cut -d: -f1)"
+    tmux "$subcommand" -t "$session"
+  fi
+}
+
+# z
+
+unalias z &> /dev/null
+z() {
+  [ $# -gt 0 ] && _z "$*" && return
+  cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
+
+# }}}
+
 # settings {{{
 
   # open files
@@ -71,7 +108,16 @@ fi
   export VISUAL="$EDITOR"
   export REACT_EDITOR=code
   export VIEWER=open
+
+  # better less
   export PAGER=less
+  export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
+  export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
+  export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+  export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
+  export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+  export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+  export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
   # directory
   setopt AUTO_CD # change directory without cd (`..` goes up by one)
@@ -133,7 +179,7 @@ fi
       fg
    fi
   }
-  zle -N on_ctrl_z ; bindkey '^Z' on_ctrl_z
+  zle -N on_ctrl_z; bindkey '^Z' on_ctrl_z
 
   # set cursor
   echo -ne "\e[6 q"
@@ -141,55 +187,6 @@ fi
   # emacs style bindings
   bindkey -e
   autoload -U select-word-style && select-word-style bash
-
-# }}}
-
-# helpers {{{
-
-# docker
-
-wipe_docker() {
-  docker stop $(docker ps -aq) || echo no running containers, skipping...
-  docker system prune --all --volumes --force
-}
-
-# fzf
-
-gbr() {
-  local branches branch
-  branches=$(git branch) &&
-  branch=$(echo "$branches" | fzf +m) &&
-  git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
-}
-
-gbra() {
-  local branches branch
-  branches=$(git branch; git branch -r) &&
-  branch=$(echo "$branches" | fzf +m) &&
-  git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
-}
-
-gco() {
-  local tags branches target
-  tags=$(
-    git tag | awk '{print "\x1b[31;1mtag\x1b[m\t" $1}') || return
-  branches=$(
-    git branch --all | grep -v HEAD             |
-    sed "s/.* //"    | sed "s#remotes/[^/]*/##" |
-    sort -u          | awk '{print "\x1b[34;1mbranch\x1b[m\t" $1}') || return
-  target=$(
-    (echo "$tags"; echo "$branches") |
-    fzf-tmux -l30 -- --no-hscroll --ansi +m -d "\t" -n 2) || return
-  git checkout $(echo "$target" | awk '{print $2}')
-}
-
-# z
-
-unalias z 2> /dev/null
-z() {
-  [ $# -gt 0 ] && _z "$*" && return
-  cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
-}
 
 # }}}
 
