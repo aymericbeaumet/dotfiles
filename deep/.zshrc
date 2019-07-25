@@ -194,14 +194,14 @@ z() {
 
 ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 
+POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
+POWERLEVEL9K_DISABLE_RPROMPT=true
+
 antibody_bundle()
 {
   cat >"$ANTIBODY_BUNDLE_FILE" <<EOF
-$(antibody bundle mafredri/zsh-async)
-$(antibody bundle sindresorhus/pure)
-  PURE_PROMPT_SYMBOL='λ'
-
-$(antibody bundle robbyrussell/oh-my-zsh path:plugins/colored-man-pages)
+$(antibody bundle romkatv/powerlevel10k)
 
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 
@@ -210,13 +210,6 @@ $(antibody bundle zsh-users/zsh-autosuggestions)
 # (must be the last plugin to be loaded)
 $(antibody bundle zsh-users/zsh-syntax-highlighting)
 EOF
-}
-
-antibody_update()
-{
-  rm -f "$ANTIBODY_BUNDLE_FILE"
-  antibody update
-  antibody_bundle
 }
 
 if [ ! -r "$ANTIBODY_BUNDLE_FILE" ]; then
