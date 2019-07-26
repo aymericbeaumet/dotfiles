@@ -253,6 +253,7 @@ alt_send_esc: true
 key_bindings:
 
   - { key: Q,        mods: Command,       command: { program: "killall", args: ["alacritty"] } }
+  - { key: W,        mods: Command|Shift, action: Quit }
   - { key: N,        mods: Command,       action: SpawnNewInstance }
 
   - { key: W,        mods: Command,       chars: "\x11\x71" } # ^Q Q
