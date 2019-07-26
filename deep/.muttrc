@@ -1,0 +1,35 @@
+set use_from = yes
+set envelope_from = yes
+set copy = no # do not store sent messages
+set editor = "vim +/^$ ++1"
+set charset = "utf-8"
+set record = ''
+set ssl_force_tls = yes
+set imap_check_subscribed
+set sort = 'reverse-threads'
+set sort_aux = 'reverse-last-date-received'
+
+# I like to see all my mail headers in my editor:
+set edit_headers=yes
+
+# don't wait for sendmail to finish (this runs sendmail in the background)
+set sendmail_wait=-1
+
+# this prevents Mutt from endlessly asking when you quit:
+#     "Move read messages to ~/mbox? ([no]/yes):"
+set move=no
+
+# this prevents Mutt from endlessly asking:
+#     "~/Mail does not exist. Create it? ([yes]/no):"
+set folder=""
+
+# load account
+source ~/.secrets/.mutt/accounts/me.beaumet.aymeric
+
+# some familiar bindings
+bind index g noop
+macro index ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to All mail"
+macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to Drafts"
+macro index gi "<change-folder>=INBOX<enter>" "Go to Inbox"
+macro index gs "<change-folder>=[Gmail]/Starred<enter>" "Go to Starred conversations"
+macro index,pager e "<save-message>=[Gmail]/All Mail<enter><enter>" "Archive"

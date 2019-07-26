@@ -44,6 +44,10 @@ fi
   # mkdir
   alias mkdir='mkdir -p'
 
+  # mutt
+  alias m='neomutt'
+  alias mutt='neomutt'
+
   # tmux
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8

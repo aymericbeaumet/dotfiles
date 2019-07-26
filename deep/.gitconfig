@@ -79,4 +79,4 @@
   gpgsign = true
 
 [include]
-  path = ~/.gitconfig.secret
+  path = ~/.secrets/.gitconfig
