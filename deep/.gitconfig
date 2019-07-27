@@ -49,7 +49,7 @@
 
 [core]
   excludesfile = ~/.gitignore
-  pager = less -R
+  pager = less
 
 [diff]
   tool = vimdiff
