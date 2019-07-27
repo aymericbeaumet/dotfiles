@@ -3,7 +3,7 @@
 
 # https://gist.github.com/ctechols/ca1035271ad134841284
 autoload -Uz compinit
-if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+if [ -n "${ZDOTDIR}/.zcompdump(#qN.mh+24)" ]; then
   compinit
 else
   compinit -C
@@ -13,7 +13,6 @@ fi
 
   # cat
   alias cat='bat --plain --paging=never'
-  BAT_THEME='1337'
 
   # du
   alias du='du -h'
@@ -31,11 +30,7 @@ fi
   # grep
   alias grep='grep --color=auto'
 
-  # less
-  alias less='less -R'
-
   # ls
-  eval "$(dircolors "$HOME/.dir_colors")" # https://github.com/seebi/dircolors-solarized
   alias ls='ls -pFH --color --group-directories-first'
   alias l='ls -hl' ; compdef l=ls
   alias ll='l' ; compdef ll=ls
@@ -64,6 +59,12 @@ fi
 
 # }}}
 
+# extensions {{{
+
+alias -s {go,js,ts,rust,json,yml,yaml,toml}=nvim
+
+# }}}
+
 # helpers {{{
 
 # docker
@@ -75,24 +76,38 @@ docker_wipe() {
 
 # tmux session manager
 
-t() {
-  if [[ -n "$TMUX" ]]; then
-    session_regexp="^$(tmux display-message -p '#S'):"
-    subcommand='switch'
-  else
-    session_regexp='^$'
-    subcommand='attach'
-  fi
-  # Try to attach/switch to the session name (create if needed)
-  if [ -n "$1" ]; then
-    tmux new-session -d -s "$1" &> /dev/null # pessimistic approach
-    tmux "$subcommand" -t "$1"
-  # Fallback to fzf
-  else
-    session="$(tmux ls | grep -v "$session_regexp" | fzf --height 40% --reverse --inline-info | cut -d: -f1)"
-    tmux "$subcommand" -t "$session"
-  fi
+t_list_sessions() {
+  [ -n "$TMUX" ] && local exclude="^$(tmux display-message -p '#S')$" || local exclude='^$'
+  tmux ls -F "#{session_name}" | grep -v "$exclude"
 }
+
+t() {
+  [ -n "$TMUX" ] && local action='switch' || local action='attach'
+  # Try to attach/switch to the session if a name is provided (create if needed)
+  if [ -n "$1" ]; then
+    tmux "$action" -t "$1" || {
+      tmux new-session -d -s "$1"
+      tmux "$action" -t "$1"
+    }
+    return 0
+  fi
+  # Gather the candidates sessions, then attach/switch to the selected one
+  local candidates="$(t_list_sessions)"
+  if [ -z "$candidates" ]; then
+    echo 'No session to $action to.'
+    return 0
+  fi
+  local session="$(echo "$candidates" | sort | fzf --height 40% --reverse --inline-info)"
+  tmux "$action" -t "$session"
+}
+
+_t() {
+  _arguments -C \
+    "1: :($(t_list_sessions))" \
+    "*::arg:->args"
+}
+
+compdef _t t
 
 # z
 
@@ -112,19 +127,12 @@ z() {
   export VISUAL="$EDITOR"
   export REACT_EDITOR=code
   export VIEWER=open
-
-  # better less
-  export PAGER=less
-  export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
-  export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
-  export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
-  export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
-  export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
-  export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
-  export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+  export PAGER='less'
 
   # directory
-  setopt AUTO_CD # change directory without cd (`..` goes up by one)
+  setopt AUTO_CD           # change directory without cd (`..` goes up by one)
+  setopt AUTO_PUSHD        # build a stack of cd history (cd -1, cd -2, etc)
+  setopt PUSHD_IGNORE_DUPS # ignore dups when building the stack
 
   # history (http://zsh.sourceforge.net/Doc/Release/Options.html)
   export HISTFILE="$HOME/.zsh/tmp/history"
@@ -179,17 +187,47 @@ z() {
 
   # bring the latest background app to foreground with ^Z
   on_ctrl_z() {
-    if [[ -n "$(jobs)" ]] ; then
+    if [ -n "$(jobs)" ] ; then
       fg
    fi
   }
   zle -N on_ctrl_z; bindkey '^Z' on_ctrl_z
 
-  # set cursor
-  echo -ne "\e[6 q"
+  # vim style bindings (+ some bindings from `bindkey -M emacs`)
+  export KEYTIMEOUT=1
+  bindkey -v
+  bindkey -M viins '^A' beginning-of-line
+  bindkey -M viins '^B' backward-char
+  bindkey -M viins '^D' delete-char-or-list
+  bindkey -M viins '^E' end-of-line
+  bindkey -M viins '^F' forward-char
+  bindkey -M viins '^H' backward-delete-char
+  bindkey -M viins '^I' expand-or-complete
+  bindkey -M viins '^K' kill-line
+  bindkey -M viins '^N' down-line-or-history
+  bindkey -M viins '^P' up-line-or-history
+  bindkey -M viins '^W' backward-kill-word
+  # todo: not working for now as this triggers escape and leave insert mode
+  bindkey -M viins '^[B' backward-word
+  bindkey -M viins '^[D' kill-word
+  bindkey -M viins '^[F' forward-word
+  bindkey -M viins '^[T' transpose-words
 
-  # emacs style bindings
-  bindkey -e
+  # set cursor based on vim mode
+  zle-line-init zle-keymap-select () {
+    case "$KEYMAP" in
+      vicmd)
+        echo -ne "\e[2 q" # block
+        ;;
+      viinsert|main|*)
+        echo -ne "\e[6 q" # vertical line
+        ;;
+    esac
+  }
+  zle -N zle-line-init
+  zle -N zle-keymap-select
+
+  # bash-like word selection
   autoload -U select-word-style && select-word-style bash
 
 # }}}
@@ -199,7 +237,7 @@ z() {
 ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline vi_mode)
 POWERLEVEL9K_DISABLE_RPROMPT=true
 
 antibody_bundle()
