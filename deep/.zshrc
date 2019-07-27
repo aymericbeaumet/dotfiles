@@ -76,9 +76,9 @@ docker_wipe() {
 
 # tmux session manager
 
-t_list_sessions() {
-  [ -n "$TMUX" ] && local exclude="^$(tmux display-message -p '#S')$" || local exclude='^$'
-  tmux ls -F "#{session_name}" | grep -v "$exclude"
+tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
+  local exclude="$([ -n "$TMUX" ] && tmux display-message -p '#{session_name}')"
+  tmux ls -F "#{session_last_attached} #{session_name}" | egrep -v "^\d+ ${exclude}$" | sort -rn | cut -d' ' -f2
 }
 
 t() {
@@ -89,21 +89,22 @@ t() {
       tmux new-session -d -s "$1"
       tmux "$action" -t "$1"
     }
-    return 0
+    return $?
   fi
   # Gather the candidates sessions, then attach/switch to the selected one
-  local candidates="$(t_list_sessions)"
+  local candidates="$(tmux_list_sessions_by_most_recently_attached_excluding_current_one)"
   if [ -z "$candidates" ]; then
-    echo 'No session to $action to.'
+    echo "No session to $action to."
     return 0
   fi
-  local session="$(echo "$candidates" | sort | fzf --height 40% --reverse --inline-info)"
+  local session="$(echo "$candidates" | fzf --height 40% --reverse --inline-info)"
   tmux "$action" -t "$session"
+  return $?
 }
 
 _t() {
   _arguments -C \
-    "1: :($(t_list_sessions))" \
+    "1: :($(tmux_list_sessions_by_most_recently_attached_excluding_current_one))" \
     "*::arg:->args"
 }
 
@@ -128,6 +129,14 @@ z() {
   export REACT_EDITOR=code
   export VIEWER=open
   export PAGER='less'
+  export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
+  export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
+  export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+  export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
+  export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+  export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+  export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+
 
   # directory
   setopt AUTO_CD           # change directory without cd (`..` goes up by one)
