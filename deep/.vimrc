@@ -17,7 +17,15 @@
 
   call plug#begin(expand('~/.vim/bundle'))
 
+    Plug 'ryanoasis/vim-devicons'
+
     Plug 'arcticicestudio/nord-vim'
+
+    Plug 'scrooloose/nerdtree'
+      nmap <silent> <leader>e :NERDTreeToggle<CR>
+      let g:NERDTreeMinimalUI = 1
+      " close vim if nerdtree if the latest instance
+      autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
     Plug 'editorconfig/editorconfig-vim'
 
@@ -27,6 +35,8 @@
       let g:airline_powerline_fonts = 1
 
     Plug 'scrooloose/nerdcommenter'
+      noremap <silent> <leader>/ :call NERDComment("n", "Toggle")<CR>
+      let g:NERDCreateDefaultMappings = 0
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
@@ -72,7 +82,7 @@ set history=1000 " increase history size
 set shell=zsh
 
 " encoding
-if has('vim_starting') | set encoding=utf8 | endif " ensure proper encoding
+if has('vim_starting') | set encoding=UTF-8 | endif " ensure proper encoding
 set fileencodings=utf-8 " ensure proper encoding
 
 " error handling
