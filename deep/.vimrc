@@ -10,58 +10,96 @@
   syntax enable
   filetype plugin indent on
   let mapleader = ' '
+  let maplocalleader = ' '
 
 " }}}
 
 " plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  }
+      inoremap <expr> <TAB> pumvisible() ? "\<CR>" : "\<TAB>"
+      let g:deoplete#enable_at_startup = 1
+      let g:deoplete#auto_completion_start_length = 1
+      set completeopt-=preview
+      imap <silent><expr> <C-Space> deoplete#manual_complete()
 
-    Plug 'ryanoasis/vim-devicons'
+    Plug 'w0rp/ale'
+      let g:ale_sign_error = '⤫'
+      let g:ale_sign_warning = '⚠'
 
-    Plug 'arcticicestudio/nord-vim'
+    Plug 'honza/dockerfile.vim'
 
+    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+      let g:go_fmt_command = "goimports"
+      let g:go_fmt_fail_silently = 1 " ale is taking care of errors
+      let g:go_highlight_build_constraints = 1
+      let g:go_highlight_extra_types = 1
+      let g:go_highlight_fields = 1
+      let g:go_highlight_functions = 1
+      let g:go_highlight_methods = 1
+      let g:go_highlight_operators = 1
+      let g:go_highlight_structs = 1
+      let g:go_highlight_types = 1
+      let g:go_auto_sameids = 1
+      let g:go_auto_type_info = 1
+      let g:go_addtags_transform = "snakecase"
+
+    Plug 'elzr/vim-json'
+
+    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+      autocmd FileType markdown nmap <buffer> <leader>p <Plug>MarkdownPreview
+
+    Plug 'rust-lang/rust.vim'
+
+    Plug 'ntpeters/vim-better-whitespace'
+      let g:better_whitespace_enabled=1
+      let g:strip_whitespace_on_save=1
+    Plug 'editorconfig/editorconfig-vim'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-rhubarb'
     Plug 'scrooloose/nerdtree'
       nmap <silent> <leader>e :NERDTreeToggle<CR>
       let g:NERDTreeMinimalUI = 1
       " close vim if nerdtree if the latest instance
       autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+    Plug 'scrooloose/nerdcommenter'
+      let g:NERDCommentWholeLinesInVMode = 1
+      let g:NERDMenuMode = 0
+      let g:NERDSpaceDelims = 1
 
-    Plug 'editorconfig/editorconfig-vim'
+    Plug 'cohama/lexima.vim'
+    Plug 'tpope/vim-unimpaired'
+    Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-surround'
+      let g:surround_indent = 1 " reindent with `=` after surrounding
+    Plug 'easymotion/vim-easymotion'
+      let g:EasyMotion_verbose = 0
+      let g:EasyMotion_smartcase = 1
+      let g:EasyMotion_use_smartsign_us = 1
+      let g:EasyMotion_keys = 'tnseriaodhplfuwyq;gjvmc,x.z/bk' " colemak
+    Plug 'terryma/vim-multiple-cursors'
+    Plug '/usr/local/opt/fzf'
+    Plug 'junegunn/fzf.vim'
+      nmap <silent> <leader>b :Buffers<CR>
+      nmap <silent> <leader>c :Commits<CR>
+      nmap <silent> <leader>f :Files<CR>
+    Plug 'farmergreg/vim-lastplace'
 
     Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'nord'
       let g:airline_powerline_fonts = 1
-
-    Plug 'scrooloose/nerdcommenter'
-      noremap <silent> <leader>/ :call NERDComment("n", "Toggle")<CR>
-      let g:NERDCreateDefaultMappings = 0
-      let g:NERDCommentWholeLinesInVMode = 1
-      let g:NERDMenuMode = 0
-      let g:NERDSpaceDelims = 1
-
-    Plug 'tpope/vim-unimpaired'
-
-    Plug 'tpope/vim-eunuch'
-
-    Plug 'tpope/vim-repeat'
-
-    Plug 'tpope/vim-surround'
-      nmap <silent> cs <Plug>Csurround
-      nmap <silent> ds <Plug>Dsurround
-      let g:surround_no_mappings = 1 " disable the default mappings
-      let g:surround_indent = 1 " reindent with `=` after surrounding
-
-    Plug 'elzr/vim-json'
-
-    Plug 'easymotion/vim-easymotion'
-      let g:EasyMotion_smartcase = 1
-      let g:EasyMotion_use_smartsign_us = 1
-
-    Plug 'farmergreg/vim-lastplace'
+      let g:airline#extensions#ale#enabled = 1
+    Plug 'ryanoasis/vim-devicons'
+    Plug 'arcticicestudio/nord-vim'
+    Plug 'junegunn/goyo.vim'
 
   call plug#end()
+
+  call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*'  })
 
 " }}}
 
@@ -109,7 +147,7 @@ set fillchars="" " remove split separators
 silent! set formatoptions=croqj " format option stuff (see :help fo-table)
 set laststatus=2 " always display status line
 set nospell " disable spell checking
-set shortmess=aoOsI " disable vim welcome message / enable shorter messages
+set shortmess=at " disable vim welcome message / enable shorter messages
 set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
 set splitright " split right
@@ -117,7 +155,12 @@ set textwidth=80 " 80 characters line
 set number " display line numbers
 set mouse=a " enable mouse support
 set list " display invisible chars
-set listchars=tab:>·,trail:· " specifically tabs and trailing spaces
+set listchars=tab:>· " specifically tabs and trailing spaces
+
+augroup vimrc_help
+  autocmd!
+  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+augroup END
 
 " mappings {{{
 
