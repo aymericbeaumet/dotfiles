@@ -43,6 +43,17 @@ fi
   # grep
   alias grep='grep --color=auto'
 
+  # less
+  export PAGER='less'
+  export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
+  export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
+  export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+  export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
+  export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+  export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+  export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+  alias -g L='| less'
+
   # ls
   alias ls='ls -pFH --color --group-directories-first'
   alias l='ls -hl' ; compdef l=ls
@@ -139,15 +150,6 @@ tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
   export VISUAL="$EDITOR"
   export REACT_EDITOR=code
   export VIEWER=open
-  export PAGER='less'
-  export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
-  export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
-  export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
-  export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
-  export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
-  export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
-  export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
-  alias -g L='| less'
 
   # directory
   setopt AUTO_CD           # change directory without cd (`..` goes up by one)

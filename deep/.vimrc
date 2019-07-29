@@ -42,8 +42,7 @@ endfunction
       augroup END
       nnoremap <silent> gd :ALEGoToDefinition<CR>
       nnoremap <silent> g<C-S> :ALEGoToDefinitionInSplit<CR>
-      nnoremap <silent> g<C-V> :ALEGoToDefinitionInTSplit<CR>
-      nnoremap <silent> g<C-T> :ALEGoToDefinitionInTab<CR>
+      nnoremap <silent> g<C-V> :ALEGoToDefinitionInVSplit<CR>
       nnoremap <silent> [L :ALEFirst<CR>
       nnoremap <silent> [l :ALEPrevious<CR>
       nnoremap <silent> ]l :ALENext<CR>
@@ -124,9 +123,9 @@ endfunction
     let g:ale_fixers['rust'] = ['rustfmt']
     let g:ale_rust_rls_config = { 'rust': { 'clippy_preference': 'on' } }
     " }}}
-    " Shell (+ Zsh) {{{
-    Plug 'chrisbra/vim-zsh', { 'do': 'brew install shellcheck' }
-    let g:ale_linters['shell'] = ['shellcheck']
+    " Shell {{{
+    Plug 'WolfgangMehner/vim-plugins', { 'rtp': 'bash-support', 'do': 'brew install shellcheck' }
+    let g:ale_linters['sh'] = ['shellcheck']
     " }}}
     " Terraform {{{
     Plug 'hashivim/vim-terraform', { 'do': 'brew install tflint' }
@@ -141,6 +140,9 @@ endfunction
     let g:ale_linters['yaml'] = ['yamllint']
     let g:ale_fixers['yaml'] = ['prettier']
     " }}}
+    " ZSH {{{
+    Plug 'chrisbra/vim-zsh'
+    " }}}
 
     Plug 'editorconfig/editorconfig-vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
@@ -150,7 +152,6 @@ endfunction
       let g:NERDTreeMinimalUI = 1
       let g:NERDTreeMapOpenSplit = '<C-S>'
       let g:NERDTreeMapOpenVSplit = '<C-V>'
-      let g:NERDTreeMapOpenInTab = '<C-T>'
       " close vim if nerdtree is the latest instance
       augroup vimrc_nerdtree
         autocmd!
@@ -173,6 +174,8 @@ endfunction
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_keys = 'tnseriaodhplfuwyq;gjvmc,x.z/bk' " colemak
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+      nmap <silent> <leader>/ :BLines<CR>
+      nmap <silent> <leader>? :BLines<CR>
       nmap <silent> <leader>b :Buffers<CR>
       nmap <silent> <leader>B :Lines<CR>
       nmap <silent> <leader>f :Files<CR>
@@ -183,7 +186,6 @@ endfunction
       let g:fzf_action = {
             \   'ctrl-s': 'split',
             \   'ctrl-v': 'vsplit',
-            \   'ctrl-t': 'tab split',
             \ }
       let g:fzf_buffers_jump = 1
     Plug 'farmergreg/vim-lastplace'
@@ -273,10 +275,14 @@ augroup END
 
 " mappings {{{
 
-  nnoremap <leader>r :source $HOME/.vimrc<CR>
-
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
   set ttimeoutlen=0 " instant insert mode exit using escape
+
+  " kill a buffer
+  nnoremap <leader>d :bd<CR>
+
+  " reload configuration
+  nnoremap <leader>r :source $HOME/.vimrc<CR>
 
   " disable duplicated-for-convenience mappings, to learn the correct ones
   noremap  <silent> <C-w><C-s> <Nop>
