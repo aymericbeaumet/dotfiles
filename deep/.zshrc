@@ -14,8 +14,21 @@ fi
   # cat
   alias cat='bat --plain --paging=never'
 
+  # cd
+  cd() {
+    if (( $# == 0 )) ; then
+      builtin cd $(fd --color=never --type directory | fzf)
+    else
+      builtin cd "$@"
+    fi
+  }
+
   # du
   alias du='du -h'
+
+  # fzf
+  export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
+  alias -g F='| fzf'
 
   # git
   git() {
@@ -43,6 +56,9 @@ fi
   alias m='neomutt'
   alias mutt='neomutt'
 
+  # ranger
+  alias r='ranger'
+
   # tmux
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
@@ -54,68 +70,63 @@ fi
   alias v='nvim'
   alias vi='nvim'
   alias vim='nvim'
-  alias mvim='gnvim'
-  alias gvim='gnvim'
+
+  # tmux session manager
+  t() {
+    [ -n "$TMUX" ] && local action='switch' || local action='attach'
+    # Try to attach/switch to the session if a name is provided (create if needed)
+    if [ -n "$1" ]; then
+      tmux "$action" -t "$1" || {
+        tmux new-session -d -s "$1"
+        tmux "$action" -t "$1"
+      }
+      return $?
+    fi
+    # Gather the candidates sessions, then attach/switch to the selected one
+    local candidates="$(tmux_list_sessions_by_most_recently_attached_excluding_current_one)"
+    if [ -z "$candidates" ]; then
+      echo "No session to $action to."
+      return 0
+    fi
+    local session="$(echo "$candidates" | fzf)"
+    tmux "$action" -t "$session"
+    return $?
+  }
+
+  _t() {
+    _arguments -C \
+      "1: :($(tmux_list_sessions_by_most_recently_attached_excluding_current_one))" \
+      "*::arg:->args"
+  }
+
+  compdef _t t
+
+  # z
+
+  unalias z &> /dev/null
+  z() {
+    [ $# -gt 0 ] && _z "$*" && return
+    cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+  }
 
 # }}}
 
 # extensions {{{
 
-alias -s {go,js,ts,rust,json,yml,yaml,toml}=nvim
+alias -s {go,js,jsx,ts,tsx,rs,json,yml,yaml,toml}=nvim
 
 # }}}
 
 # helpers {{{
-
-# docker
 
 docker_wipe() {
   docker stop $(docker ps -aq)
   docker system prune --all --volumes --force
 }
 
-# tmux session manager
-
 tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
   local exclude="$([ -n "$TMUX" ] && tmux display-message -p '#{session_name}')"
   tmux ls -F "#{session_last_attached} #{session_name}" | egrep -v "^\d+ ${exclude}$" | sort -rn | cut -d' ' -f2
-}
-
-t() {
-  [ -n "$TMUX" ] && local action='switch' || local action='attach'
-  # Try to attach/switch to the session if a name is provided (create if needed)
-  if [ -n "$1" ]; then
-    tmux "$action" -t "$1" || {
-      tmux new-session -d -s "$1"
-      tmux "$action" -t "$1"
-    }
-    return $?
-  fi
-  # Gather the candidates sessions, then attach/switch to the selected one
-  local candidates="$(tmux_list_sessions_by_most_recently_attached_excluding_current_one)"
-  if [ -z "$candidates" ]; then
-    echo "No session to $action to."
-    return 0
-  fi
-  local session="$(echo "$candidates" | fzf --height 40% --reverse --inline-info)"
-  tmux "$action" -t "$session"
-  return $?
-}
-
-_t() {
-  _arguments -C \
-    "1: :($(tmux_list_sessions_by_most_recently_attached_excluding_current_one))" \
-    "*::arg:->args"
-}
-
-compdef _t t
-
-# z
-
-unalias z &> /dev/null
-z() {
-  [ $# -gt 0 ] && _z "$*" && return
-  cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
 }
 
 # }}}
@@ -136,7 +147,7 @@ z() {
   export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
   export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
   export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
-
+  alias -g L='| less'
 
   # directory
   setopt AUTO_CD           # change directory without cd (`..` goes up by one)

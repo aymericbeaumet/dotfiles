@@ -1,69 +1,161 @@
 " Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
-" Github: @aymericbeaumet/dotfiles
 
 " init {{{
 
   if !1 | finish | endif " Skip initialization for vim-tiny or vim-small
 
-  if exists('&compatible') | set nocompatible | endif " 21st century
-
   syntax enable
   filetype plugin indent on
+  if has('vim_starting') | set encoding=UTF-8 | endif
+  set fileencodings=utf-8
+  scriptencoding utf-8
   let mapleader = ' '
   let maplocalleader = ' '
+
+" }}}
+
+" helpers {{{
+
+function! s:is_following_space_character() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 " }}}
 
 " plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  }
-      inoremap <expr> <TAB> pumvisible() ? "\<CR>" : "\<TAB>"
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  } " pip3 install --upgrade pynvim
       let g:deoplete#enable_at_startup = 1
-      let g:deoplete#auto_completion_start_length = 1
-      set completeopt-=preview
-      imap <silent><expr> <C-Space> deoplete#manual_complete()
-
+      set completeopt=menuone,noinsert
+      inoremap <silent><expr> <TAB>
+            \ pumvisible() ? '<C-Y>' :
+            \ <SID>is_following_space_character() ? "<TAB>" :
+            \ deoplete#manual_complete()
+    Plug 'fszymanski/deoplete-emoji'
+    Plug 'Shougo/neco-vim'
     Plug 'w0rp/ale'
+      augroup vimrc_ale
+        autocmd!
+        autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'quickfix' ) | bd | q | endif
+      augroup END
+      nnoremap <silent> gd :ALEGoToDefinition<CR>
+      nnoremap <silent> g<C-S> :ALEGoToDefinitionInSplit<CR>
+      nnoremap <silent> g<C-V> :ALEGoToDefinitionInTSplit<CR>
+      nnoremap <silent> g<C-T> :ALEGoToDefinitionInTab<CR>
+      nnoremap <silent> [L :ALEFirst<CR>
+      nnoremap <silent> [l :ALEPrevious<CR>
+      nnoremap <silent> ]l :ALENext<CR>
+      nnoremap <silent> ]L :ALELast<CR>
       let g:ale_sign_error = '⤫'
       let g:ale_sign_warning = '⚠'
+      let g:ale_sign_info = 'ⓘ'
+      let g:ale_sign_column_always = 1
+      let g:ale_set_highlights = 1
+      let g:ale_set_balloons = 1
+      let g:ale_linters_explicit = 1
+      let g:ale_lint_on_text_changed = 1
+      let g:ale_lint_on_insert_leave = 1
+      let g:ale_lint_on_enter = 1
+      let g:ale_lint_on_save = 1
+      let g:ale_lint_on_filetype_changed = 1
+      let g:ale_fix_on_save = 1
+      let g:ale_linters = {}
+      let g:ale_fixers = {
+            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+            \ }
 
-    Plug 'honza/dockerfile.vim'
+    " Dockerfile {{{
+    Plug 'honza/dockerfile.vim', { 'do': 'brew install hadolint' }
+    let g:ale_linters['dockerfile'] = ['hadolint']
+    " }}}
+    " Go {{{
+    Plug 'fatih/vim-go', { 'do': 'go get -u github.com/golangci/golangci-lint/cmd/golangci-lint golang.org/x/tools/gopls golang.org/x/tools/cmd/goimports' }
+    let g:ale_linters['go'] = ['golangci-lint', 'gopls']
+    let g:ale_fixers['go'] = ['goimports']
+    " }}}
+    " GraphQL {{{
+    Plug 'jparise/vim-graphql'
+    let g:ale_fixers['graphql'] = ['prettier']
+    " }}}
+    " Git {{{
+    Plug 'tpope/vim-git', { 'do': 'pip3 install --upgrade gitlint' }
+    let g:ale_linters['gitcommit'] = 'gitlint'
+    " }}}
+    " HTML {{{
+    let g:ale_fixers['html'] = ['prettier']
+    " }}}
+    " JavaScript (+ TypeScript + React + Node.js + JSX) {{{
+    Plug 'pangloss/vim-javascript', { 'do': 'yarn global add eslint eslint-config-prettier eslint-plugin-react jsonlint prettier typescript' }
+      let g:javascript_plugin_jsdoc = 1
+    Plug 'mxw/vim-jsx'
+    Plug 'peitalin/vim-jsx-typescript'
+    let g:ale_linters['javascript'] = ['eslint', 'tsserver']
+    let g:ale_fixers['javascript'] = ['prettier']
+    for l in ['javascript.jsx', 'typescript', 'typescript.tsx']
+      let g:ale_linters[l] = g:ale_linters['javascript']
+      let g:ale_fixers[l] = g:ale_fixers['javascript']
+    endfor
+    " }}}
+    " JSON {{{
+    Plug 'elzr/vim-json', { 'do': 'yarn global add jsonlint' }
+    let g:ale_linters['json'] = ['jsonlint']
+    let g:ale_fixers['json'] = ['prettier']
+    " }}}
+    " Markdown {{{
+    Plug 'plasticboy/vim-markdown', { 'do': 'yarn global add markdownlint-cli' }
+    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn'  }
+      augroup vimrc_markdown_preview
+        autocmd!
+        autocmd FileType markdown nmap <silent><buffer> <leader>p <Plug>MarkdownPreview
+      augroup END
+    let g:ale_linters['markdown'] = ['markdownlint']
+    let g:ale_fixers['markdown'] = ['prettier']
+    " }}}
+    " Python {{{
+    Plug 'hdima/python-syntax', { 'do': 'pip3 install --upgrade pylint yapf futures' }
+    let g:ale_linters['python'] = ['pylint']
+    let g:ale_fixers['python'] = ['yapf']
+    " }}}
+    " Rust {{{
+    Plug 'rust-lang/rust.vim', { 'do': 'rustup component add clippy rls rust-analysis rust-src rustfmt' }
+    let g:ale_linters['rust'] = ['rls']
+    let g:ale_fixers['rust'] = ['rustfmt']
+    let g:ale_rust_rls_config = { 'rust': { 'clippy_preference': 'on' } }
+    " }}}
+    " Shell (+ Zsh) {{{
+    Plug 'chrisbra/vim-zsh', { 'do': 'brew install shellcheck' }
+    let g:ale_linters['shell'] = ['shellcheck']
+    " }}}
+    " Terraform {{{
+    Plug 'hashivim/vim-terraform', { 'do': 'brew install tflint' }
+    let g:ale_linters['terraform'] = ['tflint']
+    " }}}
+    " Vim {{{
+    Plug 'vim-jp/syntax-vim-ex', { 'do': 'pip3 install --upgrade vim-vint' }
+    let g:ale_linters['vim'] = ['vint']
+    " }}}
+    " YAML {{{
+    Plug 'stephpy/vim-yaml', { 'do': 'pip3 install --upgrade yamllint' }
+    let g:ale_linters['yaml'] = ['yamllint']
+    let g:ale_fixers['yaml'] = ['prettier']
+    " }}}
 
-    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-      let g:go_fmt_command = "goimports"
-      let g:go_fmt_fail_silently = 1 " ale is taking care of errors
-      let g:go_highlight_build_constraints = 1
-      let g:go_highlight_extra_types = 1
-      let g:go_highlight_fields = 1
-      let g:go_highlight_functions = 1
-      let g:go_highlight_methods = 1
-      let g:go_highlight_operators = 1
-      let g:go_highlight_structs = 1
-      let g:go_highlight_types = 1
-      let g:go_auto_sameids = 1
-      let g:go_auto_type_info = 1
-      let g:go_addtags_transform = "snakecase"
-
-    Plug 'elzr/vim-json'
-
-    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-      autocmd FileType markdown nmap <buffer> <leader>p <Plug>MarkdownPreview
-
-    Plug 'rust-lang/rust.vim'
-
-    Plug 'ntpeters/vim-better-whitespace'
-      let g:better_whitespace_enabled=1
-      let g:strip_whitespace_on_save=1
     Plug 'editorconfig/editorconfig-vim'
+    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'airblade/vim-gitgutter'
-    Plug 'tpope/vim-fugitive'
-    Plug 'tpope/vim-rhubarb'
-    Plug 'scrooloose/nerdtree'
+    Plug 'scrooloose/nerdtree' | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
       nmap <silent> <leader>e :NERDTreeToggle<CR>
       let g:NERDTreeMinimalUI = 1
-      " close vim if nerdtree if the latest instance
-      autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+      let g:NERDTreeMapOpenSplit = '<C-S>'
+      let g:NERDTreeMapOpenVSplit = '<C-V>'
+      let g:NERDTreeMapOpenInTab = '<C-T>'
+      " close vim if nerdtree is the latest instance
+      augroup vimrc_nerdtree
+        autocmd!
+        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+      augroup END
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
@@ -80,26 +172,50 @@
       let g:EasyMotion_smartcase = 1
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_keys = 'tnseriaodhplfuwyq;gjvmc,x.z/bk' " colemak
-    Plug 'terryma/vim-multiple-cursors'
-    Plug '/usr/local/opt/fzf'
-    Plug 'junegunn/fzf.vim'
+    Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
       nmap <silent> <leader>b :Buffers<CR>
-      nmap <silent> <leader>c :Commits<CR>
+      nmap <silent> <leader>B :Lines<CR>
       nmap <silent> <leader>f :Files<CR>
+      nmap <silent> <leader>F :Rg<CR>
+      nmap <silent> <leader>gc :Commits<CR>
+      nmap <silent> <leader>gf :GFiles<CR>
+      nmap <silent> <leader>gs :GFiles?<CR>
+      let g:fzf_action = {
+            \   'ctrl-s': 'split',
+            \   'ctrl-v': 'vsplit',
+            \   'ctrl-t': 'tab split',
+            \ }
+      let g:fzf_buffers_jump = 1
     Plug 'farmergreg/vim-lastplace'
+    " Plug 'aymericbeaumet/zshmappings.vim'
+      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
+    Plug 'Valloric/ListToggle'
 
     Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'nord'
       let g:airline_powerline_fonts = 1
       let g:airline#extensions#ale#enabled = 1
+      let g:airline_section_z = '%l:%c '
     Plug 'ryanoasis/vim-devicons'
     Plug 'arcticicestudio/nord-vim'
     Plug 'junegunn/goyo.vim'
+      nnoremap <silent> <leader>z :Goyo<CR>
 
   call plug#end()
 
-  call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*'  })
+  call deoplete#custom#option({
+        \   'sources': {
+        \     '_': ['ale', 'buffer'],
+        \     'gitcommit': ['emoji'],
+        \     'markdown': ['emoji'],
+        \     'vim': ['necovim'],
+        \   },
+        \   'min_pattern_length': 1,
+        \ })
+  call deoplete#custom#source('emoji', {
+        \   'converters': ['converter_emoji'],
+        \ })
 
 " }}}
 
@@ -113,15 +229,9 @@ set nostartofline " leave my cursor alone
 set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
 set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
 set virtualedit=block " allow the cursor to go in to virtual places
-autocmd VimLeave * set guicursor=a:ver100
 
 " command
 set history=1000 " increase history size
-set shell=zsh
-
-" encoding
-if has('vim_starting') | set encoding=UTF-8 | endif " ensure proper encoding
-set fileencodings=utf-8 " ensure proper encoding
 
 " error handling
 set noerrorbells " turn off error bells
@@ -154,15 +264,16 @@ set splitright " split right
 set textwidth=80 " 80 characters line
 set number " display line numbers
 set mouse=a " enable mouse support
-set list " display invisible chars
-set listchars=tab:>· " specifically tabs and trailing spaces
 
+" Open the help pane vertically
 augroup vimrc_help
   autocmd!
   autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
 augroup END
 
 " mappings {{{
+
+  nnoremap <leader>r :source $HOME/.vimrc<CR>
 
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
   set ttimeoutlen=0 " instant insert mode exit using escape
