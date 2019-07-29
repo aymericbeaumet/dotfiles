@@ -825,9 +825,17 @@
                         ]
                     },
                     {
-                        "description": "[Unix] Ctrl-B",
+                        "description": "[Unix] Ctrl-B (not in Alacritty)",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^io\\.alacritty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "b",
                                     "modifiers": {
@@ -915,9 +923,17 @@
                         ]
                     },
                     {
-                        "description": "[Unix] Ctrl-F",
+                        "description": "[Unix] Ctrl-F (not in Alacritty)",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^io\\.alacritty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "f",
                                     "modifiers": {
@@ -1010,9 +1026,17 @@
                         ]
                     },
                     {
-                        "description": "[Unix] Ctrl-N",
+                        "description": "[Unix] Ctrl-N (not in Alacritty)",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^io\\.alacritty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "n",
                                     "modifiers": {
@@ -1034,9 +1058,17 @@
                         ]
                     },
                     {
-                        "description": "[Unix] Ctrl-P",
+                        "description": "[Unix] Ctrl-P (not in Alacritty)",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^io\\.alacritty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "p",
                                     "modifiers": {
