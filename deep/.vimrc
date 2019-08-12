@@ -26,7 +26,7 @@ endfunction
 " plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  } " pip3 install --upgrade pynvim
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  } " pip3 install --upgrade neovim pynvim
       let g:deoplete#enable_at_startup = 1
       set completeopt=menuone,noinsert
       inoremap <silent><expr> <TAB>
@@ -36,10 +36,6 @@ endfunction
     Plug 'fszymanski/deoplete-emoji'
     Plug 'Shougo/neco-vim'
     Plug 'w0rp/ale'
-      augroup vimrc_ale
-        autocmd!
-        autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'quickfix' ) | bd | q | endif
-      augroup END
       nnoremap <silent> gd :ALEGoToDefinition<CR>
       nnoremap <silent> g<C-S> :ALEGoToDefinitionInSplit<CR>
       nnoremap <silent> g<C-V> :ALEGoToDefinitionInVSplit<CR>
@@ -86,15 +82,15 @@ endfunction
     let g:ale_fixers['html'] = ['prettier']
     " }}}
     " JavaScript (+ TypeScript + React + Node.js + JSX) {{{
-    Plug 'pangloss/vim-javascript', { 'do': 'yarn global add eslint eslint-config-prettier eslint-plugin-react jsonlint prettier typescript' }
+    Plug 'pangloss/vim-javascript', { 'do': 'yarn global add eslint eslint-config-prettier eslint-plugin-import eslint-plugin-react jsonlint prettier typescript' }
       let g:javascript_plugin_jsdoc = 1
     Plug 'mxw/vim-jsx'
     Plug 'peitalin/vim-jsx-typescript'
     let g:ale_linters['javascript'] = ['eslint', 'tsserver']
     let g:ale_fixers['javascript'] = ['prettier']
-    for l in ['javascript.jsx', 'typescript', 'typescript.tsx']
-      let g:ale_linters[l] = g:ale_linters['javascript']
-      let g:ale_fixers[l] = g:ale_fixers['javascript']
+    for language in ['javascript.jsx', 'typescript', 'typescript.tsx']
+      let g:ale_linters[language] = g:ale_linters['javascript']
+      let g:ale_fixers[language] = g:ale_fixers['javascript']
     endfor
     " }}}
     " JSON {{{
@@ -144,24 +140,32 @@ endfunction
     Plug 'chrisbra/vim-zsh'
     " }}}
 
+    Plug 'Asheq/close-buffers.vim'
+      nnoremap <silent> <leader>D :CloseOtherBuffers<CR>
     Plug 'editorconfig/editorconfig-vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'airblade/vim-gitgutter'
     Plug 'scrooloose/nerdtree' | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-      nmap <silent> <leader>e :NERDTreeToggle<CR>
+      nnoremap <silent> <leader>e :silent NERDTreeRefreshRoot<CR> \| :NERDTreeToggle<CR>
+      nnoremap <silent> <leader>E :silent NERDTreeRefreshRoot<CR> \| :NERDTreeFind<CR>
       let g:NERDTreeMinimalUI = 1
       let g:NERDTreeMapOpenSplit = '<C-S>'
       let g:NERDTreeMapOpenVSplit = '<C-V>'
-      " close vim if nerdtree is the latest instance
-      augroup vimrc_nerdtree
-        autocmd!
-        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-      augroup END
     Plug 'scrooloose/nerdcommenter'
       let g:NERDCommentWholeLinesInVMode = 1
       let g:NERDMenuMode = 0
       let g:NERDSpaceDelims = 1
 
+    Plug 'alvan/vim-closetag'
+      let g:closetag_filetypes = 'javascript,javascript.jsx,typescript,typescript.tsx'
+      let g:closetag_xhtml_filetypes = g:closetag_filetypes
+      let g:closetag_emptyTags_caseSensitive = 1
+      let g:closetag_regions = {
+            \ 'javascript': 'jsxRegion',
+            \ 'javascript.jsx': 'jsxRegion',
+            \ 'typescript': 'jsxRegion,tsxRegion',
+            \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+            \ }
     Plug 'cohama/lexima.vim'
     Plug 'tpope/vim-unimpaired'
     Plug 'tpope/vim-eunuch'
@@ -174,15 +178,16 @@ endfunction
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_keys = 'tnseriaodhplfuwyq;gjvmc,x.z/bk' " colemak
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-      nmap <silent> <leader>/ :BLines<CR>
-      nmap <silent> <leader>? :BLines<CR>
-      nmap <silent> <leader>b :Buffers<CR>
-      nmap <silent> <leader>B :Lines<CR>
-      nmap <silent> <leader>f :Files<CR>
-      nmap <silent> <leader>F :Rg<CR>
-      nmap <silent> <leader>gc :Commits<CR>
-      nmap <silent> <leader>gf :GFiles<CR>
-      nmap <silent> <leader>gs :GFiles?<CR>
+      nnoremap <silent> <leader>/ :BLines<CR>
+      nnoremap <silent> <leader>? BLines<CR>
+      nnoremap <silent> <leader>b :Buffers<CR>
+      nnoremap <silent> <leader>B :Lines<CR>
+      nnoremap <silent> <leader>c :Commands<CR>
+      nnoremap <silent> <leader>f :Files<CR>
+      nnoremap <silent> <leader>F :Rg<CR>
+      nnoremap <silent> <leader>gc :Commits<CR>
+      nnoremap <silent> <leader>gf :GFiles<CR>
+      nnoremap <silent> <leader>gs :GFiles?<CR>
       let g:fzf_action = {
             \   'ctrl-s': 'split',
             \   'ctrl-v': 'vsplit',
@@ -211,7 +216,7 @@ endfunction
         \     '_': ['ale', 'buffer'],
         \     'gitcommit': ['emoji'],
         \     'markdown': ['emoji'],
-        \     'vim': ['necovim'],
+        \     'vim': ['buffer', 'necovim'],
         \   },
         \   'min_pattern_length': 1,
         \ })
@@ -256,7 +261,6 @@ set tabstop=2 " n spaces when using <Tab>
 " interface
 set colorcolumn=+1 " relative to text-width
 set fillchars="" " remove split separators
-silent! set formatoptions=croqj " format option stuff (see :help fo-table)
 set laststatus=2 " always display status line
 set nospell " disable spell checking
 set shortmess=at " disable vim welcome message / enable shorter messages
@@ -266,6 +270,10 @@ set splitright " split right
 set textwidth=80 " 80 characters line
 set number " display line numbers
 set mouse=a " enable mouse support
+augroup vimrc_format
+  autocmd!
+  autocmd FileType * setlocal formatoptions=crqn
+augroup END
 
 " Open the help pane vertically
 augroup vimrc_help
@@ -278,16 +286,14 @@ augroup END
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
   set ttimeoutlen=0 " instant insert mode exit using escape
 
+  " save current buffer
+  nnoremap <CR> :w<CR>
+
   " kill a buffer
-  nnoremap <leader>d :bd<CR>
+  nnoremap <silent> <leader>d :bd<CR>
 
   " reload configuration
   nnoremap <leader>r :source $HOME/.vimrc<CR>
-
-  " disable duplicated-for-convenience mappings, to learn the correct ones
-  noremap  <silent> <C-w><C-s> <Nop>
-  noremap  <silent> <C-w><C-v> <Nop>
-  noremap  <silent> <C-w><C-q> <Nop>
 
   " better `j` and `k`
   nnoremap <silent> j gj
