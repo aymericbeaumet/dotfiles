@@ -67,6 +67,18 @@ fi
   alias m='neomutt'
   alias mutt='neomutt'
 
+  # nvim
+  nvim() {
+    if (( $# == 0 )) ; then
+      command nvim "$(fd --color=never --type file | fzf)"
+    else
+      command nvim "$@"
+    fi
+  }
+  alias v='nvim'
+  alias vi='nvim'
+  alias vim='nvim'
+
   # ranger
   alias r='ranger'
 
@@ -76,11 +88,6 @@ fi
 
   # tree
   alias tree='tree -a -C --dirsfirst'
-
-  # vim
-  alias v='nvim'
-  alias vi='nvim'
-  alias vim='nvim'
 
   # tmux session manager
   t() {

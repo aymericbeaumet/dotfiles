@@ -1,5 +1,5 @@
 {
-  "editor.fontFamily": "Fira Code",
+  "editor.fontFamily": "FuraCode Nerd Font",
   "editor.fontSize": 14,
   "editor.tabSize": 2,
   "telemetry.enableTelemetry": false,
@@ -75,7 +75,6 @@
     "*.ho": "go",
     "*.bo": "go"
   },
-  "workbench.colorTheme": "Nord",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "workbench.activityBar.visible": false,
