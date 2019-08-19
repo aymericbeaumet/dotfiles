@@ -3,11 +3,9 @@
     "ecmaVersion": 2019,
     "ecmaFeatures": { "jsx": true }
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:react/recommended",
-    "prettier"
-  ]
+  "extends": ["eslint:recommended"],
+  "env": {
+    "browser": true,
+    "node": true
+  }
 }

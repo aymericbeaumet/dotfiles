@@ -55,14 +55,14 @@ brew 'yarn'
 
 # gui
 cask 'alacritty'
-mas 'Bear', id: 1091189122
 cask 'charles'
 cask 'docker'
-cask 'homebrew/cask-versions/firefox-beta'
+cask 'figma'
 cask 'gas-mask'
 cask 'google-backup-and-sync'
 cask 'hex-fiend'
 cask 'homebrew/cask-fonts/font-firacode-nerd-font'
+cask 'homebrew/cask-versions/firefox-beta'
 cask 'iterm2'
 cask 'karabiner-elements'
 cask 'keybase'
@@ -72,3 +72,5 @@ cask 'postman'
 cask 'slack'
 cask 'transmission'
 cask 'vlc'
+mas 'Bear', id: 1091189122
+mas 'Todoist', id: 585829637
