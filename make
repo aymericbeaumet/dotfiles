@@ -10,15 +10,27 @@ function readlink {
   fi
 }
 
-# Install/Update the dependencies
-# $ ./make install
+# Install the dependencies
 function __install {
   git submodule update --init --recursive
   brew bundle check || brew bundle
+  n latest
+  nvim +PlugInstall! +qall
+  # ~/.tmux/bundle/tpm/bindings/install_plugins # TODO: fix
+  # antibody bundle -> automatically done by zsh on first launch
 }
 
-# Create the symlinks in the $HOME directory from the deep directory
-# $ ./make symlink
+# Update the dependencies
+function __update {
+  git submodule update --recursive
+  brew upgrade
+  n latest
+  nvim +PlugUpdate! +qall
+  # ~/.tmux/bundle/tpm/bindings/update_plugins # TODO: fix
+  antibody update
+}
+
+# Symlink the dotfiles to the $HOME directory
 function __symlink {
   from_directories=(
     "deep"
@@ -44,5 +56,3 @@ for command in "$@" ; do
     printf '\e[91m-> skipping unknown command "%s"\e[0m\n' "$command" >&2
   fi
 done
-
-exit 0
