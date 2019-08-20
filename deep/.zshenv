@@ -15,7 +15,7 @@ export PATH="${PATH}:${ANDROID_HOME}/tools"
 export PATH="${PATH}:${ANDROID_HOME}/platform-tools"
 
 # go
-export GOPATH="$HOME/Workspace"
+export GOPATH="$HOME/Go"
 export PATH="$PATH:$GOPATH/bin"
 
 # keybase

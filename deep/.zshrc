@@ -131,6 +131,7 @@ fi
 
 # extensions {{{
 
+# quick open for some extensions
 alias -s {go,js,jsx,ts,tsx,rs,json,yml,yaml,toml}=nvim
 
 # }}}
@@ -210,54 +211,29 @@ tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
   # allow shift-TAB to backward complete
   bindkey '^[[Z' reverse-menu-complete
 
-  # disable flow control (^S / ^Q)
+  # disable flow control (give me ^S/^Q back!)
   stty stop undef
   stty start undef
 
+  # bash-like word selection
+  autoload -U select-word-style && select-word-style bash
+
+  # emacs bindings
+  bindkey -e
+
   # bring the latest background app to foreground with ^Z
   on_ctrl_z() {
-    if [ -n "$(jobs)" ] ; then
+    if [ -n "$(jobs)" ]; then
       fg
    fi
   }
   zle -N on_ctrl_z; bindkey '^Z' on_ctrl_z
 
-  # vim style bindings (+ some bindings from `bindkey -M emacs`)
-  export KEYTIMEOUT=1
-  bindkey -v
-  bindkey -M viins '^A' beginning-of-line
-  bindkey -M viins '^B' backward-char
-  bindkey -M viins '^D' delete-char-or-list
-  bindkey -M viins '^E' end-of-line
-  bindkey -M viins '^F' forward-char
-  bindkey -M viins '^H' backward-delete-char
-  bindkey -M viins '^I' expand-or-complete
-  bindkey -M viins '^K' kill-line
-  bindkey -M viins '^N' down-line-or-history
-  bindkey -M viins '^P' up-line-or-history
-  bindkey -M viins '^W' backward-kill-word
-  # todo: not working for now as this triggers escape and leave insert mode
-  bindkey -M viins '^[B' backward-word
-  bindkey -M viins '^[D' kill-word
-  bindkey -M viins '^[F' forward-word
-  bindkey -M viins '^[T' transpose-words
+# }}}
 
-  # set cursor based on vim mode
-  zle-line-init zle-keymap-select () {
-    case "$KEYMAP" in
-      vicmd)
-        echo -ne "\e[2 q" # block
-        ;;
-      viinsert|main|*)
-        echo -ne "\e[6 q" # vertical line
-        ;;
-    esac
-  }
-  zle -N zle-line-init
-  zle -N zle-keymap-select
+# secrets {{{
 
-  # bash-like word selection
-  autoload -U select-word-style && select-word-style bash
+source "$HOME/.secrets/.zshrc"
 
 # }}}
 
@@ -266,7 +242,7 @@ tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
 ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline vi_mode)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline background_jobs dir_writable status)
 POWERLEVEL9K_DISABLE_RPROMPT=true
 
 antibody_bundle()
