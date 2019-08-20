@@ -16,6 +16,101 @@
         },
         "rules": [
           {
+            "description": "[Hammerspoon] Fullscreen",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "spacebar",
+                  "modifiers": {
+                    "mandatory": ["option", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0&w=1&h=1'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Left-half",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "h",
+                  "modifiers": {
+                    "mandatory": ["option", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0&w=0.5&h=1'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Bottom-half",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "mandatory": ["option", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0.5&w=1&h=0.5'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Top-half",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "k",
+                  "modifiers": {
+                    "mandatory": ["option", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0&w=1&h=0.5'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Right-half",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "l",
+                  "modifiers": {
+                    "mandatory": ["option", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0.5&y=0&w=0.5&h=1'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Activate Alacritty",
             "manipulators": [
               {
@@ -27,7 +122,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "~/.config/yabai/activate.sh 'Alacritty'"
+                    "shell_command": "open -a 'Alacritty'"
                   }
                 ],
                 "type": "basic"
@@ -46,7 +141,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "~/.config/yabai/activate.sh 'Bear'"
+                    "shell_command": "open -a 'Bear'"
                   }
                 ],
                 "type": "basic"
@@ -65,7 +160,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "~/.config/yabai/activate.sh 'Firefox'"
+                    "shell_command": "open -a 'Firefox'"
                   }
                 ],
                 "type": "basic"
@@ -84,7 +179,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "~/.config/yabai/activate.sh 'Todoist'"
+                    "shell_command": "open -a 'Todoist'"
                   }
                 ],
                 "type": "basic"
@@ -103,387 +198,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "~/.config/yabai/activate.sh 'Code' 'Visual Studio Code'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Focus West",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "h",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --focus west"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Focus South",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "j",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --focus south"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Focus North",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "k",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --focus north"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Focus East",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "l",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --focus east"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Swap West",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "h",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --swap west"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Swap South",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "j",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --swap south"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Swap North",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "k",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --swap north"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Window Swap East",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "l",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --swap east"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Make floating window fill screen",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "spacebar",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --toggle zoom-fullscreen"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Balance all windows",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "equal_sign",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --balance"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Create desktop and follow focus",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "c",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --create"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus next desktop",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "n",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus next"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus previous desktop",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "p",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus prev"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 1",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "1",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 1"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 2",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "2",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 2"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Focus space 3",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "3",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --focus 3"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 1",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "1",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 1 && /usr/local/bin/yabai -m space --focus 1"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 2",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "2",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 2 && /usr/local/bin/yabai -m space --focus 2"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Move window to space 3",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "3",
-                  "modifiers": {
-                    "mandatory": ["shift", "option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m window --space 3 && /usr/local/bin/yabai -m space --focus 3"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Yabai] Destroy current desktop",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "q",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "/usr/local/bin/yabai -m space --destroy"
+                    "shell_command": "open -a 'Visual Studio Code'"
                   }
                 ],
                 "type": "basic"
@@ -3914,6 +3629,9 @@
       ],
       "name": "Enhanced",
       "one_to_many_mappings": {},
+      "parameters": {
+        "delay_milliseconds_before_open_device": 1000
+      },
       "selected": true,
       "simple_modifications": [
         {
@@ -4172,6 +3890,9 @@
         }
       ],
       "name": "Default",
+      "parameters": {
+        "delay_milliseconds_before_open_device": 1000
+      },
       "selected": false,
       "simple_modifications": [],
       "virtual_hid_keyboard": {

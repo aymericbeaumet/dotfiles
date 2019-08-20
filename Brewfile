@@ -1,68 +1,68 @@
+###
 # cli
+###
+
 brew 'awscli'
 brew 'bash'
+brew 'bat'
+brew 'coreutils'
 brew 'ctags'
 brew 'ctop'
 brew 'curl'
 brew 'docker'
 brew 'fd'
+brew 'findutils'
 brew 'fswatch'
-brew 'getantibody/tap/antibody'
+brew 'fzf'
+brew 'gawk'
 brew 'git'
 brew 'git-extras'
+brew 'gnu-sed'
+brew 'go'
 brew 'gpg'
 brew 'htop'
 brew 'hub'
 brew 'jq'
-brew 'koekeishiya/formulae/skhd'
 brew 'mas'
+brew 'moreutils'
+brew 'n'
 brew 'neomutt'
 brew 'neovim'
 brew 'ranger'
 brew 'reattach-to-user-namespace'
+brew 'ripgrep'
+brew 'rustup'
 brew 'terraform'
-brew 'tldr'
 brew 'tig'
+brew 'tldr'
 brew 'tmux'
 brew 'tree'
 brew 'wget'
+brew 'xsv'
 brew 'xz'
-brew 'yabai'
+brew 'yarn'
 brew 'z'
 brew 'zsh'
 
-# cli (go)
-brew 'fzf'
+tap 'getantibody/tap'
+brew 'antibody'
 
-# cli (rust)
-brew 'bat'
-brew 'fd'
-brew 'ripgrep'
-brew 'xsv'
-
-# tools (gnu core utils)
-brew 'coreutils'
-brew 'findutils'
-brew 'gawk'
-brew 'gnu-sed'
-brew 'moreutils'
-
-# languages
-brew 'go'
-brew 'n'
-brew 'rustup'
-brew 'yarn'
-
+###
 # gui
+###
+
+mas 'Bear', id: 1091189122
+mas 'Todoist', id: 585829637
+
+tap 'homebrew/cask'
 cask 'alacritty'
 cask 'charles'
 cask 'docker'
 cask 'figma'
 cask 'gas-mask'
 cask 'google-backup-and-sync'
+cask 'hammerspoon'
 cask 'hex-fiend'
-cask 'homebrew/cask-fonts/font-firacode-nerd-font'
-cask 'homebrew/cask-versions/firefox-beta'
 cask 'iterm2'
 cask 'karabiner-elements'
 cask 'keybase'
@@ -72,5 +72,9 @@ cask 'postman'
 cask 'slack'
 cask 'transmission'
 cask 'vlc'
-mas 'Bear', id: 1091189122
-mas 'Todoist', id: 585829637
+
+tap 'homebrew/cask-fonts'
+cask 'font-firacode-nerd-font'
+
+tap 'homebrew/cask-versions'
+cask 'firefox-beta'

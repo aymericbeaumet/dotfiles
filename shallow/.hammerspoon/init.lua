@@ -1,23 +1,26 @@
-local keyboard = require("keyboard")
-local utils = require("utils")
-local windowManager = require("window-manager")
+-- Auto-reload config
+hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", hs.reload):start()
 
-keyboard.registerBindings(
-  -- Window manager
-  {{"cmd", "alt"}, "c",     utils.bind(windowManager.resizeFocusedWindow, 0.25, 0.25, 0.5, 0.5)}, -- center
-  {{"cmd", "alt"}, "s",     windowManager.moveFocusedWindowToNextScreen},                         -- move to next screen
-  {{"cmd", "alt"}, "space", utils.bind(windowManager.resizeFocusedWindow, 0, 0, 1, 1)},           -- fullscreen
-  {{"cmd", "alt"}, "1",     utils.bind(windowManager.resizeFocusedWindow, 0, 0, 0.5, 0.5)},       -- upper left 1/4
-  {{"cmd", "alt"}, "2",     utils.bind(windowManager.resizeFocusedWindow, 0.5, 0, 0.5, 0.5)},     -- upper right 1/4
-  {{"cmd", "alt"}, "3",     utils.bind(windowManager.resizeFocusedWindow, 0, 0.5, 0.5, 0.5)},     -- lower left 1/4
-  {{"cmd", "alt"}, "4",     utils.bind(windowManager.resizeFocusedWindow, 0.5, 0.5, 0.5, 0.5)},   -- lower right 1/4
-  {{"cmd", "alt"}, "b",     utils.bind(windowManager.resizeFocusedWindow, 0, 0, 0.5, 1)},         -- left 1/2
-  {{"cmd", "alt"}, "f",     utils.bind(windowManager.resizeFocusedWindow, 0.5, 0, 0.5, 1)},       -- right 1/2
-  {{"cmd", "alt"}, "n",     utils.bind(windowManager.resizeFocusedWindow, 0, 0.5, 1, 0.5)},       -- lower 1/2
-  {{"cmd", "alt"}, "p",     utils.bind(windowManager.resizeFocusedWindow, 0, 0, 1, 0.5)},         -- upper 1/2
+-- Disable animations
+hs.window.animationDuration = 0
 
-  -- Convenience
-  {{"cmd", "alt"}, "v", keyboard.typePasteboard} -- useful to bypass antipaste protections
-)
-
-hs.alert("Hammerspoon ✔")
+-- High-level wrapper to set the active window frame (+ urlevent binding)
+function setWindowFrame(x, y, w, h)
+  local currentWindow = hs.window.focusedWindow()
+  local fullFrame = currentWindow:screen():fullFrame()
+  local newFrame = hs.geometry.rect(
+    fullFrame.w * x + fullFrame.topleft.x,
+    fullFrame.h * y + fullFrame.topleft.y,
+    fullFrame.w * w,
+    fullFrame.h * h
+  )
+  currentWindow:setFrame(newFrame)
+end
+hs.urlevent.bind('setWindowFrame', function(event, params)
+  setWindowFrame(
+    tonumber(params.x),
+    tonumber(params.y),
+    tonumber(params.w),
+    tonumber(params.h)
+  )
+end)

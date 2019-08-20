@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -e
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 function readlink {
@@ -10,24 +11,12 @@ function readlink {
   fi
 }
 
-# Install the dependencies
-function __install {
+function __bootstrap {
   git submodule update --init --recursive
+  brew bundle cleanup --force
   brew bundle check || brew bundle
   n latest
-  nvim +PlugInstall! +qall
-  # ~/.tmux/bundle/tpm/bindings/install_plugins # TODO: fix
-  # antibody bundle -> automatically done by zsh on first launch
-}
-
-# Update the dependencies
-function __update {
-  git submodule update --recursive
-  brew upgrade
-  n latest
-  nvim +PlugUpdate! +qall
-  # ~/.tmux/bundle/tpm/bindings/update_plugins # TODO: fix
-  antibody update
+  yarn global upgrade np
 }
 
 # Symlink the dotfiles to the $HOME directory
