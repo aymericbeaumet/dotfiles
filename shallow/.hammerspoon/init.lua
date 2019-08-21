@@ -1,16 +1,7 @@
 -- Disable animations
 hs.window.animationDuration = 0
 
--- Watch battery level to notify
-hs.battery.watcher.new(function()
-  if hs.battery.isCharging() == true then
-    return
-  end
-  local percentage = hs.battery.percentage()
-  if percentage % 10 == 0 then
-    hs.alert("[Battery] " .. percentage .. "%")
-  end
-end):start()
+-- TODO: Watch battery level to notify
 
 -- Watch configuration to auto-reload
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", hs.reload):start()
