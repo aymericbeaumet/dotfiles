@@ -27,7 +27,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0&w=1&h=1'"
+                    "shell_command": "open -g 'hammerspoon://setActiveWindowFrame?x=0&y=0&w=1&h=1'"
                   }
                 ],
                 "type": "basic"
@@ -46,7 +46,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0&w=0.5&h=1'"
+                    "shell_command": "open -g 'hammerspoon://setActiveWindowFrame?x=0&y=0&w=0.5&h=1'"
                   }
                 ],
                 "type": "basic"
@@ -65,7 +65,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0.5&w=1&h=0.5'"
+                    "shell_command": "open -g 'hammerspoon://setActiveWindowFrame?x=0&y=0.5&w=1&h=0.5'"
                   }
                 ],
                 "type": "basic"
@@ -84,7 +84,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0&y=0&w=1&h=0.5'"
+                    "shell_command": "open -g 'hammerspoon://setActiveWindowFrame?x=0&y=0&w=1&h=0.5'"
                   }
                 ],
                 "type": "basic"
@@ -103,7 +103,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -g 'hammerspoon://setWindowFrame?x=0.5&y=0&w=0.5&h=1'"
+                    "shell_command": "open -g 'hammerspoon://setActiveWindowFrame?x=0.5&y=0&w=0.5&h=1'"
                   }
                 ],
                 "type": "basic"
@@ -111,7 +111,7 @@
             ]
           },
           {
-            "description": "Activate Alacritty",
+            "description": "[Hammerspoon] Launch or focus Alacritty",
             "manipulators": [
               {
                 "from": {
@@ -122,7 +122,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -a 'Alacritty'"
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Alacritty'"
                   }
                 ],
                 "type": "basic"
@@ -130,7 +130,7 @@
             ]
           },
           {
-            "description": "Activate Bear",
+            "description": "[Hammerspoon] Launch or focus Bear",
             "manipulators": [
               {
                 "from": {
@@ -141,7 +141,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -a 'Bear'"
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Bear'"
                   }
                 ],
                 "type": "basic"
@@ -149,7 +149,7 @@
             ]
           },
           {
-            "description": "Activate Firefox",
+            "description": "[Hammerspoon] Launch or focus Firefox",
             "manipulators": [
               {
                 "from": {
@@ -160,7 +160,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -a 'Firefox'"
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Firefox'"
                   }
                 ],
                 "type": "basic"
@@ -168,7 +168,7 @@
             ]
           },
           {
-            "description": "Activate Todoist",
+            "description": "[Hammerspoon] Launch or focus Todoist",
             "manipulators": [
               {
                 "from": {
@@ -179,7 +179,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -a 'Todoist'"
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Todoist'"
                   }
                 ],
                 "type": "basic"
@@ -187,7 +187,7 @@
             ]
           },
           {
-            "description": "Activate Visual Studio Code",
+            "description": "[Hammerspoon] Launch or focus Visual Studio Code",
             "manipulators": [
               {
                 "from": {
@@ -198,7 +198,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -a 'Visual Studio Code'"
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Visual%20Studio%20Code'"
                   }
                 ],
                 "type": "basic"
