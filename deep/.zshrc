@@ -132,7 +132,7 @@ fi
 # extensions {{{
 
 # quick open for some extensions
-alias -s {go,js,jsx,ts,tsx,rs,json,yml,yaml,toml}=nvim
+alias -s {json,yml,yaml,toml}=nvim
 
 # }}}
 
