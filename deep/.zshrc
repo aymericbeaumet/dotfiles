@@ -78,6 +78,7 @@ fi
   alias v='nvim'
   alias vi='nvim'
   alias vim='nvim'
+  alias -s {json,yml,yaml,toml}=nvim
 
   # ranger
   alias r='ranger'
@@ -126,13 +127,6 @@ fi
     [ $# -gt 0 ] && _z "$*" && return
     cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
   }
-
-# }}}
-
-# extensions {{{
-
-# quick open for some extensions
-alias -s {json,yml,yaml,toml}=nvim
 
 # }}}
 
@@ -228,6 +222,17 @@ tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
    fi
   }
   zle -N on_ctrl_z; bindkey '^Z' on_ctrl_z
+
+  # make sure the cursor is a line
+  zle-line-init()
+  {
+    if [[ -n "$TMUX" ]]; then
+        print -n -- '\033[6 q'
+    else
+        print -n -- "\E]50;CursorShape=1\C-G"
+    fi
+  }
+  zle -N zle-line-init
 
 # }}}
 
