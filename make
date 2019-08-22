@@ -22,7 +22,7 @@ function __bootstrap {
 # Symlink the dotfiles to the $HOME directory
 function __symlink {
   from_directories=(
-    "deep"
+    "src"
   )
   for from_directory in "${from_directories[@]}" ; do
     resolved_from_directory="$(readlink -f "$(pwd)/$from_directory")"

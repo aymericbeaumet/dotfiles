@@ -1,15 +1,57 @@
 # dotfiles
 
-Dotfiles for git, vim, zsh and more...
+[![Build](https://img.shields.io/travis/aymericbeaumet/dotfiles?style=flat-square)](https://travis-ci.org/aymericbeaumet/dotfiles)
+[![Issues](https://img.shields.io/github/issues/aymericbeaumet/dotfiles?style=flat-square)](https://github.com/aymericbeaumet/dotfiles/issues)
+
+Hello fellow dotfiler, here you can find configuration for git, neovim, tmux,
+zsh, and many more other programs.
+
+I have been gathering, updating, carefully nitpicking my dotfiles for nearly
+10 years. Not that long compared to more experienced people, but that's a
+start.
+
+Feel free to copy, fork, PR, improve, suggest. I am always looking to make
+this work evolve toward a more convenient workflow.
+
+## Install
+
+### read-only (https)
+
+```bash
+git clone --recursive https://github.com/aymericbeaumet/dotfiles.git "$HOME/.config/dotfiles"
+"$HOME/.config/dotfiles/make" bootstrap symlink
+```
+
+### read/write (git)
 
 ```bash
 git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.config/dotfiles"
 "$HOME/.config/dotfiles/make" bootstrap symlink
 ```
 
-## License
+## Usage
 
-[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
+### `./make bootstap`
 
-To the extent possible under law, [Aymeric Beaumet](https://aymericbeaumet.com)
-has waived all copyright and related or neighboring rights to this work.
+Update the submodules, install all the dependencies, prune the
+unneeded dependencies.
+
+It also takes care to install the latest Node.js and Yarn versions.
+
+### `./make symlink`
+
+Symlink all the configuration files from the
+[`./src`](https://github.com/aymericbeaumet/dotfiles/tree/master/src)
+directory to `$HOME`.
+
+## FAQ
+
+> Why do you need both `src` and `shallow` directories?
+
+The way it works, `./make symlink` will _recursively_ create symlinks for all
+the files in `src` folder, individually. Some directories need to be
+symlinked as a whole (e.g., `~/.config/karabiner`). The trick is then to
+leverage a separate directory (`shallow`) and to create a link pointing from
+`src` to `shallow`. That way when `./make symlink` browses through the
+files in `src`, it only creates the symlink `$HOME/.config/karabiner`,
+pointing to `dotfiles/src/.config/karabiner`.
