@@ -272,6 +272,8 @@ key_bindings:
   - { key: Key7, mods: Command, chars: "\x11\x37" } # ^Q 7
   - { key: Key8, mods: Command, chars: "\x11\x38" } # ^Q 8
   - { key: Key9, mods: Command, chars: "\x11\x39" } # ^Q 9
+  - { key: LBracket, mods: Command, chars: "\x11\x68" } # ^Q h
+  - { key: RBracket, mods: Command, chars: "\x11\x6c" } # ^Q l
   - { key: LBracket, mods: Command|Shift, chars: "\x11\x70" } # ^Q p
   - { key: RBracket, mods: Command|Shift, chars: "\x11\x6e" } # ^Q n
 
