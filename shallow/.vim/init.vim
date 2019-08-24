@@ -1,1 +1,1 @@
-../../deep/.vimrc
+../../src/.vimrc
