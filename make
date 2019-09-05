@@ -12,6 +12,9 @@ function readlink {
 }
 
 function __bootstrap {
+  if ! command -v brew &> /dev/null ; then
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  fi
   git submodule update --init --recursive
   brew bundle cleanup --force
   brew bundle check || brew bundle
