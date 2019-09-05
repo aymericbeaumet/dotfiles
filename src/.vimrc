@@ -2,8 +2,6 @@
 
 " init {{{
 
-  if !1 | finish | endif " Skip initialization for vim-tiny or vim-small
-
   syntax enable
   filetype plugin indent on
   if has('vim_starting') | set encoding=UTF-8 | endif
@@ -60,6 +58,7 @@ endfunction
       let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \ }
+    Plug 'junegunn/vader.vim'
 
     " Dockerfile {{{
     Plug 'honza/dockerfile.vim', { 'do': 'brew install hadolint' }
