@@ -31,7 +31,7 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.config/
 
 ## Usage
 
-### `./make bootstap`
+### `./make bootstrap`
 
 Update the submodules, install all the dependencies, prune the
 unneeded dependencies.
