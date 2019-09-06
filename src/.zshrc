@@ -13,6 +13,7 @@ fi
 
   # cat
   alias cat='bat --plain --paging=never'
+  alias b=cat
 
   # cd
   cd() {
@@ -249,13 +250,14 @@ ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline background_jobs dir_writable status)
 POWERLEVEL9K_DISABLE_RPROMPT=true
+POWERLEVEL9K_STATUS_CROSS=true
 
 antibody_bundle()
 {
   cat >"$ANTIBODY_BUNDLE_FILE" <<EOF
-$(antibody bundle romkatv/powerlevel10k)
+source $(brew --prefix fzf)/shell/key-bindings.zsh
 
-source /usr/local/opt/fzf/shell/key-bindings.zsh
+$(antibody bundle romkatv/powerlevel10k)
 
 $(antibody bundle zsh-users/zsh-autosuggestions)
 
