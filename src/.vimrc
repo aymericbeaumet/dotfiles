@@ -197,6 +197,9 @@ endfunction
       let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
     Plug 'Valloric/ListToggle'
 
+    Plug 'moll/vim-bbye' " optional dependency
+    Plug 'aymericbeaumet/vim-symlink'
+
     Plug 'vim-airline/vim-airline'
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'nord'
