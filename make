@@ -17,7 +17,7 @@ function __bootstrap {
   fi
   git submodule update --init --recursive
   brew bundle cleanup --force
-  brew bundle check || brew bundle
+  brew bundle
   n latest
   yarn global upgrade np
 }
