@@ -94,7 +94,7 @@
   "editor.snippetSuggestions": "none",
   "go.autocompleteUnimportedPackages": true,
   "go.gotoSymbol.includeImports": true,
-  "go.useLanguageServer": false,
+  "go.useLanguageServer": true,
   "[go]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {

@@ -22,7 +22,7 @@ git clone --recursive https://github.com/aymericbeaumet/dotfiles.git "$HOME/.con
 "$HOME/.config/dotfiles/make" bootstrap symlink
 ```
 
-### read/write (git)
+### read-write (git)
 
 ```bash
 git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.config/dotfiles"
