@@ -11,25 +11,23 @@ fi
 
 # commands {{{
 
+  # fzf - cd
+  fcd() {
+    local candidates="$(fd --color=never --type directory . "${1:-$(pwd)}")"
+    if [ -z "$candidates" ]; then
+      return 0
+    fi
+    builtin cd $(echo "$candidates" | fzf)
+  }
+
   # cat
   alias cat='bat --plain --paging=never'
-  alias b=cat
-
-  # cd
-  cd() {
-    if (( $# == 0 )) ; then
-      builtin cd $(fd --color=never --type directory | fzf)
-    else
-      builtin cd "$@"
-    fi
-  }
 
   # du
   alias du='du -h'
 
   # fzf
   export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
-  alias -g F='| fzf'
 
   # git
   git() {
@@ -42,10 +40,10 @@ fi
   alias g=git
 
   # grep
-  alias grep='grep --color=auto'
+  export GREP_COLOR=auto
 
   # less
-  export PAGER='less'
+  export LESS=R
   export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
   export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
   export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -53,32 +51,17 @@ fi
   export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
   export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
   export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
-  alias -g L='| less'
+  export PAGER='less'
 
   # ls
   alias ls='ls -pFH --color --group-directories-first'
-  alias l='ls -hl' ; compdef l=ls
-  alias ll='l' ; compdef ll=ls
+  alias ll='ls -hl' ; compdef ll=ls
   alias la='ll -A' ; compdef la=ls
 
   # mkdir
   alias mkdir='mkdir -p'
 
-  # mutt
-  alias m='neomutt'
-  alias mutt='neomutt'
-
   # nvim
-  nvim() {
-    if (( $# == 0 )) ; then
-      command nvim "$(fd --color=never --type file | fzf)"
-    else
-      command nvim "$@"
-    fi
-  }
-  alias v='nvim'
-  alias vi='nvim'
-  alias vim='nvim'
   alias -s {json,yml,yaml,toml}=nvim
 
   # ranger
@@ -91,7 +74,7 @@ fi
   # tree
   alias tree='tree -a -C --dirsfirst'
 
-  # tmux session manager
+  # tmux
   t() {
     [ -n "$TMUX" ] && local action='switch' || local action='attach'
     # Try to attach/switch to the session if a name is provided (create if needed)

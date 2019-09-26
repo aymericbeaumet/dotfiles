@@ -1,9 +1,9 @@
+--follow
+
+--smart-case
+
 --type-add
 go:*.go
 
 --type-add
 rs:*.rs
-
---follow
-
---smart-case

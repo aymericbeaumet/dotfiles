@@ -37,6 +37,14 @@ endfunction
       let g:airline_section_z = '%l:%c '
     Plug 'arcticicestudio/nord-vim'
 
+    Plug 'tpope/vim-surround'
+
+    Plug 'tpope/vim-unimpaired'
+
+    Plug 'scrooloose/nerdcommenter'
+
+    Plug 'easymotion/vim-easymotion'
+
   call plug#end()
 
 " }}}
