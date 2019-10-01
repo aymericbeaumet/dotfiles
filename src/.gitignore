@@ -37,7 +37,6 @@ tags
 *.xccheckout
 *.xcuserstate
 DerivedData
-build/
 xcuserdata
 
 # Node.js

@@ -21,6 +21,7 @@
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue
+  rbi = rebase --interactive
   rmc = rm --cached
   rs = reset
   rsh = reset --hard
