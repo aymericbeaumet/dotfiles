@@ -40,9 +40,11 @@ fi
   alias g=git
 
   # grep
+  alias -g G="| grep"
   export GREP_COLOR=auto
 
   # less
+  alias -g L="| less"
   export LESS=R
   export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
   export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink

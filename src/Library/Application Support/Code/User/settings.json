@@ -29,51 +29,23 @@
   "explorer.confirmDragAndDrop": false,
   "search.useIgnoreFiles": true,
   "extensions.ignoreRecommendations": false,
-  "eslint.enable": true,
   "editor.formatOnSave": true,
-  "[javascript]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascriptreact]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.formatOnSave": true
-  },
-  "[rust]": {
-    "editor.formatOnSave": true
-  },
-  "[terraform]": {
-    "editor.formatOnSave": true
-  },
-  "[yaml]": {
-    "editor.formatOnSave": true
-  },
   "editor.trimAutoWhitespace": true,
   "files.trimTrailingWhitespace": true,
-  "workbench.statusBar.feedback.visible": false,
   "explorer.confirmDelete": false,
   "files.hotExit": "off",
-  "workbench.tree.horizontalScrolling": true,
-  "editor.codeLens": false,
   "vim.leader": "<space>",
   "vim.easymotion": true,
   "editor.formatOnPaste": true,
   "breadcrumbs.enabled": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "vim.easymotionKeys": "tnseriaodhplfuwyq;gjvmc,x.z/bk",
-  "yaml.format.enable": false,
   "scm.diffDecorations": "none",
   "rust-client.updateOnStartup": true,
   "rust.clippy_preference": "on",
-  "eslint.packageManager": "yarn",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "files.associations": {
     "*.rustpeg": "peg",
-    "*.ho": "go",
-    "*.bo": "go"
   },
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
@@ -84,11 +56,7 @@
   "rust.unstable_features": true,
   "rust.wait_to_build": 500,
   "workbench.sideBar.location": "left",
-  "liveshare.featureSet": "insiders",
-  "gitblame.commitUrl": "Blame guess",
-  "gitblame.ignoreWhitespace": true,
   "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "git.enableSmartCommit": true,
   "git.autofetch": true,
   "editor.snippetSuggestions": "none",
@@ -102,9 +70,10 @@
   },
   "go.useCodeSnippetsOnFunctionSuggest": true,
   "go.formatTool": "goimports",
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": [
+    "--fast"
+  ],
   "vim.easymotionMarkerFontFamily": "FuraCode Nerd Font",
   "vim.easymotionMarkerForegroundColorOneChar": "red",
   "vim.easymotionMarkerForegroundColorTwoChar": "yellow",
