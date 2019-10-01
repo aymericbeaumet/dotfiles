@@ -72,7 +72,7 @@
   "go.formatTool": "goimports",
   "go.lintTool": "golangci-lint",
   "go.lintFlags": [
-    "--fast"
+    "--enable-all"
   ],
   "vim.easymotionMarkerFontFamily": "FuraCode Nerd Font",
   "vim.easymotionMarkerForegroundColorOneChar": "red",
