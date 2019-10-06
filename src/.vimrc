@@ -12,18 +12,11 @@
 
 " }}}
 
-" helpers {{{
-
-function! s:is_following_space_character() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" }}}
-
 " plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
+    "Plug 'farmergreg/vim-lastplace'
+
     Plug 'moll/vim-bbye' " optional dependency
     Plug 'aymericbeaumet/vim-symlink'
 
@@ -33,7 +26,6 @@ endfunction
       set noshowmode " hide the duplicate mode in bottom status bar
       let g:airline_theme = 'nord'
       let g:airline_powerline_fonts = 1
-      let g:airline#extensions#ale#enabled = 1
       let g:airline_section_z = '%l:%c '
     Plug 'arcticicestudio/nord-vim'
 

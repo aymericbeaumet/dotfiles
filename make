@@ -28,10 +28,11 @@ function __bootstrap {
     sudo chsh -s "$(command -v zsh)" "$USER"
   fi
   n latest
-  yarn global upgrade np
+  yarn global add np
   rustup-init -y
   for toolchain in stable nightly; do
     rustup toolchain install "$toolchain"
+    rustup component add --toolchain "$toolchain" cargo clippy rls rustfmt rust-{analysis,docs,src,std}
   done
   rustup default nightly
   rustup update
