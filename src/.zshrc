@@ -23,6 +23,12 @@ fi
   # cat
   alias cat='bat --plain --paging=never'
 
+  # docker
+  docker() {
+    command docker "$@"
+  }
+  alias d=docker
+
   # du
   alias du='du -h'
 
@@ -31,7 +37,7 @@ fi
 
   # git
   git() {
-    if (( $# == 0 )) ; then
+    if (( $# == 0 )); then
       command hub status -sb
     else
       command hub "$@"
@@ -40,11 +46,28 @@ fi
   alias g=git
 
   # grep
-  alias -g G="| grep"
+  alias -g G="|& grep -i"
   export GREP_COLOR=auto
 
+  # kubectl, kubens kubectx
+  kubectl() {
+    if (( $# == 0 )); then
+      command kubectl cluster-info
+    else
+      case "$1" in
+        # kubectx
+        ctx|context|contexts) shift; command kubectx "$@";;
+        # kubens
+        ns|namespace|namespaces) shift; command kubens "$@";;
+        # kubectl
+        *) command kubectl "$@";;
+      esac
+    fi
+  }
+  alias k=kubectl
+
   # less
-  alias -g L="| less"
+  alias -g L="|& less"
   export LESS=R
   export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
   export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
@@ -65,6 +88,10 @@ fi
 
   # nvim
   alias -s {json,yml,yaml,toml}=nvim
+
+  # pbcopy, pbpaste
+  alias -g C="| pbcopy"
+  alias -g P="| pbpaste"
 
   # ranger
   alias r='ranger'
@@ -233,7 +260,7 @@ source "$HOME/.secrets/.zshrc"
 ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline background_jobs dir_writable status)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir kubecontext vcs newline background_jobs dir_writable status)
 POWERLEVEL9K_DISABLE_RPROMPT=true
 POWERLEVEL9K_STATUS_CROSS=true
 
