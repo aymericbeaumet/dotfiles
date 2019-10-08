@@ -33,3 +33,5 @@ fi
 
 # ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
+
+export PATH="$HOME/.cargo/bin:$PATH"
