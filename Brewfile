@@ -3,6 +3,7 @@
 ###
 
 brew 'ansible'
+brew 'asdf'
 brew 'awscli'
 brew 'bash'
 brew 'bat'
@@ -35,6 +36,7 @@ brew 'n'
 brew 'neovim'
 brew 'postgresql'
 brew 'pv'
+brew 'rabbitmq'
 brew 'reattach-to-user-namespace'
 brew 'ripgrep'
 brew 'rustup'
