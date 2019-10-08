@@ -20,6 +20,14 @@ fi
     builtin cd $(echo "$candidates" | fzf)
   }
 
+  # asdf
+  asdf() {
+    if ! [ -x "$(command -v asdf)" ]; then
+      . $(brew --prefix asdf)/asdf.sh
+    fi
+    command asdf "$@"
+  }
+
   # cat
   alias cat='bat --plain --paging=never'
 
