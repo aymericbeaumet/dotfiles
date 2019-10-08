@@ -10,7 +10,7 @@ export GPG_TTY="$(tty)"
 # homebrew + coreutils
 BREW_PATH='/usr/local'
 if [[ -z "$TMUX" ]]; then
-  export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/bin:$PATH"
+  export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
 fi
 
 # cargo
@@ -33,5 +33,3 @@ fi
 
 # ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
-
-export PATH="$HOME/.cargo/bin:$PATH"
