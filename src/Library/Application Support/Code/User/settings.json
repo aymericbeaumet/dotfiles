@@ -46,6 +46,12 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "files.associations": {
     "*.rustpeg": "peg",
+    "*.job": "makefile",
+    "*.service": "makefile",
+    "*.shared": "makefile",
+    "*.template": "makefile",
+    "*.tpl": "yaml",
+    "*.base": "makefile"
   },
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
@@ -88,5 +94,12 @@
   "javascript.format.insertSpaceAfterConstructor": true,
   "javascript.suggestionActions.enabled": false,
   "typescript.format.insertSpaceAfterConstructor": true,
-  "typescript.surveys.enabled": false
+  "typescript.surveys.enabled": false,
+  "terraform.codelens.enabled": false,
+  "terraform.telemetry.enabled": false,
+  "references.preferredLocation": "view",
+  "editor.codeLens": false,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

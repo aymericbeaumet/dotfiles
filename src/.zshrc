@@ -28,6 +28,11 @@ fi
     command asdf "$@"
   }
 
+  # bat
+  alias -g B="| bat"
+  alias -g J="| bat -l json"
+  alias -g Y="| bat -l yaml"
+
   # cat
   alias cat='bat --plain --paging=never'
 
@@ -103,6 +108,16 @@ fi
 
   # ranger
   alias r='ranger'
+
+  # terraform
+  terraform() {
+    if (( $# == 0 )); then
+      command terraform workspace show
+    else
+      command terraform "$@"
+    fi
+  }
+  alias tf=terraform
 
   # tmux
   export LC_ALL=en_US.UTF-8
