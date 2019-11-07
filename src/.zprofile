@@ -4,34 +4,32 @@
 # Sourced here to make `z` available in login shells
 source '/usr/local/opt/z/etc/profile.d/z.sh'
 
-# gpg
-export GPG_TTY="$(tty)"
-
-# homebrew + coreutils
-BREW_PATH='/usr/local'
 if [[ -z "$TMUX" ]]; then
+
+  # gpg
+  export GPG_TTY="$(tty)"
+
+  # homebrew + coreutils
+  BREW_PATH='/usr/local'
   export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
-fi
 
-# cargo
-export CARGO_HOME="$HOME/.cargo"
-if [[ -z "$TMUX" ]]; then
+  # krew
+  KREW_ROOT="$HOME/.krew"
+  export PATH="$KREW_ROOT/bin:$PATH"
+
+  # cargo
+  export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"
-fi
 
-# go
-export GOPATH="$HOME/.go"
-if [[ -z "$TMUX" ]]; then
+  # go
+  export GOPATH="$HOME/.go"
   export PATH="$GOPATH/bin:$PATH"
-fi
 
-# n
-export N_PREFIX="$HOME/.n"
-if [[ -z "$TMUX" ]]; then
+  # n
+  export N_PREFIX="$HOME/.n"
   export PATH="$N_PREFIX/bin:$PATH"
+
+  # ripgrep
+  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
+
 fi
-
-# ripgrep
-export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
-
-export PATH="$HOME/.cargo/bin:$PATH"
