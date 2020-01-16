@@ -106,6 +106,9 @@ fi
   alias -g C="| pbcopy"
   alias -g P="| pbpaste"
 
+  # pup
+  alias pup='pup --color'
+
   # ranger
   alias r='ranger'
 

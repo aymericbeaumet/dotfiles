@@ -75,10 +75,11 @@
     }
   },
   "go.useCodeSnippetsOnFunctionSuggest": true,
-  "go.formatTool": "goimports",
   "go.lintTool": "golangci-lint",
   "go.lintFlags": [
-    "--enable-all"
+    "--enable-all",
+    "-D",
+    "wsl"
   ],
   "vim.easymotionMarkerFontFamily": "FuraCode Nerd Font",
   "vim.easymotionMarkerForegroundColorOneChar": "red",
@@ -101,5 +102,11 @@
   "editor.codeLens": false,
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "go.formatTool": "goimports",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "C_Cpp.updateChannel": "Insiders",
+  "workbench.editor.showTabs": false
 }

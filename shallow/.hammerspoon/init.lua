@@ -6,18 +6,6 @@ hs.window.animationDuration = 0
 -- Watch configuration to auto-reload
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", hs.reload):start()
 
--- Watch Wi-Fi networks to notify
-hs.wifi.watcher.new(function(watcher, message, interface)
-  if message == "SSIDChange" then
-    local network = hs.wifi.currentNetwork(interface)
-    if network == nil then
-      hs.alert.show("[Wi-Fi] KO")
-    else
-      hs.alert.show("[Wi-Fi] " .. network)
-    end
-  end
-end):watchingFor({ "SSIDChange" }):start()
-
 -- Wrapper to launch or focus an application
 hs.urlevent.bind('launchOrFocus', function(event, params)
   hs.application.launchOrFocus(params.name)
