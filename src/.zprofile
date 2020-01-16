@@ -33,3 +33,5 @@ if [[ -z "$TMUX" ]]; then
   export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
 fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
