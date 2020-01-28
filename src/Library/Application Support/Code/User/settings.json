@@ -108,5 +108,5 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "C_Cpp.updateChannel": "Insiders",
-  "workbench.editor.showTabs": false
+  "workbench.editor.showTabs": true
 }

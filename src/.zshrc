@@ -11,23 +11,6 @@ fi
 
 # commands {{{
 
-  # fzf - cd
-  fcd() {
-    local candidates="$(fd --color=never --type directory . "${1:-$(pwd)}")"
-    if [ -z "$candidates" ]; then
-      return 0
-    fi
-    builtin cd $(echo "$candidates" | fzf)
-  }
-
-  # asdf
-  asdf() {
-    if ! [ -x "$(command -v asdf)" ]; then
-      . $(brew --prefix asdf)/asdf.sh
-    fi
-    command asdf "$@"
-  }
-
   # bat
   alias -g B="| bat"
   alias -g J="| bat -l json"
@@ -36,17 +19,20 @@ fi
   # cat
   alias cat='bat --plain --paging=never'
 
-  # docker
-  docker() {
-    command docker "$@"
-  }
-  alias d=docker
-
   # du
   alias du='du -h'
 
   # fzf
   export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
+
+  # d (fzf - cd)
+  d() {
+    local candidates="$(fd --color=never --type directory . "${1:-$(pwd)}")"
+    if [ -z "$candidates" ]; then
+      return 0
+    fi
+    builtin cd $(echo "$candidates" | fzf)
+  }
 
   # git
   git() {
@@ -57,6 +43,13 @@ fi
     fi
   }
   alias g=git
+
+  # ... (cd to git root)
+  ...() {
+    local p="$(git rev-parse --show-toplevel || pwd)"
+    echo "$p"
+    cd "$p"
+  }
 
   # grep
   alias -g G="|& grep -i"
@@ -102,6 +95,9 @@ fi
   # nvim
   alias -s {json,yml,yaml,toml}=nvim
 
+  # pen.md
+  alias p='ssh pen.md'
+
   # pbcopy, pbpaste
   alias -g C="| pbcopy"
   alias -g P="| pbpaste"
@@ -109,55 +105,26 @@ fi
   # pup
   alias pup='pup --color'
 
-  # ranger
-  alias r='ranger'
-
-  # terraform
-  terraform() {
+  # tmux
+  tmux() {
     if (( $# == 0 )); then
-      command terraform workspace show
+      if [ -z "$TMUX" ]; then
+        command tmux attach -t default || command tmux new -s default
+      fi
     else
-      command terraform "$@"
+      command tmux "$@"
     fi
   }
-  alias tf=terraform
-
-  # tmux
+  alias t=tmux
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
+  t # start default session
 
   # tree
   alias tree='tree -a -C --dirsfirst'
 
-  # tmux
-  t() {
-    [ -n "$TMUX" ] && local action='switch' || local action='attach'
-    # Try to attach/switch to the session if a name is provided (create if needed)
-    if [ -n "$1" ]; then
-      tmux "$action" -t "$1" || {
-        tmux new-session -d -s "$1"
-        tmux "$action" -t "$1"
-      }
-      return $?
-    fi
-    # Gather the candidates sessions, then attach/switch to the selected one
-    local candidates="$(tmux_list_sessions_by_most_recently_attached_excluding_current_one)"
-    if [ -z "$candidates" ]; then
-      echo "No session to $action to."
-      return 0
-    fi
-    local session="$(echo "$candidates" | fzf)"
-    tmux "$action" -t "$session"
-    return $?
-  }
-
-  _t() {
-    _arguments -C \
-      "1: :($(tmux_list_sessions_by_most_recently_attached_excluding_current_one))" \
-      "*::arg:->args"
-  }
-
-  compdef _t t
+  # w
+  alias w=watchexec
 
   # z
 
@@ -174,11 +141,6 @@ fi
 docker_wipe() {
   docker stop $(docker ps -aq)
   docker system prune --all --volumes --force
-}
-
-tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
-  local exclude="$([ -n "$TMUX" ] && tmux display-message -p '#{session_name}')"
-  tmux ls -F "#{session_last_attached} #{session_name}" | egrep -v "^\d+ ${exclude}$" | sort -rn | cut -d' ' -f2
 }
 
 # }}}
@@ -262,17 +224,6 @@ tmux_list_sessions_by_most_recently_attached_excluding_current_one() {
   }
   zle -N on_ctrl_z; bindkey '^Z' on_ctrl_z
 
-  # make sure the cursor is a line
-  zle-line-init()
-  {
-    if [[ -n "$TMUX" ]]; then
-        print -n -- '\033[6 q'
-    else
-        print -n -- "\E]50;CursorShape=1\C-G"
-    fi
-  }
-  zle -N zle-line-init
-
 # }}}
 
 # secrets {{{
@@ -286,7 +237,7 @@ source "$HOME/.secrets/.zshrc"
 ANTIBODY_BUNDLE_FILE="$HOME/.zsh/tmp/plugins.sh"
 
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir kubecontext vcs newline background_jobs dir_writable status)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline background_jobs dir_writable status)
 POWERLEVEL9K_DISABLE_RPROMPT=true
 POWERLEVEL9K_STATUS_CROSS=true
 
