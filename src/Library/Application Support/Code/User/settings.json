@@ -108,5 +108,19 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "C_Cpp.updateChannel": "Insiders",
-  "workbench.editor.showTabs": true
+  "workbench.editor.showTabs": true,
+  "go.useLanguageServer": true,
+  "terraform.indexing": {
+    "enabled": false,
+    "liveIndexing": false,
+    "delay": 500,
+    "exclude": [
+      ".terraform/**/*",
+      "**/.terraform/**/*"
+    ]
+  },
+  "terraform.languageServer": {
+    "enabled": true,
+    "args": []
+  }
 }
