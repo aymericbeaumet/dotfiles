@@ -15,16 +15,22 @@
 " plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
-    Plug 'preservim/nerdtree'
     Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb' | Plug 'shumphrey/fugitive-gitlab.vim'
     Plug 'moll/vim-bbye' | Plug 'aymericbeaumet/vim-symlink'
     Plug 'jceb/vim-orgmode'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-speeddating'
+    Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'easymotion/vim-easymotion'
+      let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
+      let g:EasyMotion_smartcase = 1
+      let g:EasyMotion_use_smartsign_us = 1
+      let g:EasyMotion_use_upper = 1
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
   call plug#end()
 
@@ -43,13 +49,19 @@
 
   nnoremap <silent> <Leader>/ :BLines<CR>
   nnoremap <silent> <Leader>b :Buffers<CR>
-  nnoremap <silent> <Leader>gf :GitFiles<CR>
-  nnoremap <silent> <Leader>gl :Commits<CR>
+  nnoremap <silent> <Leader>c :Commands<CR>
   nnoremap <silent> <Leader>d :bd<CR>
-  nnoremap <silent> <Leader>e :NERDTreeToggle<CR>
+  nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :Files<CR>
   nnoremap <silent> <Leader>r :Rg<CR>
   nnoremap <silent> <Leader>R :RgWithHiddenFiles<CR>
+  nnoremap <silent> <Leader>q :q<CR>
+
+  nnoremap <silent> <Leader>gb :Gbrowse<CR>
+  nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
+  nnoremap <silent> <Leader>gf :GitFiles<CR>
+  nnoremap <silent> <Leader>gl :Commits<CR>
+  nnoremap <silent> <Leader>gs :Gstatus<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -73,6 +85,24 @@
   " clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+
+  " : and / supports <C-R> to call FZF (https://github.com/junegunn/fzf.vim/issues/264#issuecomment-265898760)
+  function! s:FzfCommandHistory()
+    let s:INTERRUPT = "\u03\u0c" " <C-c><C-l>
+    let s:SUBMIT = "\u0d" " <C-m>
+    let s:cmdtype = getcmdtype()
+    let s:args = string({
+          \   "options": "--query=" . shellescape(getcmdline()),
+          \ })
+    if s:cmdtype == ':'
+      return s:INTERRUPT . ":keepp call fzf#vim#command_history(" .  s:args . ")" . s:SUBMIT
+    elseif s:cmdtype == '/'
+      return s:INTERRUPT . ":keepp call fzf#vim#search_history(" .  s:args . ")" . s:SUBMIT
+    else
+      return ''
+    endif
+  endfunction
+  cnoremap <expr> <C-r> <SID>FzfCommandHistory()
 
 " }}}
 

@@ -3,9 +3,6 @@
 
 alias d=date
 
-source /usr/local/opt/fzf/shell/key-bindings.zsh
-export FZF_DEFAULT_OPTS='--ansi --border --color=bw --inline-info --height 40% --layout=reverse'
-
 g() {
   if (( $# == 0 )); then
     command hub status -sb
@@ -15,14 +12,22 @@ g() {
 }
 
 ...() {
-  local p="$(git rev-parse --show-toplevel || pwd)"
-  echo "$p"
+  local p="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
   cd "$p"
 }
 
-alias k=kubectl
+alias j=jobs
 
-alias l='ls -pFH --group-directories-first'
+k() {
+  if (( $# == 0 )); then
+    command kubectl config current-context
+  else
+    command kubectl "$@"
+  fi
+}
+
+alias ls='ls -pFH --group-directories-first'
+alias l=ls
 alias ll='ls -hl'
 alias la='ll -A'
 
@@ -76,6 +81,12 @@ export EDITOR=nvim
 export PAGER=less
 export HISTFILE="$HOME/.zsh/tmp/history"
 
+source /usr/local/opt/fzf/shell/key-bindings.zsh
+export FZF_DEFAULT_OPTS='--ansi --border --color=bw --inline-info --height 40% --layout=reverse'
+
+# cd by typing path directly + keep a stack of path (without duplicates)
+setopt autocd autopushd pushdignoredups
+
 # disable flow control (give me ^S/^Q back!)
 stty stop undef
 stty start undef
@@ -86,7 +97,15 @@ autoload -U select-word-style && select-word-style bash
 # emacs bindings
 bindkey -e
 
-# custom prompt (which restores cursor to |)
-export PROMPT="$(echo -ne '\e[5 q')$ "
+# custom prompt
+export PROMPT='$ '
+
+# restore cursor + newline before prompt (https://stackoverflow.com/a/59576993/1071486)
+precmd() {
+  echo -ne '\e[5 q'
+  precmd() {
+    echo -e '\e[5 q'
+  }
+}
 
 source "$HOME/.secrets/.zshrc"
