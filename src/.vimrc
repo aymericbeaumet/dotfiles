@@ -155,7 +155,7 @@ syntax off
 set fillchars="" " remove split separators
 set laststatus=2 " always display status line
 set nospell " disable spell checking
-set shortmess=at " disable vim welcome message / enable shorter messages
+set shortmess=aoOsIcF " disable vim welcome message / enable shorter messages
 set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
 set splitright " split right
