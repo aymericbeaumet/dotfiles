@@ -39,14 +39,14 @@
   pr = pull-request
 
 [color]
-  branch = auto
-  diff = auto
-  grep = auto
-  interactive = auto
-  pager = true
-  showbranch = auto
-  status = auto
-  ui = auto
+  branch = false
+  diff = false
+  grep = false
+  interactive = false
+  pager = false
+  showbranch = false
+  status = false
+  ui = false
 
 [core]
   excludesfile = ~/.gitignore
