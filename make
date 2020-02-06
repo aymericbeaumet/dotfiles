@@ -27,18 +27,6 @@ function __bootstrap {
   if ! [[ "$SHELL" =~ /zsh$ ]]; then
     sudo chsh -s "$(command -v zsh)" "$USER"
   fi
-  n latest
-  yarn global add np
-  rustup-init -y
-  for toolchain in stable nightly; do
-    rustup toolchain install "$toolchain"
-    rustup component add --toolchain "$toolchain" cargo clippy rls rustfmt rust-{analysis,docs,src,std}
-  done
-  rustup default nightly
-  rustup update
-  # todo: nvim plugins
-  # todo: tmux plugins
-  # todo: zsh plugins
 }
 
 for command in "$@" ; do

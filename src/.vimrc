@@ -25,6 +25,7 @@
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-speeddating'
     Plug 'tpope/vim-eunuch'
+    Plug 'jiangmiao/auto-pairs'
     Plug 'scrooloose/nerdcommenter'
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
@@ -32,7 +33,23 @@
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+      let g:go_fmt_command = 'goreturns'
+      let g:go_play_browser_command = 'open %URL% &'
+      let g:go_auto_type_info = 1
+      let g:go_updatetime = 1 " ms
+      let g:go_metalinter_autosave = 1
+      let g:go_metalinter_autosave_enabled = ['vet', 'golint']
+      let g:go_template_autocreate = 0
+      let g:go_echo_command_info = 0
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' } " pip3 install --user pynvim
+      let g:deoplete#enable_at_startup = 1
+      set completeopt=menu,noinsert
+      inoremap <expr> <Tab> pumvisible() ? "\<C-y>" : "\<Tab>"
   call plug#end()
+
+  call deoplete#custom#option('omni_patterns', {
+        \ 'go': '[^. *\t]\.\w*',
+        \})
 
 " }}}
 
@@ -51,11 +68,15 @@
   nnoremap <silent> <Leader>b :Buffers<CR>
   nnoremap <silent> <Leader>c :Commands<CR>
   nnoremap <silent> <Leader>d :bd<CR>
+  nnoremap <silent> <Leader>D :bd!<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :Files<CR>
+  nnoremap <silent> <Leader>l :lnext<CR>
+  nnoremap <silent> <Leader>L :lprev<CR>
   nnoremap <silent> <Leader>r :Rg<CR>
   nnoremap <silent> <Leader>R :RgWithHiddenFiles<CR>
   nnoremap <silent> <Leader>q :q<CR>
+  nnoremap <silent> <Leader>Q :q!<CR>
 
   nnoremap <silent> <Leader>gb :Gbrowse<CR>
   nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
@@ -139,6 +160,7 @@ set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
 set splitright " split right
 set mouse=a " enable mouse support
+set noshowmode " hide mode from status bar
 
 " performance
 set lazyredraw " only redraw when needed
