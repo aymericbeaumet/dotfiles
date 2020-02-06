@@ -89,47 +89,36 @@ z() {
   cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
 }
 
+# global env
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export EDITOR=nvim
 export PAGER=less
-export HISTFILE="$HOME/.zsh/tmp/history"
-
-# disable flow control
-stty stop undef
-stty start undef
-
-# bash-like word selection
-autoload -U select-word-style && select-word-style bash
 
 # bindings
 bindkey -e
+bindkey '^[[Z' reverse-menu-complete # allow shift-TAB to backward complete
+autoload -U select-word-style && select-word-style bash
 
-# directory
-setopt AUTO_CD           # change directory without cd (`..` goes up by one)
-setopt AUTO_PUSHD        # build a stack of cd history (cd -1, cd -2, etc)
-setopt PUSHD_IGNORE_DUPS # ignore dups when building the stack
+# changing directories (http://zsh.sourceforge.net/Doc/Release/Options.html#Changing-Directories)
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt CHASE_DOTS
+setopt CHASE_LINKS
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_TO_HOME
 
-# history
-export HISTFILE="$HOME/.zsh/tmp/history"
-export SAVEHIST=10000
-export HISTSIZE=10000
-setopt APPEND_HISTORY       # do not overwrite history
-setopt INC_APPEND_HISTORY   # write after each command
-setopt SHARE_HISTORY        # share history between multiple shell sessions
-setopt EXTENDED_HISTORY     # more information in history (begin time, elapsed time, command)
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS # avoid duplicate command lines in history
-setopt HIST_REDUCE_BLANKS   # remove superfluous blanks from history
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_SAVE_NO_DUPS
-
-# autocomplete
-setopt GLOB_DOTS          # lets files beginning with a . be matched without explicitly specifying the dot.
-setopt AUTO_REMOVE_SLASH  # autoremove slash when not needed
-setopt AUTO_PARAM_SLASH   # automatically append a slash after a directory
-setopt ALWAYS_TO_END      # move cursor to end if word had one match
-unsetopt COMPLETE_IN_WORD # complete at the end of a word even if the cursor is not after the last character
+# completion (http://zsh.sourceforge.net/Doc/Release/Options.html#Completion-2)
+setopt ALWAYS_TO_END
+setopt AUTO_LIST
+setopt AUTO_MENU
+setopt AUTO_PARAM_KEYS
+setopt AUTO_PARAM_SLASH
+setopt AUTO_REMOVE_SLASH
+setopt LIST_AMBIGUOUS
+setopt LIST_PACKED
+setopt LIST_TYPES
+unsetopt COMPLETE_IN_WORD
 # Allow arrow navigation
 zstyle ':completion:*' menu select
 # Don't complete stuff already on the line
@@ -152,21 +141,50 @@ zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 zstyle ':completion:*:default' menu 'select=0'
 # Separate man page sections
 zstyle ':completion:*:manuals' separate-sections true
-# allow shift-TAB to backward complete
-bindkey '^[[Z' reverse-menu-complete
 
-# custom prompt
+# expansion and globbing (http://zsh.sourceforge.net/Doc/Release/Options.html#Expansion-and-Globbing)
+setopt BAD_PATTERN
+setopt GLOB
+setopt GLOB_DOTS
+setopt GLOB_STAR_SHORT
+
+# history (http://zsh.sourceforge.net/Doc/Release/Options.html#History)
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=10000
+export SAVEHIST=10000
+setopt EXTENDED_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FCNTL_LOCK
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_NO_FUNCTIONS
+setopt HIST_NO_STORE
+setopt HIST_REDUCE_BLANKS
+setopt HIST_SAVE_BY_COPY
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+unsetopt APPEND_HISTORY
+unsetopt INC_APPEND_HISTORY
+
+# input/output (http://zsh.sourceforge.net/Doc/Release/Options.html#Input_002fOutput)
+setopt INTERACTIVE_COMMENTS
+setopt RC_QUOTES
+unsetopt FLOW_CONTROL
+stty stop undef
+stty start undef
+
+# prompting (http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting)
 export PROMPT='$ '
-
-# restore cursor + newline before prompt (https://stackoverflow.com/a/59576993/1071486)
-precmd() {
+precmd() { # restore cursor + newline before prompt (https://stackoverflow.com/a/59576993/1071486)
   echo -ne '\e[5 q'
   precmd() {
     echo -e '\e[5 q'
   }
 }
 
-source "$HOME/.secrets/.zshrc"
-
+# fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --color=bw --inline-info --height 40% --layout=reverse'
+
+# keybase
+source "$HOME/.secrets/.zshrc"
