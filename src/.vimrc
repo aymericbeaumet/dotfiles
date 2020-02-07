@@ -41,6 +41,7 @@
       let g:go_metalinter_autosave_enabled = ['vet', 'golint']
       let g:go_template_autocreate = 0
       let g:go_echo_command_info = 0
+    Plug 'slashmili/alchemist.vim'
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' } " pip3 install --user pynvim
       let g:deoplete#enable_at_startup = 1
       set completeopt=menu,noinsert
@@ -82,7 +83,11 @@
   nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
   nnoremap <silent> <Leader>gf :GitFiles<CR>
   nnoremap <silent> <Leader>gl :Commits<CR>
-  nnoremap <silent> <Leader>gs :Gstatus<CR>
+  nnoremap <silent> <Leader>gw :Gwrite<CR>
+  nnoremap <silent> <Leader>g<Space> :G<Space>
+
+  nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
+  nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -190,8 +195,12 @@ if has('persistent_undo')
   let &undodir = expand('~/.vim/tmp/undo//')
 endif
 
-" open the help pane vertically
-augroup vimrc_help
+augroup vimrc
   autocmd!
+  " open the help pane vertically
   autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+  " delete trailing spaces
+  autocmd BufWritePre * :%s/\s\+$//e
+  " disable autocomplete in markdown files
+  autocmd FileType markdown call deoplete#custom#buffer_option('auto_complete', v:false)
 augroup END

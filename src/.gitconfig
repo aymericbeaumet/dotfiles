@@ -39,14 +39,8 @@
   pr = pull-request
 
 [color]
-  branch = false
-  diff = false
-  grep = false
-  interactive = false
-  pager = false
-  showbranch = false
-  status = false
-  ui = false
+  ui = never
+  grep = auto
 
 [core]
   excludesfile = ~/.gitignore
@@ -71,6 +65,9 @@
   email = hi@aymericbeaumet.com
 
 [github]
+  user = aymericbeaumet
+
+[gitlab]
   user = aymericbeaumet
 
 [bitbucket]
