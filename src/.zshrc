@@ -94,6 +94,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export EDITOR=nvim
 export PAGER=less
+export GREP_OPTIONS='--color=auto'
 
 # bindings
 bindkey -e
