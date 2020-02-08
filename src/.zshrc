@@ -10,7 +10,7 @@ else
 fi
 
 d() {
-  local path="$(fd --type directory | fzf -1 -0 -q "$1")"
+  local path="$(fd --hidden --type directory | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -35,7 +35,7 @@ alias j=jobs
 
 k() {
   if (( $# == 0 )); then
-    command kubectl config current-context
+    kubectl config current-context
   else
     command kubectl "$@"
   fi
@@ -81,7 +81,7 @@ if [ -z "$TMUX" ]; then; t scratch; fi
 
 alias tree='tree -a -C --dirsfirst'
 
-alias w=watchexec
+alias w='watchexec --restart'
 
 unalias z &> /dev/null
 z() {

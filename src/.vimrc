@@ -27,25 +27,29 @@
     Plug 'tpope/vim-eunuch'
     Plug 'jiangmiao/auto-pairs'
     Plug 'scrooloose/nerdcommenter'
+    Plug 'Valloric/ListToggle'
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
       let g:EasyMotion_smartcase = 1
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-      let g:go_fmt_command = 'goreturns'
-      let g:go_play_browser_command = 'open %URL% &'
       let g:go_auto_type_info = 1
-      let g:go_updatetime = 1 " ms
+      let g:go_echo_command_info = 0
+      let g:go_fmt_command = 'goreturns'
+      let g:go_jump_to_error = 0
+      let g:go_list_type = "locationlist"
       let g:go_metalinter_autosave = 1
       let g:go_metalinter_autosave_enabled = ['vet', 'golint']
+      let g:go_play_browser_command = 'open %URL% &'
       let g:go_template_autocreate = 0
-      let g:go_echo_command_info = 0
-    Plug 'slashmili/alchemist.vim'
+      let g:go_updatetime = 50 " ms
+      let g:go_gopls_complete_unimported = 1
+      "let g:go_gopls_use_placeholders = 0 " TODO
+    Plug 'elixir-editors/vim-elixir'
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' } " pip3 install --user pynvim
       let g:deoplete#enable_at_startup = 1
-      set completeopt=menu,noinsert
-      inoremap <expr> <Tab> pumvisible() ? "\<C-y>" : "\<Tab>"
+      set completeopt=menu
   call plug#end()
 
   call deoplete#custom#option('omni_patterns', {
@@ -67,22 +71,20 @@
 
   nnoremap <silent> <Leader>/ :BLines<CR>
   nnoremap <silent> <Leader>b :Buffers<CR>
-  nnoremap <silent> <Leader>c :Commands<CR>
+  " <Leader>c NerdCommenter leader
+  nnoremap <silent> <Leader>R :RgWithHiddenFiles<CR>
   nnoremap <silent> <Leader>d :bd<CR>
-  nnoremap <silent> <Leader>D :bd!<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :Files<CR>
-  nnoremap <silent> <Leader>l :lnext<CR>
-  nnoremap <silent> <Leader>L :lprev<CR>
+  " <Leader>l LToggle
+  " <Leader>q QToggle
   nnoremap <silent> <Leader>r :Rg<CR>
-  nnoremap <silent> <Leader>R :RgWithHiddenFiles<CR>
-  nnoremap <silent> <Leader>q :q<CR>
-  nnoremap <silent> <Leader>Q :q!<CR>
 
   nnoremap <silent> <Leader>gb :Gbrowse<CR>
   nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
   nnoremap <silent> <Leader>gf :GitFiles<CR>
   nnoremap <silent> <Leader>gl :Commits<CR>
+  nnoremap <silent> <Leader>gm :Git mergetool<CR>
   nnoremap <silent> <Leader>gw :Gwrite<CR>
   nnoremap <silent> <Leader>g<Space> :G<Space>
 
