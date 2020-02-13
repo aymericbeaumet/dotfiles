@@ -12,9 +12,29 @@
 
 " }}}
 
+" autocmd {{{
+
+augroup vimrc
+
+  autocmd!
+  " open the help pane vertically
+  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+
+  " disable autocomplete in markdown files
+  autocmd FileType markdown call deoplete#custom#buffer_option('auto_complete', v:false)
+
+  " custom mappings in go buffers
+  autocmd FileType go nnoremap <buffer> <silent> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType go nnoremap <buffer> <silent> K :ALEHover<CR>
+
+augroup END
+
+" }}}
+
 " plugins {{{
 
   call plug#begin(expand('~/.vim/bundle'))
+
     Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb' | Plug 'shumphrey/fugitive-gitlab.vim'
@@ -25,7 +45,6 @@
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-speeddating'
     Plug 'tpope/vim-eunuch'
-    Plug 'jiangmiao/auto-pairs'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
     Plug 'easymotion/vim-easymotion'
@@ -33,63 +52,135 @@
       let g:EasyMotion_smartcase = 1
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
-    Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-      let g:go_auto_type_info = 1
-      let g:go_echo_command_info = 0
-      let g:go_fmt_command = 'goreturns'
-      let g:go_jump_to_error = 0
-      let g:go_list_type = "locationlist"
-      let g:go_metalinter_autosave = 1
-      let g:go_metalinter_autosave_enabled = ['vet', 'golint']
-      let g:go_play_browser_command = 'open %URL% &'
-      let g:go_template_autocreate = 0
-      let g:go_updatetime = 50 " ms
-      let g:go_gopls_complete_unimported = 1
-      "let g:go_gopls_use_placeholders = 0 " TODO
-    Plug 'elixir-editors/vim-elixir'
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' } " pip3 install --user pynvim
-      let g:deoplete#enable_at_startup = 1
-      set completeopt=menu
-  call plug#end()
 
-  call deoplete#custom#option('omni_patterns', {
-        \ 'go': '[^. *\t]\.\w*',
-        \})
+    Plug 'dense-analysis/ale'
+      let g:ale_fix_on_save = 1
+      let g:ale_fixers = {
+            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+            \   'go': ['goimports', 'gofmt'],
+            \ }
+      let g:ale_go_gofmt_options = '-s'
+      let g:ale_lint_on_save = 1
+      let g:ale_lint_on_insert_leave = 0
+      let g:ale_lint_on_text_changed = 0
+      let g:ale_linters = {
+            \   'go': ['gopls', 'golangci-lint'],
+            \ }
+      let g:ale_type_map = {
+            \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
+            \ }
+      let g:ale_lsp_show_message_severity = 'warning'
+      let g:ale_sign_error = 'E'
+      let g:ale_sign_warning = 'W'
+      let g:ale_sign_info = 'I'
+      let g:ale_set_highlights = 0
+      let g:ale_completion_enabled = 1
+      set omnifunc=ale#completion#OmniFunc
+      set completeopt=menu
+
+  call plug#end()
 
 " }}}
 
 " commands {{{
 
-  command! -bang -nargs=* RgWithHiddenFiles call fzf#vim#grep("rg --hidden --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, <bang>0)
+  command! -bang -nargs=? -complete=dir FilesWithPreview
+        \ call fzf#vim#files(
+        \   <q-args>,
+        \   fzf#vim#with_preview({'source': 'fd'}),
+        \   <bang>0,
+        \ )
+
+  command! -bang -nargs=? -complete=dir FilesWithPreviewAndHiddenFiles
+        \ call fzf#vim#files(
+        \   <q-args>,
+        \   fzf#vim#with_preview({'source': 'fd --hidden --exclude .git'}),
+        \   <bang>0,
+        \ )
+
+  command! -bang -nargs=? -complete=dir GitFilesWithPreview
+        \ call fzf#vim#files(
+        \   <q-args>,
+        \   fzf#vim#with_preview({'source': 'git ls-files'}),
+        \   <bang>0,
+        \ )
+
+  command! -bang -nargs=* RgWithPreview
+        \ call fzf#vim#grep(
+        \   'rg                          --column --line-number --no-heading --smart-case '.shellescape(<q-args>),
+        \   1,
+        \   fzf#vim#with_preview(),
+        \   <bang>0,
+        \ )
+
+  command! -bang -nargs=* RgWithPreviewAndHiddenFiles
+        \ call fzf#vim#grep(
+        \   'rg --hidden --glob "!.git/" --column --line-number --no-heading --smart-case '.shellescape(<q-args>),
+        \   1,
+        \   fzf#vim#with_preview(),
+        \   <bang>0,
+        \ )
+
+  command! -bang -nargs=* GitGrepWithPreview
+        \ call fzf#vim#grep(
+        \   'git grep '.shellescape(<q-args>),
+        \   1,
+        \   fzf#vim#with_preview(),
+        \   <bang>0,
+        \ )
+
+  " https://vi.stackexchange.com/a/8535/1956
+  command! Cnext try | cnext | catch | cfirst | catch | endtry
+  command! Cprev try | cprev | catch | clast  | catch | endtry
+  command! Lnext try | lnext | catch | lfirst | catch | endtry
+  command! Lprev try | lprev | catch | llast  | catch | endtry
 
 " }}}
 
 " mappings {{{
 
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
-  set ttimeoutlen=0 " instant insert mode exit using escape
+  set ttimeoutlen=0  " instant insert mode exit using escape
+
+  vnoremap <silent> <Leader>s :sort<CR>
+
+  nnoremap <silent> [q :Cprev<CR>
+  nnoremap <silent> ]q :Cnext<CR>
+  nnoremap <silent> [l :Lprev<CR>
+  nnoremap <silent> ]l :Lnext<CR>
 
   nnoremap <silent> <Leader>/ :BLines<CR>
   nnoremap <silent> <Leader>b :Buffers<CR>
   " <Leader>c NerdCommenter leader
-  nnoremap <silent> <Leader>R :RgWithHiddenFiles<CR>
   nnoremap <silent> <Leader>d :bd<CR>
+  nnoremap <silent> <Leader>D :bd!<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
-  nnoremap <silent> <Leader>f :Files<CR>
+  nnoremap <silent> <Leader>f :FilesWithPreview<CR>
+  nnoremap <silent> <Leader>F :FilesWithPreviewAndHiddenFiles<CR>
+  " <Leader>g git commands leader (see below)
   " <Leader>l LToggle
   " <Leader>q QToggle
-  nnoremap <silent> <Leader>r :Rg<CR>
+  nnoremap <silent> <Leader>r :RgWithPreview<CR>
+  nnoremap <silent> <Leader>R :RgWithPreviewAndHiddenFiles<CR>
+  " <Leader>v vimrc commands leader (see below)
 
-  nnoremap <silent> <Leader>gb :Gbrowse<CR>
-  nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
-  nnoremap <silent> <Leader>gf :GitFiles<CR>
-  nnoremap <silent> <Leader>gl :Commits<CR>
-  nnoremap <silent> <Leader>gm :Git mergetool<CR>
-  nnoremap <silent> <Leader>gw :Gwrite<CR>
+  nnoremap <silent> <Leader>gd       :Gvdiffsplit<CR>
+  nnoremap <silent> <Leader>gf       :GitFilesWithPreview<CR>
+  nnoremap <silent> <Leader>gg       :GitGrepWithPreview<CR>
+  nnoremap <silent> <Leader>gl       :Commits<CR>
+  nnoremap <silent> <Leader>gm       :Git mergetool<CR>
+  nnoremap <silent> <Leader>gw       :Gwrite<CR>
   nnoremap <silent> <Leader>g<Space> :G<Space>
 
   nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
+
+  " center search results
+  nnoremap <silent> n nzz
+  nnoremap <silent> N Nzz
+
+  " sorry
+  nnoremap Q <Nop>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -162,12 +253,13 @@ syntax off
 set fillchars="" " remove split separators
 set laststatus=2 " always display status line
 set nospell " disable spell checking
-set shortmess=aoOsIcF " disable vim welcome message / enable shorter messages
+set shortmess=aoOsIctF " disable vim welcome message / enable shorter messages
 set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
 set splitright " split right
 set mouse=a " enable mouse support
 set noshowmode " hide mode from status bar
+set noinsertmode
 
 " performance
 set lazyredraw " only redraw when needed
@@ -196,13 +288,3 @@ if has('persistent_undo')
   set undoreload=10000
   let &undodir = expand('~/.vim/tmp/undo//')
 endif
-
-augroup vimrc
-  autocmd!
-  " open the help pane vertically
-  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
-  " delete trailing spaces
-  autocmd BufWritePre * :%s/\s\+$//e
-  " disable autocomplete in markdown files
-  autocmd FileType markdown call deoplete#custom#buffer_option('auto_complete', v:false)
-augroup END
