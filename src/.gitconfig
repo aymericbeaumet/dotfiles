@@ -42,6 +42,10 @@
   ui = never
   grep = auto
 
+[commit]
+  gpgsign = true
+  verbose = true
+
 [core]
   excludesfile = ~/.gitignore
   pager = less
@@ -72,9 +76,6 @@
 
 [bitbucket]
   user = aymericbeaumet
-
-[commit]
-  gpgsign = true
 
 [include]
   path = ~/.secrets/.gitconfig

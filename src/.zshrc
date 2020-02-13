@@ -26,6 +26,10 @@ g() {
   fi
 }
 
+.() {
+  nvim .
+}
+
 ...() {
   local path="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
   cd "$path"
@@ -35,7 +39,9 @@ alias j=jobs
 
 k() {
   if (( $# == 0 )); then
-    kubectl config current-context
+    local context=$(kubectl config current-context)
+    local namespace=$(kubens -c)
+    echo "$context/$namespace"
   else
     command kubectl "$@"
   fi
@@ -53,8 +59,6 @@ alias mkdir='mkdir -p'
 alias v=nvim
 alias vi=nvim
 alias vim=nvim
-
-alias p=pwd
 
 t() {
   local target="$1"
@@ -79,7 +83,7 @@ t() {
 
 if [ -z "$TMUX" ]; then; t scratch; fi
 
-alias tree='tree -a -C --dirsfirst'
+alias tree='tree -a -I .git --dirsfirst'
 
 alias w='watchexec --restart'
 
@@ -175,13 +179,14 @@ stty stop undef
 stty start undef
 
 # prompting (http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting)
-export PROMPT='$ '
 precmd() { # restore cursor + newline before prompt (https://stackoverflow.com/a/59576993/1071486)
   echo -ne '\e[5 q'
   precmd() {
     echo -e '\e[5 q'
   }
 }
+export PROMPT="%~
+$ "
 
 # fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh

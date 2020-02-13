@@ -368,6 +368,28 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Todoist",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "t",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Todoist'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus Slack",
                         "manipulators": [
                             {
