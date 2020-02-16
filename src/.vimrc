@@ -16,16 +16,9 @@
 
 augroup vimrc
 
-  autocmd!
-  " open the help pane vertically
-  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
-
-  " disable autocomplete in markdown files
-  autocmd FileType markdown call deoplete#custom#buffer_option('auto_complete', v:false)
-
   " custom mappings in go buffers
-  autocmd FileType go nnoremap <buffer> <silent> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType go nnoremap <buffer> <silent> K :ALEHover<CR>
+  autocmd FileType go nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType go nnoremap <silent> <buffer> K :ALEHover<CR>
 
 augroup END
 
@@ -39,7 +32,6 @@ augroup END
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb' | Plug 'shumphrey/fugitive-gitlab.vim'
     Plug 'moll/vim-bbye' | Plug 'aymericbeaumet/vim-symlink'
-    Plug 'jceb/vim-orgmode'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
     Plug 'tpope/vim-repeat'
@@ -47,6 +39,7 @@ augroup END
     Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
+
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
       let g:EasyMotion_smartcase = 1
@@ -76,7 +69,8 @@ augroup END
       let g:ale_set_highlights = 0
       let g:ale_completion_enabled = 1
       set omnifunc=ale#completion#OmniFunc
-      set completeopt=menu
+      set completeopt=menu,menuone,noinsert,noselect
+      inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-y>\<CR>" : "\<CR>")
 
   call plug#end()
 
@@ -143,6 +137,7 @@ augroup END
   set ttimeoutlen=0  " instant insert mode exit using escape
 
   vnoremap <silent> <Leader>s :sort<CR>
+  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze --url \| xargs open<CR><CR>
 
   nnoremap <silent> [q :Cprev<CR>
   nnoremap <silent> ]q :Cnext<CR>
@@ -180,6 +175,7 @@ augroup END
   nnoremap <silent> N Nzz
 
   " sorry
+  inoremap <C-Space> <Nop>
   nnoremap Q <Nop>
 
   " save current buffer

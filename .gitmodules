@@ -1,3 +1,6 @@
 [submodule "shallow/.vim/autoload"]
 	path = shallow/.vim/autoload
 	url = https://github.com/junegunn/vim-plug.git
+[submodule "shallow/.zsh/bundle/zsh-completions"]
+	path = shallow/.zsh/bundle/zsh-completions
+	url = git://github.com/zsh-users/zsh-completions.git

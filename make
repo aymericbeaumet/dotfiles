@@ -22,7 +22,6 @@ function __bootstrap {
   fi
   mkdir -p "$GOPATH" "$HOME/Workspace"
   git submodule update --init --recursive
-  brew bundle cleanup --force
   brew bundle
   if ! [[ "$SHELL" =~ /zsh$ ]]; then
     sudo chsh -s "$(command -v zsh)" "$USER"
