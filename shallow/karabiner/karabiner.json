@@ -412,28 +412,6 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Launch or focus Visual Studio Code",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "v",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Visual%20Studio%20Code'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Trigger left_control if caps_lock is hold, disabled otherwise",
                         "manipulators": [
                             {

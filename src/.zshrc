@@ -1,13 +1,8 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
-# https://gist.github.com/ctechols/ca1035271ad134841284
-autoload -Uz compinit
-if [ -n "${ZDOTDIR}/.zcompdump(#qN.mh+24)" ]; then
-  compinit
-else
-  compinit -C
-fi
+fpath=($HOME/.zsh/bundle/zsh-completions/src $fpath)
+autoload -Uz compinit && compinit
 
 d() {
   local path="$(fd --hidden --type directory | fzf -1 -0 -q "$1")"
@@ -25,10 +20,7 @@ g() {
     command hub "$@"
   fi
 }
-
-.() {
-  nvim .
-}
+compdef g=git
 
 ...() {
   local path="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
@@ -39,20 +31,19 @@ alias j=jobs
 
 k() {
   if (( $# == 0 )); then
-    local context=$(kubectl config current-context)
+    local context=$(kubectx -c)
     local namespace=$(kubens -c)
     echo "$context/$namespace"
   else
     command kubectl "$@"
   fi
 }
+compdef k=kubectl
 
 alias ls='ls -pFH --group-directories-first'
 alias ll='ls -hl'
 alias l=ll
 alias la='ll -A'
-
-alias m=man
 
 alias mkdir='mkdir -p'
 
@@ -80,8 +71,6 @@ t() {
     command tmux attach-session -t "$target"
   fi
 }
-
-if [ -z "$TMUX" ]; then; t scratch; fi
 
 alias tree='tree -a -I .git --dirsfirst'
 
@@ -112,6 +101,7 @@ setopt CHASE_DOTS
 setopt CHASE_LINKS
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_TO_HOME
+
 
 # completion (http://zsh.sourceforge.net/Doc/Release/Options.html#Completion-2)
 setopt ALWAYS_TO_END
@@ -194,3 +184,8 @@ export FZF_DEFAULT_OPTS='--ansi --border --color=bw --inline-info --height 40% -
 
 # keybase
 source "$HOME/.secrets/.zshrc"
+
+# start or join a default tmux session
+if [ -z "$TMUX" ]; then;
+  t scratch
+fi
