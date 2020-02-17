@@ -39,8 +39,7 @@
   pr = pull-request
 
 [color]
-  ui = never
-  grep = auto
+  ui = auto
 
 [commit]
   gpgsign = true
@@ -62,7 +61,7 @@
   viewer = less
 
 [push]
-  default = current
+  default = simple
 
 [user]
   name = Aymeric Beaumet

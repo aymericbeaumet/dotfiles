@@ -40,7 +40,7 @@ k() {
 }
 compdef k=kubectl
 
-alias ls='ls -pFH --group-directories-first'
+alias ls='ls --color=auto -pFH --group-directories-first'
 alias ll='ls -hl'
 alias l=ll
 alias la='ll -A'
@@ -113,6 +113,7 @@ setopt AUTO_REMOVE_SLASH
 setopt LIST_AMBIGUOUS
 setopt LIST_PACKED
 setopt LIST_TYPES
+setopt +o nomatch
 unsetopt COMPLETE_IN_WORD
 # Allow arrow navigation
 zstyle ':completion:*' menu select
@@ -169,18 +170,18 @@ stty stop undef
 stty start undef
 
 # prompting (http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting)
-precmd() { # restore cursor + newline before prompt (https://stackoverflow.com/a/59576993/1071486)
+precmd() { # set title + restore cursor
+  print -n "\ek$(pwd)\e\\"
   echo -ne '\e[5 q'
-  precmd() {
-    echo -e '\e[5 q'
-  }
 }
-export PROMPT="%~
-$ "
+source ~/.zsh/bundle/powerlevel10k/powerlevel10k.zsh-theme
+source ~/.p10k.zsh
+source ~/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh
-export FZF_DEFAULT_OPTS='--ansi --border --color=bw --inline-info --height 40% --layout=reverse'
+export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # keybase
 source "$HOME/.secrets/.zshrc"
