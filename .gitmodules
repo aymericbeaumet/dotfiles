@@ -4,3 +4,12 @@
 [submodule "shallow/.zsh/bundle/zsh-completions"]
 	path = shallow/.zsh/bundle/zsh-completions
 	url = git://github.com/zsh-users/zsh-completions.git
+[submodule "shallow/.zsh/bundle/powerlevel10k"]
+	path = shallow/.zsh/bundle/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "shallow/.zsh/bundle/zsh-autosuggestions"]
+	path = shallow/.zsh/bundle/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "shallow/.zsh/bundle/zsh-syntax-highlighting"]
+	path = shallow/.zsh/bundle/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

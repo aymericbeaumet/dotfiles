@@ -4,6 +4,7 @@
 " init {{{
 
   filetype plugin indent on
+  syntax on
   if has('vim_starting') | set encoding=UTF-8 | endif
   set fileencodings=utf-8
   scriptencoding utf-8
@@ -28,6 +29,7 @@ augroup END
 
   call plug#begin(expand('~/.vim/bundle'))
 
+    Plug 'arcticicestudio/nord-vim'
     Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb' | Plug 'shumphrey/fugitive-gitlab.vim'
@@ -137,7 +139,7 @@ augroup END
   set ttimeoutlen=0  " instant insert mode exit using escape
 
   vnoremap <silent> <Leader>s :sort<CR>
-  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze --url \| xargs open<CR><CR>
+  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url \| xargs open<CR><CR>
 
   nnoremap <silent> [q :Cprev<CR>
   nnoremap <silent> ]q :Cnext<CR>
@@ -169,10 +171,6 @@ augroup END
 
   nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
-
-  " center search results
-  nnoremap <silent> n nzz
-  nnoremap <silent> N Nzz
 
   " sorry
   inoremap <C-Space> <Nop>
@@ -245,7 +243,7 @@ set softtabstop=2 " n spaces when using <Tab>
 set tabstop=2 " n spaces when using <Tab>
 
 " interface
-syntax off
+colorscheme nord
 set fillchars="" " remove split separators
 set laststatus=2 " always display status line
 set nospell " disable spell checking
