@@ -60,8 +60,11 @@
 [man]
   viewer = less
 
+[pull]
+  rebase = true
+
 [push]
-  default = simple
+  default = current
 
 [user]
   name = Aymeric Beaumet

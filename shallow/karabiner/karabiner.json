@@ -258,50 +258,6 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Launch or focus Anki",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "k",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Anki'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                      "description": "[Hammerspoon] Launch or focus 1Password",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "1",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=1Password 7'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "[Hammerspoon] Launch or focus Dash",
                         "manipulators": [
                             {
