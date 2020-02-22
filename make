@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 # Symlink the dotfiles to the $HOME directory
-function __symlink {
+__symlink() {
   from_directory="$(greadlink -f "$(pwd)/src")"
   find "$from_directory" -type file -o -type link | while read -r from ; do
     to="$HOME/${from##"$from_directory/"}"
@@ -15,7 +15,8 @@ function __symlink {
   done
 }
 
-function __bootstrap {
+# Install the dependencies
+__install() {
   source "$(pwd)/src/.zprofile"
   if ! command -v brew &> /dev/null ; then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -28,8 +29,14 @@ function __bootstrap {
   fi
 }
 
-for command in "$@" ; do
-  if [[ "$(type "__$command" 2>/dev/null)" == *function* ]] ; then
+# Configure the OS
+__configure() {
+  # Disable key repeat delay
+  defaults write NSGlobalDomain KeyRepeat -int 1
+}
+
+for command in "$@"; do
+  if [[ "$(type "__$command" 2>/dev/null)" == *function* ]]; then
     printf '\e[94m%s...\e[0m\n' "$command"
     "__$command"
     printf '\e[92mok\e[0m\n'

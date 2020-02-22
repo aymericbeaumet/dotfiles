@@ -41,6 +41,7 @@ augroup END
     Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
+    Plug 'MaxMEllon/vim-jsx-pretty'
 
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
@@ -74,6 +75,10 @@ augroup END
       set completeopt=menu,menuone,noinsert,noselect
       inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-y>\<CR>" : "\<CR>")
 
+    Plug 'elixir-editors/vim-elixir'
+
+    Plug 'hashivim/vim-terraform'
+
   call plug#end()
 
 " }}}
@@ -83,14 +88,14 @@ augroup END
   command! -bang -nargs=? -complete=dir FilesWithPreview
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd'}),
+        \   fzf#vim#with_preview({'source': 'fd --type file'}),
         \   <bang>0,
         \ )
 
   command! -bang -nargs=? -complete=dir FilesWithPreviewAndHiddenFiles
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --hidden --exclude .git'}),
+        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git'}),
         \   <bang>0,
         \ )
 

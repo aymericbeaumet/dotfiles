@@ -4,13 +4,42 @@
 fpath=($HOME/.zsh/bundle/zsh-completions/src $fpath)
 autoload -Uz compinit && compinit
 
+alias cat='bat --paging=never --style=plain'
+
 d() {
-  local path="$(fd --hidden --type directory | fzf -1 -0 -q "$1")"
+  local path="$(fd          --exclude .git --type directory | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
   fi
   cd "$path"
+}
+
+D() {
+  local path="$(fd --hidden --exclude .git --type directory | fzf -1 -0 -q "$1")"
+  if [ -z "$path" ]; then
+    echo 'wow such empty' 1>&2
+    return
+  fi
+  cd "$path"
+}
+
+f() {
+  local path="$(fd          --exclude .git --type file | fzf -1 -0 -q "$1")"
+  if [ -z "$path" ]; then
+    echo 'wow such empty' 1>&2
+    return
+  fi
+  "$EDITOR" "$path"
+}
+
+F() {
+  local path="$(fd --hidden --exclude .git --type file | fzf -1 -0 -q "$1")"
+  if [ -z "$path" ]; then
+    echo 'wow such empty' 1>&2
+    return
+  fi
+  "$EDITOR" "$path"
 }
 
 g() {
