@@ -7,7 +7,7 @@ autoload -Uz compinit && compinit
 alias cat='bat --paging=never --style=plain'
 
 d() {
-  local path="$(fd          --exclude .git --type directory | fzf -1 -0 -q "$1")"
+  local path="$(fd --type directory                         | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -16,7 +16,7 @@ d() {
 }
 
 D() {
-  local path="$(fd --hidden --exclude .git --type directory | fzf -1 -0 -q "$1")"
+  local path="$(fd --type directory --hidden --exclude .git | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -25,7 +25,7 @@ D() {
 }
 
 f() {
-  local path="$(fd          --exclude .git --type file | fzf -1 -0 -q "$1")"
+  local path="$(fd --type file                         | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -34,7 +34,7 @@ f() {
 }
 
 F() {
-  local path="$(fd --hidden --exclude .git --type file | fzf -1 -0 -q "$1")"
+  local path="$(fd --type file --hidden --exclude .git | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
