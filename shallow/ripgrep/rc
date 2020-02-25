@@ -2,8 +2,8 @@
 
 --smart-case
 
---type-add
-go:*.go
+--type-add=go:*.go
+--type-add=rs:*.rs
 
---type-add
-rs:*.rs
+# TODO: use $HOME when supported
+--ignore-file=/Users/aymericbeaumet/.config/ripgrep/ignore
