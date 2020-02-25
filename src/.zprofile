@@ -4,7 +4,8 @@
 # Sourced here to make `z` available in login shells
 source '/usr/local/opt/z/etc/profile.d/z.sh'
 
-if [[ -z "$TMUX" ]]; then
+if [[ -z "$__Z_PROFILE_LOADED__" ]]; then
+  export __Z_PROFILE_LOADED__=true
 
   # gpg
   export GPG_TTY="$(tty)"
@@ -33,5 +34,3 @@ if [[ -z "$TMUX" ]]; then
   export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
 fi
-
-export PATH="$HOME/.cargo/bin:$PATH"

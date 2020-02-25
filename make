@@ -29,6 +29,14 @@ __install() {
   fi
 }
 
+# Install editor tools
+__tools() {
+  go get golang.org/x/tools/cmd/goimports golang.org/x/tools/gopls
+  brew install golangci/tap/golangci-lint || brew upgrade golangci/tap/golangci-lint
+  rustup update
+  rustup component add rustfmt rls rust-analysis rust-src
+}
+
 # Configure the OS
 __configure() {
   # Disable key repeat delay

@@ -49,18 +49,21 @@ augroup END
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
 
-    Plug 'dense-analysis/ale'
+    Plug 'dense-analysis/ale', { 'do': '~/.dotfiles/make tools' }
       let g:ale_fix_on_save = 1
       let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'go': ['goimports', 'gofmt'],
+            \   'rust': ['rustfmt'],
             \ }
       let g:ale_go_gofmt_options = '-s'
       let g:ale_lint_on_save = 1
       let g:ale_lint_on_insert_leave = 0
       let g:ale_lint_on_text_changed = 0
+      let g:ale_linters_explicit = 1
       let g:ale_linters = {
             \   'go': ['gopls', 'golangci-lint'],
+            \   'rust': ['rls'],
             \ }
       let g:ale_type_map = {
             \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
@@ -74,6 +77,8 @@ augroup END
       set omnifunc=ale#completion#OmniFunc
       set completeopt=menu,menuone,noinsert,noselect
       inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-y>\<CR>" : "\<CR>")
+
+    Plug 'rust-lang/rust.vim'
 
     Plug 'elixir-editors/vim-elixir'
 
@@ -108,7 +113,7 @@ augroup END
 
   command! -bang -nargs=* RgWithPreview
         \ call fzf#vim#grep(
-        \   'rg                          --column --line-number --no-heading --smart-case '.shellescape(<q-args>),
+        \   'rg          --column --line-number --no-heading '.shellescape(<q-args>),
         \   1,
         \   fzf#vim#with_preview(),
         \   <bang>0,
@@ -116,7 +121,7 @@ augroup END
 
   command! -bang -nargs=* RgWithPreviewAndHiddenFiles
         \ call fzf#vim#grep(
-        \   'rg --hidden --glob "!.git/" --column --line-number --no-heading --smart-case '.shellescape(<q-args>),
+        \   'rg --hidden --column --line-number --no-heading '.shellescape(<q-args>),
         \   1,
         \   fzf#vim#with_preview(),
         \   <bang>0,
@@ -176,6 +181,8 @@ augroup END
 
   nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
+  nnoremap <silent> <Leader>vu :PlugUpdate<CR>
+  nnoremap <silent> <Leader>vU :PlugUpdat!<CR>
 
   " sorry
   inoremap <C-Space> <Nop>
