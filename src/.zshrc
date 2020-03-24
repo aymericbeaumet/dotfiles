@@ -6,6 +6,10 @@ autoload -Uz compinit && compinit
 
 alias cat='bat --paging=never --style=plain'
 
+cd() {
+  builtin cd "$@" >/dev/null
+}
+
 d() {
   local path="$(fd --type directory                         | fzf -1 -0 -q "$1")"
   if [ -z "$path" ]; then
@@ -103,12 +107,19 @@ t() {
 
 alias tree='tree -a -I .git --dirsfirst'
 
-alias w='watchexec --restart'
+alias w='watchexec --clear --restart -i .git -i "*.md"'
 
 unalias z &> /dev/null
 z() {
   [ $# -gt 0 ] && _z "$*" && return
   cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
+
+urls() {
+  fc -rl 1 | squeeze --url | sort -u
+}
+furls() {
+  urls | fzf | pbcopy
 }
 
 # global env
@@ -170,8 +181,6 @@ zstyle ':completion:*:manuals' separate-sections true
 # expansion and globbing (http://zsh.sourceforge.net/Doc/Release/Options.html#Expansion-and-Globbing)
 setopt BAD_PATTERN
 setopt GLOB
-setopt GLOB_DOTS
-setopt GLOB_STAR_SHORT
 
 # history (http://zsh.sourceforge.net/Doc/Release/Options.html#History)
 export HISTFILE="$HOME/.zsh_history"

@@ -79,9 +79,6 @@ brew 'k9s'
 tap 'getantibody/tap'
 brew 'antibody'
 
-tap 'golangci/tap'
-brew 'golangci-lint'
-
 tap 'weaveworks/tap'
 brew 'eksctl'
 

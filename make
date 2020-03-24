@@ -17,11 +17,11 @@ __symlink() {
 
 # Install the dependencies
 __install() {
-  source "$(pwd)/src/.zprofile"
+  source ./src/.zprofile
   if ! command -v brew &> /dev/null ; then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
-  mkdir -p "$GOPATH" "$HOME/Workspace"
+  mkdir -p "$HOME/Workspace" "$GOPATH"
   git submodule update --init --recursive
   brew bundle
   if ! [[ "$SHELL" =~ /zsh$ ]]; then
@@ -31,10 +31,14 @@ __install() {
 
 # Install editor tools
 __tools() {
-  go get golang.org/x/tools/cmd/goimports golang.org/x/tools/gopls
-  brew install golangci/tap/golangci-lint || brew upgrade golangci/tap/golangci-lint
+  # Terraform
+  brew install tflint || brew upgrade tflint
+  # Rust
   rustup update
   rustup component add rustfmt rls rust-analysis rust-src
+  # Go
+  go get golang.org/x/tools/cmd/goimports golang.org/x/tools/gopls
+  brew install golangci/tap/golangci-lint || brew upgrade golangci/tap/golangci-lint
 }
 
 # Configure the OS
