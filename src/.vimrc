@@ -17,9 +17,13 @@
 
 augroup vimrc
 
-  " custom mappings in go buffers
-  autocmd FileType go nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType go nnoremap <silent> <buffer> K :ALEHover<CR>
+  " custom mappings in go/rust buffers
+  "autocmd FileType go,rust nnoremap <silent> <buffer> <C-[> :ALEFindReferences<CR>
+  autocmd FileType go,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType go,rust nnoremap <silent> <buffer> K :ALEHover<CR>
+
+  " syntax highlighting for custom filetypes
+  autocmd BufNewFile,BufRead *.tpl set ft=yaml
 
 augroup END
 
@@ -41,7 +45,6 @@ augroup END
     Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
-    Plug 'MaxMEllon/vim-jsx-pretty'
 
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
@@ -51,23 +54,25 @@ augroup END
 
     Plug 'dense-analysis/ale', { 'do': '~/.dotfiles/make tools' }
       let g:ale_fix_on_save = 1
-      let g:ale_fixers = {
-            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-            \   'go': ['goimports', 'gofmt'],
-            \   'rust': ['rustfmt'],
-            \ }
-      let g:ale_go_gofmt_options = '-s'
       let g:ale_lint_on_save = 1
       let g:ale_lint_on_insert_leave = 0
       let g:ale_lint_on_text_changed = 0
       let g:ale_linters_explicit = 1
+      let g:ale_fixers = {
+            \   'terraform': ['terraform'],
+            \   'rust': ['rustfmt'],
+            \   'go': ['goimports', 'gofmt'],
+            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+            \ }
       let g:ale_linters = {
-            \   'go': ['gopls', 'golangci-lint'],
+            \   'terraform': ['terraform', 'tflint'],
             \   'rust': ['rls'],
+            \   'go': ['gopls', 'golangci-lint'],
             \ }
       let g:ale_type_map = {
             \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
             \ }
+      let g:ale_go_gofmt_options = '-s'
       let g:ale_lsp_show_message_severity = 'warning'
       let g:ale_sign_error = 'E'
       let g:ale_sign_warning = 'W'
@@ -76,13 +81,16 @@ augroup END
       let g:ale_completion_enabled = 1
       set omnifunc=ale#completion#OmniFunc
       set completeopt=menu,menuone,noinsert,noselect
-      inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-y>\<CR>" : "\<CR>")
+
+    Plug 'hashivim/vim-terraform'
 
     Plug 'rust-lang/rust.vim'
 
+    "Plug 'fatih/vim-go'
+
     Plug 'elixir-editors/vim-elixir'
 
-    Plug 'hashivim/vim-terraform'
+    Plug 'MaxMEllon/vim-jsx-pretty'
 
   call plug#end()
 
@@ -149,7 +157,7 @@ augroup END
   set ttimeoutlen=0  " instant insert mode exit using escape
 
   vnoremap <silent> <Leader>s :sort<CR>
-  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url \| xargs open<CR><CR>
+  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
 
   nnoremap <silent> [q :Cprev<CR>
   nnoremap <silent> ]q :Cnext<CR>
@@ -159,8 +167,8 @@ augroup END
   nnoremap <silent> <Leader>/ :BLines<CR>
   nnoremap <silent> <Leader>b :Buffers<CR>
   " <Leader>c NerdCommenter leader
-  nnoremap <silent> <Leader>d :bd<CR>
-  nnoremap <silent> <Leader>D :bd!<CR>
+  nnoremap <silent> <Leader>d :Bwipeout<CR>
+  nnoremap <silent> <Leader>D :Bwipeout!<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :FilesWithPreview<CR>
   nnoremap <silent> <Leader>F :FilesWithPreviewAndHiddenFiles<CR>
@@ -182,10 +190,14 @@ augroup END
   nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
   nnoremap <silent> <Leader>vu :PlugUpdate<CR>
-  nnoremap <silent> <Leader>vU :PlugUpdat!<CR>
+  nnoremap <silent> <Leader>vU :PlugUpdate!<CR>
+
+  " allow <C-W> mappings without releasing the prefix key
+  nnoremap <C-W><C-Q> <C-W>q
 
   " sorry
   inoremap <C-Space> <Nop>
+  nnoremap <Space> <Nop>
   nnoremap Q <Nop>
 
   " save current buffer

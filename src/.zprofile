@@ -14,10 +14,6 @@ if [[ -z "$__Z_PROFILE_LOADED__" ]]; then
   BREW_PATH='/usr/local'
   export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/opt/gettext/bin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
 
-  # krew
-  KREW_ROOT="$HOME/.krew"
-  export PATH="$KREW_ROOT/bin:$PATH"
-
   # cargo
   export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"

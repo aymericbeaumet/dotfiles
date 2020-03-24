@@ -1,2 +1,3 @@
 .git/
+Cargo.lock
 yarn.lock
