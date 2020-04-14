@@ -19,7 +19,7 @@ brew 'fish'
 brew 'fswatch'
 brew 'fzf'
 brew 'gawk'
-brew 'gettext'
+brew 'gettext' # mktemp
 brew 'git'
 brew 'git-extras'
 brew 'gnu-sed'
@@ -52,6 +52,7 @@ brew 'rabbitmq'
 brew 'redis'
 brew 'ripgrep'
 brew 'rustup'
+brew 'sd'
 brew 'swift'
 brew 'swiftformat'
 brew 'terraform'
@@ -87,7 +88,6 @@ brew 'eksctl'
 ###
 
 mas 'Bear', id: 1091189122
-mas 'Todoist', id: 585829637
 mas 'Xcode', id: 497799835
 
 tap 'homebrew/cask'
@@ -109,7 +109,7 @@ cask 'kap'
 cask 'karabiner-elements'
 cask 'keybase'
 cask 'ngrok'
-#cask 'plash'
+cask 'notion'
 cask 'postico'
 cask 'postman'
 cask 'slack'

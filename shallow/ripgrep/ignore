@@ -1,3 +1,4 @@
 .git/
 Cargo.lock
+node_modules/
 yarn.lock
