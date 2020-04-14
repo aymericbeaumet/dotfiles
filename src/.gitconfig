@@ -18,6 +18,7 @@
   me = merge
   pl = pull
   ps = push
+  plps = !git pl && git ps
   rb = rebase
   rba = rebase --abort
   rbc = rebase --continue

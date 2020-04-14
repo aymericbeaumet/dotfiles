@@ -214,28 +214,6 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Launch or focus Bear",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "b",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Bear'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "[Hammerspoon] Launch or focus Firefox",
                         "manipulators": [
                             {
@@ -324,11 +302,11 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Launch or focus Todoist",
+                        "description": "[Hammerspoon] Launch or focus Notion",
                         "manipulators": [
                             {
                                 "from": {
-                                    "key_code": "t",
+                                    "key_code": "n",
                                     "modifiers": {
                                         "mandatory": [
                                             "command",
@@ -338,7 +316,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Todoist'"
+                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Notion'"
                                     }
                                 ],
                                 "type": "basic"

@@ -107,7 +107,7 @@ t() {
 
 alias tree='tree -a -I .git --dirsfirst'
 
-alias w='watchexec --clear --restart -i .git -i "*.md"'
+alias w='watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile --'
 
 unalias z &> /dev/null
 z() {
