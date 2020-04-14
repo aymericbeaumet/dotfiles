@@ -9,3 +9,4 @@ shada/
 tmp/
 logs/
 shallow/karabiner/automatic_backups/
+Brewfile.lock.json
