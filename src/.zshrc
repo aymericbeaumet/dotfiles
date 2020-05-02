@@ -4,7 +4,10 @@
 fpath=($HOME/.zsh/bundle/zsh-completions/src $fpath)
 autoload -Uz compinit && compinit
 
-alias cat='bat --paging=never --style=plain'
+...() {
+  local path="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+  cd "$path"
+}
 
 cd() {
   builtin cd "$@" >/dev/null
@@ -54,11 +57,6 @@ g() {
   fi
 }
 compdef g=git
-
-...() {
-  local path="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-  cd "$path"
-}
 
 alias j=jobs
 
@@ -118,6 +116,7 @@ z() {
 urls() {
   fc -rl 1 | squeeze --url | sort -u
 }
+
 furls() {
   urls | fzf | pbcopy
 }
@@ -141,7 +140,6 @@ setopt CHASE_DOTS
 setopt CHASE_LINKS
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_TO_HOME
-
 
 # completion (http://zsh.sourceforge.net/Doc/Release/Options.html#Completion-2)
 setopt ALWAYS_TO_END
@@ -221,7 +219,7 @@ source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
-# keybase
+# secrets
 source "$HOME/.secrets/.zshrc"
 
 # start or join a default tmux session

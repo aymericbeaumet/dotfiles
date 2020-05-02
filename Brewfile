@@ -87,14 +87,12 @@ brew 'eksctl'
 # gui
 ###
 
-mas 'Bear', id: 1091189122
 mas 'Xcode', id: 497799835
 
 tap 'homebrew/cask'
 cask '1password'
 cask 'alacritty'
 cask 'alfred'
-cask 'caprine'
 cask 'charles'
 cask 'cyberduck'
 cask 'daisydisk'
@@ -118,7 +116,6 @@ cask 'transmission'
 cask 'virtualbox' # minikube
 cask 'visual-studio-code'
 cask 'vlc'
-cask 'whatsapp'
 
 tap 'homebrew/cask-fonts'
 cask 'font-firacode-nerd-font'
