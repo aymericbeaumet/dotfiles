@@ -18,7 +18,6 @@
 augroup vimrc
 
   " custom mappings in go/rust buffers
-  "autocmd FileType go,rust nnoremap <silent> <buffer> <C-[> :ALEFindReferences<CR>
   autocmd FileType go,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
   autocmd FileType go,rust nnoremap <silent> <buffer> K :ALEHover<CR>
 
@@ -37,7 +36,6 @@ augroup END
     Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb' | Plug 'shumphrey/fugitive-gitlab.vim'
-    Plug 'moll/vim-bbye' | Plug 'aymericbeaumet/vim-symlink'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
     Plug 'tpope/vim-repeat'
@@ -45,6 +43,10 @@ augroup END
     Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
+
+    Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
+    Plug 'git@github.com:aymericbeaumet/vim-zshmappings.git'
+      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
 
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
@@ -83,14 +85,7 @@ augroup END
       set completeopt=menu,menuone,noinsert,noselect
 
     Plug 'hashivim/vim-terraform'
-
     Plug 'rust-lang/rust.vim'
-
-    "Plug 'fatih/vim-go'
-
-    Plug 'elixir-editors/vim-elixir'
-
-    Plug 'MaxMEllon/vim-jsx-pretty'
 
   call plug#end()
 
@@ -222,24 +217,6 @@ augroup END
   " clean screen and reload file
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
-
-  " : and / supports <C-R> to call FZF (https://github.com/junegunn/fzf.vim/issues/264#issuecomment-265898760)
-  function! s:FzfCommandHistory()
-    let s:INTERRUPT = "\u03\u0c" " <C-c><C-l>
-    let s:SUBMIT = "\u0d" " <C-m>
-    let s:cmdtype = getcmdtype()
-    let s:args = string({
-          \   "options": "--query=" . shellescape(getcmdline()),
-          \ })
-    if s:cmdtype == ':'
-      return s:INTERRUPT . ":keepp call fzf#vim#command_history(" .  s:args . ")" . s:SUBMIT
-    elseif s:cmdtype == '/'
-      return s:INTERRUPT . ":keepp call fzf#vim#search_history(" .  s:args . ")" . s:SUBMIT
-    else
-      return ''
-    endif
-  endfunction
-  cnoremap <expr> <C-r> <SID>FzfCommandHistory()
 
 " }}}
 
