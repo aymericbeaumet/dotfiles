@@ -61,15 +61,15 @@ augroup END
       let g:ale_lint_on_text_changed = 0
       let g:ale_linters_explicit = 1
       let g:ale_fixers = {
-            \   'terraform': ['terraform'],
-            \   'rust': ['rustfmt'],
             \   'go': ['goimports', 'gofmt'],
+            \   'rust': ['rustfmt'],
+            \   'terraform': ['terraform'],
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \ }
       let g:ale_linters = {
-            \   'terraform': ['terraform', 'tflint'],
-            \   'rust': ['rls'],
             \   'go': ['gopls', 'golangci-lint'],
+            \   'rust': ['rls'],
+            \   'terraform': ['terraform', 'tflint'],
             \ }
       let g:ale_type_map = {
             \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
