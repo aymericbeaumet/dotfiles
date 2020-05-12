@@ -35,14 +35,16 @@ augroup END
     Plug 'arcticicestudio/nord-vim'
     Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb' | Plug 'shumphrey/fugitive-gitlab.vim'
+    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
     Plug 'tpope/vim-repeat'
-    Plug 'tpope/vim-speeddating'
     Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
+
+    Plug 'embear/vim-localvimrc'
+      let g:localvimrc_persistent = 1
 
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
     Plug 'git@github.com:aymericbeaumet/vim-zshmappings.git'
@@ -54,35 +56,32 @@ augroup END
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
 
-    Plug 'dense-analysis/ale', { 'do': '~/.dotfiles/make tools' }
+    Plug 'git@github.com:aymericbeaumet/ale.git', { 'do': '~/.dotfiles/make tools' }
+      let g:ale_completion_enabled = 1
+      set omnifunc=ale#completion#OmniFunc
+      set completeopt=menu,menuone,noinsert,noselect
       let g:ale_fix_on_save = 1
       let g:ale_lint_on_save = 1
-      let g:ale_lint_on_insert_leave = 0
-      let g:ale_lint_on_text_changed = 0
       let g:ale_linters_explicit = 1
+      let g:ale_lsp_show_message_severity = 'warning'
+      let g:ale_sign_error = 'E'
+      let g:ale_sign_info = 'I'
+      let g:ale_sign_warning = 'W'
       let g:ale_fixers = {
+            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'go': ['goimports', 'gofmt'],
             \   'rust': ['rustfmt'],
             \   'terraform': ['terraform'],
-            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \ }
       let g:ale_linters = {
             \   'go': ['gopls', 'golangci-lint'],
             \   'rust': ['rls'],
+            \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
-            \ }
-      let g:ale_type_map = {
-            \   'golangci-lint': {'ES': 'WS', 'E': 'W'},
+            \   'vim': ['vint'],
+            \   'zsh': ['shellcheck'],
             \ }
       let g:ale_go_gofmt_options = '-s'
-      let g:ale_lsp_show_message_severity = 'warning'
-      let g:ale_sign_error = 'E'
-      let g:ale_sign_warning = 'W'
-      let g:ale_sign_info = 'I'
-      let g:ale_set_highlights = 0
-      let g:ale_completion_enabled = 1
-      set omnifunc=ale#completion#OmniFunc
-      set completeopt=menu,menuone,noinsert,noselect
 
     Plug 'hashivim/vim-terraform'
     Plug 'rust-lang/rust.vim'
@@ -107,13 +106,6 @@ augroup END
         \   <bang>0,
         \ )
 
-  command! -bang -nargs=? -complete=dir GitFilesWithPreview
-        \ call fzf#vim#files(
-        \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'git ls-files'}),
-        \   <bang>0,
-        \ )
-
   command! -bang -nargs=* RgWithPreview
         \ call fzf#vim#grep(
         \   'rg          --column --line-number --no-heading '.shellescape(<q-args>),
@@ -125,14 +117,6 @@ augroup END
   command! -bang -nargs=* RgWithPreviewAndHiddenFiles
         \ call fzf#vim#grep(
         \   'rg --hidden --column --line-number --no-heading '.shellescape(<q-args>),
-        \   1,
-        \   fzf#vim#with_preview(),
-        \   <bang>0,
-        \ )
-
-  command! -bang -nargs=* GitGrepWithPreview
-        \ call fzf#vim#grep(
-        \   'git grep '.shellescape(<q-args>),
         \   1,
         \   fzf#vim#with_preview(),
         \   <bang>0,
@@ -175,8 +159,6 @@ augroup END
   " <Leader>v vimrc commands leader (see below)
 
   nnoremap <silent> <Leader>gd       :Gvdiffsplit<CR>
-  nnoremap <silent> <Leader>gf       :GitFilesWithPreview<CR>
-  nnoremap <silent> <Leader>gg       :GitGrepWithPreview<CR>
   nnoremap <silent> <Leader>gl       :Commits<CR>
   nnoremap <silent> <Leader>gm       :Git mergetool<CR>
   nnoremap <silent> <Leader>gw       :Gwrite<CR>
