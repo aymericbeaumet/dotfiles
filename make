@@ -39,6 +39,10 @@ __tools() {
   # Go
   go get golang.org/x/tools/cmd/goimports golang.org/x/tools/gopls
   brew install golangci/tap/golangci-lint || brew upgrade golangci/tap/golangci-lint
+  # Vim
+  pip3 install vim-vint
+  # Shell
+  brew install shellcheck
 }
 
 # Configure the OS
