@@ -18,8 +18,8 @@
 augroup vimrc
 
   " custom mappings in go/rust buffers
-  autocmd FileType go,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType go,rust nnoremap <silent> <buffer> K :ALEHover<CR>
+  autocmd FileType go,javascript,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType go,javascript,rust nnoremap <silent> <buffer> K :ALEHover<CR>
 
   " syntax highlighting for custom filetypes
   autocmd BufNewFile,BufRead *.tpl set ft=yaml
@@ -56,7 +56,7 @@ augroup END
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
 
-    Plug 'git@github.com:aymericbeaumet/ale.git', { 'do': '~/.dotfiles/make tools' }
+    Plug 'dense-analysis/ale', { 'do': '~/.dotfiles/make tools' }
       let g:ale_completion_enabled = 1
       set omnifunc=ale#completion#OmniFunc
       set completeopt=menu,menuone,noinsert,noselect
@@ -70,18 +70,22 @@ augroup END
       let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'go': ['goimports', 'gofmt'],
+            \   'javascript': ['xo'],
             \   'rust': ['rustfmt'],
             \   'terraform': ['terraform'],
             \ }
       let g:ale_linters = {
             \   'go': ['gopls', 'golangci-lint'],
+            \   'javascript': ['tsserver', 'xo'],
             \   'rust': ['rls'],
             \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
             \   'vim': ['vint'],
             \   'zsh': ['shellcheck'],
             \ }
+      let g:javascript_xo_use_global = 1
       let g:ale_go_gofmt_options = '-s'
+      let g:ale_go_golangci_lint_package = 1
 
     Plug 'hashivim/vim-terraform'
     Plug 'rust-lang/rust.vim'
@@ -168,9 +172,6 @@ augroup END
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
   nnoremap <silent> <Leader>vu :PlugUpdate<CR>
   nnoremap <silent> <Leader>vU :PlugUpdate!<CR>
-
-  " allow <C-W> mappings without releasing the prefix key
-  nnoremap <C-W><C-Q> <C-W>q
 
   " sorry
   inoremap <C-Space> <Nop>
