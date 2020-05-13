@@ -31,18 +31,12 @@ __install() {
 
 # Install editor tools
 __tools() {
-  # Terraform
-  brew install tflint || brew upgrade tflint
-  # Rust
-  rustup update
-  rustup component add rustfmt rls rust-analysis rust-src
-  # Go
-  go get golang.org/x/tools/cmd/goimports golang.org/x/tools/gopls
-  brew install golangci/tap/golangci-lint || brew upgrade golangci/tap/golangci-lint
-  # Vim
-  pip3 install vim-vint
-  # Shell
-  brew install shellcheck
+  go get -u golang.org/x/tools/{cmd/goimports,gopls} github.com/golangci/golangci-lint/cmd/golangci-lint # Go
+  yarn global add typescript xo # JavaScript/TypeScript
+  rustup update && rustup component add rustfmt rls rust-analysis rust-src # Rust
+  brew install shellcheck # Shell
+  brew install tflint || brew upgrade tflint # Terraform
+  pip3 install vim-vint # Vim
 }
 
 # Configure the OS
