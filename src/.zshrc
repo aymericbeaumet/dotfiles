@@ -1,38 +1,39 @@
+# shellcheck shell=bash
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
-fpath=($HOME/.zsh/bundle/zsh-completions/src $fpath)
+fpath=("$HOME/.zsh/bundle/zsh-completions/src" $fpath)
 autoload -Uz compinit && compinit
 
 ...() {
-  local path="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-  cd "$path"
+  local path=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+  cd "$path" || exit 1
 }
 
 cd() {
-  builtin cd "$@" >/dev/null
+  builtin cd "$@" >/dev/null || exit 1
 }
 
 d() {
-  local path="$(fd --type directory                         | fzf -1 -0 -q "$1")"
+  local path=$(fd --type directory                         | fzf -1 -0 -q "$1")
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
   fi
-  cd "$path"
+  cd "$path" || exit 1
 }
 
 D() {
-  local path="$(fd --type directory --hidden --exclude .git | fzf -1 -0 -q "$1")"
+  local path=$(fd --type directory --hidden --exclude .git | fzf -1 -0 -q "$1")
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
   fi
-  cd "$path"
+  cd "$path" || exit 1
 }
 
 f() {
-  local path="$(fd --type file                         | fzf -1 -0 -q "$1")"
+  local path=$(fd --type file                         | fzf -1 -0 -q "$1")
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -41,7 +42,7 @@ f() {
 }
 
 F() {
-  local path="$(fd --type file --hidden --exclude .git | fzf -1 -0 -q "$1")"
+  local path=$(fd --type file --hidden --exclude .git | fzf -1 -0 -q "$1")
   if [ -z "$path" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -103,14 +104,18 @@ t() {
   fi
 }
 
-alias tree='tree -a -I .git --dirsfirst'
+tree() {
+  command tree -a -I .git --dirsfirst "$@"
+}
 
-alias w='watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile --'
+w() {
+  command watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile -- "$@"
+}
 
 unalias z &> /dev/null
 z() {
   [ $# -gt 0 ] && _z "$*" && return
-  cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+  cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')" || exit 1
 }
 
 urls() {
@@ -223,6 +228,6 @@ export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=rev
 source "$HOME/.secrets/.zshrc"
 
 # start or join a default tmux session
-if [ -z "$TMUX" ]; then;
+if [ -z "$TMUX" ]; then
   t scratch
 fi
