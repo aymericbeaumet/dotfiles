@@ -17,7 +17,7 @@
 
 augroup vimrc
 
-  " custom mappings in go/rust buffers
+  " custom mappings for some filetypes
   autocmd FileType go,javascript,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
   autocmd FileType go,javascript,rust nnoremap <silent> <buffer> K :ALEHover<CR>
 
@@ -42,6 +42,7 @@ augroup END
     Plug 'tpope/vim-eunuch'
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
+    Plug 'editorconfig/editorconfig-vim'
 
     Plug 'embear/vim-localvimrc'
       let g:localvimrc_persistent = 1
@@ -266,3 +267,20 @@ if has('persistent_undo')
   set undoreload=10000
   let &undodir = expand('~/.vim/tmp/undo//')
 endif
+
+" TMP: until this is merged https://github.com/dense-analysis/ale/pull/2933
+call ale#Set('go_revive_executable', 'revive')
+call ale#Set('go_revive_options', '')
+function! Ale_linters_go_golint_GetCommand(buffer) abort
+    let l:options = ale#Var(a:buffer, 'go_revive_options')
+    return ale#go#EnvString(a:buffer) . '%e'
+    \   . (!empty(l:options) ? ' ' . l:options : '')
+    \   . ' %t'
+endfunction
+call ale#linter#Define('go', {
+\   'name': 'revive',
+\   'output_stream': 'both',
+\   'executable': {b -> ale#Var(b, 'go_revive_executable')},
+\   'command': function('Ale_linters_go_golint_GetCommand'),
+\   'callback': 'ale#handlers#unix#HandleAsWarning',
+\})
