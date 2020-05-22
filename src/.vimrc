@@ -32,6 +32,10 @@ augroup END
 
   call plug#begin(expand('~/.vim/bundle'))
 
+    Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
+    Plug 'git@github.com:aymericbeaumet/vim-zshmappings.git'
+      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
+
     Plug 'arcticicestudio/nord-vim'
     Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -46,10 +50,6 @@ augroup END
 
     Plug 'embear/vim-localvimrc'
       let g:localvimrc_persistent = 1
-
-    Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
-    Plug 'git@github.com:aymericbeaumet/vim-zshmappings.git'
-      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
 
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
@@ -76,20 +76,23 @@ augroup END
             \   'terraform': ['terraform'],
             \ }
       let g:ale_linters = {
-            \   'go': ['gopls', 'golangci-lint'],
+            \   'go': ['gopls', 'golangci-lint', 'revive'],
             \   'javascript': ['tsserver', 'xo'],
-            \   'rust': ['rls'],
+            \   'rust': ['rls', 'cargo'],
             \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
             \   'vim': ['vint'],
             \   'zsh': ['shellcheck'],
             \ }
-      let g:javascript_xo_use_global = 1
       let g:ale_go_gofmt_options = '-s'
+      let g:ale_go_golangci_lint_options = '--disable wsl'
       let g:ale_go_golangci_lint_package = 1
+      let g:ale_javascript_xo_use_global = 1
+      let g:ale_rust_cargo_use_clippy = 1
 
     Plug 'hashivim/vim-terraform'
     Plug 'rust-lang/rust.vim'
+    Plug 'rhysd/vim-wasm'
 
   call plug#end()
 
@@ -100,38 +103,40 @@ augroup END
   command! -bang -nargs=? -complete=dir FilesWithPreview
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --type file'}),
+        \   fzf#vim#with_preview({'source': 'fd --color=always --type file'}),
         \   <bang>0,
         \ )
 
   command! -bang -nargs=? -complete=dir FilesWithPreviewAndHiddenFiles
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git'}),
+        \   fzf#vim#with_preview({'source': 'fd --color=always --type file --hidden --exclude .git'}),
         \   <bang>0,
         \ )
 
-  command! -bang -nargs=* RgWithPreview
-        \ call fzf#vim#grep(
-        \   'rg          --column --line-number --no-heading '.shellescape(<q-args>),
-        \   1,
-        \   fzf#vim#with_preview(),
-        \   <bang>0,
-        \ )
+  function! RgWithPreview(query, fullscreen)
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+    let initial_command = printf(command_fmt, shellescape(a:query))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  endfunction
+  command! -nargs=* -bang RgWithPreview call RgWithPreview(<q-args>, <bang>0)
 
-  command! -bang -nargs=* RgWithPreviewAndHiddenFiles
-        \ call fzf#vim#grep(
-        \   'rg --hidden --column --line-number --no-heading '.shellescape(<q-args>),
-        \   1,
-        \   fzf#vim#with_preview(),
-        \   <bang>0,
-        \ )
+  function! RgWithPreviewAndHiddenFiles(query, fullscreen)
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden -- %s || true'
+    let initial_command = printf(command_fmt, shellescape(a:query))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  endfunction
+  command! -nargs=* -bang RgWithPreviewAndHiddenFiles call RgWithPreviewAndHiddenFiles(<q-args>, <bang>0)
 
   " https://vi.stackexchange.com/a/8535/1956
-  command! Cnext try | cnext | catch | cfirst | catch | endtry
-  command! Cprev try | cprev | catch | clast  | catch | endtry
-  command! Lnext try | lnext | catch | lfirst | catch | endtry
-  command! Lprev try | lprev | catch | llast  | catch | endtry
+  command! Cnext try | cnext | catch | silent! cfirst | endtry
+  command! Cprev try | cprev | catch | silent! clast  | endtry
+  command! Lnext try | lnext | catch | silent! lfirst | endtry
+  command! Lprev try | lprev | catch | silent! llast  | endtry
 
 " }}}
 
@@ -267,20 +272,3 @@ if has('persistent_undo')
   set undoreload=10000
   let &undodir = expand('~/.vim/tmp/undo//')
 endif
-
-" TMP: until this is merged https://github.com/dense-analysis/ale/pull/2933
-call ale#Set('go_revive_executable', 'revive')
-call ale#Set('go_revive_options', '')
-function! Ale_linters_go_golint_GetCommand(buffer) abort
-    let l:options = ale#Var(a:buffer, 'go_revive_options')
-    return ale#go#EnvString(a:buffer) . '%e'
-    \   . (!empty(l:options) ? ' ' . l:options : '')
-    \   . ' %t'
-endfunction
-call ale#linter#Define('go', {
-\   'name': 'revive',
-\   'output_stream': 'both',
-\   'executable': {b -> ale#Var(b, 'go_revive_executable')},
-\   'command': function('Ale_linters_go_golint_GetCommand'),
-\   'callback': 'ale#handlers#unix#HandleAsWarning',
-\})
