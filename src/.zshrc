@@ -11,7 +11,7 @@ autoload -Uz compinit && compinit
 }
 
 cd() {
-  builtin cd "$@" >/dev/null || exit 1
+  builtin cd "$@" >/dev/null
 }
 
 d() {
