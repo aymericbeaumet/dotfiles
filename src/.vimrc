@@ -21,6 +21,10 @@ augroup vimrc
   autocmd FileType go,javascript,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
   autocmd FileType go,javascript,rust nnoremap <silent> <buffer> K :ALEHover<CR>
 
+  " js/jsx and ts/tsx are respectively the same
+  autocmd BufNewFile,BufRead *.js,*.jsx set filetype=javascript
+  autocmd BufNewFile,BufRead *.ts,*.tsx set filetype=typescript
+
   " syntax highlighting for custom filetypes
   autocmd BufNewFile,BufRead *.tpl set ft=yaml
 
@@ -71,13 +75,15 @@ augroup END
       let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'go': ['goimports', 'gofmt'],
-            \   'javascript': ['xo'],
+            \   'javascript': ['prettier'],
+            \   'typescript': ['prettier'],
             \   'rust': ['rustfmt'],
             \   'terraform': ['terraform'],
             \ }
       let g:ale_linters = {
             \   'go': ['gopls', 'golangci-lint', 'revive'],
-            \   'javascript': ['tsserver', 'xo'],
+            \   'javascript': ['tsserver'],
+            \   'typescript': ['tsserver'],
             \   'rust': ['rls', 'cargo'],
             \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
@@ -91,8 +97,9 @@ augroup END
       let g:ale_rust_cargo_use_clippy = 1
 
     Plug 'hashivim/vim-terraform'
-    Plug 'rust-lang/rust.vim'
+    Plug 'leafgarland/typescript-vim' | Plug 'peitalin/vim-jsx-typescript'
     Plug 'rhysd/vim-wasm'
+    Plug 'rust-lang/rust.vim'
 
   call plug#end()
 
