@@ -18,12 +18,8 @@
 augroup vimrc
 
   " custom mappings for some filetypes
-  autocmd FileType go,javascript,rust nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType go,javascript,rust nnoremap <silent> <buffer> K :ALEHover<CR>
-
-  " js/jsx and ts/tsx are respectively the same
-  autocmd BufNewFile,BufRead *.js,*.jsx set filetype=javascript
-  autocmd BufNewFile,BufRead *.ts,*.tsx set filetype=typescript
+  autocmd FileType go,javascript,javascriptreact,rust,typescript,typescriptreact nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType go,javascript,javascriptreact,rust,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
 
   " syntax highlighting for custom filetypes
   autocmd BufNewFile,BufRead *.tpl set ft=yaml
@@ -51,6 +47,7 @@ augroup END
     Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
     Plug 'editorconfig/editorconfig-vim'
+    Plug 'jiangmiao/auto-pairs'
 
     Plug 'embear/vim-localvimrc'
       let g:localvimrc_persistent = 1
@@ -76,18 +73,23 @@ augroup END
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'go': ['goimports', 'gofmt'],
             \   'javascript': ['prettier'],
-            \   'typescript': ['prettier'],
+            \   'javascriptreact': ['prettier'],
             \   'rust': ['rustfmt'],
             \   'terraform': ['terraform'],
+            \   'typescript': ['prettier'],
+            \   'typescriptreact': ['prettier'],
             \ }
       let g:ale_linters = {
             \   'go': ['gopls', 'golangci-lint', 'revive'],
             \   'javascript': ['tsserver'],
-            \   'typescript': ['tsserver'],
+            \   'javascriptreact': ['tsserver'],
             \   'rust': ['rls', 'cargo'],
             \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
+            \   'typescript': ['tsserver'],
+            \   'typescriptreact': ['tsserver'],
             \   'vim': ['vint'],
+            \   'sql': ['sqlint'],
             \   'zsh': ['shellcheck'],
             \ }
       let g:ale_go_gofmt_options = '-s'
@@ -96,8 +98,10 @@ augroup END
       let g:ale_javascript_xo_use_global = 1
       let g:ale_rust_cargo_use_clippy = 1
 
+    Plug 'HerringtonDarkholme/yats.vim'
     Plug 'hashivim/vim-terraform'
-    Plug 'leafgarland/typescript-vim' | Plug 'peitalin/vim-jsx-typescript'
+    Plug 'kevinoid/vim-jsonc'
+    Plug 'lifepillar/pgsql.vim'
     Plug 'rhysd/vim-wasm'
     Plug 'rust-lang/rust.vim'
 
@@ -110,40 +114,42 @@ augroup END
   command! -bang -nargs=? -complete=dir FilesWithPreview
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --color=always --type file'}),
+        \   fzf#vim#with_preview({'source': 'fd --type file'}),
         \   <bang>0,
         \ )
 
   command! -bang -nargs=? -complete=dir FilesWithPreviewAndHiddenFiles
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --color=always --type file --hidden --exclude .git'}),
+        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git'}),
         \   <bang>0,
         \ )
 
-  function! RgWithPreview(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  function! Ripgrep(query, fullscreen)
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case          -- %s || true'
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
     let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+    call fzf#vim#grep(initial_command, 1, {}, a:fullscreen)
   endfunction
-  command! -nargs=* -bang RgWithPreview call RgWithPreview(<q-args>, <bang>0)
+  command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
 
-  function! RgWithPreviewAndHiddenFiles(query, fullscreen)
+  function! RipgrepWithHiddenFiles(query, fullscreen)
     let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden -- %s || true'
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
     let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+    call fzf#vim#grep(initial_command, 1, {}, a:fullscreen)
   endfunction
-  command! -nargs=* -bang RgWithPreviewAndHiddenFiles call RgWithPreviewAndHiddenFiles(<q-args>, <bang>0)
+  command! -nargs=* -bang RipgrepWithHiddenFiles call RipgrepWithHiddenFiles(<q-args>, <bang>0)
 
   " https://vi.stackexchange.com/a/8535/1956
   command! Cnext try | cnext | catch | silent! cfirst | endtry
   command! Cprev try | cprev | catch | silent! clast  | endtry
   command! Lnext try | lnext | catch | silent! lfirst | endtry
   command! Lprev try | lprev | catch | silent! llast  | endtry
+
+  cnoreabbrev Remove Delete
 
 " }}}
 
@@ -164,15 +170,14 @@ augroup END
   nnoremap <silent> <Leader>b :Buffers<CR>
   " <Leader>c NerdCommenter leader
   nnoremap <silent> <Leader>d :Bwipeout<CR>
-  nnoremap <silent> <Leader>D :Bwipeout!<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :FilesWithPreview<CR>
   nnoremap <silent> <Leader>F :FilesWithPreviewAndHiddenFiles<CR>
   " <Leader>g git commands leader (see below)
   " <Leader>l LToggle
   " <Leader>q QToggle
-  nnoremap <silent> <Leader>r :RgWithPreview<CR>
-  nnoremap <silent> <Leader>R :RgWithPreviewAndHiddenFiles<CR>
+  nnoremap <silent> <Leader>r :Ripgrep<CR>
+  nnoremap <silent> <Leader>R :RipgrepWithHiddenFiles<CR>
   " <Leader>v vimrc commands leader (see below)
 
   nnoremap <silent> <Leader>gd       :Gvdiffsplit<CR>
