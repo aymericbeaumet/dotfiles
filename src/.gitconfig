@@ -6,7 +6,7 @@
 
 [alias]
   a = add
-  br = branch
+  br = branch -v --sort=-committerdate
   ci = commit
   cia = commit --amend
   cl = clone
@@ -17,7 +17,6 @@
   l = log
   me = merge
   pl = pull
-  plps = !git pl && git ps
   ps = push
   rb = rebase
   rba = rebase --abort
@@ -27,18 +26,17 @@
   rs = reset
   rsh = reset --hard
   rv = revert
-  sh = stash
+  sh = stash --include-untracked
+  shc = stash clear
   shl = stash list
   shp = stash pop
   sm = submodule
   smfg = submodule foreach git
   st = status --short --branch
   sw = show
-  ; Hub aliases
-  b = browse
-  cis = ci-status
-  cmp = compare
-  pr = pull-request
+  #
+  shco = !git sh && git co
+  plps = !git pl && git ps
 
 [color]
   ui = auto

@@ -43,6 +43,8 @@ __tools() {
   rustup update && rustup component add rustfmt rls rust-analysis rust-src
   # Shell
   brew install shellcheck
+  # SQL
+  gem install sqlint
   # Terraform
   brew install tflint || brew upgrade tflint
   # Vim

@@ -59,18 +59,42 @@ g() {
 }
 compdef g=git
 
-alias j=jobs
-
 k() {
   if (( $# == 0 )); then
-    local context=$(kubectx -c)
-    local namespace=$(kubens -c)
+    context=$(kubectx -c)
+    namespace=$(kubens -c)
     echo "$context/$namespace"
   else
     command kubectl "$@"
   fi
 }
 compdef k=kubectl
+
+t() {
+  if (( $# == 0 )); then
+    output="$(command tmux list-panes -s -F '#{window_index} #{pane_index} | #{pane_current_path} | #{pane_current_command}' | sed "s:$HOME:~:" | sort | fzf --with-nth=4..)"
+    if [ -z "$output" ]; then
+      return
+    fi
+    window="$(echo "$output" | cut -d' ' -f1)"
+    pane="$(echo "$output" | cut -d' ' -f2)"
+    command tmux select-window -t "$window"
+    command tmux select-pane -t "$pane"
+  else
+    command tmux "$@"
+  fi
+}
+compdef t=tmux
+
+tree() {
+  command tree -a -I .git --dirsfirst "$@"
+}
+
+w() {
+  command watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile -- "$@"
+}
+
+alias j=jobs
 
 alias ls='ls --color=auto -pFH --group-directories-first'
 alias ll='ls -hl'
@@ -82,35 +106,6 @@ alias mkdir='mkdir -p'
 alias v=nvim
 alias vi=nvim
 alias vim=nvim
-
-t() {
-  local target="$1"
-
-  if [ -z "$target" ]; then
-    local output="$(command tmux ls | sort | fzf)"
-    if [ -z "$output" ]; then
-      return
-    fi
-    target="$(echo "$output" | cut -d: -f1)"
-  else
-    command tmux has-session -t "$target" &>/dev/null || \
-      command tmux new-session -d -c "$HOME" -s "$target"
-  fi
-
-  if [ -n "$TMUX" ]; then
-    command tmux switch-client -t "$target"
-  else
-    command tmux attach-session -t "$target"
-  fi
-}
-
-tree() {
-  command tree -a -I .git --dirsfirst "$@"
-}
-
-w() {
-  command watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile -- "$@"
-}
 
 unalias z &> /dev/null
 z() {
@@ -228,6 +223,6 @@ export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=rev
 source "$HOME/.secrets/.zshrc"
 
 # start or join a default tmux session
-if [ -z "$TMUX" ]; then
-  t scratch
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+  tmux attach -t default || tmux new -s default
 fi
