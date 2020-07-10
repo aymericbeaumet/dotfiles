@@ -72,7 +72,7 @@ compdef k=kubectl
 
 t() {
   if (( $# == 0 )); then
-    output="$(command tmux list-panes -s -F '#{window_index} #{pane_index} | #{pane_current_path} | #{pane_current_command}' | sed "s:$HOME:~:" | sort | fzf --with-nth=4..)"
+    output="$(command tmux list-panes -s -F '#{window_index} #{pane_index} #{pane_current_path}:#{pane_current_command}' | sed "s:$HOME:~:" | sort | fzf --with-nth=3..)"
     if [ -z "$output" ]; then
       return
     fi
