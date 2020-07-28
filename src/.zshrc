@@ -38,7 +38,7 @@ f() {
     echo 'wow such empty' 1>&2
     return
   fi
-  "$EDITOR" "$path"
+  echo "$path"
 }
 
 F() {
@@ -47,7 +47,7 @@ F() {
     echo 'wow such empty' 1>&2
     return
   fi
-  "$EDITOR" "$path"
+  echo "$path"
 }
 
 g() {
@@ -94,15 +94,14 @@ w() {
   command watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile -- "$@"
 }
 
+alias b=bat
+alias c=cat
 alias j=jobs
-
 alias ls='ls --color=auto -pFH --group-directories-first'
-alias ll='ls -hl'
 alias l=ll
 alias la='ll -A'
-
+alias ll='ls -hl'
 alias mkdir='mkdir -p'
-
 alias v=nvim
 alias vi=nvim
 alias vim=nvim
