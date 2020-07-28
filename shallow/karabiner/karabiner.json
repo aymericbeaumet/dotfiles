@@ -236,7 +236,7 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Launch or focus Notion",
+                        "description": "[Hammerspoon] Launch or focus Notes",
                         "manipulators": [
                             {
                                 "from": {
@@ -250,7 +250,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Notion'"
+                                        "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Notes'"
                                     }
                                 ],
                                 "type": "basic"

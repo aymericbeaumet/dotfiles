@@ -180,6 +180,7 @@ augroup END
   nnoremap <silent> <Leader>R :RipgrepWithHiddenFiles<CR>
   " <Leader>v vimrc commands leader (see below)
 
+  nnoremap <silent> <Leader>gb       :Gblame<CR>
   nnoremap <silent> <Leader>gd       :Gvdiffsplit<CR>
   nnoremap <silent> <Leader>gl       :Commits<CR>
   nnoremap <silent> <Leader>gm       :Git mergetool<CR>
