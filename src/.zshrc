@@ -225,3 +225,10 @@ source "$HOME/.secrets/.zshrc"
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach -t default || tmux new -s default
 fi
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/serverless.zsh ]] && . /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/sls.zsh ]] && . /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/sls.zsh

@@ -26,7 +26,7 @@
   rs = reset
   rsh = reset --hard
   rv = revert
-  sh = stash --include-untracked
+  sh = stash
   shc = stash clear
   shl = stash list
   shp = stash pop
