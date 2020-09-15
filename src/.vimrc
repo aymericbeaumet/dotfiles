@@ -18,8 +18,8 @@
 augroup vimrc
 
   " custom mappings for some filetypes
-  autocmd FileType go,javascript,javascriptreact,rust,typescript,typescriptreact nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType go,javascript,javascriptreact,rust,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
+  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
 
   " syntax highlighting for custom filetypes
   autocmd BufNewFile,BufRead *.tpl set ft=yaml
@@ -37,7 +37,6 @@ augroup END
       let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
 
     Plug 'arcticicestudio/nord-vim'
-    Plug 'airblade/vim-rooter'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'tpope/vim-surround'
@@ -48,6 +47,12 @@ augroup END
     Plug 'Valloric/ListToggle'
     Plug 'editorconfig/editorconfig-vim'
     Plug 'jiangmiao/auto-pairs'
+
+    Plug 'airblade/vim-rooter'
+      let g:rooter_patterns = ['.git']
+      let g:rooter_cd_cmd = 'lcd'
+      let g:rooter_silent_chdir = 1
+      let g:rooter_resolve_links = 1
 
     Plug 'embear/vim-localvimrc'
       let g:localvimrc_persistent = 1
@@ -95,8 +100,6 @@ augroup END
       let g:ale_go_gofmt_options = '-s'
       let g:ale_go_golangci_lint_options = '--disable wsl'
       let g:ale_go_golangci_lint_package = 1
-      let g:ale_javascript_xo_use_global = 1
-      let g:ale_rust_cargo_use_clippy = 1
 
     Plug 'HerringtonDarkholme/yats.vim'
     Plug 'hashivim/vim-terraform'
@@ -104,6 +107,7 @@ augroup END
     Plug 'lifepillar/pgsql.vim'
     Plug 'rhysd/vim-wasm'
     Plug 'rust-lang/rust.vim'
+    Plug 'zchee/vim-flatbuffers'
 
   call plug#end()
 
@@ -170,6 +174,7 @@ augroup END
   nnoremap <silent> <Leader>b :Buffers<CR>
   " <Leader>c NerdCommenter leader
   nnoremap <silent> <Leader>d :Bwipeout<CR>
+  nnoremap <silent> <Leader>D :bufdo Bwipeout<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :FilesWithPreview<CR>
   nnoremap <silent> <Leader>F :FilesWithPreviewAndHiddenFiles<CR>

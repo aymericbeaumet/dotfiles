@@ -14,6 +14,12 @@ if [[ -z "$__Z_PROFILE_LOADED__" ]]; then
   BREW_PATH='/usr/local'
   export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/opt/gettext/bin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
 
+  # android
+  export PATH="$HOME/android:$PATH"
+  export ANDROID_HOME=$HOME/Library/Android/sdk
+  export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+  export ANDROID_AVD_HOME=$HOME/.android/avd
+
   # cargo
   export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"
