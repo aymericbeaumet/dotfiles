@@ -37,9 +37,8 @@ __tools() {
     github.com/mgechev/revive \
     golang.org/x/tools/cmd/goimports \
     golang.org/x/tools/gopls
-  # JavaScript/TypeScript
-  yarn global add typescript xo
   # Rust
+  brew install rust-analyzer
   rustup update && rustup component add rustfmt rls rust-analysis rust-src
   # Shell
   brew install shellcheck

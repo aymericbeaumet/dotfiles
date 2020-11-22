@@ -91,7 +91,7 @@ tree() {
 }
 
 w() {
-  command watchexec --clear --restart -i ".*" -i "*.md" -i Dockerfile -- "$@"
+  command watchexec --clear --restart -i ".*" -i "*.md" -i "*.qtpl.go" -i "*.tmp" -i Dockerfile -- "$@"
 }
 
 alias b=bat

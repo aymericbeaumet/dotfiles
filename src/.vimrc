@@ -47,6 +47,8 @@ augroup END
     Plug 'Valloric/ListToggle'
     Plug 'editorconfig/editorconfig-vim'
     Plug 'jiangmiao/auto-pairs'
+    Plug 'alvan/vim-closetag'
+    Plug 'puremourning/vimspector'
 
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git']
@@ -63,7 +65,7 @@ augroup END
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
 
-    Plug 'dense-analysis/ale', { 'do': '~/.dotfiles/make tools' }
+    Plug 'dense-analysis/ale'
       let g:ale_completion_enabled = 1
       set omnifunc=ale#completion#OmniFunc
       set completeopt=menu,menuone,noinsert,noselect
@@ -88,7 +90,7 @@ augroup END
             \   'go': ['gopls', 'golangci-lint', 'revive'],
             \   'javascript': ['tsserver'],
             \   'javascriptreact': ['tsserver'],
-            \   'rust': ['rls', 'cargo'],
+            \   'rust': ['analyzer'],
             \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
             \   'typescript': ['tsserver'],
@@ -101,20 +103,21 @@ augroup END
       let g:ale_go_golangci_lint_options = '--disable wsl'
       let g:ale_go_golangci_lint_package = 1
 
+    Plug 'lifepillar/pgsql.vim'
+
     Plug 'HerringtonDarkholme/yats.vim'
     Plug 'hashivim/vim-terraform'
     Plug 'kevinoid/vim-jsonc'
-    Plug 'lifepillar/pgsql.vim'
     Plug 'rhysd/vim-wasm'
     Plug 'rust-lang/rust.vim'
     Plug 'zchee/vim-flatbuffers'
+    Plug 'b0o/builder.vim' | Plug 'b0o/quicktemplate.vim'
 
   call plug#end()
 
 " }}}
 
 " commands {{{
-
   command! -bang -nargs=? -complete=dir FilesWithPreview
         \ call fzf#vim#files(
         \   <q-args>,

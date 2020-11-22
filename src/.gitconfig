@@ -65,6 +65,7 @@
 
 [push]
   default = current
+	followTags = true
 
 [user]
   name = Aymeric Beaumet
