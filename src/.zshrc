@@ -59,32 +59,23 @@ g() {
 }
 compdef g=git
 
-k() {
-  if (( $# == 0 )); then
-    context=$(kubectx -c)
-    namespace=$(kubens -c)
-    echo "$context/$namespace"
-  else
-    command kubectl "$@"
-  fi
-}
-compdef k=kubectl
+alias k='kubectl'
 
-t() {
-  if (( $# == 0 )); then
-    output="$(command tmux list-panes -s -F '#{window_index} #{pane_index} #{pane_current_path}:#{pane_current_command}' | sed "s:$HOME:~:" | sort | fzf --with-nth=3..)"
-    if [ -z "$output" ]; then
-      return
-    fi
-    window="$(echo "$output" | cut -d' ' -f1)"
-    pane="$(echo "$output" | cut -d' ' -f2)"
-    command tmux select-window -t "$window"
-    command tmux select-pane -t "$pane"
-  else
-    command tmux "$@"
-  fi
-}
-compdef t=tmux
+alias kgi='kubectl get ingress -owide'
+alias kdi='kubectl describe ingress'
+alias kei='kubectl edit ingress'
+
+alias kgn='kubectl get node -owide --sort-by=.metadata.creationTimestamp'
+alias kdn='kubectl describe node'
+alias ken='kubectl edit node'
+
+alias kgp='kubectl get pod -owide'
+alias kdp='kubectl describe pod'
+alias kep='kubectl edit pod'
+
+alias kgs='kubectl get service -owide'
+alias kds='kubectl describe service'
+alias kes='kubectl edit service'
 
 tree() {
   command tree -a -I .git --dirsfirst "$@"
@@ -225,10 +216,3 @@ source "$HOME/.secrets/.zshrc"
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach -t default || tmux new -s default
 fi
-
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[[ -f /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/serverless.zsh ]] && . /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/serverless.zsh
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[[ -f /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/sls.zsh ]] && . /Users/aymericbeaumet/Workspace/rekki/unity/node_modules/tabtab/.completions/sls.zsh

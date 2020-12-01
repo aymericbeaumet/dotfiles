@@ -121,14 +121,7 @@ augroup END
   command! -bang -nargs=? -complete=dir FilesWithPreview
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --type file'}),
-        \   <bang>0,
-        \ )
-
-  command! -bang -nargs=? -complete=dir FilesWithPreviewAndHiddenFiles
-        \ call fzf#vim#files(
-        \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git'}),
+        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git -E "*.qtpl.go"'}),
         \   <bang>0,
         \ )
 
@@ -140,15 +133,6 @@ augroup END
     call fzf#vim#grep(initial_command, 1, {}, a:fullscreen)
   endfunction
   command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
-
-  function! RipgrepWithHiddenFiles(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden -- %s || true'
-    let initial_command = printf(command_fmt, shellescape(a:query))
-    let reload_command = printf(command_fmt, '{q}')
-    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-    call fzf#vim#grep(initial_command, 1, {}, a:fullscreen)
-  endfunction
-  command! -nargs=* -bang RipgrepWithHiddenFiles call RipgrepWithHiddenFiles(<q-args>, <bang>0)
 
   " https://vi.stackexchange.com/a/8535/1956
   command! Cnext try | cnext | catch | silent! cfirst | endtry
@@ -177,15 +161,12 @@ augroup END
   nnoremap <silent> <Leader>b :Buffers<CR>
   " <Leader>c NerdCommenter leader
   nnoremap <silent> <Leader>d :Bwipeout<CR>
-  nnoremap <silent> <Leader>D :bufdo Bwipeout<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
   nnoremap <silent> <Leader>f :FilesWithPreview<CR>
-  nnoremap <silent> <Leader>F :FilesWithPreviewAndHiddenFiles<CR>
   " <Leader>g git commands leader (see below)
   " <Leader>l LToggle
   " <Leader>q QToggle
   nnoremap <silent> <Leader>r :Ripgrep<CR>
-  nnoremap <silent> <Leader>R :RipgrepWithHiddenFiles<CR>
   " <Leader>v vimrc commands leader (see below)
 
   nnoremap <silent> <Leader>gb       :Gblame<CR>
@@ -228,6 +209,10 @@ augroup END
   nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
   xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
 
+  " keep the next/previous in the middle of the screen
+  nnoremap <silent> n nzz
+  nnoremap <silent> N Nzz
+
 " }}}
 
 " buffer
@@ -240,6 +225,7 @@ set nostartofline " leave my cursor alone
 set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
 set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
 set virtualedit=block " allow the cursor to go in to virtual places
+set nocursorline " do not color the cursorline
 
 " command
 set history=10000 " increase history size
