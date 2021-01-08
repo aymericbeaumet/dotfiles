@@ -79,6 +79,7 @@ augroup END
       let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
             \   'go': ['goimports', 'gofmt'],
+            \   'graphql': ['prettier'],
             \   'javascript': ['prettier'],
             \   'javascriptreact': ['prettier'],
             \   'rust': ['rustfmt'],
@@ -104,14 +105,13 @@ augroup END
       let g:ale_go_golangci_lint_package = 1
 
     Plug 'lifepillar/pgsql.vim'
-
     Plug 'HerringtonDarkholme/yats.vim'
     Plug 'hashivim/vim-terraform'
-    Plug 'kevinoid/vim-jsonc'
-    Plug 'rhysd/vim-wasm'
     Plug 'rust-lang/rust.vim'
     Plug 'zchee/vim-flatbuffers'
-    Plug 'b0o/builder.vim' | Plug 'b0o/quicktemplate.vim'
+    Plug 'jparise/vim-graphql'
+    Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+    Plug 'neoclide/jsonc.vim'
 
   call plug#end()
 
@@ -126,10 +126,10 @@ augroup END
         \ )
 
   function! Ripgrep(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case          -- %s || true'
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
-    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..']}
     call fzf#vim#grep(initial_command, 1, {}, a:fullscreen)
   endfunction
   command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
