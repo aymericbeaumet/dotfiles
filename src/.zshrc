@@ -10,6 +10,10 @@ autoload -Uz compinit && compinit
   cd "$path" || exit 1
 }
 
+a() {
+  aggr-cli @aymericbeaumet
+}
+
 cd() {
   builtin cd "$@" >/dev/null
 }
