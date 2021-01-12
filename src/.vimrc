@@ -130,7 +130,7 @@ augroup END
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
     let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..']}
-    call fzf#vim#grep(initial_command, 1, {}, a:fullscreen)
+    call fzf#vim#grep(initial_command, 1, spec, a:fullscreen)
   endfunction
   command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
 
