@@ -6,52 +6,26 @@ fpath=("$HOME/.zsh/bundle/zsh-completions/src" $fpath)
 autoload -Uz compinit && compinit
 
 ...() {
-  local path=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-  cd "$path" || exit 1
-}
-
-a() {
-  aggr-cli @aymericbeaumet
-}
-
-cd() {
-  builtin cd "$@" >/dev/null
+  dirpath=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+  cd "$dirpath" || exit 1
 }
 
 d() {
-  local path=$(fd --type directory                         | fzf -1 -0 -q "$1")
-  if [ -z "$path" ]; then
+  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0)
+  if [ -z "$dirpath" ]; then
     echo 'wow such empty' 1>&2
     return
   fi
-  cd "$path" || exit 1
-}
-
-D() {
-  local path=$(fd --type directory --hidden --exclude .git | fzf -1 -0 -q "$1")
-  if [ -z "$path" ]; then
-    echo 'wow such empty' 1>&2
-    return
-  fi
-  cd "$path" || exit 1
+  cd "$dirpath" || exit 1
 }
 
 f() {
-  local path=$(fd --type file                         | fzf -1 -0 -q "$1")
-  if [ -z "$path" ]; then
+  filepath=$(fd --type file --hidden --exclude .git | fzf -0)
+  if [ -z "$filepath" ]; then
     echo 'wow such empty' 1>&2
     return
   fi
-  echo "$path"
-}
-
-F() {
-  local path=$(fd --type file --hidden --exclude .git | fzf -1 -0 -q "$1")
-  if [ -z "$path" ]; then
-    echo 'wow such empty' 1>&2
-    return
-  fi
-  echo "$path"
+  echo "$filepath"
 }
 
 g() {
@@ -62,6 +36,20 @@ g() {
   fi
 }
 compdef g=git
+
+v() {
+  if (( $# == 0 )); then
+    filepath=$(fd --type file --hidden --exclude .git | fzf -0)
+    if [ -z "$filepath" ]; then
+      echo 'wow such empty' 1>&2
+      return
+    fi
+    command nvim "$filepath"
+  else
+    command nvim "$@"
+  fi
+}
+compdef v=nvim
 
 alias k='kubectl'
 
@@ -97,9 +85,6 @@ alias l=ll
 alias la='ll -A'
 alias ll='ls -hl'
 alias mkdir='mkdir -p'
-alias v=nvim
-alias vi=nvim
-alias vim=nvim
 
 unalias z &> /dev/null
 z() {

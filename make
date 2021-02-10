@@ -37,6 +37,8 @@ __tools() {
     github.com/mgechev/revive \
     golang.org/x/tools/cmd/goimports \
     golang.org/x/tools/gopls
+  # Python
+  pip3 install black flake8 python-language-server
   # Rust
   brew install rust-analyzer
   rustup update && rustup component add rustfmt rls rust-analysis rust-src

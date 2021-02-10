@@ -2,3 +2,4 @@
 # Github: @aymericbeaumet/dotfiles
 
 setopt noglobalrcs
+source "$HOME/.cargo/env"
