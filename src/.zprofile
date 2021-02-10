@@ -35,6 +35,9 @@ if [[ -z "$__Z_PROFILE_LOADED__" ]]; then
   # ripgrep
   export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
+  # python
+  export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+
   # ruby
   export PATH="$BREW_PATH/opt/ruby/bin:$PATH"
   export PATH="$BREW_PATH/lib/ruby/gems/2.7.0/bin/:$PATH"

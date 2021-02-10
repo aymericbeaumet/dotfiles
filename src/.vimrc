@@ -18,11 +18,14 @@
 augroup vimrc
 
   " custom mappings for some filetypes
-  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
+  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
 
   " syntax highlighting for custom filetypes
   autocmd BufNewFile,BufRead *.tpl set ft=yaml
+
+  " wrap at 80 characters for markdown
+  autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 
 augroup END
 
@@ -36,19 +39,20 @@ augroup END
     Plug 'git@github.com:aymericbeaumet/vim-zshmappings.git'
       let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
 
-    Plug 'arcticicestudio/nord-vim'
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
-    Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-unimpaired'
-    Plug 'tpope/vim-repeat'
-    Plug 'tpope/vim-eunuch'
-    Plug 'scrooloose/nerdcommenter'
     Plug 'Valloric/ListToggle'
+    Plug 'alvan/vim-closetag'
+    Plug 'arcticicestudio/nord-vim'
     Plug 'editorconfig/editorconfig-vim'
     Plug 'jiangmiao/auto-pairs'
-    Plug 'alvan/vim-closetag'
     Plug 'puremourning/vimspector'
+    Plug 'scrooloose/nerdcommenter'
+    Plug 'tpope/vim-abolish'
+    Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-unimpaired'
 
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git']
@@ -67,6 +71,7 @@ augroup END
 
     Plug 'dense-analysis/ale'
       let g:ale_completion_enabled = 1
+      let g:ale_completion_autoimport = 1
       set omnifunc=ale#completion#OmniFunc
       set completeopt=menu,menuone,noinsert,noselect
       let g:ale_fix_on_save = 1
@@ -82,6 +87,7 @@ augroup END
             \   'graphql': ['prettier'],
             \   'javascript': ['prettier'],
             \   'javascriptreact': ['prettier'],
+            \   'python': ['black'],
             \   'rust': ['rustfmt'],
             \   'terraform': ['terraform'],
             \   'typescript': ['prettier'],
@@ -91,6 +97,7 @@ augroup END
             \   'go': ['gopls', 'golangci-lint', 'revive'],
             \   'javascript': ['tsserver'],
             \   'javascriptreact': ['tsserver'],
+            \   'python': ['pyls', 'blake', 'flake8'],
             \   'rust': ['analyzer'],
             \   'sh': ['shellcheck'],
             \   'terraform': ['terraform', 'tflint'],
@@ -103,6 +110,7 @@ augroup END
       let g:ale_go_gofmt_options = '-s'
       let g:ale_go_golangci_lint_options = '--disable wsl'
       let g:ale_go_golangci_lint_package = 1
+      let g:ale_python_auto_pipenv = 1
 
     Plug 'lifepillar/pgsql.vim'
     Plug 'HerringtonDarkholme/yats.vim'
