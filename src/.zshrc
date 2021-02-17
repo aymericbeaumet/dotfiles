@@ -11,7 +11,7 @@ autoload -Uz compinit && compinit
 }
 
 d() {
-  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0)
+  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0 -1)
   if [ -z "$dirpath" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -20,7 +20,7 @@ d() {
 }
 
 f() {
-  filepath=$(fd --type file --hidden --exclude .git | fzf -0)
+  filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1)
   if [ -z "$filepath" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -39,7 +39,7 @@ compdef g=git
 
 v() {
   if (( $# == 0 )); then
-    filepath=$(fd --type file --hidden --exclude .git | fzf -0)
+    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1)
     if [ -z "$filepath" ]; then
       echo 'wow such empty' 1>&2
       return
@@ -50,6 +50,18 @@ v() {
   fi
 }
 compdef v=nvim
+alias vi='v'
+alias vim='v'
+alias nvim='v'
+
+z() {
+  directory=$(zoxide query --list "$@" | fzf -0 -1)
+  if [ -z "$directory" ]; then
+    echo 'wow such empty' 1>&2
+    return
+  fi
+  cd "$directory" || exit 1
+}
 
 alias k='kubectl'
 
@@ -85,12 +97,6 @@ alias l=ll
 alias la='ll -A'
 alias ll='ls -hl'
 alias mkdir='mkdir -p'
-
-unalias z &> /dev/null
-z() {
-  [ $# -gt 0 ] && _z "$*" && return
-  cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')" || exit 1
-}
 
 urls() {
   fc -rl 1 | squeeze --url | sort -u
@@ -197,6 +203,9 @@ source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
+
+# zoxide
+eval "$(zoxide init zsh --no-aliases)"
 
 # secrets
 source "$HOME/.secrets/.zshrc"

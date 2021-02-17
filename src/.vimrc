@@ -53,6 +53,7 @@ augroup END
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
+    Plug 'junegunn/goyo.vim'
 
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git']
@@ -187,7 +188,8 @@ augroup END
   nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
   nnoremap <silent> <Leader>vu :PlugUpdate<CR>
-  nnoremap <silent> <Leader>vU :PlugUpdate!<CR>
+
+  nnoremap <silent> <Leader>z :Goyo<CR>
 
   " sorry
   inoremap <C-Space> <Nop>

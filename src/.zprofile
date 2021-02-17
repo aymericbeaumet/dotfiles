@@ -1,9 +1,6 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com>
 # Github: @aymericbeaumet/dotfiles
 
-# Sourced here to make `z` available in login shells
-source '/usr/local/opt/z/etc/profile.d/z.sh'
-
 if [[ -z "$__Z_PROFILE_LOADED__" ]]; then
   export __Z_PROFILE_LOADED__=true
 
