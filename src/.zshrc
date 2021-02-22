@@ -28,15 +28,6 @@ f() {
   echo "$filepath"
 }
 
-g() {
-  if (( $# == 0 )); then
-    command hub status -sb
-  else
-    command hub "$@"
-  fi
-}
-compdef g=git
-
 v() {
   if (( $# == 0 )); then
     filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1)
@@ -63,47 +54,20 @@ z() {
   cd "$directory" || exit 1
 }
 
-alias k='kubectl'
-
-alias kgi='kubectl get ingress -owide'
-alias kdi='kubectl describe ingress'
-alias kei='kubectl edit ingress'
-
-alias kgn='kubectl get node -owide --sort-by=.metadata.creationTimestamp'
-alias kdn='kubectl describe node'
-alias ken='kubectl edit node'
-
-alias kgp='kubectl get pod -owide'
-alias kdp='kubectl describe pod'
-alias kep='kubectl edit pod'
-
-alias kgs='kubectl get service -owide'
-alias kds='kubectl describe service'
-alias kes='kubectl edit service'
-
-tree() {
-  command tree -a -I .git --dirsfirst "$@"
-}
-
-w() {
-  command watchexec --clear --restart -i ".*" -i "*.md" -i "*.qtpl.go" -i "*.tmp" -i Dockerfile -- "$@"
-}
-
 alias b=bat
 alias c=cat
+alias g='git'; compdef g=git
 alias j=jobs
-alias ls='ls --color=auto -pFH --group-directories-first'
+alias k='kubectl'; compdef k=kubectl
 alias l=ll
 alias la='ll -A'
 alias ll='ls -hl'
+alias ls='ls --color=auto -pFH --group-directories-first'
 alias mkdir='mkdir -p'
+alias w='watchexec'
 
 urls() {
   fc -rl 1 | squeeze --url | sort -u
-}
-
-furls() {
-  urls | fzf | pbcopy
 }
 
 # global env
@@ -203,6 +167,9 @@ source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
+
+# pimp
+eval "$(pimp --zsh)"
 
 # zoxide
 eval "$(zoxide init zsh --no-aliases)"
