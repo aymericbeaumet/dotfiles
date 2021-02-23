@@ -11,14 +11,17 @@ mappings:
   - git ci  ... : hub commit
   - git cia ... : hub commit --amend
   - git cl  ... : hub clone
+  - git co      : hub checkout {{ GitLocalBranches | FZF }}
   - git co  ... : hub checkout
   - git df  ... : hub diff
   - git dfc ... : hub diff --cached
+  - git fe      : hub fetch {{ GitRemotes | FZF }}
   - git fe  ... : hub fetch
   - git l   ... : hub log
   - git me  ... : hub merge
   - git pl  ... : hub pull
   - git ps  ... : hub push -u
+  - git rb      : hub rebase {{ GitLocalBranches | FZF }}
   - git rb  ... : hub rebase
   - git rba ... : hub rebase --abort
   - git rbc ... : hub rebase --continue
