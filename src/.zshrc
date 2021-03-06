@@ -64,6 +64,8 @@ alias la='ll -A'
 alias ll='ls -hl'
 alias ls='ls --color=auto -pFH --group-directories-first'
 alias mkdir='mkdir -p'
+alias p='pimp'
+alias t='tree'
 alias w='watchexec'
 
 urls() {
@@ -169,7 +171,7 @@ source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # pimp
-eval "$(pimp --zsh)"
+eval "$(pimp --shell)"
 
 # zoxide
 eval "$(zoxide init zsh --no-aliases)"
