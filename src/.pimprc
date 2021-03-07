@@ -6,7 +6,7 @@
 # git
 ###
 
-git : hub status -sb
+git : ["hub", "status", "-sb"]
 
 git foobar ... : |
     #!{{ (Exec "echo" "-n" "/bin/sh").Stdout }}
