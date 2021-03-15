@@ -48,8 +48,8 @@ alias nvim='v'
 z() {
   directory=$(zoxide query --list --score "$@" | fzf -0 -1 --nth=2 | awk '{ print $2 }')
   if [ -z "$directory" ]; then
-    echo 'wow such empty' 1>&2
-    return
+    d "$@"
+    return $?
   fi
   cd "$directory" || exit 1
 }
