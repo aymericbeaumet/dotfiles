@@ -22,7 +22,7 @@ augroup vimrc
   autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
 
   " syntax highlighting for custom filetypes
-  autocmd BufNewFile,BufRead *.tpl set ft=yaml
+  autocmd BufNewFile,BufRead *.tpl,Pimpfile* set ft=yaml
 
   " wrap at 80 characters for markdown
   autocmd BufRead,BufNewFile *.md setlocal textwidth=80
