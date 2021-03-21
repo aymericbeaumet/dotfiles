@@ -171,7 +171,7 @@ source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # pimp
-eval "$(pimp --zsh)"
+eval "$(pimp --global=~/.Pimpfile --zsh)"
 
 # zoxide
 eval "$(zoxide init zsh --no-aliases)"
