@@ -9,14 +9,14 @@
 git : hub status -sb
 
 git foobar ... : |
-    #!{{ (Exec "echo" "-n" "/bin/sh").Stdout }}
-    echo "$@"
-    cat <<EOF
-    {{ "Git Remotes" | upper }}
-    {{- range GitRemotes }}
-    - {{ . | lower }}
-    {{- end }}
-    EOF
+  #!{{ (exec "echo" "-n" "/bin/sh").Stdout }}
+  echo "$@"
+  cat <<EOF
+  {{ "Git Remotes" | toString | upper }}
+  {{- range GitRemotes }}
+  - {{ . | toString | lower }}
+  {{- end }}
+  EOF
 
 git a       : hub add .
 git a   ... : hub add
@@ -52,14 +52,14 @@ git st  ... : hub status --short --branch
 git sw  ... : hub show
 
 git plps : |
-    #!/bin/sh
-    pimp git pl
-    pimp git ps
+  #!/bin/sh
+  pimp git pl
+  pimp git ps
 
 git shco : |
-    #!/bin/sh
-    pimp git sh
-    pimp git co
+  #!/bin/sh
+  pimp git sh
+  pimp git co
 
 git ... : hub
 
