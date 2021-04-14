@@ -18,8 +18,11 @@
 augroup vimrc
 
   " custom mappings for some filetypes
-  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact nnoremap <silent> <buffer> K :ALEHover<CR>
+  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :ALEHover<CR>
+
+  " add support for .cjs
+  autocmd BufNewFile,BufRead .*.cjs,*.cjs set ft=javascript
 
   " syntax highlighting for custom filetypes
   autocmd BufNewFile,BufRead *.tpl,Pimpfile set ft=yaml
@@ -41,7 +44,6 @@ augroup END
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'Valloric/ListToggle'
-    Plug 'alvan/vim-closetag'
     Plug 'arcticicestudio/nord-vim'
     Plug 'editorconfig/editorconfig-vim'
     Plug 'jiangmiao/auto-pairs'
@@ -56,7 +58,7 @@ augroup END
     Plug 'junegunn/goyo.vim'
 
     Plug 'airblade/vim-rooter'
-      let g:rooter_patterns = ['.git']
+      let g:rooter_patterns = ['.git', 'go.mod', 'package.json']
       let g:rooter_cd_cmd = 'lcd'
       let g:rooter_silent_chdir = 1
       let g:rooter_resolve_links = 1
@@ -65,16 +67,12 @@ augroup END
       let g:localvimrc_persistent = 1
 
     Plug 'easymotion/vim-easymotion'
-      let g:EasyMotion_keys = 'X.Z/C,VMBKQ;WYFUPLAORISETN'
+      let g:EasyMotion_keys = 'Z/X.C,VMQ;WYFUPLAORISETN'
       let g:EasyMotion_smartcase = 1
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
 
     Plug 'dense-analysis/ale'
-      let g:ale_completion_enabled = 1
-      let g:ale_completion_autoimport = 1
-      set omnifunc=ale#completion#OmniFunc
-      set completeopt=menu,menuone,noinsert,noselect
       let g:ale_fix_on_save = 1
       let g:ale_lint_on_save = 1
       let g:ale_linters_explicit = 1
@@ -88,8 +86,11 @@ augroup END
             \   'graphql': ['prettier'],
             \   'javascript': ['prettier'],
             \   'javascriptreact': ['prettier'],
+            \   'json': ['prettier'],
             \   'python': ['black'],
             \   'rust': ['rustfmt'],
+            \   'scss': ['prettier'],
+            \   'svelte': ['prettier'],
             \   'terraform': ['terraform'],
             \   'typescript': ['prettier'],
             \   'typescriptreact': ['prettier'],
@@ -101,11 +102,12 @@ augroup END
             \   'python': ['pyls', 'blake', 'flake8'],
             \   'rust': ['analyzer'],
             \   'sh': ['shellcheck'],
+            \   'sql': ['sqlint'],
+            \   'svelte': ['svelteserver'],
             \   'terraform': ['terraform', 'tflint'],
             \   'typescript': ['tsserver'],
             \   'typescriptreact': ['tsserver'],
             \   'vim': ['vint'],
-            \   'sql': ['sqlint'],
             \   'zsh': ['shellcheck'],
             \ }
       let g:ale_go_gofmt_options = '-s'
@@ -113,21 +115,42 @@ augroup END
       let g:ale_go_golangci_lint_package = 1
       let g:ale_python_auto_pipenv = 1
 
-    Plug 'lifepillar/pgsql.vim'
+    Plug 'alvan/vim-closetag'
+      let g:closetag_filetypes = 'html,xhtml,phtml,svelte,snippets'
+
+    Plug 'leafOfTree/vim-svelte-plugin'
+      let g:vim_svelte_plugin_use_typescript = 1
+      let g:vim_svelte_plugin_use_sass = 1
+
     Plug 'HerringtonDarkholme/yats.vim'
     Plug 'hashivim/vim-terraform'
     Plug 'rust-lang/rust.vim'
     Plug 'zchee/vim-flatbuffers'
-    Plug 'jparise/vim-graphql'
-    Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-    Plug 'neoclide/jsonc.vim'
+    Plug 'kevinoid/vim-jsonc'
+
+    Plug 'SirVer/ultisnips'
+      let g:UltiSnipsExpandTrigger='<tab>'
+      let g:UltiSnipsJumpForwardTrigger='<tab>'
+      let g:UltiSnipsEditSplit="vertical"
+
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+      set completeopt=menu,menuone,noinsert,noselect
+      let g:deoplete#enable_at_startup = 1
 
   call plug#end()
+
+  " deoplete.nvim
+  call deoplete#custom#option('smart_case', v:true)
+  call deoplete#custom#source('_', 'mark', '')
+  call deoplete#custom#source('_', 'max_menu_width', 120)
+  call deoplete#custom#source('ultisnips', 'rank', 1000)
+  call deoplete#custom#source('ale', 'rank', 900)
+  call deoplete#custom#option('ignore_sources', { '_': ['around', 'buffer', 'file', 'member', 'omni'] })
 
 " }}}
 
 " commands {{{
-  command! -bang -nargs=? -complete=dir FilesWithPreview
+  command! -bang -nargs=? -complete=dir Files
         \ call fzf#vim#files(
         \   <q-args>,
         \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git -E "*.qtpl.go"'}),
@@ -171,7 +194,7 @@ augroup END
   " <Leader>c NerdCommenter leader
   nnoremap <silent> <Leader>d :Bwipeout<CR>
   nnoremap <silent> <Leader>e :Explore<CR>
-  nnoremap <silent> <Leader>f :FilesWithPreview<CR>
+  nnoremap <silent> <Leader>f :Files<CR>
   " <Leader>g git commands leader (see below)
   " <Leader>l LToggle
   " <Leader>q QToggle
@@ -185,9 +208,12 @@ augroup END
   nnoremap <silent> <Leader>gw       :Gwrite<CR>
   nnoremap <silent> <Leader>g<Space> :G<Space>
 
-  nnoremap <silent> <Leader>ve :edit ~/.vimrc<CR>
+  nnoremap <silent> <Leader>ve :vs ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
-  nnoremap <silent> <Leader>vu :PlugUpdate<CR>
+
+  nnoremap <silent> <Leader>pu :PlugUpdate<CR>
+
+  nnoremap <silent> <Leader>se :UltiSnipsEdit<CR>
 
   nnoremap <silent> <Leader>z :Goyo<CR>
 
@@ -223,6 +249,8 @@ augroup END
   nnoremap <silent> n nzz
   nnoremap <silent> N Nzz
 
+  " C-] from insert mode
+  imap <silent> <C-]> <C-c><C-]>
 " }}}
 
 " buffer

@@ -39,6 +39,8 @@ __tools() {
     golang.org/x/tools/gopls
   # Python
   pip3 install black flake8 python-language-server
+  # Npm
+  npm install -g svelte-language-server
   # Rust
   brew install rust-analyzer
   rustup update && rustup component add rustfmt rls rust-analysis rust-src
