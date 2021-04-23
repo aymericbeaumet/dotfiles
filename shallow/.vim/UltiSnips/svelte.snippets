@@ -1,12 +1,24 @@
-snippet field "<div />"
-<div class="field">
-	<div class="control">
-		$0
-	</div>
-</div>
+snippet script "<script>" b
+<script>
+$0
+</script>
 endsnippet
 
-snippet section "<section />" b
+snippet load "<script context='module'>" b
+<script context="module">
+import type { Load } from "@sveltejs/kit"
+
+export const load: Load = async function({ context }) {
+  return {
+    props: {
+      prefix: context.prefix,
+    },
+  }
+}
+</script>
+endsnippet
+
+snippet section "<section>" b
 <section class="section">
 	$0
 </section>
@@ -14,4 +26,8 @@ endsnippet
 
 snippet _ "i18n" w
 {$_("$0")}
+endsnippet
+
+snippet __ "i18n" w
+__("$0")
 endsnippet

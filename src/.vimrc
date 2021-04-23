@@ -58,7 +58,7 @@ augroup END
     Plug 'junegunn/goyo.vim'
 
     Plug 'airblade/vim-rooter'
-      let g:rooter_patterns = ['.git', 'go.mod', 'package.json']
+      let g:rooter_patterns = ['.git', 'go.mod', 'package-lock.json']
       let g:rooter_cd_cmd = 'lcd'
       let g:rooter_silent_chdir = 1
       let g:rooter_resolve_links = 1
@@ -95,18 +95,22 @@ augroup END
             \   'typescript': ['prettier'],
             \   'typescriptreact': ['prettier'],
             \ }
+      let g:ale_linter_aliases = {
+            \   'javascriptreact': ['javascript'],
+            \   'typescript': ['javascript'],
+            \   'typescriptreact': ['javascript'],
+            \   'svelte': ['css', 'javascript', 'svelte'],
+            \ }
       let g:ale_linters = {
+            \   'css': ['stylelint'],
             \   'go': ['gopls', 'golangci-lint', 'revive'],
-            \   'javascript': ['tsserver'],
-            \   'javascriptreact': ['tsserver'],
+            \   'javascript': ['eslint', 'tsserver'],
             \   'python': ['pyls', 'blake', 'flake8'],
             \   'rust': ['analyzer'],
             \   'sh': ['shellcheck'],
             \   'sql': ['sqlint'],
             \   'svelte': ['svelteserver'],
             \   'terraform': ['terraform', 'tflint'],
-            \   'typescript': ['tsserver'],
-            \   'typescriptreact': ['tsserver'],
             \   'vim': ['vint'],
             \   'zsh': ['shellcheck'],
             \ }

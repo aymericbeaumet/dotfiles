@@ -4,6 +4,7 @@
 
 --type-add=go:*.go
 --type-add=rs:*.rs
+--type-add=svelte:*.svelte
 
 # TODO: use $HOME when supported
 --ignore-file=/Users/aymericbeaumet/.config/ripgrep/ignore
