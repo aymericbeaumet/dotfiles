@@ -1,41 +1,21 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com>
 # Github: @aymericbeaumet/dotfiles
 
-if [[ -z "$__Z_PROFILE_LOADED__" ]]; then
-  export __Z_PROFILE_LOADED__=true
+if [ -z "$RIPGREP_CONFIG_PATH" ]; then
+  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
+fi
 
-  # gpg
-  export GPG_TTY="$(tty)"
-
-  # homebrew + coreutils
+if [ -z "$BREW_PATH" ]; then
   BREW_PATH='/usr/local'
-  export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/opt/gettext/bin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
+  export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
+fi
 
-  # android
-  export PATH="$HOME/android:$PATH"
-  export ANDROID_HOME=$HOME/Library/Android/sdk
-  export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-  export ANDROID_AVD_HOME=$HOME/.android/avd
-
-  # cargo
+if [ -z "$CARGO_HOME" ]; then
   export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"
+fi
 
-  # go
+if [ -z "$GOPATH" ]; then
   export GOPATH="$HOME/.go"
   export PATH="$GOPATH/bin:$PATH"
-
-  # n
-  export N_PREFIX="$HOME/.n"
-  export PATH="$N_PREFIX/bin:$PATH"
-
-  # ripgrep
-  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
-
-  # python
-  export PATH="$HOME/Library/Python/3.9/bin:$PATH"
-
-  # ruby
-  export PATH="$BREW_PATH/opt/ruby/bin:$PATH"
-  export PATH="$BREW_PATH/lib/ruby/gems/2.7.0/bin/:$PATH"
 fi

@@ -24,6 +24,7 @@ __install() {
   mkdir -p "$HOME/Workspace" "$GOPATH"
   git submodule update --init --recursive
   brew bundle
+  python3 -m pip install --user --upgrade pynvim
   if ! [[ "$SHELL" =~ /zsh$ ]]; then
     sudo chsh -s "$(command -v zsh)" "$USER"
   fi
@@ -49,7 +50,7 @@ __tools() {
   # SQL
   gem install sqlint
   # Terraform
-  brew install tflint || brew upgrade tflint
+  brew install tflint
   # Vim
   pip3 install vim-vint
 }
@@ -57,7 +58,8 @@ __tools() {
 # Configure the OS
 __configure() {
   # Disable key repeat delay
-  defaults write NSGlobalDomain KeyRepeat -int 1
+  defaults write -g InitialKeyRepeat -int 1
+  defaults write -g KeyRepeat -int 1
 }
 
 for command in "$@"; do

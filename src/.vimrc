@@ -127,10 +127,11 @@ augroup END
       let g:vim_svelte_plugin_use_sass = 1
 
     Plug 'HerringtonDarkholme/yats.vim'
+    Plug 'cespare/vim-toml'
     Plug 'hashivim/vim-terraform'
+    Plug 'kevinoid/vim-jsonc'
     Plug 'rust-lang/rust.vim'
     Plug 'zchee/vim-flatbuffers'
-    Plug 'kevinoid/vim-jsonc'
 
     Plug 'SirVer/ultisnips'
       let g:UltiSnipsExpandTrigger='<tab>'
