@@ -30,29 +30,27 @@ __install() {
   fi
 }
 
-# Install editor tools
-__tools() {
+# Install dev tools
+__devtools() {
+  # Cloud
+  brew install awscli helm kubectl
   # Go
-  go get -u \
-    github.com/golangci/golangci-lint/cmd/golangci-lint \
-    github.com/mgechev/revive \
-    golang.org/x/tools/cmd/goimports \
-    golang.org/x/tools/gopls
+  brew install go
+  GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+  GO111MODULE=on go get github.com/mgechev/revive@latest
+  GO111MODULE=on go get golang.org/x/tools/cmd/goimports@latest
+  GO111MODULE=on go get golang.org/x/tools/gopls@latest
   # Python
+  brew install python3
   pip3 install black flake8 python-language-server
   # Npm
+  brew install node
   npm install -g svelte-language-server
   # Rust
-  brew install rust-analyzer
+  brew install rustup rust-analyzer
   rustup update && rustup component add rustfmt rls rust-analysis rust-src
   # Shell
   brew install shellcheck
-  # SQL
-  gem install sqlint
-  # Terraform
-  brew install tflint
-  # Vim
-  pip3 install vim-vint
 }
 
 # Configure the OS

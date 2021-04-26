@@ -71,10 +71,6 @@ alias ls='ls --color=auto -pFH --group-directories-first'
 alias mkdir='mkdir -p'
 alias w='watchexec'
 
-urls() {
-  fc -rl 1 | squeeze --url | sort -u
-}
-
 # global env
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -169,7 +165,13 @@ eval "$(starship init zsh)"
 # zoxide
 eval "$(zoxide init zsh --no-aliases)"
 
-# start or join a default tmux session
+# zsh-autosuggestions
+source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# zsh-syntax-highlighting
+source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# start or join the default tmux session
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach -t default || tmux new -s default
 fi
