@@ -28,6 +28,15 @@ f() {
   echo "$filepath"
 }
 
+g() {
+  if (( $# == 0 )); then
+    command git status -sb
+  else
+    command git "$@"
+  fi
+}
+compdef g=git
+
 v() {
   if (( $# == 0 )); then
     filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1)
@@ -54,18 +63,12 @@ z() {
   cd "$directory" || exit 1
 }
 
-alias b=bat
-alias c=cat
-alias g='git'; compdef g=git
-alias j=jobs
 alias k='kubectl'; compdef k=kubectl
 alias l=ll
 alias la='ll -A'
 alias ll='ls -hl'
 alias ls='ls --color=auto -pFH --group-directories-first'
 alias mkdir='mkdir -p'
-alias p='pimp'
-alias t='tree'
 alias w='watchexec'
 
 urls() {
@@ -156,28 +159,15 @@ unsetopt FLOW_CONTROL
 stty stop undef
 stty start undef
 
-# prompting (http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting)
-precmd() { # set title + restore cursor
-  print -n "\ek$(pwd)\e\\"
-  echo -ne '\e[5 q'
-}
-source ~/.zsh/bundle/powerlevel10k/powerlevel10k.zsh-theme
-source ~/.p10k.zsh
-source ~/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
-# pimp
-eval "$(pimp --zsh)"
+# starship
+eval "$(starship init zsh)"
 
 # zoxide
 eval "$(zoxide init zsh --no-aliases)"
-
-# secrets
-source "$HOME/.secrets/.zshrc"
 
 # start or join a default tmux session
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then

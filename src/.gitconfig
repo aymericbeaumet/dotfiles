@@ -5,7 +5,37 @@
   statusHints = false
 
 [alias]
-  ; now using https://github.com/aymericbeaumet/dotfiles/blob/master/src/.pimprc
+  a = add
+  br = branch -v --sort=-committerdate
+  ci = commit
+  cia = commit --amend
+  cl = clone
+  co = checkout
+  df = diff
+  dfc = diff --cached
+  fe = fetch
+  l = log
+  me = merge
+  pl = pull
+  ps = push -u
+  rb = rebase
+  rba = rebase --abort
+  rbc = rebase --continue
+  rbi = rebase --interactive
+  rmc = rm --cached
+  rs = reset
+  rsh = reset --hard
+  rv = revert
+  sh = stash
+  shc = stash clear
+  shl = stash list
+  shp = stash pop
+  sm = submodule
+  st = status --short --branch
+  sw = show
+  #
+  shco = !git sh && git co
+  plps = !git pl && git ps
 
 [color]
   ui = auto
