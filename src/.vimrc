@@ -63,9 +63,6 @@ augroup END
       let g:rooter_silent_chdir = 1
       let g:rooter_resolve_links = 1
 
-    Plug 'embear/vim-localvimrc'
-      let g:localvimrc_persistent = 1
-
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'Z/X.C,VMQ;WYFUPLAORISETN'
       let g:EasyMotion_smartcase = 1
@@ -108,16 +105,13 @@ augroup END
             \   'python': ['pyls', 'blake', 'flake8'],
             \   'rust': ['analyzer'],
             \   'sh': ['shellcheck'],
-            \   'sql': ['sqlint'],
             \   'svelte': ['svelteserver'],
-            \   'terraform': ['terraform', 'tflint'],
+            \   'terraform': ['terraform'],
             \   'vim': ['vint'],
             \   'zsh': ['shellcheck'],
             \ }
       let g:ale_go_gofmt_options = '-s'
-      let g:ale_go_golangci_lint_options = '--disable wsl'
       let g:ale_go_golangci_lint_package = 1
-      let g:ale_python_auto_pipenv = 1
 
     Plug 'alvan/vim-closetag'
       let g:closetag_filetypes = 'html,xhtml,phtml,svelte,snippets'
@@ -216,6 +210,7 @@ augroup END
   nnoremap <silent> <Leader>ve :vs ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
 
+  nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>
 
   nnoremap <silent> <Leader>se :UltiSnipsEdit<CR>
