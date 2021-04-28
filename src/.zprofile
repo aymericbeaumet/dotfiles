@@ -7,7 +7,7 @@ fi
 
 if [ -z "$BREW_PATH" ]; then
   BREW_PATH='/usr/local'
-  export PATH="$BREW_PATH/opt/coreutils/libexec/gnubin:$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
+  export PATH="$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
 fi
 
 if [ -z "$CARGO_HOME" ]; then

@@ -33,31 +33,28 @@ __install() {
 # Install dev tools
 __devtools() {
   # Cloud
-  brew install awscli helm kubectl
-  # Go
-  brew install go
+  brew reinstall ansible awscli helm kubectl packer terraform vault
+  # Golang
+  brew reinstall go
   GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@latest
   GO111MODULE=on go get github.com/mgechev/revive@latest
   GO111MODULE=on go get golang.org/x/tools/cmd/goimports@latest
   GO111MODULE=on go get golang.org/x/tools/gopls@latest
-  # Python
-  brew install python3
-  pip3 install black flake8 python-language-server
-  # Npm
-  brew install node
-  npm install -g svelte-language-server
+  # Node
+  brew reinstall node
+  npm install -g svelte-language-server typescript
   # Rust
-  brew install rustup rust-analyzer
-  rustup update && rustup component add rustfmt rls rust-analysis rust-src
+  brew reinstall rustup-init rust-analyzer
+  rustup-init -y --default-toolchain=stable --no-modify-path
   # Shell
-  brew install shellcheck
+  brew reinstall shellcheck
 }
 
 # Configure the OS
 __configure() {
   # Disable key repeat delay
-  defaults write -g InitialKeyRepeat -int 1
-  defaults write -g KeyRepeat -int 1
+  defaults write -g InitialKeyRepeat -int 50
+  defaults write -g KeyRepeat -int 10
 }
 
 for command in "$@"; do

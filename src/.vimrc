@@ -18,14 +18,14 @@
 augroup vimrc
 
   " custom mappings for some filetypes
-  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType python,rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :ALEHover<CR>
+  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
+  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :ALEHover<CR>
 
   " add support for .cjs
   autocmd BufNewFile,BufRead .*.cjs,*.cjs set ft=javascript
 
   " syntax highlighting for custom filetypes
-  autocmd BufNewFile,BufRead *.tpl,Pimpfile set ft=yaml
+  autocmd BufNewFile,BufRead *.tpl set ft=yaml
 
   " wrap at 80 characters for markdown
   autocmd BufRead,BufNewFile *.md setlocal textwidth=80
@@ -51,14 +51,13 @@ augroup END
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-abolish'
     Plug 'tpope/vim-eunuch'
-    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
     Plug 'junegunn/goyo.vim'
 
     Plug 'airblade/vim-rooter'
-      let g:rooter_patterns = ['.git', 'go.mod', 'package-lock.json']
+      let g:rooter_patterns = ['.git', 'go.mod']
       let g:rooter_cd_cmd = 'lcd'
       let g:rooter_silent_chdir = 1
       let g:rooter_resolve_links = 1
@@ -79,12 +78,12 @@ augroup END
       let g:ale_sign_warning = 'W'
       let g:ale_fixers = {
             \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+            \   'css': ['prettier'],
             \   'go': ['goimports', 'gofmt'],
             \   'graphql': ['prettier'],
             \   'javascript': ['prettier'],
             \   'javascriptreact': ['prettier'],
             \   'json': ['prettier'],
-            \   'python': ['black'],
             \   'rust': ['rustfmt'],
             \   'scss': ['prettier'],
             \   'svelte': ['prettier'],
@@ -94,24 +93,25 @@ augroup END
             \ }
       let g:ale_linter_aliases = {
             \   'javascriptreact': ['javascript'],
-            \   'typescript': ['javascript'],
-            \   'typescriptreact': ['javascript'],
-            \   'svelte': ['css', 'javascript', 'svelte'],
+            \   'typescript': ['typescript', 'javascript'],
+            \   'typescriptreact': ['typescript'],
+            \   'svelte': ['svelte', 'css', 'javascript'],
             \ }
       let g:ale_linters = {
             \   'css': ['stylelint'],
             \   'go': ['gopls', 'golangci-lint', 'revive'],
-            \   'javascript': ['eslint', 'tsserver'],
-            \   'python': ['pyls', 'blake', 'flake8'],
-            \   'rust': ['analyzer'],
+            \   'javascript': ['eslint'],
+            \   'rust': ['analyzer', 'cargo'],
             \   'sh': ['shellcheck'],
             \   'svelte': ['svelteserver'],
             \   'terraform': ['terraform'],
-            \   'vim': ['vint'],
+            \   'typescript': ['tsserver'],
             \   'zsh': ['shellcheck'],
             \ }
       let g:ale_go_gofmt_options = '-s'
       let g:ale_go_golangci_lint_package = 1
+      let g:ale_go_golangci_lint_options = '--disable wsl'
+      let g:ale_rust_cargo_use_clippy = 1
 
     Plug 'alvan/vim-closetag'
       let g:closetag_filetypes = 'html,xhtml,phtml,svelte,snippets'

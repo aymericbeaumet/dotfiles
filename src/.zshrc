@@ -11,7 +11,7 @@ autoload -Uz compinit && compinit
 }
 
 d() {
-  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0 -1)
+  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0 -1 --preview 'exa -la {}')
   if [ -z "$dirpath" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -20,7 +20,7 @@ d() {
 }
 
 f() {
-  filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1)
+  filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --preview 'bat {}')
   if [ -z "$filepath" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -39,37 +39,38 @@ compdef g=git
 
 v() {
   if (( $# == 0 )); then
-    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1)
+    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --preview 'bat {}')
     if [ -z "$filepath" ]; then
-      echo 'wow such empty' 1>&2
-      return
+      command nvim
+    else
+      command nvim "$filepath"
     fi
-    command nvim "$filepath"
   else
     command nvim "$@"
   fi
 }
 compdef v=nvim
-alias vi='v'
-alias vim='v'
-alias nvim='v'
 
 z() {
-  directory=$(zoxide query --list --score "$@" | fzf -0 -1 --nth=2 | awk '{ print $2 }')
-  if [ -z "$directory" ]; then
-    d "$@"
-    return $?
+  if (( $# == 0 )); then
+    directory=$(zoxide query --list --score "$@" | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
+    if [ -z "$directory" ]; then
+      echo 'wow such empty' 1>&2
+      return
+    fi
+    cd "$directory" || exit 1
+  else
+    cd "$(zoxide query "$@")" || exit 1
   fi
-  cd "$directory" || exit 1
 }
 
-alias k='kubectl'; compdef k=kubectl
-alias l=ll
-alias la='ll -A'
-alias ll='ls -hl'
-alias ls='ls --color=auto -pFH --group-directories-first'
+alias k='kubectl'
+alias ls='exa --group-directories-first'
+alias l='ls -lg'
+alias la='l -a'
 alias mkdir='mkdir -p'
 alias w='watchexec'
+alias tree='l --tree'
 
 # global env
 export LC_ALL=en_US.UTF-8
