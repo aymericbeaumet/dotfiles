@@ -42,7 +42,7 @@ __devtools() {
   GO111MODULE=on go get golang.org/x/tools/gopls@latest
   # Node
   brew reinstall node
-  npm install -g svelte-language-server typescript
+  npm install -g npm svelte-language-server typescript
   # Rust
   brew reinstall rustup-init rust-analyzer
   rustup-init -y --default-toolchain=stable --no-modify-path
