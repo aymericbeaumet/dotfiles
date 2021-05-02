@@ -1,0 +1,1 @@
+../../bundle/weechat-autosort/autosort.py

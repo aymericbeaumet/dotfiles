@@ -5,7 +5,7 @@
 
   filetype plugin indent on
   syntax on
-  if has('vim_starting') | set encoding=UTF-8 | endif
+  set encoding=UTF-8
   set fileencodings=utf-8
   scriptencoding utf-8
   let mapleader = ' '
@@ -17,9 +17,11 @@
 
 augroup vimrc
 
+  autocmd!
+
   " custom mappings for some filetypes
-  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :ALEGoToDefinition<CR>
-  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :ALEHover<CR>
+  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition', 'drop')<CR>
+  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :call CocActionAsync('doHover')<CR>
 
   " add support for .cjs
   autocmd BufNewFile,BufRead .*.cjs,*.cjs set ft=javascript
@@ -30,6 +32,9 @@ augroup vimrc
   " wrap at 80 characters for markdown
   autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 
+  " remember last position in file
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
 augroup END
 
 " }}}
@@ -39,8 +44,6 @@ augroup END
   call plug#begin(expand('~/.vim/bundle'))
 
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
-    Plug 'git@github.com:aymericbeaumet/vim-zshmappings.git'
-      let g:zshmappings_command_mode_search_history_tool = 'fzf.vim'
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'Valloric/ListToggle'
@@ -54,7 +57,6 @@ augroup END
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
-    Plug 'junegunn/goyo.vim'
 
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git', 'go.mod']
@@ -68,83 +70,23 @@ augroup END
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
 
-    Plug 'dense-analysis/ale'
-      let g:ale_fix_on_save = 1
-      let g:ale_lint_on_save = 1
-      let g:ale_linters_explicit = 1
-      let g:ale_lsp_show_message_severity = 'warning'
-      let g:ale_sign_error = 'E'
-      let g:ale_sign_info = 'I'
-      let g:ale_sign_warning = 'W'
-      let g:ale_fixers = {
-            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-            \   'css': ['prettier'],
-            \   'go': ['goimports', 'gofmt'],
-            \   'graphql': ['prettier'],
-            \   'javascript': ['prettier'],
-            \   'javascriptreact': ['prettier'],
-            \   'json': ['prettier'],
-            \   'rust': ['rustfmt'],
-            \   'scss': ['prettier'],
-            \   'svelte': ['prettier'],
-            \   'terraform': ['terraform'],
-            \   'typescript': ['prettier'],
-            \   'typescriptreact': ['prettier'],
-            \ }
-      let g:ale_linter_aliases = {
-            \   'javascriptreact': ['javascript'],
-            \   'typescript': ['typescript', 'javascript'],
-            \   'typescriptreact': ['typescript'],
-            \   'svelte': ['svelte', 'css', 'javascript'],
-            \ }
-      let g:ale_linters = {
-            \   'css': ['stylelint'],
-            \   'go': ['gopls', 'golangci-lint', 'revive'],
-            \   'javascript': ['eslint'],
-            \   'rust': ['analyzer', 'cargo'],
-            \   'sh': ['shellcheck'],
-            \   'svelte': ['svelteserver'],
-            \   'terraform': ['terraform'],
-            \   'typescript': ['tsserver'],
-            \   'zsh': ['shellcheck'],
-            \ }
-      let g:ale_go_gofmt_options = '-s'
-      let g:ale_go_golangci_lint_package = 1
-      let g:ale_go_golangci_lint_options = '--disable wsl'
-      let g:ale_rust_cargo_use_clippy = 1
-
     Plug 'alvan/vim-closetag'
       let g:closetag_filetypes = 'html,xhtml,phtml,svelte,snippets'
 
-    Plug 'leafOfTree/vim-svelte-plugin'
-      let g:vim_svelte_plugin_use_typescript = 1
-      let g:vim_svelte_plugin_use_sass = 1
-
-    Plug 'HerringtonDarkholme/yats.vim'
-    Plug 'cespare/vim-toml'
-    Plug 'hashivim/vim-terraform'
-    Plug 'kevinoid/vim-jsonc'
-    Plug 'rust-lang/rust.vim'
-    Plug 'zchee/vim-flatbuffers'
-
-    Plug 'SirVer/ultisnips'
-      let g:UltiSnipsExpandTrigger='<tab>'
-      let g:UltiSnipsJumpForwardTrigger='<tab>'
-      let g:UltiSnipsEditSplit="vertical"
-
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-      set completeopt=menu,menuone,noinsert,noselect
-      let g:deoplete#enable_at_startup = 1
+    Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+      let g:coc_global_extensions = [
+            \   'coc-git',
+            \   'coc-go',
+            \   'coc-graphql',
+            \   'coc-json',
+            \   'coc-prettier',
+            \   'coc-rust-analyzer',
+            \   'coc-snippets',
+            \   'coc-svelte',
+            \   'coc-tsserver',
+            \ ]
 
   call plug#end()
-
-  " deoplete.nvim
-  call deoplete#custom#option('smart_case', v:true)
-  call deoplete#custom#source('_', 'mark', '')
-  call deoplete#custom#source('_', 'max_menu_width', 120)
-  call deoplete#custom#source('ultisnips', 'rank', 1000)
-  call deoplete#custom#source('ale', 'rank', 900)
-  call deoplete#custom#option('ignore_sources', { '_': ['around', 'buffer', 'file', 'member', 'omni'] })
 
 " }}}
 
@@ -175,30 +117,39 @@ augroup END
 
 " }}}
 
+" terminal {{{
+
+  nnoremap <silent> <Leader>t :term<CR>:startinsert<CR>
+  tnoremap <C-\> <Esc><C-\><C-n>
+  autocmd TermOpen * nnoremap <silent> <buffer> <C-C> :startinsert<CR><C-C>
+  autocmd TermOpen * nnoremap <silent> <buffer> <C-L> :startinsert<CR><C-L>
+
+" }}}
+
 " mappings {{{
 
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
   set ttimeoutlen=0  " instant insert mode exit using escape
 
-  vnoremap <silent> <Leader>s :sort<CR>
   vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
 
-  nnoremap <silent> [q :Cprev<CR>
-  nnoremap <silent> ]q :Cnext<CR>
   nnoremap <silent> [l :Lprev<CR>
   nnoremap <silent> ]l :Lnext<CR>
+  nnoremap <silent> [q :Cprev<CR>
+  nnoremap <silent> ]q :Cnext<CR>
+
+  " <Leader><Leader> -> nerdcommenter
 
   nnoremap <silent> <Leader>/ :BLines<CR>
+
   nnoremap <silent> <Leader>b :Buffers<CR>
-  " <Leader>c NerdCommenter leader
-  nnoremap <silent> <Leader>d :Bwipeout<CR>
-  nnoremap <silent> <Leader>e :Explore<CR>
+
+  nnoremap <silent> <Leader>ce :e ~/.vim/coc-settings.json<CR>
+  nnoremap <silent> <Leader>cu :CocUpdate<CR>
+
+  nnoremap <silent> <Leader>d :Bwipeout!<CR>
+
   nnoremap <silent> <Leader>f :Files<CR>
-  " <Leader>g git commands leader (see below)
-  " <Leader>l LToggle
-  " <Leader>q QToggle
-  nnoremap <silent> <Leader>r :Ripgrep<CR>
-  " <Leader>v vimrc commands leader (see below)
 
   nnoremap <silent> <Leader>gb       :Gblame<CR>
   nnoremap <silent> <Leader>gd       :Gvdiffsplit<CR>
@@ -207,15 +158,27 @@ augroup END
   nnoremap <silent> <Leader>gw       :Gwrite<CR>
   nnoremap <silent> <Leader>g<Space> :G<Space>
 
-  nnoremap <silent> <Leader>ve :vs ~/.vimrc<CR>
-  nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
+  nnoremap <silent> <Leader>ke :e ~/.config/karabiner/karabiner.json<CR>
+
+  " <Leader>l -> location list toggle
+
+  nnoremap <silent> <Leader>n :b NeoMutt<CR>:startinsert<CR>
 
   nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>
 
-  nnoremap <silent> <Leader>se :UltiSnipsEdit<CR>
+  " <Leader>q -> quickfix list toggle
 
-  nnoremap <silent> <Leader>z :Goyo<CR>
+  nnoremap <silent> <Leader>r :Ripgrep<CR>
+
+  vnoremap <silent> <Leader>s :sort<CR>
+
+  nnoremap <silent> <Leader>ve :e ~/.vimrc<CR>
+  nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
+
+  nnoremap <silent> <Leader>w :b WeeChat<CR>:startinsert<CR>
+
+  nnoremap <silent> <Leader>ze :e ~/.zshrc<CR>
 
   " sorry
   inoremap <C-Space> <Nop>
@@ -249,9 +212,39 @@ augroup END
   nnoremap <silent> n nzz
   nnoremap <silent> N Nzz
 
-  " C-] from insert mode
-  imap <silent> <C-]> <C-c><C-]>
-" }}}
+  " emacs bindings for convenience
+
+  cnoremap <silent> <C-A> <Home>
+	cnoremap <silent> <C-B> <Left>
+  cnoremap <silent> <C-D> <Del>
+  cnoremap <silent> <C-E> <End>
+	cnoremap <silent> <C-F> <Right>
+  cnoremap <silent> <C-K> <Esc>lDa
+  cnoremap <silent> <C-U> <Esc>0d$i
+  cnoremap <silent> <M-B> <S-Left>
+  cnoremap <silent> <M-D> <Space><S-Right><C-W><C-H>
+  cnoremap <silent> <M-F> <S-Right>
+
+  inoremap <silent> <C-A> <Home>
+	inoremap <silent> <C-B> <Left>
+  inoremap <silent> <C-D> <Del>
+  inoremap <silent> <C-E> <End>
+	inoremap <silent> <C-F> <Right>
+  inoremap <silent> <C-K> <Esc>lDa
+  inoremap <silent> <C-U> <Esc>0d$i
+  inoremap <silent> <M-B> <S-Left>
+  inoremap <silent> <M-D> <Space><S-Right><C-W><C-H>
+  inoremap <silent> <M-F> <S-Right>
+
+  " easy navigation from any mode
+  noremap <silent> <M-H> <C-\><C-N><C-C><C-W>h
+  noremap <silent> <M-J> <C-\><C-N><C-C><C-W>j
+  noremap <silent> <M-K> <C-\><C-N><C-C><C-W>k
+  noremap <silent> <M-L> <C-\><C-N><C-C><C-W>l
+  noremap <silent> <M-I> <C-\><C-N><C-C><C-I>
+  noremap <silent> <M-O> <C-\><C-N><C-C><C-O>
+
+  " }}}
 
 " buffer
 set autoread " watch for file changes by other programs
@@ -289,10 +282,11 @@ set splitright " split right
 set mouse=a " enable mouse support
 set noshowmode " hide mode from status bar
 set noinsertmode
+set showtabline=0 " never show tabline
 
 " performance
 set lazyredraw " only redraw when needed
-if exists('&ttyfast') | set ttyfast | endif " we have a fast terminal
+set ttyfast " we have a fast terminal
 
 " search and replace
 set ignorecase " ignore case when searching
@@ -311,9 +305,19 @@ set wildmenu " better command line completion menu
 set wildmode=full " ensure better completion
 
 " undo
-if has('persistent_undo')
-  set undofile
-  set undolevels=1000
-  set undoreload=10000
-  let &undodir = expand('~/.vim/tmp/undo//')
-endif
+set undofile
+set undolevels=1000
+set undoreload=10000
+let &undodir = expand('~/.vim/tmp/undo//')
+
+function! Bootstrap()
+  term neomutt
+  file NeoMutt
+  setlocal nobuflisted
+
+  term weechat
+  file WeeChat
+  setlocal nobuflisted
+
+  term
+endfunction

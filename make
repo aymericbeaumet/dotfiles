@@ -24,7 +24,7 @@ __install() {
   mkdir -p "$HOME/Workspace" "$GOPATH"
   git submodule update --init --recursive
   brew bundle
-  python3 -m pip install --user --upgrade pynvim
+  python3 -m pip install --force-reinstall --upgrade neovim-remote pynvim websocket-client
   if ! [[ "$SHELL" =~ /zsh$ ]]; then
     sudo chsh -s "$(command -v zsh)" "$USER"
   fi

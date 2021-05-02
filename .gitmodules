@@ -1,6 +1,17 @@
 [submodule "shallow/.vim/autoload"]
 	path = shallow/.vim/autoload
 	url = https://github.com/junegunn/vim-plug.git
+
+[submodule "shallow/.weechat/bundle/weechat-autosort"]
+	path = shallow/.weechat/bundle/weechat-autosort
+	url = https://github.com/de-vri-es/weechat-autosort.git
+[submodule "shallow/.weechat/bundle/wee-slack"]
+	path = shallow/.weechat/bundle/wee-slack
+	url = https://github.com/wee-slack/wee-slack.git
+
+[submodule "shallow/.zsh/bundle/powerlevel10k"]
+	path = shallow/.zsh/bundle/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
 [submodule "shallow/.zsh/bundle/zsh-autosuggestions"]
 	path = shallow/.zsh/bundle/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
