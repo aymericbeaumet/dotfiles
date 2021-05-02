@@ -1,6 +1,14 @@
-# shellcheck shell=bash
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+source "$HOME/.p10k.zsh"
+source "$HOME/.zsh/bundle/powerlevel10k/powerlevel10k.zsh-theme"
 
 fpath=("$HOME/.zsh/bundle/zsh-completions/src" $fpath)
 autoload -Uz compinit && compinit
@@ -37,20 +45,6 @@ g() {
 }
 compdef g=git
 
-v() {
-  if (( $# == 0 )); then
-    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --preview 'bat {}')
-    if [ -z "$filepath" ]; then
-      command nvim
-    else
-      command nvim "$filepath"
-    fi
-  else
-    command nvim "$@"
-  fi
-}
-compdef v=nvim
-
 z() {
   if (( $# == 0 )); then
     directory=$(zoxide query --list --score "$@" | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
@@ -64,13 +58,19 @@ z() {
   fi
 }
 
-alias k='kubectl'
+alias v=nvr
+alias vi=nvr
+alias vim=nvr
+alias nvim=nvr
+
 alias ls='exa --group-directories-first'
 alias l='ls -lg'
 alias la='l -a'
+alias tree='l --tree'
+
+alias k='kubectl'
 alias mkdir='mkdir -p'
 alias w='watchexec'
-alias tree='l --tree'
 
 # global env
 export LC_ALL=en_US.UTF-8
@@ -153,15 +153,12 @@ unsetopt INC_APPEND_HISTORY
 setopt INTERACTIVE_COMMENTS
 setopt RC_QUOTES
 unsetopt FLOW_CONTROL
-stty stop undef
-stty start undef
+
+# load plugins
 
 # fzf
 source /usr/local/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
-
-# starship
-eval "$(starship init zsh)"
 
 # zoxide
 eval "$(zoxide init zsh --no-aliases)"
@@ -171,8 +168,3 @@ source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # zsh-syntax-highlighting
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-
-# start or join the default tmux session
-if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-  tmux attach -t default || tmux new -s default
-fi

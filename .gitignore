@@ -4,9 +4,10 @@
 .VimballRecord
 .netrwhist
 .yarnrc
-bundle/
-shada/
-tmp/
-logs/
-shallow/karabiner/automatic_backups/
 Brewfile.lock.json
+bundle/
+logs/
+plugins/
+shada/
+shallow/karabiner/automatic_backups/
+tmp/

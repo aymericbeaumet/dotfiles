@@ -1,32 +1,80 @@
+# accounts
+folder-hook 'account.me.beaumet.aymeric' 'source ~/.mutt/account.me.beaumet.aymeric'
+folder-hook 'account.com.rekki.aymeric' 'source ~/.mutt/account.com.rekki.aymeric'
+source ~/.mutt/account.me.beaumet.aymeric
+macro index <M-1> '<sync-mailbox><enter-command>source ~/.mutt/account.me.beaumet.aymeric<enter><change-folder>!<enter>'
+macro index <M-2> '<sync-mailbox><enter-command>source ~/.mutt/account.com.rekki.aymeric<enter><change-folder>!<enter>'
+
 set use_from = yes
 set envelope_from = yes
 set copy = no # do not store sent messages
-set editor = "vim +/^$ ++1"
+set editor = "nvim"
 set charset = "utf-8"
-set record = ''
-set ssl_force_tls = yes
+set edit_headers                     # show headers when composing
+set fast_reply                       # skip to compose when replying
+set askcc                            # ask for CC:
+set fcc_attach                       # save attachments with the body
+set forward_format = "Fwd: %s"       # format of subject when forwarding
+set forward_decode                   # decode when forwarding
+set attribution = "On %d, %n wrote:" # format of quoting header
+set reply_to                         # reply to Reply to: field
+set reverse_name                     # reply as whomever it was to
+set include                          # include message in replies
+set forward_quote                    # include message in forwards
+set text_flowed
+unset sig_dashes                     # no dashes before sig
+unset mime_forward                   # forward attachments as part of body
+unset help                           # No help bar at the top of index
+set tmpdir = ~/.mutt/tmp/            # where to keep temp files
+unset confirmappend      # don't ask, just do!
+set quit                 # don't ask, just do!!
+unset mark_old           # read/new is good enough for me
+set beep_new             # bell on new mails
+set pipe_decode          # strip headers and eval mimes when piping
+set thorough_search      # strip headers and eval mimes before searching
+set timeout = 0
+set sendmail_wait=-1 # don't wait for sendmail to finish (this runs sendmail in the background)
+set move=no # this prevents Mutt from endlessly asking when you quit:
+set folder="" # this prevents Mutt from endlessly asking:
+
+# status bar, date format, finding stuff etc.
+set status_chars = " *%A"
+set status_format = "[ Folder: %f ] [%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]%>─%?p?( %p postponed )?"
+set date_format = "%d.%m.%Y %H:%M"
+set sort = threads
+set sort_aux = reverse-last-date-received
+set uncollapse_jump
+set sort_re
+set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+set send_charset = "utf-8:iso-8859-1:us-ascii"
+set charset = "utf-8"
+set arrow_cursor = "no" # Change `color indicator` depending
+
+# https://www.neomutt.org/guide/reference search sleep_time for additional info
+set sleep_time=0 # be faster
+set beep=no # no beep sound
+set sort = threads 
+set sort_aux = reverse-last-date-received
+# Index page format. Default "%4C %Z %{%b %d} %-15.15L (%?l?%4l&%4c?) %s"
+set index_format="%4C %Z %{%b %d %R} %-15.15L (%?l?%4l&%4c?) %s"
+set mailcap_path 	= ~/.mutt/mailcap
+auto_view text/html
+alternative_order text/html text/plain text/enriched
+set sidebar_visible
+set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
+set mail_check_stats
+
+# cache
+set header_cache = "~/.mutt/tmp/cache/headers"
+set message_cachedir = "~/.mutt/tmp/cache/bodies"
+
+# imap/smtp
 set imap_check_subscribed
-set sort = 'reverse-threads'
-set sort_aux = 'reverse-last-date-received'
+set smtp_authenticators = ""
+set ssl_force_tls = yes
 
-# I like to see all my mail headers in my editor:
-set edit_headers=yes
-
-# don't wait for sendmail to finish (this runs sendmail in the background)
-set sendmail_wait=-1
-
-# this prevents Mutt from endlessly asking when you quit:
-#     "Move read messages to ~/mbox? ([no]/yes):"
-set move=no
-
-# this prevents Mutt from endlessly asking:
-#     "~/Mail does not exist. Create it? ([yes]/no):"
-set folder=""
-
-# load account
-source ~/.secrets/.mutt/accounts/me.beaumet.aymeric
-
-# some familiar bindings
+# bindings
 bind index g noop
 macro index ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to All mail"
 macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to Drafts"
