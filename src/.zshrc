@@ -1,6 +1,8 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
+stty start undef
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -75,7 +77,7 @@ alias w='watchexec'
 # global env
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export EDITOR=nvim
+export EDITOR=nvr
 export PAGER=less
 export GREP_OPTIONS='--color=auto'
 
@@ -153,6 +155,9 @@ unsetopt INC_APPEND_HISTORY
 setopt INTERACTIVE_COMMENTS
 setopt RC_QUOTES
 unsetopt FLOW_CONTROL
+
+# fast escape
+KEYTIMEOUT=1
 
 # load plugins
 
