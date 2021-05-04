@@ -50,8 +50,9 @@ augroup vimrc
     nnoremap <silent> <buffer> <C-L> :startinsert<CR><C-L>
     nnoremap <silent> <buffer> <LeftRelease> <LeftRelease>i
 
-    tnoremap <silent> <buffer> <Esc> <C-\><C-N><C-C>
+    tnoremap <silent> <buffer> <Esc> <C-\><C-N>
     tnoremap <silent> <buffer> <C-L> <C-\><C-N><C-L>:startinsert<CR><C-L>
+    tnoremap <silent> <buffer> <C-W> <C-\><C-N><C-W>
   endfunction
   autocmd TermOpen * call OnTermOpen()
 
