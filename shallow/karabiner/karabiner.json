@@ -168,6 +168,25 @@
             ]
           },
           {
+            "description": "[Hammerspoon] Launch or focus Slack",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "s",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Slack'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Trigger left_control if caps_lock is hold, disabled otherwise",
             "manipulators": [
               {
@@ -425,15 +444,9 @@
             ]
           },
           {
-            "description": "[Unix] Ctrl-H",
+            "description": "[Unix/Alacritty] Ctrl-H",
             "manipulators": [
               {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_unless"
-                  }
-                ],
                 "from": {
                   "key_code": "h",
                   "modifiers": {
@@ -711,240 +724,6 @@
             ]
           },
           {
-            "description": "[Alacritty] Alt-B",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "b",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "b" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-D",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "d",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "d" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-F",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "f",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "f" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-H",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "h",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "h" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-I",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "i",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "i" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-J",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "j",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "j" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-K",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "k",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "k" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-L",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "l",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "l" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Alacritty] Alt-O",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "bundle_identifiers": ["^io\\.alacritty$"],
-                    "type": "frontmost_application_if"
-                  }
-                ],
-                "from": {
-                  "key_code": "o",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "escape"
-                  },
-                  { "key_code": "o" }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
             "description": "[Finder] Close all windows",
             "manipulators": [
               {
@@ -974,80 +753,13 @@
       },
       "devices": [
         {
-          "disable_built_in_keyboard_if_exists": false,
+          "disable_built_in_keyboard_if_exists": true,
           "fn_function_keys": [],
           "identifiers": {
             "is_keyboard": true,
             "is_pointing_device": false,
-            "product_id": 322,
-            "vendor_id": 9456
-          },
-          "ignore": false,
-          "manipulate_caps_lock_led": false,
-          "simple_modifications": [
-            {
-              "from": {
-                "key_code": "application"
-              },
-              "to": [
-                {
-                  "key_code": "right_option"
-                }
-              ]
-            },
-            {
-              "from": {
-                "key_code": "left_command"
-              },
-              "to": [
-                {
-                  "key_code": "left_option"
-                }
-              ]
-            },
-            {
-              "from": {
-                "key_code": "left_option"
-              },
-              "to": [
-                {
-                  "key_code": "left_command"
-                }
-              ]
-            },
-            {
-              "from": {
-                "key_code": "right_option"
-              },
-              "to": [
-                {
-                  "key_code": "right_command"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "disable_built_in_keyboard_if_exists": false,
-          "fn_function_keys": [],
-          "identifiers": {
-            "is_keyboard": true,
-            "is_pointing_device": false,
-            "product_id": 636,
-            "vendor_id": 1452
-          },
-          "ignore": false,
-          "manipulate_caps_lock_led": true,
-          "simple_modifications": []
-        },
-        {
-          "disable_built_in_keyboard_if_exists": false,
-          "fn_function_keys": [],
-          "identifiers": {
-            "is_keyboard": true,
-            "is_pointing_device": false,
-            "product_id": 321,
-            "vendor_id": 1241
+            "product_id": 256,
+            "vendor_id": 2131
           },
           "ignore": false,
           "manipulate_caps_lock_led": false,
@@ -1064,58 +776,15 @@
             },
             {
               "from": {
-                "key_code": "left_command"
+                "key_code": "delete_or_backspace"
               },
               "to": [
                 {
-                  "key_code": "left_option"
-                }
-              ]
-            },
-            {
-              "from": {
-                "key_code": "left_control"
-              },
-              "to": [
-                {
-                  "key_code": "fn"
-                }
-              ]
-            },
-            {
-              "from": {
-                "key_code": "left_option"
-              },
-              "to": [
-                {
-                  "key_code": "left_command"
-                }
-              ]
-            },
-            {
-              "from": {
-                "key_code": "right_option"
-              },
-              "to": [
-                {
-                  "key_code": "right_command"
+                  "key_code": "backslash"
                 }
               ]
             }
           ]
-        },
-        {
-          "disable_built_in_keyboard_if_exists": false,
-          "fn_function_keys": [],
-          "identifiers": {
-            "is_keyboard": true,
-            "is_pointing_device": false,
-            "product_id": 25701,
-            "vendor_id": 65261
-          },
-          "ignore": true,
-          "manipulate_caps_lock_led": false,
-          "simple_modifications": []
         }
       ],
       "fn_function_keys": [
@@ -1575,3 +1244,4 @@
     }
   ]
 }
+

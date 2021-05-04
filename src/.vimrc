@@ -35,6 +35,29 @@ augroup vimrc
   " remember last position in file
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+  " terminal
+  function! OnTermOpen()
+    " skip fzf buffers
+    if expand('<afile>') =~ "fzf"
+      return
+    endif
+
+    startinsert
+    autocmd WinEnter  <buffer> startinsert
+    autocmd TermClose <buffer> b#
+
+    nnoremap <silent> <buffer> <C-C> :startinsert<CR><C-C>
+    nnoremap <silent> <buffer> <C-L> :startinsert<CR><C-L>
+    nnoremap <silent> <buffer> <LeftRelease> <LeftRelease>i
+
+    tnoremap <silent> <buffer> <Esc> <C-\><C-N><C-C>
+    tnoremap <silent> <buffer> <C-L> <C-\><C-N><C-L>:startinsert<CR><C-L>
+  endfunction
+  autocmd TermOpen * call OnTermOpen()
+
+  " delete whitespaces
+  autocmd BufWritePre * :%s/\s\+$//e
+
 augroup END
 
 " }}}
@@ -46,9 +69,9 @@ augroup END
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'Valloric/ListToggle'
     Plug 'arcticicestudio/nord-vim'
-    Plug 'editorconfig/editorconfig-vim'
     Plug 'jiangmiao/auto-pairs'
     Plug 'puremourning/vimspector'
     Plug 'scrooloose/nerdcommenter'
@@ -69,6 +92,7 @@ augroup END
       let g:EasyMotion_smartcase = 1
       let g:EasyMotion_use_smartsign_us = 1
       let g:EasyMotion_use_upper = 1
+      let g:EasyMotion_do_mapping = 0
 
     Plug 'alvan/vim-closetag'
       let g:closetag_filetypes = 'html,xhtml,phtml,svelte,snippets'
@@ -117,15 +141,6 @@ augroup END
 
 " }}}
 
-" terminal {{{
-
-  nnoremap <silent> <Leader>t :term<CR>:startinsert<CR>
-  tnoremap <C-\> <Esc><C-\><C-n>
-  autocmd TermOpen * nnoremap <silent> <buffer> <C-C> :startinsert<CR><C-C>
-  autocmd TermOpen * nnoremap <silent> <buffer> <C-L> :startinsert<CR><C-L>
-
-" }}}
-
 " mappings {{{
 
   set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
@@ -133,17 +148,20 @@ augroup END
 
   vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
 
+  vnoremap <silent> <Leader>s :sort<CR>
+
   nnoremap <silent> [l :Lprev<CR>
   nnoremap <silent> ]l :Lnext<CR>
   nnoremap <silent> [q :Cprev<CR>
   nnoremap <silent> ]q :Cnext<CR>
 
-  " <Leader><Leader> -> nerdcommenter
+  nmap <Leader><Leader> <Plug>(easymotion-overwin-f)
 
   nnoremap <silent> <Leader>/ :BLines<CR>
 
   nnoremap <silent> <Leader>b :Buffers<CR>
 
+  " <Leader>c<Space> nerdcommenter
   nnoremap <silent> <Leader>ce :e ~/.vim/coc-settings.json<CR>
   nnoremap <silent> <Leader>cu :CocUpdate<CR>
 
@@ -151,18 +169,13 @@ augroup END
 
   nnoremap <silent> <Leader>f :Files<CR>
 
-  nnoremap <silent> <Leader>gb       :Gblame<CR>
-  nnoremap <silent> <Leader>gd       :Gvdiffsplit<CR>
-  nnoremap <silent> <Leader>gl       :Commits<CR>
-  nnoremap <silent> <Leader>gm       :Git mergetool<CR>
-  nnoremap <silent> <Leader>gw       :Gwrite<CR>
-  nnoremap <silent> <Leader>g<Space> :G<Space>
-
-  nnoremap <silent> <Leader>ke :e ~/.config/karabiner/karabiner.json<CR>
+  nnoremap <silent> <Leader>gb :Git blame<CR>
+  nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
+  nnoremap <silent> <Leader>gl :Commits<CR>
+  nnoremap <silent> <Leader>gm :Git mergetool<CR>
+  nnoremap <silent> <Leader>gw :Gwrite<CR>
 
   " <Leader>l -> location list toggle
-
-  nnoremap <silent> <Leader>n :b NeoMutt<CR>:startinsert<CR>
 
   nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>
@@ -171,19 +184,12 @@ augroup END
 
   nnoremap <silent> <Leader>r :Ripgrep<CR>
 
-  vnoremap <silent> <Leader>s :sort<CR>
+  nnoremap <silent> <Leader>t :term<CR>
 
   nnoremap <silent> <Leader>ve :e ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
 
-  nnoremap <silent> <Leader>w :b WeeChat<CR>:startinsert<CR>
-
   nnoremap <silent> <Leader>ze :e ~/.zshrc<CR>
-
-  " sorry
-  inoremap <C-Space> <Nop>
-  nnoremap <Space> <Nop>
-  nnoremap Q <Nop>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -205,44 +211,12 @@ augroup END
   vnoremap <silent> > >gv
 
   " clean screen and reload file
-  nnoremap <silent> <C-l>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>
-  xnoremap <silent> <C-l> <C-c>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-l>gv
+  nnoremap <silent> <C-L>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>
+  xnoremap <silent> <C-L> <C-C>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
 
   " keep the next/previous in the middle of the screen
   nnoremap <silent> n nzz
   nnoremap <silent> N Nzz
-
-  " emacs bindings for convenience
-
-  cnoremap <silent> <C-A> <Home>
-	cnoremap <silent> <C-B> <Left>
-  cnoremap <silent> <C-D> <Del>
-  cnoremap <silent> <C-E> <End>
-	cnoremap <silent> <C-F> <Right>
-  cnoremap <silent> <C-K> <Esc>lDa
-  cnoremap <silent> <C-U> <Esc>0d$i
-  cnoremap <silent> <M-B> <S-Left>
-  cnoremap <silent> <M-D> <Space><S-Right><C-W><C-H>
-  cnoremap <silent> <M-F> <S-Right>
-
-  inoremap <silent> <C-A> <Home>
-	inoremap <silent> <C-B> <Left>
-  inoremap <silent> <C-D> <Del>
-  inoremap <silent> <C-E> <End>
-	inoremap <silent> <C-F> <Right>
-  inoremap <silent> <C-K> <Esc>lDa
-  inoremap <silent> <C-U> <Esc>0d$i
-  inoremap <silent> <M-B> <S-Left>
-  inoremap <silent> <M-D> <Space><S-Right><C-W><C-H>
-  inoremap <silent> <M-F> <S-Right>
-
-  " easy navigation from any mode
-  noremap <silent> <M-H> <C-\><C-N><C-C><C-W>h
-  noremap <silent> <M-J> <C-\><C-N><C-C><C-W>j
-  noremap <silent> <M-K> <C-\><C-N><C-C><C-W>k
-  noremap <silent> <M-L> <C-\><C-N><C-C><C-W>l
-  noremap <silent> <M-I> <C-\><C-N><C-C><C-I>
-  noremap <silent> <M-O> <C-\><C-N><C-C><C-O>
 
   " }}}
 
@@ -280,7 +254,6 @@ set showcmd " show (partial) command in the last line of the screen
 set splitbelow " slit below
 set splitright " split right
 set mouse=a " enable mouse support
-set noshowmode " hide mode from status bar
 set noinsertmode
 set showtabline=0 " never show tabline
 
@@ -309,15 +282,3 @@ set undofile
 set undolevels=1000
 set undoreload=10000
 let &undodir = expand('~/.vim/tmp/undo//')
-
-function! Bootstrap()
-  term neomutt
-  file NeoMutt
-  setlocal nobuflisted
-
-  term weechat
-  file WeeChat
-  setlocal nobuflisted
-
-  term
-endfunction
