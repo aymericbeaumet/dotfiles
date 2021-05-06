@@ -35,27 +35,6 @@ augroup vimrc
   " remember last position in file
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-  " terminal
-  function! OnTermOpen()
-    " skip fzf buffers
-    if expand('<afile>') =~ "fzf"
-      return
-    endif
-
-    startinsert
-    autocmd WinEnter  <buffer> startinsert
-    autocmd TermClose <buffer> b#
-
-    nnoremap <silent> <buffer> <C-C> :startinsert<CR><C-C>
-    nnoremap <silent> <buffer> <C-L> :startinsert<CR><C-L>
-    nnoremap <silent> <buffer> <LeftRelease> <LeftRelease>i
-
-    tnoremap <silent> <buffer> <Esc> <C-\><C-N>
-    tnoremap <silent> <buffer> <C-L> <C-\><C-N><C-L>:startinsert<CR><C-L>
-    tnoremap <silent> <buffer> <C-W> <C-\><C-N><C-W>
-  endfunction
-  autocmd TermOpen * call OnTermOpen()
-
   " delete whitespaces
   autocmd BufWritePre * :%s/\s\+$//e
 
@@ -185,8 +164,6 @@ augroup END
 
   nnoremap <silent> <Leader>r :Ripgrep<CR>
 
-  nnoremap <silent> <Leader>t :term<CR>
-
   nnoremap <silent> <Leader>ve :e ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
 
@@ -256,6 +233,7 @@ set splitbelow " slit below
 set splitright " split right
 set mouse=a " enable mouse support
 set noinsertmode
+set noshowmode " do not show the mode
 set showtabline=0 " never show tabline
 
 " performance
