@@ -1,7 +1,13 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
+stty stop undef
 stty start undef
+
+# start or join the default tmux session
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+  tmux attach -t default || tmux new -s default
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -60,10 +66,9 @@ z() {
   fi
 }
 
-alias v=nvr
-alias vi=nvr
-alias vim=nvr
-alias nvim=nvr
+alias v=nvim
+alias vi=nvim
+alias vim=nvim
 
 alias ls='exa --group-directories-first'
 alias l='ls -lg'
@@ -77,7 +82,7 @@ alias w='watchexec'
 # global env
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export EDITOR=nvr
+export EDITOR=nvim
 export PAGER=less
 export GREP_OPTIONS='--color=auto'
 
@@ -156,8 +161,10 @@ setopt INTERACTIVE_COMMENTS
 setopt RC_QUOTES
 unsetopt FLOW_CONTROL
 
-# fast escape
-KEYTIMEOUT=1
+# set title + restore cursor
+precmd() {
+  echo -ne '\e[5 q'
+}
 
 # load plugins
 
