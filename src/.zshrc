@@ -1,14 +1,6 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 # Github: @aymericbeaumet/dotfiles
 
-stty stop undef
-stty start undef
-
-# start or join the default tmux session
-if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-  tmux attach -t default || tmux new -s default
-fi
-
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -24,6 +16,19 @@ autoload -Uz compinit && compinit
 ...() {
   dirpath=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
   cd "$dirpath" || exit 1
+}
+
+b() {
+  if (( $# == 0 )); then
+    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --preview 'bat {}')
+    if [ -z "$filepath" ]; then
+      echo 'wow such empty' 1>&2
+      return
+    fi
+    bat "$filepath"
+  else
+    bat "$@"
+  fi
 }
 
 d() {
@@ -66,6 +71,18 @@ z() {
   fi
 }
 
+t() {
+  if (( $# == 0 )); then
+    if [ -n "$TMUX" ]; then
+      echo "$TMUX"
+    else
+      tmux attach -t default || tmux new -s default
+    fi
+  else
+    tmux "$@"
+  fi
+}
+
 alias v=nvim
 alias vi=nvim
 alias vim=nvim
@@ -77,7 +94,7 @@ alias tree='l --tree'
 
 alias k='kubectl'
 alias mkdir='mkdir -p'
-alias w='watchexec'
+alias w='watchexec --restart --clear --'
 
 # global env
 export LC_ALL=en_US.UTF-8

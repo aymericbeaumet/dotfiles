@@ -22,6 +22,7 @@ augroup vimrc
   " custom mappings for some filetypes
   autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition', 'drop')<CR>
   autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :call CocActionAsync('doHover')<CR>
+  autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
 
   " add support for .cjs
   autocmd BufNewFile,BufRead .*.cjs,*.cjs set ft=javascript
@@ -79,16 +80,15 @@ augroup END
 
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
-            \   'coc-git',
             \   'coc-go',
-            \   'coc-graphql',
             \   'coc-json',
             \   'coc-prettier',
             \   'coc-rust-analyzer',
             \   'coc-snippets',
-            \   'coc-svelte',
             \   'coc-tsserver',
             \ ]
+
+    Plug 'jvirtanen/vim-hcl'
 
   call plug#end()
 
@@ -135,7 +135,7 @@ augroup END
   nnoremap <silent> [q :Cprev<CR>
   nnoremap <silent> ]q :Cnext<CR>
 
-  nmap <Leader><Leader> <Plug>(easymotion-overwin-f)
+  nmap <Leader><Leader>s <Plug>(easymotion-overwin-f)
 
   nnoremap <silent> <Leader>/ :BLines<CR>
 

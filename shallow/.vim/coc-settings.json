@@ -9,5 +9,8 @@
     "rust",
     "svelte",
     "typescript"
-  ]
+  ],
+  "go.goplsOptions": {
+    "completeUnimported": true
+  }
 }
