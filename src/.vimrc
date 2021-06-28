@@ -50,7 +50,6 @@ augroup END
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'Valloric/ListToggle'
     Plug 'arcticicestudio/nord-vim'
     Plug 'jiangmiao/auto-pairs'
@@ -58,6 +57,7 @@ augroup END
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-abolish'
     Plug 'tpope/vim-eunuch'
+    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
@@ -158,7 +158,7 @@ augroup END
   " <Leader>l -> location list toggle
 
   nnoremap <silent> <Leader>pc :PlugClean<CR>
-  nnoremap <silent> <Leader>pu :PlugUpdate<CR>
+  nnoremap <silent> <Leader>pu :PlugUpdate<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
 
   " <Leader>q -> quickfix list toggle
 
@@ -196,7 +196,14 @@ augroup END
   nnoremap <silent> n nzz
   nnoremap <silent> N Nzz
 
+  " trigger completion
+  inoremap <silent><expr> <c-space> coc#refresh()
+
   " }}}
+
+" theme
+set termguicolors     " enable true colors support
+colorscheme nord
 
 " buffer
 set autoread " watch for file changes by other programs
@@ -223,7 +230,6 @@ set softtabstop=2 " n spaces when using <Tab>
 set tabstop=2 " n spaces when using <Tab>
 
 " interface
-colorscheme nord
 set fillchars="" " remove split separators
 set laststatus=2 " always display status line
 set nospell " disable spell checking
@@ -235,6 +241,7 @@ set mouse=a " enable mouse support
 set noinsertmode
 set noshowmode " do not show the mode
 set showtabline=0 " never show tabline
+set nonumber
 
 " performance
 set lazyredraw " only redraw when needed

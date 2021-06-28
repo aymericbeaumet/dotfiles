@@ -10,6 +10,7 @@
     "svelte",
     "typescript"
   ],
+  "go.checkForUpdates": "install",
   "go.goplsOptions": {
     "completeUnimported": true
   }
