@@ -130,26 +130,7 @@
             ]
           },
           {
-            "description": "[Hammerspoon] Launch or focus Discord",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "d",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Discord'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Firefox",
+            "description": "[Hammerspoon] Launch or focus Brave Browser",
             "manipulators": [
               {
                 "from": {
@@ -160,45 +141,7 @@
                 },
                 "to": [
                   {
-                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Firefox'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Notes",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "n",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Notes'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Slack",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "s",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Slack'"
+                    "shell_command": "open -g 'hammerspoon://launchOrFocus?name=Brave%20Browser'"
                   }
                 ],
                 "type": "basic"
@@ -1309,4 +1252,3 @@
     }
   ]
 }
-

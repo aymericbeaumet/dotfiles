@@ -58,6 +58,18 @@ g() {
 }
 compdef g=git
 
+t() {
+  if (( $# == 0 )); then
+    if [ -n "$TMUX" ]; then
+      echo "$TMUX"
+    else
+      tmux attach -t default || tmux new -s default
+    fi
+  else
+    tmux "$@"
+  fi
+}
+
 z() {
   if (( $# == 0 )); then
     directory=$(zoxide query --list --score "$@" | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
@@ -71,30 +83,21 @@ z() {
   fi
 }
 
-t() {
-  if (( $# == 0 )); then
-    if [ -n "$TMUX" ]; then
-      echo "$TMUX"
-    else
-      tmux attach -t default || tmux new -s default
-    fi
-  else
-    tmux "$@"
-  fi
-}
-
-alias v=nvim
-alias vi=nvim
-alias vim=nvim
+alias k='kubectl'
+alias kgj='kubectl get jobs  --sort-by=.status.startTime'
+alias kgn='kubectl get nodes --sort-by=.metadata.creationTimestamp'
+alias kgp='kubectl get pods  --sort-by=.status.startTime'
 
 alias ls='exa --group-directories-first'
 alias l='ls -lg'
 alias la='l -a'
 alias tree='l --tree'
 
-alias k='kubectl'
-alias mkdir='mkdir -p'
-alias w='watchexec --restart --clear --'
+alias v=nvim
+alias vi=nvim
+alias vim=nvim
+
+alias w='watchexec --restart --clear'
 
 # global env
 export LC_ALL=en_US.UTF-8

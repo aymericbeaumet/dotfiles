@@ -4,6 +4,7 @@
   "coc.source.file.enable": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "go",
+    "html",
     "javascript",
     "json",
     "rust",
