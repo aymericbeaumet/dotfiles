@@ -63,7 +63,7 @@ augroup END
     Plug 'tpope/vim-unimpaired'
 
     Plug 'airblade/vim-rooter'
-      let g:rooter_patterns = ['.git', 'go.mod']
+      let g:rooter_patterns = ['.git']
       let g:rooter_cd_cmd = 'lcd'
       let g:rooter_silent_chdir = 1
       let g:rooter_resolve_links = 1
@@ -81,14 +81,17 @@ augroup END
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
             \   'coc-go',
+            \   'coc-html',
             \   'coc-json',
             \   'coc-prettier',
             \   'coc-rust-analyzer',
             \   'coc-snippets',
+            \   'coc-svelte',
             \   'coc-tsserver',
             \ ]
 
     Plug 'jvirtanen/vim-hcl'
+    Plug 'leafOfTree/vim-svelte-plugin'
 
   call plug#end()
 

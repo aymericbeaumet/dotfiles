@@ -7,6 +7,7 @@
 [alias]
   a = add
   br = branch -v --sort=-committerdate
+  bw = browse
   ci = commit
   cia = commit --amend
   cl = clone
