@@ -80,6 +80,7 @@ augroup END
 
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
+            \   'coc-eslint',
             \   'coc-go',
             \   'coc-html',
             \   'coc-json',
