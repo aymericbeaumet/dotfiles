@@ -99,15 +99,16 @@ augroup END
 " }}}
 
 " commands {{{
+
   command! -bang -nargs=? -complete=dir Files
         \ call fzf#vim#files(
         \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git -E "*.qtpl.go"'}),
+        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git'}),
         \   <bang>0,
         \ )
 
   function! Ripgrep(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+    let command_fmt = 'rg --hidden --glob "!.git" --column --line-number --no-heading --color=always --smart-case -- %s || true'
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
     let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..']}
