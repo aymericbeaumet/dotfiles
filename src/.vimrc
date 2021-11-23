@@ -47,6 +47,10 @@ augroup END
 
   call plug#begin(expand('~/.vim/bundle'))
 
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+      let g:airline_theme='base16_nord'
+
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -76,7 +80,7 @@ augroup END
       let g:EasyMotion_do_mapping = 0
 
     Plug 'alvan/vim-closetag'
-      let g:closetag_filetypes = 'html,xhtml,phtml,svelte,snippets'
+      let g:closetag_filetypes = 'html,xhtml,phtml,snippets'
 
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
@@ -92,6 +96,7 @@ augroup END
             \ ]
 
     Plug 'jvirtanen/vim-hcl'
+    Plug 'kevinoid/vim-jsonc'
     Plug 'leafOfTree/vim-svelte-plugin'
 
   call plug#end()
@@ -203,8 +208,10 @@ augroup END
 
   " trigger completion
   inoremap <silent><expr> <c-space> coc#refresh()
+  inoremap <silent><expr> <tab> pumvisible() ? coc#_select_confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-  " }}}
+" }}}
 
 " theme
 set termguicolors     " enable true colors support
