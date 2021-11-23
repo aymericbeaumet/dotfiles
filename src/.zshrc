@@ -84,14 +84,20 @@ z() {
 }
 
 alias k='kubectl'
-alias kgj='kubectl get jobs  --sort-by=.status.startTime'
-alias kgn='kubectl get nodes --sort-by=.metadata.creationTimestamp'
-alias kgp='kubectl get pods  --sort-by=.status.startTime'
+
+alias kdp='kubectl describe pod'
+alias kdn='kubectl describe node'
+
+alias kga='kubectl get all'
+alias kgd='kubectl get deployments'
+alias kgj='kubectl get jobs        --sort-by=.status.startTime'
+alias kgn='kubectl get nodes       --sort-by=.metadata.creationTimestamp'
+alias kgp='kubectl get pods        --sort-by=.status.startTime'
 
 alias ls='exa --group-directories-first'
 alias l='ls -lg'
 alias la='l -a'
-alias tree='l --tree'
+alias tree='la --tree -I .git --git-ignore'
 
 alias v=nvim
 alias vi=nvim

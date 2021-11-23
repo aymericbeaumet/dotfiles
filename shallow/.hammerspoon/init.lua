@@ -1,33 +1,37 @@
 -- Disable animations
 hs.window.animationDuration = 0
 
--- TODO: Watch battery level to notify
-
 -- Watch configuration to auto-reload
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", hs.reload):start()
 
--- Wrapper to launch or focus an application
-hs.urlevent.bind('launchOrFocus', function(event, params)
+-- Listen for application events from hammerspoon://...
+
+hs.urlevent.bind('launchOrFocusApplication', function(event, params)
   hs.application.launchOrFocus(params.name)
 end)
 
--- Wrapper to set the active window frame
-hs.urlevent.bind('setActiveWindowFrame', function(event, params)
-  setActiveWindowFrame(
-    tonumber(params.x),
-    tonumber(params.y),
-    tonumber(params.w),
-    tonumber(params.h)
+hs.urlevent.bind('moveFocusedWindowNextScreen', function(event, params)
+  local currentWindow = hs.window.focusedWindow()
+  local currentScreen = currentWindow:screen()
+  currentWindow:move(
+    currentWindow:frame():toUnitRect(currentScreen:frame()),
+    currentScreen:next(),
+    true,
+    0
   )
 end)
-function setActiveWindowFrame(x, y, w, h)
+
+hs.urlevent.bind('setCurrentWindowFrame', function(event, params)
+  local x = tonumber(params.x)
+  local y = tonumber(params.y)
+  local w = tonumber(params.w)
+  local h = tonumber(params.h)
   local currentWindow = hs.window.focusedWindow()
   local fullFrame = currentWindow:screen():fullFrame()
-  local newFrame = hs.geometry.rect(
+  currentWindow:setFrame(hs.geometry.rect(
     fullFrame.w * x + fullFrame.topleft.x,
     fullFrame.h * y + fullFrame.topleft.y,
     fullFrame.w * w,
     fullFrame.h * h
-  )
-  currentWindow:setFrame(newFrame)
-end
+  ))
+end)

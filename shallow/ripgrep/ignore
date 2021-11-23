@@ -1,4 +1,6 @@
 .git/
 Cargo.lock
+go.sum
 node_modules/
+package-lock.json
 yarn.lock
