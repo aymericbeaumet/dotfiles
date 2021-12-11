@@ -90,6 +90,7 @@ alias kdn='kubectl describe node'
 
 alias kga='kubectl get all'
 alias kgd='kubectl get deployments'
+alias kgi='kubectl get ingress'
 alias kgj='kubectl get jobs        --sort-by=.status.startTime'
 alias kgn='kubectl get nodes       --sort-by=.metadata.creationTimestamp'
 alias kgp='kubectl get pods        --sort-by=.status.startTime'

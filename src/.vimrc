@@ -20,8 +20,9 @@ augroup vimrc
   autocmd!
 
   " custom mappings for some filetypes
-  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition', 'drop')<CR>
-  autocmd FileType rust,go,javascript,javascriptreact,typescript,typescriptreact,svelte nnoremap <silent> <buffer> K :call CocActionAsync('doHover')<CR>
+  autocmd FileType rust,go nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition')<CR>zz
+
+  " auto-import for go on save
   autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
 
   " add support for .cjs
@@ -47,24 +48,21 @@ augroup END
 
   call plug#begin(expand('~/.vim/bundle'))
 
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-      let g:airline_theme='base16_nord'
-
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
 
     Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'Valloric/ListToggle'
     Plug 'arcticicestudio/nord-vim'
     Plug 'jiangmiao/auto-pairs'
-    Plug 'puremourning/vimspector'
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-abolish'
     Plug 'tpope/vim-eunuch'
-    Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
+
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+      let g:airline_theme='base16_nord'
 
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git']
@@ -79,25 +77,12 @@ augroup END
       let g:EasyMotion_use_upper = 1
       let g:EasyMotion_do_mapping = 0
 
-    Plug 'alvan/vim-closetag'
-      let g:closetag_filetypes = 'html,xhtml,phtml,snippets'
-
+    Plug 'hashivim/vim-terraform'
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
-            \   'coc-eslint',
             \   'coc-go',
-            \   'coc-html',
-            \   'coc-json',
-            \   'coc-prettier',
             \   'coc-rust-analyzer',
-            \   'coc-snippets',
-            \   'coc-svelte',
-            \   'coc-tsserver',
             \ ]
-
-    Plug 'jvirtanen/vim-hcl'
-    Plug 'kevinoid/vim-jsonc'
-    Plug 'leafOfTree/vim-svelte-plugin'
 
   call plug#end()
 
@@ -159,18 +144,8 @@ augroup END
 
   nnoremap <silent> <Leader>f :Files<CR>
 
-  nnoremap <silent> <Leader>gb :Git blame<CR>
-  nnoremap <silent> <Leader>gd :Gvdiffsplit<CR>
-  nnoremap <silent> <Leader>gl :Commits<CR>
-  nnoremap <silent> <Leader>gm :Git mergetool<CR>
-  nnoremap <silent> <Leader>gw :Gwrite<CR>
-
-  " <Leader>l -> location list toggle
-
   nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
-
-  " <Leader>q -> quickfix list toggle
 
   nnoremap <silent> <Leader>r :Ripgrep<CR>
 
@@ -205,16 +180,48 @@ augroup END
   " keep the next/previous in the middle of the screen
   nnoremap <silent> n nzz
   nnoremap <silent> N Nzz
+  nnoremap <silent> <C-I> <C-I>zz
+  nnoremap <silent> <C-O> <C-O>zz
 
   " trigger completion
-  inoremap <silent><expr> <c-space> coc#refresh()
-  inoremap <silent><expr> <tab> pumvisible() ? coc#_select_confirm()
-                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  inoremap <silent><expr> <C-SPACE> coc#refresh()
+  inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+
+  " navigate diagnostics
+  nmap <silent> [d <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]d <Plug>(coc-diagnostic-next)
+
+  " show documentation
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+      call CocActionAsync('doHover')
+    else
+      execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+  endfunction
+
+  " convenient insert mode mappings
+  inoremap <silent> <C-A> <Home>
+  inoremap <silent> <C-B> <Left>
+  inoremap <silent> <C-D> <Del>
+  inoremap <silent> <C-E> <End>
+  inoremap <silent> <C-F> <Right>
+  inoremap <silent> <C-H> <Backspace>
 
 " }}}
 
 " theme
-set termguicolors     " enable true colors support
+set termguicolors " enable true colors support
 colorscheme nord
 
 " buffer
