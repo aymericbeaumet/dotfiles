@@ -8,6 +8,7 @@
   a = add
   br = branch -v --sort=-committerdate
   bw = browse
+  c-p = cherry-pick
   ci = commit
   cia = commit --amend
   cl = clone

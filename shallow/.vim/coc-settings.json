@@ -1,19 +1,12 @@
 {
+  "coc.preferences.formatOnSaveFiletypes": [
+    "go",
+    "rust"
+  ],
   "coc.source.around.enable": false,
   "coc.source.buffer.enable": false,
   "coc.source.file.enable": true,
-  "coc.preferences.formatOnSaveFiletypes": [
-    "go",
-    "html",
-    "javascript",
-    "json",
-    "markdown",
-    "rust",
-    "svelte",
-    "typescript"
-  ],
   "go.checkForUpdates": "install",
-  "go.goplsOptions": {
-    "completeUnimported": true
-  }
+  "go.goplsOptions.completeUnimported": true,
+  "rust-analyzer.checkOnSave.command": "clippy"
 }
