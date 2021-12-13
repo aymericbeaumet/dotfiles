@@ -196,7 +196,7 @@ precmd() {
 # load plugins
 
 # fzf
-source /usr/local/opt/fzf/shell/key-bindings.zsh
+source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # zoxide

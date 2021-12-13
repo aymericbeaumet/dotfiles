@@ -5,9 +5,8 @@ if [ -z "$RIPGREP_CONFIG_PATH" ]; then
   export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 fi
 
-if [ -z "$BREW_PATH" ]; then
-  BREW_PATH='/usr/local'
-  export PATH="$BREW_PATH/bin:$BREW_PATH/sbin:$PATH"
+if [ -z "$HOMEBREW_PREFIX" ]; then
+  eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
 if [ -z "$CARGO_HOME" ]; then
