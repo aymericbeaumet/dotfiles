@@ -4,26 +4,28 @@ env:
   TERM: xterm-256color
 
 window:
-  dynamic_padding: true
+  startup_mode: SimpleFullscreen
   decorations: none
-  startup_mode: maximized
-  dynamic_title: false
+  dynamic_padding: false
+  padding:
+    x: 0
+    y: 0
 
 scrolling:
   history: 0
 
 font:
   normal:
-    family: FuraCode Nerd Font
+    family: FiraCode Nerd Font
     style: Retina
   bold:
-    family: FuraCode Nerd Font
+    family: FiraCode Nerd Font
     style: Retina
   italic:
-    family: FuraCode Nerd Font
+    family: FiraCode Nerd Font
     style: Retina
   bold_italic:
-    family: FuraCode Nerd Font
+    family: FiraCode Nerd Font
     style: Retina
   size: 13
 

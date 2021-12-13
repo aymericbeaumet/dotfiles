@@ -5,7 +5,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 # Symlink the dotfiles to the $HOME directory
 __symlink() {
-  from_directory="$(greadlink -f "$(pwd)/src")"
+  from_directory="$(pwd)/src"
   find "$from_directory" -type file -o -type link | while read -r from ; do
     to="$HOME/${from##"$from_directory/"}"
     to_directory="$(dirname "$to")"
@@ -28,26 +28,6 @@ __install() {
   if ! [[ "$SHELL" =~ /zsh$ ]]; then
     sudo chsh -s "$(command -v zsh)" "$USER"
   fi
-}
-
-# Install dev tools
-__devtools() {
-  # Cloud
-  brew reinstall ansible awscli helm kubectl packer terraform vault
-  # Golang
-  brew reinstall go
-  GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-  GO111MODULE=on go get github.com/mgechev/revive@latest
-  GO111MODULE=on go get golang.org/x/tools/cmd/goimports@latest
-  GO111MODULE=on go get golang.org/x/tools/gopls@latest
-  # Node
-  brew reinstall node
-  npm install -g npm svelte-language-server typescript
-  # Rust
-  brew reinstall rustup-init rust-analyzer
-  rustup-init -y --default-toolchain=stable --no-modify-path
-  # Shell
-  brew reinstall shellcheck
 }
 
 # Configure the OS

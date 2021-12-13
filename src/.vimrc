@@ -50,7 +50,7 @@ augroup END
 
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
 
-    Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+    Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'arcticicestudio/nord-vim'
     Plug 'jiangmiao/auto-pairs'
     Plug 'scrooloose/nerdcommenter'
