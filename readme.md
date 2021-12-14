@@ -6,9 +6,6 @@
 Hello fellow dotfiler, here you can find configuration for git, neovim, tmux,
 zsh, and many more other programs.
 
-I have been gathering, updating, carefully nitpicking my dotfiles for nearly
-10 years.
-
 Feel free to copy, fork, PR, improve, suggest. I am always looking to make
 this work evolve toward a more convenient workflow.
 
