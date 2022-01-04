@@ -20,7 +20,7 @@ autoload -Uz compinit && compinit
 
 b() {
   if (( $# == 0 )); then
-    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --preview 'bat {}')
+    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
     if [ -z "$filepath" ]; then
       echo 'wow such empty' 1>&2
       return
@@ -32,7 +32,7 @@ b() {
 }
 
 d() {
-  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0 -1 --preview 'exa -la {}')
+  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'exa -la {}')
   if [ -z "$dirpath" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -41,7 +41,7 @@ d() {
 }
 
 f() {
-  filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --preview 'bat {}')
+  filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
   if [ -z "$filepath" ]; then
     echo 'wow such empty' 1>&2
     return
@@ -66,9 +66,25 @@ t() {
       tmux attach -t default || tmux new -s default
     fi
   else
-    tmux "$@"
+    command tmux "$@"
   fi
 }
+
+v() {
+  if (( $# == 0 )); then
+    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
+    if [ -z "$filepath" ]; then
+      echo 'wow such empty' 1>&2
+      return
+    fi
+    command nvim "$filepath"
+  else
+    command nvim "$@"
+  fi
+}
+compdef v=nvim
+alias vi=v
+alias vim=v
 
 z() {
   if (( $# == 0 )); then
@@ -100,11 +116,7 @@ alias l='ls -lg'
 alias la='l -a'
 alias tree='la --tree -I .git --git-ignore'
 
-alias v=nvim
-alias vi=nvim
-alias vim=nvim
-
-alias w='watchexec --restart --clear'
+alias w='watchexec --restart --clear --'
 
 # global env
 export LC_ALL=en_US.UTF-8

@@ -80,8 +80,10 @@ augroup END
     Plug 'hashivim/vim-terraform'
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
+            \   'coc-eslint8',
             \   'coc-go',
             \   'coc-rust-analyzer',
+            \   'coc-tsserver',
             \ ]
 
   call plug#end()
@@ -180,6 +182,8 @@ augroup END
   " keep the next/previous in the middle of the screen
   nnoremap <silent> n nzz
   nnoremap <silent> N Nzz
+  nnoremap <silent> * *zz
+  nnoremap <silent> # #zz
   nnoremap <silent> <C-I> <C-I>zz
   nnoremap <silent> <C-O> <C-O>zz
 

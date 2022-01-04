@@ -1,7 +1,7 @@
 {
     "global": {
         "check_for_updates_on_startup": true,
-        "show_in_menu_bar": true,
+        "show_in_menu_bar": false,
         "show_profile_name_in_menu_bar": false
     },
     "profiles": [
@@ -263,6 +263,28 @@
                                 "to": [
                                     {
                                         "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Slack'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus Spotify",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "y",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Spotify'"
                                     }
                                 ],
                                 "type": "basic"
