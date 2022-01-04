@@ -1,11 +1,13 @@
 {
   "coc.preferences.formatOnSaveFiletypes": [
     "go",
+    "javascript",
     "rust"
   ],
   "coc.source.around.enable": false,
   "coc.source.buffer.enable": false,
   "coc.source.file.enable": true,
+  "eslint.autoFixOnSave": true,
   "go.checkForUpdates": "install",
   "go.goplsOptions.completeUnimported": true,
   "rust-analyzer.checkOnSave.command": "clippy"
