@@ -1,7 +1,4 @@
-# dotfiles
-
-[![travis](https://img.shields.io/travis/aymericbeaumet/dotfiles?style=flat-square&logo=travis)](https://travis-ci.org/aymericbeaumet/dotfiles)
-[![github](https://img.shields.io/github/issues/aymericbeaumet/dotfiles?style=flat-square&logo=github)](https://github.com/aymericbeaumet/dotfiles/issues)
+# dotfiles [![travis](https://img.shields.io/travis/aymericbeaumet/dotfiles?style=flat-square&logo=travis)](https://travis-ci.org/aymericbeaumet/dotfiles)
 
 Hello fellow dotfiler, here you can find my configuration for git, neovim, tmux,
 zsh, and other clis.
