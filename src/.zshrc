@@ -119,11 +119,12 @@ alias tree='la --tree -I .git --git-ignore'
 alias w='watchexec --restart --clear --'
 
 # global env
-export LC_ALL=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
 export EDITOR=nvim
 export PAGER=less
-export GREP_OPTIONS='--color=auto'
 
 # bindings
 bindkey -e
@@ -208,11 +209,12 @@ precmd() {
 # load plugins
 
 # fzf
-source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+[ -r /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+[ -r /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # zoxide
-eval "$(zoxide init zsh --no-aliases)"
+[ -x zoxide ] && eval "$(zoxide init zsh --no-aliases)"
 
 # zsh-autosuggestions
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
