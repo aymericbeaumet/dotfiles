@@ -16,7 +16,7 @@
                 },
                 "rules": [
                     {
-                        "description": "[Hammerspoon] Fullscreen",
+                        "description": "[Hyper-Space] Fullscreen",
                         "manipulators": [
                             {
                                 "from": {
@@ -32,7 +32,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://setCurrentWindowFrame?x=0&y=0&w=1&h=1'"
+                                        "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0&y=0&w=1&h=1'"
                                     }
                                 ],
                                 "type": "basic"
@@ -40,7 +40,7 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Left-half",
+                        "description": "[Hyper-H] Left-half",
                         "manipulators": [
                             {
                                 "from": {
@@ -56,7 +56,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://setCurrentWindowFrame?x=0&y=0&w=0.5&h=1'"
+                                        "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0&y=0&w=0.5&h=1'"
                                     }
                                 ],
                                 "type": "basic"
@@ -64,7 +64,7 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Bottom-half",
+                        "description": "[Hyper-J] Bottom-half",
                         "manipulators": [
                             {
                                 "from": {
@@ -80,7 +80,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://setCurrentWindowFrame?x=0&y=0.5&w=1&h=0.5'"
+                                        "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0&y=0.5&w=1&h=0.5'"
                                     }
                                 ],
                                 "type": "basic"
@@ -88,7 +88,7 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Top-half",
+                        "description": "[Hyper-K] Top-half",
                         "manipulators": [
                             {
                                 "from": {
@@ -104,7 +104,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://setCurrentWindowFrame?x=0&y=0&w=1&h=0.5'"
+                                        "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0&y=0&w=1&h=0.5'"
                                     }
                                 ],
                                 "type": "basic"
@@ -112,7 +112,7 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Right-half",
+                        "description": "[Hyper-L] Right-half",
                         "manipulators": [
                             {
                                 "from": {
@@ -128,7 +128,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://setCurrentWindowFrame?x=0.5&y=0&w=0.5&h=1'"
+                                        "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0.5&y=0&w=0.5&h=1'"
                                     }
                                 ],
                                 "type": "basic"
@@ -136,7 +136,31 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Next Screen",
+                        "description": "[Hyper-F] Focus",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "shift",
+                                            "control",
+                                            "option",
+                                            "command"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0.2&y=0.2&w=0.6&h=0.6'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hyper-N] Next Screen",
                         "manipulators": [
                             {
                                 "from": {
@@ -152,7 +176,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://moveFocusedWindowNextScreen'"
+                                        "shell_command": "open -gjFu 'hammerspoon://moveFocusedWindowNextScreen'"
                                     }
                                 ],
                                 "type": "basic"
@@ -174,7 +198,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Alacritty'"
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Alacritty'"
                                     }
                                 ],
                                 "type": "basic"
@@ -196,29 +220,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Firefox'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Hammerspoon] Launch or focus Discord",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "d",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Discord'"
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Firefox'"
                                     }
                                 ],
                                 "type": "basic"
@@ -240,7 +242,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Notes'"
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Notes'"
                                     }
                                 ],
                                 "type": "basic"
@@ -262,7 +264,29 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Slack'"
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Slack'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus Messages",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "i",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Messages'"
                                     }
                                 ],
                                 "type": "basic"
@@ -284,7 +308,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g 'hammerspoon://launchOrFocusApplication?name=Spotify'"
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Spotify'"
                                     }
                                 ],
                                 "type": "basic"
@@ -300,8 +324,8 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "left_shift",
                                         "lazy": true,
+                                        "key_code": "left_shift",
                                         "modifiers": [
                                             "left_command",
                                             "left_control",
@@ -385,76 +409,6 @@
                                         ]
                                     }
                                 },
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Remap] Alt + , (instead of Alt + c)",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "c",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "comma",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "c",
-                                        "modifiers": [
-                                            "option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Remap] Alt + ' (instead of Alt + e)",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "e",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "quote",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "e",
-                                        "modifiers": [
-                                            "option"
-                                        ]
-                                    }
-                                ],
                                 "type": "basic"
                             }
                         ]

@@ -4,12 +4,12 @@ env:
   TERM: xterm-256color
 
 window:
-  startup_mode: SimpleFullscreen
+  startup_mode: Maximized
   decorations: none
-  dynamic_padding: false
+  dynamic_padding: true
   padding:
-    x: 0
-    y: 0
+    x: 2
+    y: 3
 
 scrolling:
   history: 0
