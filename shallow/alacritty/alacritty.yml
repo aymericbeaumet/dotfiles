@@ -5,7 +5,7 @@ env:
 
 window:
   startup_mode: Maximized
-  decorations: none
+  decorations: buttonless
   dynamic_padding: true
   padding:
     x: 2

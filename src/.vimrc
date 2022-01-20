@@ -59,6 +59,8 @@ augroup END
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
+    Plug 'junegunn/goyo.vim'
+    Plug 'hashivim/vim-terraform'
 
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
@@ -77,7 +79,6 @@ augroup END
       let g:EasyMotion_use_upper = 1
       let g:EasyMotion_do_mapping = 0
 
-    Plug 'hashivim/vim-terraform'
     Plug 'neoclide/coc.nvim', { 'branch': 'release' }
       let g:coc_global_extensions = [
             \   'coc-eslint8',
@@ -146,6 +147,8 @@ augroup END
 
   nnoremap <silent> <Leader>f :Files<CR>
 
+  nnoremap <silent> <Leader>pf vipgq<CR>
+
   nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
 
@@ -154,7 +157,7 @@ augroup END
   nnoremap <silent> <Leader>ve :e ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
 
-  nnoremap <silent> <Leader>ze :e ~/.zshrc<CR>
+  nnoremap <silent> <Leader>z :Goyo<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
