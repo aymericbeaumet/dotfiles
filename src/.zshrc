@@ -20,33 +20,24 @@ autoload -Uz compinit && compinit
 
 b() {
   if (( $# == 0 )); then
-    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
+    filepath=$(command fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
     if [ -z "$filepath" ]; then
       echo 'wow such empty' 1>&2
       return
     fi
-    bat "$filepath"
+    command bat "$filepath"
   else
-    bat "$@"
+    command bat "$@"
   fi
 }
 
 d() {
-  dirpath=$(fd --type directory --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'exa -la {}')
+  dirpath=$(command fd --type directory --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'exa -la {}')
   if [ -z "$dirpath" ]; then
     echo 'wow such empty' 1>&2
     return
   fi
   cd "$dirpath" || exit 1
-}
-
-f() {
-  filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
-  if [ -z "$filepath" ]; then
-    echo 'wow such empty' 1>&2
-    return
-  fi
-  echo "$filepath"
 }
 
 g() {
@@ -72,7 +63,7 @@ t() {
 
 v() {
   if (( $# == 0 )); then
-    filepath=$(fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
+    filepath=$(command fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
     if [ -z "$filepath" ]; then
       echo 'wow such empty' 1>&2
       return
@@ -88,14 +79,19 @@ alias vim=v
 
 z() {
   if (( $# == 0 )); then
-    directory=$(zoxide query --list --score "$@" | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
+    directory=$(command zoxide query --score --list | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
     if [ -z "$directory" ]; then
       echo 'wow such empty' 1>&2
       return
     fi
     cd "$directory" || exit 1
   else
-    cd "$(zoxide query "$@")" || exit 1
+    directory=$(command zoxide query "$@" 2>/dev/null)
+    if [ -z "$directory" ]; then
+      echo 'wow such empty' 1>&2
+      return
+    fi
+    cd "$directory" || exit 1
   fi
 }
 
@@ -107,9 +103,9 @@ alias kdn='kubectl describe node'
 alias kga='kubectl get all'
 alias kgd='kubectl get deployments'
 alias kgi='kubectl get ingress'
-alias kgj='kubectl get jobs        --sort-by=.status.startTime'
-alias kgn='kubectl get nodes       --sort-by=.metadata.creationTimestamp'
-alias kgp='kubectl get pods        --sort-by=.status.startTime'
+alias kgj='kubectl get jobs  --sort-by=.status.startTime'
+alias kgn='kubectl get nodes --sort-by=.metadata.creationTimestamp'
+alias kgp='kubectl get pods  --sort-by=.status.startTime'
 
 alias ls='exa --group-directories-first'
 alias l='ls -lg'
@@ -206,18 +202,20 @@ precmd() {
   echo -ne '\e[5 q'
 }
 
-# load plugins
+# allow command line edition in vim with ^V
+autoload -Uz edit-command-line && zle -N edit-command-line
+bindkey "^V" edit-command-line
 
-# fzf
+# fzf plugin
 [ -r /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 [ -r /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
-# zoxide
+# zoxide plugin
 [ -x zoxide ] && eval "$(zoxide init zsh --no-aliases)"
 
-# zsh-autosuggestions
+# zsh-autosuggestions plugin
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
-# zsh-syntax-highlighting
+# zsh-syntax-highlighting plugin
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

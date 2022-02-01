@@ -64,7 +64,7 @@ augroup END
 
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
-      let g:airline_theme='base16_nord'
+      let g:airline_theme = 'base16_nord'
 
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git']
@@ -146,8 +146,6 @@ augroup END
   nnoremap <silent> <Leader>d :Bwipeout!<CR>
 
   nnoremap <silent> <Leader>f :Files<CR>
-
-  nnoremap <silent> <Leader>pf vipgq<CR>
 
   nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
