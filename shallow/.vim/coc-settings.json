@@ -10,5 +10,10 @@
   "eslint.autoFixOnSave": true,
   "go.checkForUpdates": "install",
   "go.goplsOptions.completeUnimported": true,
+  "goplsOptions": {
+    "env": {
+      "CGO_CFLAGS_ALLOW": "-Xpreprocessor"
+    }
+  },
   "rust-analyzer.checkOnSave.command": "clippy"
 }

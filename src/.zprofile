@@ -18,3 +18,6 @@ if [ -z "$GOPATH" ]; then
   export GOPATH="$HOME/.go"
   export PATH="$GOPATH/bin:$PATH"
 fi
+
+# temporary fix
+export CGO_CFLAGS_ALLOW="-Xpreprocessor"
