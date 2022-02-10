@@ -14,3 +14,6 @@
 [submodule "shallow/.zsh/bundle/zsh-syntax-highlighting"]
 	path = shallow/.zsh/bundle/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "shallow/.zsh/bundle/fzf-tab"]
+	path = shallow/.zsh/bundle/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab

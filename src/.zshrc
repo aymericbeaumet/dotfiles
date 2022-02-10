@@ -147,28 +147,18 @@ setopt LIST_PACKED
 setopt LIST_TYPES
 setopt +o nomatch
 unsetopt COMPLETE_IN_WORD
-# Allow arrow navigation
-zstyle ':completion:*' menu select
 # Don't complete stuff already on the line
 zstyle ':completion:*' ignore-line true
 # Don't complete directory we are already in
 zstyle ':completion:*' ignore-parents parent pwd
-# More complete output (not always)
-zstyle ':completion:*' verbose yes
-# Fix group name display
-zstyle ':completion:*' group-name ''
-# Case insensitive completion
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-# Ignore completion functions
-zstyle ':completion:*:functions' ignored-patterns '_*'
-# Explicitly write the type of what the autocomplete has found / was looking for
-zstyle ':completion:*:descriptions' format '%B%d%b'
+# Print expected type when 0 matches
 zstyle ':completion:*:warnings' format 'No matches for: %d'
-# Don't prompt for a huge list, page it!
-zstyle ':completion:*:default' list-prompt '%S%M matches%s'
-zstyle ':completion:*:default' menu 'select=0'
-# Separate man page sections
-zstyle ':completion:*:manuals' separate-sections true
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # expansion and globbing (http://zsh.sourceforge.net/Doc/Release/Options.html#Expansion-and-Globbing)
 setopt BAD_PATTERN
@@ -197,7 +187,7 @@ setopt INTERACTIVE_COMMENTS
 setopt RC_QUOTES
 unsetopt FLOW_CONTROL
 
-# set title + restore cursor
+# set title + restore cursor before each command
 precmd() {
   echo -ne '\e[5 q'
 }
@@ -207,7 +197,6 @@ autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey "^V" edit-command-line
 
 # fzf plugin
-[ -r /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 [ -r /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
@@ -219,3 +208,12 @@ source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # zsh-syntax-highlighting plugin
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# fzf-tab plugin
+source "$HOME/.zsh/bundle/fzf-tab/fzf-tab.plugin.zsh"
+# preview directory's content with exa when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# switch group using `,` and `.`
+zstyle ':fzf-tab:*' switch-group ',' '.'
+# accept the result and start another completion immediately with Ctrl-I
+zstyle ':fzf-tab:*' continuous-trigger 'ctrl-i'
