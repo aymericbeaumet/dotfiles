@@ -60,7 +60,6 @@ augroup END
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
     Plug 'junegunn/goyo.vim'
-    Plug 'hashivim/vim-terraform'
 
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
@@ -84,8 +83,12 @@ augroup END
             \   'coc-eslint8',
             \   'coc-go',
             \   'coc-rust-analyzer',
+            \   'coc-svelte',
             \   'coc-tsserver',
             \ ]
+
+    Plug 'hashivim/vim-terraform'
+    Plug 'evanleck/vim-svelte'
 
   call plug#end()
 
