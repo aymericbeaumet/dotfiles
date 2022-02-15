@@ -2,7 +2,9 @@
   "coc.preferences.formatOnSaveFiletypes": [
     "go",
     "javascript",
-    "rust"
+    "json",
+    "rust",
+    "svelte"
   ],
   "coc.source.around.enable": false,
   "coc.source.buffer.enable": false,
@@ -15,5 +17,6 @@
       "CGO_CFLAGS_ALLOW": "-Xpreprocessor"
     }
   },
-  "rust-analyzer.checkOnSave.command": "clippy"
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "svelte.enable-ts-plugin": true
 }

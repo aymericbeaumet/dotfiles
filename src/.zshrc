@@ -96,10 +96,8 @@ z() {
 }
 
 alias k='kubectl'
-
 alias kdp='kubectl describe pod'
 alias kdn='kubectl describe node'
-
 alias kga='kubectl get all'
 alias kgd='kubectl get deployments'
 alias kgi='kubectl get ingress'
@@ -159,6 +157,8 @@ zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# case-insensitive completion
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # expansion and globbing (http://zsh.sourceforge.net/Doc/Release/Options.html#Expansion-and-Globbing)
 setopt BAD_PATTERN
@@ -198,7 +198,7 @@ bindkey "^V" edit-command-line
 
 # fzf plugin
 [ -r /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
-export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
+  export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # zoxide plugin
 [ -x zoxide ] && eval "$(zoxide init zsh --no-aliases)"
@@ -210,10 +210,10 @@ source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # fzf-tab plugin
-source "$HOME/.zsh/bundle/fzf-tab/fzf-tab.plugin.zsh"
-# preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-# switch group using `,` and `.`
-zstyle ':fzf-tab:*' switch-group ',' '.'
-# accept the result and start another completion immediately with Ctrl-I
-zstyle ':fzf-tab:*' continuous-trigger 'ctrl-i'
+#source "$HOME/.zsh/bundle/fzf-tab/fzf-tab.plugin.zsh"
+  ## preview directory's content with exa when completing cd
+  #zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+  ## switch group using `,` and `.`
+  #zstyle ':fzf-tab:*' switch-group ',' '.'
+  ## accept the result and start another completion immediately with Ctrl-I
+  #zstyle ':fzf-tab:*' continuous-trigger 'ctrl-i'
