@@ -1,13 +1,80 @@
 -- Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 -- Github: @aymericbeaumet/dotfiles
 
+-- buffer
+vim.o.autoread = true -- watch for file changes by other programs
+vim.o.hidden = true -- when a tab is closed, do not delete the buffer
+
+-- bindings
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
+-- command
+vim.o.history = 10000 -- increase history size
+
+-- cursor
+vim.o.cursorline = true -- color the cursorline
+vim.o.scrolloff = 8 -- keep at least 8 lines after the cursor when scrolling
+vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
+vim.o.startofline = false -- leave my cursor alone
+vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
+
+-- indentation
+vim.o.autoindent = true -- auto-indentation
+vim.o.expandtab = true -- replace tabs by spaces
+vim.o.shiftwidth = 2 -- number of space to use for indent
+vim.o.smarttab = true -- insert `shiftwidth` spaces instead of tabs
+vim.o.softtabstop = 2 -- n spaces when using <Tab>
+vim.o.tabstop = 2 -- n spaces when using <Tab>
+
+-- interface
+vim.o.fillchars = '' -- remove split separators
+vim.o.laststatus = 2 -- always display status line
+vim.o.mouse = 'a' -- enable mouse support
+vim.o.number = true -- show line numbers
+vim.o.shortmess = 'aoOsIctF' -- disable vim welcome message / enable shorter messages
+vim.o.showcmd = true -- show (partial) command in the last line of the screen
+vim.o.showtabline = 0 -- never show tabline
+vim.o.spell = false -- disable spell checking
+vim.o.splitbelow = true -- slit below
+vim.o.splitright = true -- split right
+
+-- performance
+vim.o.lazyredraw = true -- only redraw when needed
+vim.o.ttyfast = true -- we have a fast terminal
+
+-- search and replace
+vim.o.ignorecase = true -- ignore case when searching
+vim.o.incsearch = true -- show matches as soon as possible
+vim.o.smartcase = true -- smarter search case
+vim.o.wildignorecase = true -- ignore case in file completion
+vim.o.wildignore = '' -- remove default ignores
+vim.o.wildignore = vim.o.wildignore .. '*.o,*.obj,*.so,*.a,*.dylib,*.pyc,*.hi' -- ignore compiled files
+vim.o.wildignore = vim.o.wildignore .. '*.zip,*.gz,*.xz,*.tar,*.rar' -- ignore compressed files
+vim.o.wildignore = vim.o.wildignore .. '*/.git/*,*/.hg/*,*/.svn/*' -- ignore SCM files
+vim.o.wildignore = vim.o.wildignore .. '*.png,*.jpg,*.jpeg,*.gif' -- ignore image files
+vim.o.wildignore = vim.o.wildignore .. '*.pdf,*.dmg' -- ignore binary files
+vim.o.wildignore = vim.o.wildignore .. '.*.sw*,*~' -- ignore editor files
+vim.o.wildignore = vim.o.wildignore .. '.DS_Store' -- ignore OS files
+vim.o.wildmenu = true -- better command line completion menu
+vim.o.wildmode = 'full' -- ensure better completion
+
+-- undo
+vim.o.undofile = true
+vim.o.undolevels = 1000
+vim.o.undoreload = 10000
+-- let &undodir = expand('~/.config/nvim/tmp/undo//')
+
+-- plugins
 require('packer').startup(function(use)
 	use {
 		'shaunsingh/nord.nvim',
-		config = function() vim.cmd([[
-      set termguicolors
-      colorscheme nord
-    ]]) end
+		config = function()
+			vim.cmd([[
+			set termguicolors
+			colorscheme nord
+			]])
+		end
 	}
 
 	use {
@@ -49,22 +116,20 @@ require('packer').startup(function(use)
 	use 'tpope/vim-surround'
 	use 'tpope/vim-unimpaired'
 
-  use {
-    'tpope/vim-eunuch',
-    config = function()
-	    vim.cmd('cnoreabbrev Remove Delete')
-    end
-  }
+	use {
+		'tpope/vim-eunuch',
+		config = function()
+			vim.cmd('cnoreabbrev Remove Delete')
+		end
+	}
 
 	use {
 		'airblade/vim-rooter',
-		config = function()
-			vim.cmd([[
-			let g:rooter_patterns = ['.git']
-			let g:rooter_cd_cmd = 'lcd'
-			let g:rooter_silent_chdir = 1
-			let g:rooter_resolve_links = 1
-			]])
+		setup = function()
+			vim.g.rooter_patterns = { '.git' }
+			vim.g.rooter_cd_cmd = 'lcd'
+			vim.g.rooter_silent_chdir = 1
+			vim.g.rooter_resolve_links = 1
 		end
 	}
 
@@ -82,26 +147,24 @@ require('packer').startup(function(use)
 	use {
 		'neoclide/coc.nvim',
 		branch = 'release',
-		config = function()
-			vim.cmd([[
-			let g:coc_global_extensions = [
-			\   'coc-eslint8',
-			\   'coc-go',
-			\   'coc-rust-analyzer',
-			\   'coc-svelte',
-			\   'coc-tsserver',
-			\ ]
-			]])
+		setup = function()
+      vim.g.coc_global_extensions = {
+        'coc-eslint8',
+        'coc-go',
+        'coc-rust-analyzer',
+        'coc-svelte',
+        'coc-tsserver',
+      }
 		end
 	}
 
 	use {
 		'windwp/nvim-autopairs',
-    config = function()
-      require('nvim-autopairs').setup({
-        disable_filetype = { "TelescopePrompt" , "vim" },
-      })
-    end
+		config = function()
+			require('nvim-autopairs').setup({
+				disable_filetype = { 'TelescopePrompt' , 'vim' },
+			})
+		end
 	}
 
 	use 'hashivim/vim-terraform'
@@ -110,18 +173,6 @@ end)
 
 -- legacy
 vim.cmd([[
-" init {{{
-
-  filetype plugin indent on
-  syntax on
-  " set encoding=UTF-8
-  " set fileencodings=utf-8
-  " scriptencoding utf-8
-  let mapleader = ' '
-  let maplocalleader = ' '
-
-" }}}
-
 " autocmd {{{
 
 augroup initvim
@@ -184,8 +235,8 @@ augroup END
 
   nnoremap <silent> <Leader>r :Ripgrep<CR>
 
-  nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.vim<CR>
-  nnoremap <silent> <Leader>vs :source ~/.config/nvim/init.vim<CR>
+  nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.lua<CR>
+  nnoremap <silent> <Leader>vs :source ~/.config/nvim/init.lua<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -259,66 +310,4 @@ augroup END
 
 " }}}
 
-" buffer
-set autoread " watch for file changes by other programs
-set hidden " when a tab is closed, do not delete the buffer
-
-" cursor
-set nostartofline " leave my cursor alone
-set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
-set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
-set virtualedit=block " allow the cursor to go in to virtual places
-set cursorline " color the cursorline
-
-" command
-set history=10000 " increase history size
-
-" indentation
-set autoindent " auto-indentation
-set backspace=2 " fix backspace (on some OS/terminals)
-set expandtab " replace tabs by spaces
-set shiftwidth=2 " number of space to use for indent
-set smarttab " insert `shiftwidth` spaces instead of tabs
-set softtabstop=2 " n spaces when using <Tab>
-set tabstop=2 " n spaces when using <Tab>
-
-" interface
-set fillchars="" " remove split separators
-set laststatus=2 " always display status line
-set nospell " disable spell checking
-set shortmess=aoOsIctF " disable vim welcome message / enable shorter messages
-set showcmd " show (partial) command in the last line of the screen
-set splitbelow " slit below
-set splitright " split right
-set mouse=a " enable mouse support
-set noinsertmode
-set noshowmode " do not show the mode
-set showtabline=0 " never show tabline
-set number " show line numbers
-
-" performance
-set lazyredraw " only redraw when needed
-set ttyfast " we have a fast terminal
-
-" search and replace
-set ignorecase " ignore case when searching
-set incsearch " show matches as soon as possible
-set smartcase " smarter search case
-set wildignorecase " ignore case in file completion
-set wildignore= " remove default ignores
-set wildignore+=*.o,*.obj,*.so,*.a,*.dylib,*.pyc,*.hi " ignore compiled files
-set wildignore+=*.zip,*.gz,*.xz,*.tar,*.rar " ignore compressed files
-set wildignore+=*/.git/*,*/.hg/*,*/.svn/* " ignore SCM files
-set wildignore+=*.png,*.jpg,*.jpeg,*.gif " ignore image files
-set wildignore+=*.pdf,*.dmg " ignore binary files
-set wildignore+=.*.sw*,*~ " ignore editor files
-set wildignore+=.DS_Store " ignore OS files
-set wildmenu " better command line completion menu
-set wildmode=full " ensure better completion
-
-" undo
-set undofile
-set undolevels=1000
-set undoreload=10000
-let &undodir = expand('~/.config/nvim/tmp/undo//')
 ]])
