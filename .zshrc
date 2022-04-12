@@ -61,13 +61,6 @@ t() {
   fi
 }
 
-v() {
-  command nvim "$@"
-}
-compdef v=nvim
-alias vi=v
-alias vim=v
-
 z() {
   if (( $# == 0 )); then
     directory=$(command zoxide query --score --list | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
@@ -86,6 +79,8 @@ z() {
   fi
 }
 
+alias brew='arch -arm64 brew'
+
 alias k='kubectl'
 alias kdp='kubectl describe pod'
 alias kdn='kubectl describe node'
@@ -101,9 +96,11 @@ alias l='ls -lg'
 alias la='l -a'
 alias tree='la --tree -I .git --git-ignore'
 
-alias w='watchexec --restart --clear --'
+alias v=nvim
+alias vi=nvim
+alias vim=nvim
 
-alias brew='arch -arm64 brew'
+alias w='watchexec --restart --clear --'
 
 # global env
 export LANGUAGE=en_US.UTF-8
@@ -138,26 +135,33 @@ setopt LIST_PACKED
 setopt LIST_TYPES
 setopt +o nomatch
 unsetopt COMPLETE_IN_WORD
+# Allow arrow navigation
+zstyle ':completion:*' menu select
 # Don't complete stuff already on the line
 zstyle ':completion:*' ignore-line true
 # Don't complete directory we are already in
 zstyle ':completion:*' ignore-parents parent pwd
-# Print expected type when 0 matches
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set descriptions format to enable group support
-zstyle ':completion:*:descriptions' format '[%d]'
-# set list-colors to enable filename colorizing
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# case-insensitive completion
+# More complete output (not always)
+zstyle ':completion:*' verbose yes
+# Fix group name display
+zstyle ':completion:*' group-name ''
+# Case insensitive completion
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-# show highlight menu on completion
-zstyle ':completion:*' menu select
+# Ignore completion functions
+zstyle ':completion:*:functions' ignored-patterns '_*'
+# Explicitly write the type of what the autocomplete has found / was looking for
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+# Don't prompt for a huge list, page it!
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*:default' menu 'select=0'
+# Separate man page sections
+zstyle ':completion:*:manuals' separate-sections true
 
 # expansion and globbing (http://zsh.sourceforge.net/Doc/Release/Options.html#Expansion-and-Globbing)
 setopt BAD_PATTERN
 setopt GLOB
+setopt GLOBDOTS
 
 # history (http://zsh.sourceforge.net/Doc/Release/Options.html#History)
 export HISTFILE="$HOME/.zsh_history"
