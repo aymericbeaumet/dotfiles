@@ -1,6 +1,6 @@
-[submodule ".config/nvim/autoload"]
-	path = .config/nvim/autoload
-	url = https://github.com/junegunn/vim-plug.git
+[submodule ".config/nvim/pack/packer/start/packer.nvim"]
+	path = .config/nvim/pack/packer/start/packer.nvim
+	url = https://github.com/wbthomason/packer.nvim
 
 [submodule ".zsh/bundle/powerlevel10k"]
 	path = .zsh/bundle/powerlevel10k

@@ -1,13 +1,122 @@
-" Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
-" Github: @aymericbeaumet/dotfiles
+-- Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
+-- Github: @aymericbeaumet/dotfiles
 
+require('packer').startup(function(use)
+	use {
+		'shaunsingh/nord.nvim',
+		config = function() vim.cmd([[
+      set termguicolors
+      colorscheme nord
+    ]]) end
+	}
+
+	use {
+		'nvim-lualine/lualine.nvim',
+		requires = { 'kyazdani42/nvim-web-devicons'},
+		config = function() require('lualine').setup { options = { theme = 'nord' } } end
+	}
+
+	use {
+		'kyazdani42/nvim-tree.lua',
+		requires = { 'kyazdani42/nvim-web-devicons' },
+		config = function() require('nvim-tree').setup() end
+	}
+
+	use {
+		'git@github.com:aymericbeaumet/vim-symlink.git',
+		requires = { 'moll/vim-bbye' }
+	}
+
+	use {
+		'nvim-telescope/telescope.nvim',
+		requires = { 'nvim-lua/plenary.nvim' },
+		config = function()
+			vim.cmd([[
+			nnoremap <leader>b <cmd>Telescope buffers<cr>
+			nnoremap <leader>f <cmd>Telescope find_files<cr>
+			nnoremap <leader>r <cmd>Telescope live_grep<cr>
+			]])
+		end
+	}
+
+	use {
+		'numToStr/Comment.nvim',
+		config = function() require('Comment').setup() end
+	}
+
+	use 'tpope/vim-abolish'
+	use 'tpope/vim-repeat'
+	use 'tpope/vim-surround'
+	use 'tpope/vim-unimpaired'
+
+  use {
+    'tpope/vim-eunuch',
+    config = function()
+	    vim.cmd('cnoreabbrev Remove Delete')
+    end
+  }
+
+	use {
+		'airblade/vim-rooter',
+		config = function()
+			vim.cmd([[
+			let g:rooter_patterns = ['.git']
+			let g:rooter_cd_cmd = 'lcd'
+			let g:rooter_silent_chdir = 1
+			let g:rooter_resolve_links = 1
+			]])
+		end
+	}
+
+	use {
+		'phaazon/hop.nvim',
+		branch = 'v1',
+		config = function()
+			require('hop').setup {
+				keys = 'Z/X.C,VMQ;WYFUPLAORISETN',
+				uppercase_labels = true,
+			}
+		end
+	}
+
+	use {
+		'neoclide/coc.nvim',
+		branch = 'release',
+		config = function()
+			vim.cmd([[
+			let g:coc_global_extensions = [
+			\   'coc-eslint8',
+			\   'coc-go',
+			\   'coc-rust-analyzer',
+			\   'coc-svelte',
+			\   'coc-tsserver',
+			\ ]
+			]])
+		end
+	}
+
+	use {
+		'windwp/nvim-autopairs',
+    config = function()
+      require('nvim-autopairs').setup({
+        disable_filetype = { "TelescopePrompt" , "vim" },
+      })
+    end
+	}
+
+	use 'hashivim/vim-terraform'
+	use 'evanleck/vim-svelte'
+end)
+
+-- legacy
+vim.cmd([[
 " init {{{
 
   filetype plugin indent on
   syntax on
-  set encoding=UTF-8
-  set fileencodings=utf-8
-  scriptencoding utf-8
+  " set encoding=UTF-8
+  " set fileencodings=utf-8
+  " scriptencoding utf-8
   let mapleader = ' '
   let maplocalleader = ' '
 
@@ -25,12 +134,6 @@ augroup initvim
   " auto-import for go on save
   autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
 
-  " add support for .cjs
-  autocmd BufNewFile,BufRead .*.cjs,*.cjs set ft=javascript
-
-  " syntax highlighting for custom filetypes
-  autocmd BufNewFile,BufRead *.tpl set ft=yaml
-
   " wrap at 80 characters for markdown
   autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 
@@ -41,80 +144,13 @@ augroup END
 
 " }}}
 
-" plugins {{{
-
-  call plug#begin(expand('~/.config/nvim/bundle'))
-
-    Plug 'arcticicestudio/nord-vim'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-      let g:airline_theme = 'base16_nord'
-
-    Plug 'kyazdani42/nvim-web-devicons'
-    Plug 'kyazdani42/nvim-tree.lua'
-
-    Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
-    Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'scrooloose/nerdcommenter'
-    Plug 'tpope/vim-abolish'
-    Plug 'tpope/vim-eunuch'
-    Plug 'tpope/vim-repeat'
-    Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-unimpaired'
-    Plug 'airblade/vim-rooter'
-      let g:rooter_patterns = ['.git']
-      let g:rooter_cd_cmd = 'lcd'
-      let g:rooter_silent_chdir = 1
-      let g:rooter_resolve_links = 1
-    Plug 'easymotion/vim-easymotion'
-      let g:EasyMotion_keys = 'Z/X.C,VMQ;WYFUPLAORISETN'
-      let g:EasyMotion_smartcase = 1
-      let g:EasyMotion_use_smartsign_us = 1
-      let g:EasyMotion_use_upper = 1
-      let g:EasyMotion_do_mapping = 0
-
-    Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-      let g:coc_global_extensions = [
-            \   'coc-eslint8',
-            \   'coc-go',
-            \   'coc-rust-analyzer',
-            \   'coc-svelte',
-            \   'coc-tsserver',
-            \ ]
-    Plug 'hashivim/vim-terraform'
-    Plug 'evanleck/vim-svelte'
-
-  call plug#end()
-
-  lua require'nvim-tree'.setup {}
-
-" }}}
-
 " commands {{{
-
-  command! -bang -nargs=? -complete=dir Files
-        \ call fzf#vim#files(
-        \   <q-args>,
-        \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git'}),
-        \   <bang>0,
-        \ )
-
-  function! Ripgrep(query, fullscreen)
-    let command_fmt = 'rg --hidden --glob "!.git" --column --line-number --no-heading --color=always --smart-case -- %s || true'
-    let initial_command = printf(command_fmt, shellescape(a:query))
-    let reload_command = printf(command_fmt, '{q}')
-    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..']}
-    call fzf#vim#grep(initial_command, 1, spec, a:fullscreen)
-  endfunction
-  command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
 
   " https://vi.stackexchange.com/a/8535/1956
   command! Cnext try | cnext | catch | silent! cfirst | endtry
   command! Cprev try | cprev | catch | silent! clast  | endtry
   command! Lnext try | lnext | catch | silent! lfirst | endtry
   command! Lprev try | lprev | catch | silent! llast  | endtry
-
-  cnoreabbrev Remove Delete
 
 " }}}
 
@@ -183,31 +219,31 @@ augroup END
   nnoremap <silent> <C-O> <C-O>zz
 
   " trigger completion
-  inoremap <silent><expr> <C-SPACE> coc#refresh()
-  inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
+  "inoremap <silent><expr> <C-SPACE> coc#refresh()
+  "inoremap <silent><expr> <TAB>
+      "\ pumvisible() ? coc#_select_confirm() :
+      "\ <SID>check_back_space() ? "\<TAB>" :
+      "\ coc#refresh()
+  "function! s:check_back_space() abort
+    "let col = col('.') - 1
+    "return !col || getline('.')[col - 1]  =~# '\s'
+  "endfunction
 
   " navigate diagnostics
-  nmap <silent> [d <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]d <Plug>(coc-diagnostic-next)
+  "nmap <silent> [d <Plug>(coc-diagnostic-prev)
+  "nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
   " show documentation
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-      call CocActionAsync('doHover')
-    else
-      execute '!' . &keywordprg . " " . expand('<cword>')
-    endif
-  endfunction
+  "nnoremap <silent> K :call <SID>show_documentation()<CR>
+  "function! s:show_documentation()
+    "if (index(['vim','help'], &filetype) >= 0)
+      "execute 'h '.expand('<cword>')
+    "elseif (coc#rpc#ready())
+      "call CocActionAsync('doHover')
+    "else
+      "execute '!' . &keywordprg . " " . expand('<cword>')
+    "endif
+  "endfunction
 
   " convenient insert mode mappings
   inoremap <silent> <C-A> <Home>
@@ -222,10 +258,6 @@ augroup END
   nnoremap q: <Nop>
 
 " }}}
-
-" theme
-set termguicolors " enable true colors support
-colorscheme nord
 
 " buffer
 set autoread " watch for file changes by other programs
@@ -289,3 +321,4 @@ set undofile
 set undolevels=1000
 set undoreload=10000
 let &undodir = expand('~/.config/nvim/tmp/undo//')
+]])
