@@ -84,16 +84,6 @@ autocmd BufWritePre * :%s/\s\+$//e
 augroup END
 ]])
 
--- commands
-
-vim.cmd([[
-" https://vi.stackexchange.com/a/8535/1956
-command! Cnext try | cnext | catch | silent! cfirst | endtry
-command! Cprev try | cprev | catch | silent! clast  | endtry
-command! Lnext try | lnext | catch | silent! lfirst | endtry
-command! Lprev try | lprev | catch | silent! llast  | endtry
-]])
-
 -- mappings
 
 -- mappings > leader
