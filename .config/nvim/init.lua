@@ -69,6 +69,7 @@ vim.o.undolevels = 1000
 vim.o.undoreload = 10000
 
 -- autocmds
+
 vim.cmd([[
 augroup initvim
 
@@ -95,58 +96,59 @@ command! Lprev try | lprev | catch | silent! llast  | endtry
 
 -- mappings
 
-vim.cmd([[
-" leader mappings
-vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
-nnoremap <silent> <Leader>d :Bwipeout!<CR>
-nnoremap <silent> <Leader>vc :PlugClean<CR>
-nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.lua<CR>
-nnoremap <silent> <Leader>vs :PackerCompile<CR>:source ~/.config/nvim/init.lua<CR>
-nnoremap <silent> <Leader>vu :PackerSync<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
+-- mappings > leader
+vim.api.nvim_set_keymap('v', '<cr>', '<cmd>w !squeeze -1 --url --open<cr><cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>Bwipeout!<cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>vc', '<cmd>PackerClean<cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>ve', '<cmd>e ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>vs', '<cmd>PackerCompile<cr>:source ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>vu', '<cmd>PackerSync<cr>:CocUpdate<cr>:CocCommand go.install.tools<cr>', { noremap = true, silent = true })
 
-" save current buffer
-nnoremap <CR> :w<CR>
+-- mappings > save current buffer
+vim.api.nvim_set_keymap('n', '<cr>', '<cmd>w<cr>', { noremap = true, silent = true })
 
-" better `j` and `k`
-nnoremap <silent> j gj
-vnoremap <silent> j gj
-nnoremap <silent> k gk
-vnoremap <silent> k gk
+-- mappings > better `j` and `k`
+vim.api.nvim_set_keymap('n', 'j', 'gj', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'j', 'gj', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'k', 'gk', { noremap = true, silent = true })
 
-" copy from the cursor to the end of line using Y (matches D behavior)
-nnoremap <silent> Y y$
+-- mappings > copy from the cursor to the end of line using Y (matches D behavior)
+vim.api.nvim_set_keymap('n', 'Y', 'y$', { noremap = true, silent = true })
 
-" keep the cursor in place while joining lines
-nnoremap <silent> J mZJ`Z
+-- mappings > keep the cursor in place while joining lines
+vim.api.nvim_set_keymap('n', 'J', 'mZJ`Z', { noremap = true, silent = true })
 
-" reselect visual block after indent
-vnoremap <silent> < <gv
-vnoremap <silent> > >gv
+-- mappings > reselect visual block after indent
+vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true, silent = true })
 
-" clean screen and reload file
-nnoremap <silent> <C-L>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>
-xnoremap <silent> <C-L> <C-C>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
+-- mappings > clean screen and reload file
+vim.api.nvim_set_keymap('n', '<c-l>', '<cmd>nohl<cr>:redraw<cr>:checktime<cr><C-L>', { noremap = true, silent = true })
 
-" keep the next/previous in the middle of the screen
-nnoremap <silent> n nzz
-nnoremap <silent> N Nzz
-nnoremap <silent> * *zz
-nnoremap <silent> # #zz
-nnoremap <silent> <C-I> <C-I>zz
-nnoremap <silent> <C-O> <C-O>zz
+-- mappings > keep "teleport" moves vertically centered
+vim.api.nvim_set_keymap('n', 'n', 'nzz', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'N', 'Nzz', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '*', '*zz', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '#', '#zz', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<c-i>', '<c-i>zz', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<c-o>', '<c-o>zz', { noremap = true, silent = true })
 
-" convenient insert mode mappings
-inoremap <silent> <C-A> <Home>
-inoremap <silent> <C-B> <Left>
-inoremap <silent> <C-D> <Del>
-inoremap <silent> <C-E> <End>
-inoremap <silent> <C-F> <Right>
-inoremap <silent> <C-H> <Backspace>
+-- mappings > convenient insert mode mappings
+vim.api.nvim_set_keymap('i', '<c-a>', '<home>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<c-b>', '<left>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<c-d>', '<del>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<c-e>', '<end>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<c-f>', '<right>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<c-h>', '<backspace>', { noremap = true, silent = true })
 
-" disable some bindings
-nnoremap Q <Nop>
-nnoremap q: <Nop>
-]])
+-- mappings > disable some mappings
+vim.api.nvim_set_keymap('n', '<up>', '<nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<down>', '<nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<left>', '<nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<right>', '<nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'Q', '<nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'q:', '<nop>', { noremap = true, silent = true })
 
 -- plugins
 require('packer').startup(function(use)
@@ -248,7 +250,7 @@ require('packer').startup(function(use)
       autocmd!
 
       " jump to definition
-      autocmd FileType rust,go nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition')<CR>zz
+      autocmd FileType rust,go nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition')<cr>zz
 
       " auto-import for go on save
       autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
@@ -271,7 +273,7 @@ require('packer').startup(function(use)
       "nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
       " show documentation
-      "nnoremap <silent> K :call <SID>show_documentation()<CR>
+      "nnoremap <silent> K :call <SID>show_documentation()<cr>
       "function! s:show_documentation()
       "if (index(['vim','help'], &filetype) >= 0)
       "execute 'h '.expand('<cword>')
