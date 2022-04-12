@@ -67,86 +67,89 @@ vim.o.undoreload = 10000
 
 -- plugins
 require('packer').startup(function(use)
-	use {
-		'shaunsingh/nord.nvim',
-		config = function()
-			vim.cmd([[
-			set termguicolors
-			colorscheme nord
-			]])
-		end
-	}
+  use {
+    'shaunsingh/nord.nvim',
+    config = function()
+      vim.cmd([[
+      set termguicolors
+      colorscheme nord
+      ]])
+    end
+  }
 
-	use {
-		'nvim-lualine/lualine.nvim',
-		requires = { 'kyazdani42/nvim-web-devicons'},
-		config = function() require('lualine').setup { options = { theme = 'nord' } } end
-	}
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons'},
+    config = function() require('lualine').setup { options = { theme = 'nord' } } end
+  }
 
-	use {
-		'kyazdani42/nvim-tree.lua',
-		requires = { 'kyazdani42/nvim-web-devicons' },
-		config = function() require('nvim-tree').setup() end
-	}
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+    config = function() require('nvim-tree').setup() end
+  }
 
-	use {
-		'git@github.com:aymericbeaumet/vim-symlink.git',
-		requires = { 'moll/vim-bbye' }
-	}
+  use {
+    'git@github.com:aymericbeaumet/vim-symlink.git',
+    requires = { 'moll/vim-bbye' }
+  }
 
-	use {
-		'nvim-telescope/telescope.nvim',
-		requires = { 'nvim-lua/plenary.nvim' },
-		config = function()
-			vim.cmd([[
-			nnoremap <silent> <leader>b <cmd>Telescope buffers<cr>
-			nnoremap <silent> <leader>f <cmd>Telescope find_files<cr>
-			nnoremap <silent> <leader>r <cmd>Telescope live_grep<cr>
-      nnoremap <silent> <Leader>/ <cmd>Telescope current_buffer_fuzzy_find fuzzy=false case_mode=ignore_case<cr>
-			]])
-		end
-	}
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('telescope').setup {
+        defaults = { file_ignore_patterns = { ".git" } }
+      }
+      vim.cmd([[
+      nnoremap <silent> <leader>b <cmd>Telescope buffers<cr>
+      nnoremap <silent> <leader>f <cmd>Telescope find_files hidden=true<cr>
+      nnoremap <silent> <leader>r <cmd>Telescope live_grep hidden=true<cr>
+      nnoremap <silent> <Leader>/ <cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>
+      ]])
+    end,
+  }
 
-	use {
-		'numToStr/Comment.nvim',
-		config = function() require('Comment').setup() end
-	}
+  use {
+    'numToStr/Comment.nvim',
+    config = function() require('Comment').setup() end
+  }
 
-	use 'tpope/vim-abolish'
-	use 'tpope/vim-repeat'
-	use 'tpope/vim-surround'
-	use 'tpope/vim-unimpaired'
+  use 'tpope/vim-abolish'
+  use 'tpope/vim-repeat'
+  use 'tpope/vim-surround'
+  use 'tpope/vim-unimpaired'
 
-	use {
-		'tpope/vim-eunuch',
-		config = function()
-			vim.cmd('cnoreabbrev Remove Delete')
-		end
-	}
+  use {
+    'tpope/vim-eunuch',
+    config = function()
+      vim.cmd('cnoreabbrev Remove Delete')
+    end
+  }
 
-	use {
-		'airblade/vim-rooter',
-		setup = function()
-			vim.g.rooter_patterns = { '.git' }
-			vim.g.rooter_cd_cmd = 'lcd'
-			vim.g.rooter_silent_chdir = 1
-			vim.g.rooter_resolve_links = 1
-		end
-	}
+  use {
+    'airblade/vim-rooter',
+    setup = function()
+      vim.g.rooter_patterns = { '.git' }
+      vim.g.rooter_cd_cmd = 'lcd'
+      vim.g.rooter_silent_chdir = 1
+      vim.g.rooter_resolve_links = 1
+    end
+  }
 
-	use {
-		'phaazon/hop.nvim',
-		branch = 'v1',
-		config = function()
-			require('hop').setup()
+  use {
+    'phaazon/hop.nvim',
+    branch = 'v1',
+    config = function()
+      require('hop').setup()
       vim.cmd("nnoremap <silent> <Leader><Leader>s :HopChar1<cr>")
-		end
-	}
+    end
+  }
 
-	use {
-		'neoclide/coc.nvim',
-		branch = 'release',
-		setup = function()
+  use {
+    'neoclide/coc.nvim',
+    branch = 'release',
+    setup = function()
       vim.g.coc_global_extensions = {
         'coc-eslint8',
         'coc-go',
@@ -154,20 +157,20 @@ require('packer').startup(function(use)
         'coc-svelte',
         'coc-tsserver',
       }
-		end
-	}
+    end
+  }
 
-	use {
-		'windwp/nvim-autopairs',
-		config = function()
-			require('nvim-autopairs').setup({
-				disable_filetype = { 'TelescopePrompt' , 'vim' },
-			})
-		end
-	}
+  use {
+    'windwp/nvim-autopairs',
+    config = function()
+      require('nvim-autopairs').setup({
+        disable_filetype = { 'TelescopePrompt' , 'vim' },
+      })
+    end
+  }
 
-	use 'hashivim/vim-terraform'
-	use 'evanleck/vim-svelte'
+  use 'hashivim/vim-terraform'
+  use 'evanleck/vim-svelte'
 end)
 
 -- legacy
