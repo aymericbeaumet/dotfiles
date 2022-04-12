@@ -80,6 +80,3 @@
 
 [bitbucket]
   user = aymericbeaumet
-
-[include]
-  path = ~/.secrets/.gitconfig

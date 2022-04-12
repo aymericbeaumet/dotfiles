@@ -203,12 +203,3 @@ source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # zsh-syntax-highlighting plugin
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-
-# fzf-tab plugin
-#source "$HOME/.zsh/bundle/fzf-tab/fzf-tab.plugin.zsh"
-  ## preview directory's content with exa when completing cd
-  #zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-  ## switch group using `,` and `.`
-  #zstyle ':fzf-tab:*' switch-group ',' '.'
-  ## accept the result and start another completion immediately with Ctrl-I
-  #zstyle ':fzf-tab:*' continuous-trigger 'ctrl-i'

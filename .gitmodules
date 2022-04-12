@@ -1,19 +1,16 @@
-[submodule "shallow/.vim/autoload"]
-	path = shallow/.vim/autoload
+[submodule ".config/nvim/autoload"]
+	path = .config/nvim/autoload
 	url = https://github.com/junegunn/vim-plug.git
 
-[submodule "shallow/.zsh/bundle/powerlevel10k"]
-	path = shallow/.zsh/bundle/powerlevel10k
+[submodule ".zsh/bundle/powerlevel10k"]
+	path = .zsh/bundle/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
-[submodule "shallow/.zsh/bundle/zsh-autosuggestions"]
-	path = shallow/.zsh/bundle/zsh-autosuggestions
+[submodule ".zsh/bundle/zsh-autosuggestions"]
+	path = .zsh/bundle/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
-[submodule "shallow/.zsh/bundle/zsh-completions"]
-	path = shallow/.zsh/bundle/zsh-completions
+[submodule ".zsh/bundle/zsh-completions"]
+	path = .zsh/bundle/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
-[submodule "shallow/.zsh/bundle/zsh-syntax-highlighting"]
-	path = shallow/.zsh/bundle/zsh-syntax-highlighting
+[submodule ".zsh/bundle/zsh-syntax-highlighting"]
+	path = .zsh/bundle/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "shallow/.zsh/bundle/fzf-tab"]
-	path = shallow/.zsh/bundle/fzf-tab
-	url = https://github.com/Aloxaf/fzf-tab

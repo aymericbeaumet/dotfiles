@@ -15,7 +15,7 @@
 
 " autocmd {{{
 
-augroup vimrc
+augroup initvim
 
   autocmd!
 
@@ -55,8 +55,6 @@ augroup END
 
     Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
     Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
-    Plug 'Yggdroot/indentLine'
-    Plug 'jiangmiao/auto-pairs'
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-abolish'
     Plug 'tpope/vim-eunuch'
@@ -150,8 +148,8 @@ augroup END
 
   nnoremap <silent> <Leader>r :Ripgrep<CR>
 
-  nnoremap <silent> <Leader>ve :e ~/.vimrc<CR>
-  nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
+  nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.vim<CR>
+  nnoremap <silent> <Leader>vs :source ~/.config/nvim/init.vim<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -218,6 +216,10 @@ augroup END
   inoremap <silent> <C-E> <End>
   inoremap <silent> <C-F> <Right>
   inoremap <silent> <C-H> <Backspace>
+
+  " disable some bindings
+  nnoremap Q <Nop>
+  nnoremap q: <Nop>
 
 " }}}
 
