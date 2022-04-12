@@ -62,16 +62,7 @@ t() {
 }
 
 v() {
-  if (( $# == 0 )); then
-    filepath=$(command fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
-    if [ -z "$filepath" ]; then
-      echo 'wow such empty' 1>&2
-      return
-    fi
-    command nvim "$filepath"
-  else
-    command nvim "$@"
-  fi
+  command nvim "$@"
 }
 compdef v=nvim
 alias vi=v
@@ -111,6 +102,8 @@ alias la='l -a'
 alias tree='la --tree -I .git --git-ignore'
 
 alias w='watchexec --restart --clear --'
+
+alias brew='arch -arm64 brew'
 
 # global env
 export LANGUAGE=en_US.UTF-8
@@ -159,6 +152,8 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # case-insensitive completion
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+# show highlight menu on completion
+zstyle ':completion:*' menu select
 
 # expansion and globbing (http://zsh.sourceforge.net/Doc/Release/Options.html#Expansion-and-Globbing)
 setopt BAD_PATTERN

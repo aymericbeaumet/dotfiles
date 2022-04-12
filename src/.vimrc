@@ -34,9 +34,6 @@ augroup vimrc
   " wrap at 80 characters for markdown
   autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 
-  " remember last position in file
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-
   " delete whitespaces
   autocmd BufWritePre * :%s/\s\+$//e
 
@@ -48,10 +45,17 @@ augroup END
 
   call plug#begin(expand('~/.vim/bundle'))
 
-    Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
-
-    Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
     Plug 'arcticicestudio/nord-vim'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+      let g:airline_theme = 'base16_nord'
+
+    Plug 'kyazdani42/nvim-web-devicons'
+    Plug 'kyazdani42/nvim-tree.lua'
+
+    Plug 'git@github.com:aymericbeaumet/vim-symlink.git' | Plug 'moll/vim-bbye'
+    Plug '/opt/homebrew/opt/fzf' | Plug 'junegunn/fzf.vim'
+    Plug 'Yggdroot/indentLine'
     Plug 'jiangmiao/auto-pairs'
     Plug 'scrooloose/nerdcommenter'
     Plug 'tpope/vim-abolish'
@@ -59,18 +63,11 @@ augroup END
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-unimpaired'
-    Plug 'junegunn/goyo.vim'
-
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-      let g:airline_theme = 'base16_nord'
-
     Plug 'airblade/vim-rooter'
       let g:rooter_patterns = ['.git']
       let g:rooter_cd_cmd = 'lcd'
       let g:rooter_silent_chdir = 1
       let g:rooter_resolve_links = 1
-
     Plug 'easymotion/vim-easymotion'
       let g:EasyMotion_keys = 'Z/X.C,VMQ;WYFUPLAORISETN'
       let g:EasyMotion_smartcase = 1
@@ -86,11 +83,12 @@ augroup END
             \   'coc-svelte',
             \   'coc-tsserver',
             \ ]
-
     Plug 'hashivim/vim-terraform'
     Plug 'evanleck/vim-svelte'
 
   call plug#end()
+
+  lua require'nvim-tree'.setup {}
 
 " }}}
 
@@ -131,11 +129,6 @@ augroup END
 
   vnoremap <silent> <Leader>s :sort<CR>
 
-  nnoremap <silent> [l :Lprev<CR>
-  nnoremap <silent> ]l :Lnext<CR>
-  nnoremap <silent> [q :Cprev<CR>
-  nnoremap <silent> ]q :Cnext<CR>
-
   nmap <Leader><Leader>s <Plug>(easymotion-overwin-f)
 
   nnoremap <silent> <Leader>/ :BLines<CR>
@@ -148,6 +141,8 @@ augroup END
 
   nnoremap <silent> <Leader>d :Bwipeout!<CR>
 
+  nnoremap <silent> <Leader>e :NvimTreeToggle<CR>
+
   nnoremap <silent> <Leader>f :Files<CR>
 
   nnoremap <silent> <Leader>pc :PlugClean<CR>
@@ -157,8 +152,6 @@ augroup END
 
   nnoremap <silent> <Leader>ve :e ~/.vimrc<CR>
   nnoremap <silent> <Leader>vs :source ~/.vimrc<CR>
-
-  nnoremap <silent> <Leader>z :Goyo<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
@@ -234,7 +227,6 @@ colorscheme nord
 
 " buffer
 set autoread " watch for file changes by other programs
-set autowrite " automatically save before :next and :make
 set hidden " when a tab is closed, do not delete the buffer
 
 " cursor
@@ -242,7 +234,7 @@ set nostartofline " leave my cursor alone
 set scrolloff=8 " keep at least 8 lines after the cursor when scrolling
 set sidescrolloff=10 " (same as `scrolloff` about columns during side scrolling)
 set virtualedit=block " allow the cursor to go in to virtual places
-set nocursorline " do not color the cursorline
+set cursorline " color the cursorline
 
 " command
 set history=10000 " increase history size
@@ -268,7 +260,7 @@ set mouse=a " enable mouse support
 set noinsertmode
 set noshowmode " do not show the mode
 set showtabline=0 " never show tabline
-set nonumber
+set number " show line numbers
 
 " performance
 set lazyredraw " only redraw when needed

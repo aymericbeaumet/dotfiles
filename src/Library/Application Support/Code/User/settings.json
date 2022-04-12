@@ -1,6 +1,6 @@
 {
-  "editor.fontFamily": "FuraCode Nerd Font",
-  "editor.fontSize": 14,
+  "editor.fontFamily": "FiraCode Nerd Font",
+  "editor.fontSize": 13,
   "editor.tabSize": 2,
   "telemetry.enableTelemetry": false,
   "telemetry.enableCrashReporter": false,
