@@ -99,9 +99,10 @@ require('packer').startup(function(use)
 		requires = { 'nvim-lua/plenary.nvim' },
 		config = function()
 			vim.cmd([[
-			nnoremap <leader>b <cmd>Telescope buffers<cr>
-			nnoremap <leader>f <cmd>Telescope find_files<cr>
-			nnoremap <leader>r <cmd>Telescope live_grep<cr>
+			nnoremap <silent> <leader>b <cmd>Telescope buffers<cr>
+			nnoremap <silent> <leader>f <cmd>Telescope find_files<cr>
+			nnoremap <silent> <leader>r <cmd>Telescope live_grep<cr>
+      nnoremap <silent> <Leader>/ <cmd>Telescope current_buffer_fuzzy_find fuzzy=false case_mode=ignore_case<cr>
 			]])
 		end
 	}
@@ -137,10 +138,8 @@ require('packer').startup(function(use)
 		'phaazon/hop.nvim',
 		branch = 'v1',
 		config = function()
-			require('hop').setup {
-				keys = 'Z/X.C,VMQ;WYFUPLAORISETN',
-				uppercase_labels = true,
-			}
+			require('hop').setup()
+      vim.cmd("nnoremap <silent> <Leader><Leader>s :HopChar1<cr>")
 		end
 	}
 
@@ -214,12 +213,6 @@ augroup END
 
   vnoremap <silent> <Leader>s :sort<CR>
 
-  nmap <Leader><Leader>s <Plug>(easymotion-overwin-f)
-
-  nnoremap <silent> <Leader>/ :BLines<CR>
-
-  nnoremap <silent> <Leader>b :Buffers<CR>
-
   " <Leader>c<Space> nerdcommenter
   nnoremap <silent> <Leader>ce :e ~/.config/nvim/coc-settings.json<CR>
   nnoremap <silent> <Leader>cu :CocUpdate<CR>
@@ -228,15 +221,11 @@ augroup END
 
   nnoremap <silent> <Leader>e :NvimTreeToggle<CR>
 
-  nnoremap <silent> <Leader>f :Files<CR>
-
   nnoremap <silent> <Leader>pc :PlugClean<CR>
   nnoremap <silent> <Leader>pu :PlugUpdate<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
 
-  nnoremap <silent> <Leader>r :Ripgrep<CR>
-
   nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.lua<CR>
-  nnoremap <silent> <Leader>vs :source ~/.config/nvim/init.lua<CR>
+  nnoremap <silent> <Leader>vs :PackerCompile<CR>:source ~/.config/nvim/init.lua<CR>
 
   " save current buffer
   nnoremap <CR> :w<CR>
