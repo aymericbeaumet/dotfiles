@@ -39,6 +39,10 @@ vim.o.spell = false -- disable spell checking
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
 
+-- mappings
+vim.o.timeoutlen = 500 -- time to wait when a part of a mapped sequence is typed
+vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
+
 -- performance
 vim.o.lazyredraw = true -- only redraw when needed
 vim.o.ttyfast = true -- we have a fast terminal
@@ -63,17 +67,101 @@ vim.o.wildmode = 'full' -- ensure better completion
 vim.o.undofile = true
 vim.o.undolevels = 1000
 vim.o.undoreload = 10000
--- let &undodir = expand('~/.config/nvim/tmp/undo//')
+
+-- autocmds
+vim.cmd([[
+augroup initvim
+
+autocmd!
+
+" wrap at 80 characters for markdown
+autocmd BufRead,BufNewFile *.md setlocal textwidth=80
+
+" delete whitespaces
+autocmd BufWritePre * :%s/\s\+$//e
+
+augroup END
+]])
+
+-- commands
+
+vim.cmd([[
+" https://vi.stackexchange.com/a/8535/1956
+command! Cnext try | cnext | catch | silent! cfirst | endtry
+command! Cprev try | cprev | catch | silent! clast  | endtry
+command! Lnext try | lnext | catch | silent! lfirst | endtry
+command! Lprev try | lprev | catch | silent! llast  | endtry
+]])
+
+-- mappings
+
+vim.cmd([[
+" leader mappings
+vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
+nnoremap <silent> <Leader>d :Bwipeout!<CR>
+nnoremap <silent> <Leader>vc :PlugClean<CR>
+nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.lua<CR>
+nnoremap <silent> <Leader>vs :PackerCompile<CR>:source ~/.config/nvim/init.lua<CR>
+nnoremap <silent> <Leader>vu :PackerSync<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
+
+" save current buffer
+nnoremap <CR> :w<CR>
+
+" better `j` and `k`
+nnoremap <silent> j gj
+vnoremap <silent> j gj
+nnoremap <silent> k gk
+vnoremap <silent> k gk
+
+" copy from the cursor to the end of line using Y (matches D behavior)
+nnoremap <silent> Y y$
+
+" keep the cursor in place while joining lines
+nnoremap <silent> J mZJ`Z
+
+" reselect visual block after indent
+vnoremap <silent> < <gv
+vnoremap <silent> > >gv
+
+" clean screen and reload file
+nnoremap <silent> <C-L>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>
+xnoremap <silent> <C-L> <C-C>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
+
+" keep the next/previous in the middle of the screen
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> <C-I> <C-I>zz
+nnoremap <silent> <C-O> <C-O>zz
+
+" convenient insert mode mappings
+inoremap <silent> <C-A> <Home>
+inoremap <silent> <C-B> <Left>
+inoremap <silent> <C-D> <Del>
+inoremap <silent> <C-E> <End>
+inoremap <silent> <C-F> <Right>
+inoremap <silent> <C-H> <Backspace>
+
+" disable some bindings
+nnoremap Q <Nop>
+nnoremap q: <Nop>
+]])
 
 -- plugins
 require('packer').startup(function(use)
+  use 'tpope/vim-abolish'
+  use 'tpope/vim-repeat'
+  use 'tpope/vim-surround'
+  use 'tpope/vim-unimpaired'
+  use 'hashivim/vim-terraform'
+  use 'evanleck/vim-svelte'
+
   use {
     'shaunsingh/nord.nvim',
     config = function()
-      vim.cmd([[
-      set termguicolors
-      colorscheme nord
-      ]])
+      vim.o.termguicolors = true
+      vim.cmd('colorscheme nord')
     end
   }
 
@@ -86,7 +174,10 @@ require('packer').startup(function(use)
   use {
     'kyazdani42/nvim-tree.lua',
     requires = { 'kyazdani42/nvim-web-devicons' },
-    config = function() require('nvim-tree').setup() end
+    config = function()
+      require('nvim-tree').setup()
+      vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
+    end
   }
 
   use {
@@ -101,12 +192,10 @@ require('packer').startup(function(use)
       require('telescope').setup {
         defaults = { file_ignore_patterns = { ".git" } }
       }
-      vim.cmd([[
-      nnoremap <silent> <leader>b <cmd>Telescope buffers<cr>
-      nnoremap <silent> <leader>f <cmd>Telescope find_files hidden=true<cr>
-      nnoremap <silent> <leader>r <cmd>Telescope live_grep hidden=true<cr>
-      nnoremap <silent> <Leader>/ <cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>
-      ]])
+      vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep hidden=true<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>', { noremap = true, silent = true })
     end,
   }
 
@@ -114,11 +203,6 @@ require('packer').startup(function(use)
     'numToStr/Comment.nvim',
     config = function() require('Comment').setup() end
   }
-
-  use 'tpope/vim-abolish'
-  use 'tpope/vim-repeat'
-  use 'tpope/vim-surround'
-  use 'tpope/vim-unimpaired'
 
   use {
     'tpope/vim-eunuch',
@@ -142,7 +226,7 @@ require('packer').startup(function(use)
     branch = 'v1',
     config = function()
       require('hop').setup()
-      vim.cmd("nnoremap <silent> <Leader><Leader>s :HopChar1<cr>")
+      vim.api.nvim_set_keymap('n', '<leader><leader>s', '<cmd>HopChar1<cr>', { noremap = true, silent = true })
     end
   }
 
@@ -157,6 +241,47 @@ require('packer').startup(function(use)
         'coc-svelte',
         'coc-tsserver',
       }
+
+      vim.cmd([[
+      augroup nvim_coc
+
+      autocmd!
+
+      " jump to definition
+      autocmd FileType rust,go nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition')<CR>zz
+
+      " auto-import for go on save
+      autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+
+      augroup END
+
+      " trigger completion
+      "inoremap <silent><expr> <C-SPACE> coc#refresh()
+      "inoremap <silent><expr> <TAB>
+      "\ pumvisible() ? coc#_select_confirm() :
+      "\ <SID>check_back_space() ? "\<TAB>" :
+      "\ coc#refresh()
+      "function! s:check_back_space() abort
+      "let col = col('.') - 1
+      "return !col || getline('.')[col - 1]  =~# '\s'
+      "endfunction
+
+      " navigate diagnostics
+      "nmap <silent> [d <Plug>(coc-diagnostic-prev)
+      "nmap <silent> ]d <Plug>(coc-diagnostic-next)
+
+      " show documentation
+      "nnoremap <silent> K :call <SID>show_documentation()<CR>
+      "function! s:show_documentation()
+      "if (index(['vim','help'], &filetype) >= 0)
+      "execute 'h '.expand('<cword>')
+      "elseif (coc#rpc#ready())
+      "call CocActionAsync('doHover')
+      "else
+      "execute '!' . &keywordprg . " " . expand('<cword>')
+      "endif
+      "endfunction
+      ]])
     end
   }
 
@@ -168,138 +293,4 @@ require('packer').startup(function(use)
       })
     end
   }
-
-  use 'hashivim/vim-terraform'
-  use 'evanleck/vim-svelte'
 end)
-
--- legacy
-vim.cmd([[
-" autocmd {{{
-
-augroup initvim
-
-  autocmd!
-
-  " custom mappings for some filetypes
-  autocmd FileType rust,go nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition')<CR>zz
-
-  " auto-import for go on save
-  autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
-
-  " wrap at 80 characters for markdown
-  autocmd BufRead,BufNewFile *.md setlocal textwidth=80
-
-  " delete whitespaces
-  autocmd BufWritePre * :%s/\s\+$//e
-
-augroup END
-
-" }}}
-
-" commands {{{
-
-  " https://vi.stackexchange.com/a/8535/1956
-  command! Cnext try | cnext | catch | silent! cfirst | endtry
-  command! Cprev try | cprev | catch | silent! clast  | endtry
-  command! Lnext try | lnext | catch | silent! lfirst | endtry
-  command! Lprev try | lprev | catch | silent! llast  | endtry
-
-" }}}
-
-" mappings {{{
-
-  set timeoutlen=500 " time to wait when a part of a mapped sequence is typed
-  set ttimeoutlen=0  " instant insert mode exit using escape
-
-  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
-
-  vnoremap <silent> <Leader>s :sort<CR>
-
-  " <Leader>c<Space> nerdcommenter
-  nnoremap <silent> <Leader>ce :e ~/.config/nvim/coc-settings.json<CR>
-  nnoremap <silent> <Leader>cu :CocUpdate<CR>
-
-  nnoremap <silent> <Leader>d :Bwipeout!<CR>
-
-  nnoremap <silent> <Leader>e :NvimTreeToggle<CR>
-
-  nnoremap <silent> <Leader>pc :PlugClean<CR>
-  nnoremap <silent> <Leader>pu :PlugUpdate<CR>:CocUpdate<CR>:CocCommand go.install.tools<CR>
-
-  nnoremap <silent> <Leader>ve :e ~/.config/nvim/init.lua<CR>
-  nnoremap <silent> <Leader>vs :PackerCompile<CR>:source ~/.config/nvim/init.lua<CR>
-
-  " save current buffer
-  nnoremap <CR> :w<CR>
-
-  " better `j` and `k`
-  nnoremap <silent> j gj
-  vnoremap <silent> j gj
-  nnoremap <silent> k gk
-  vnoremap <silent> k gk
-
-  " copy from the cursor to the end of line using Y (matches D behavior)
-  nnoremap <silent> Y y$
-
-  " keep the cursor in place while joining lines
-  nnoremap <silent> J mZJ`Z
-
-  " reselect visual block after indent
-  vnoremap <silent> < <gv
-  vnoremap <silent> > >gv
-
-  " clean screen and reload file
-  nnoremap <silent> <C-L>      :<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>
-  xnoremap <silent> <C-L> <C-C>:<C-u>nohl<CR>:redraw<CR>:checktime<CR><C-L>gv
-
-  " keep the next/previous in the middle of the screen
-  nnoremap <silent> n nzz
-  nnoremap <silent> N Nzz
-  nnoremap <silent> * *zz
-  nnoremap <silent> # #zz
-  nnoremap <silent> <C-I> <C-I>zz
-  nnoremap <silent> <C-O> <C-O>zz
-
-  " trigger completion
-  "inoremap <silent><expr> <C-SPACE> coc#refresh()
-  "inoremap <silent><expr> <TAB>
-      "\ pumvisible() ? coc#_select_confirm() :
-      "\ <SID>check_back_space() ? "\<TAB>" :
-      "\ coc#refresh()
-  "function! s:check_back_space() abort
-    "let col = col('.') - 1
-    "return !col || getline('.')[col - 1]  =~# '\s'
-  "endfunction
-
-  " navigate diagnostics
-  "nmap <silent> [d <Plug>(coc-diagnostic-prev)
-  "nmap <silent> ]d <Plug>(coc-diagnostic-next)
-
-  " show documentation
-  "nnoremap <silent> K :call <SID>show_documentation()<CR>
-  "function! s:show_documentation()
-    "if (index(['vim','help'], &filetype) >= 0)
-      "execute 'h '.expand('<cword>')
-    "elseif (coc#rpc#ready())
-      "call CocActionAsync('doHover')
-    "else
-      "execute '!' . &keywordprg . " " . expand('<cword>')
-    "endif
-  "endfunction
-
-  " convenient insert mode mappings
-  inoremap <silent> <C-A> <Home>
-  inoremap <silent> <C-B> <Left>
-  inoremap <silent> <C-D> <Del>
-  inoremap <silent> <C-E> <End>
-  inoremap <silent> <C-F> <Right>
-  inoremap <silent> <C-H> <Backspace>
-
-  " disable some bindings
-  nnoremap Q <Nop>
-  nnoremap q: <Nop>
-
-" }}}
-
-]])
