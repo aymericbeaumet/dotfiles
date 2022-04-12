@@ -134,7 +134,7 @@ augroup END
   nnoremap <silent> <Leader>b :Buffers<CR>
 
   " <Leader>c<Space> nerdcommenter
-  nnoremap <silent> <Leader>ce :e ~/.vim/coc-settings.json<CR>
+  nnoremap <silent> <Leader>ce :e ~/.config/nvim/coc-settings.json<CR>
   nnoremap <silent> <Leader>cu :CocUpdate<CR>
 
   nnoremap <silent> <Leader>d :Bwipeout!<CR>
@@ -288,4 +288,4 @@ set wildmode=full " ensure better completion
 set undofile
 set undolevels=1000
 set undoreload=10000
-let &undodir = expand('~/.vim/tmp/undo//')
+let &undodir = expand('~/.config/nvim/tmp/undo//')
