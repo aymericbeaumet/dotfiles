@@ -15,7 +15,7 @@ symlink() {
 done
 
 /usr/bin/find . -mindepth 1 -maxdepth 1 -type dir -name '.*' \! -name '.config' \! -name '.git' | while read -r dir ; do
-    symlink ${dir#./}
+  symlink ${dir#./}
 done
 
 /usr/bin/find .config -mindepth 1 -maxdepth 1 -type dir | while read -r dir ; do
