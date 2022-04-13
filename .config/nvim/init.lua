@@ -11,8 +11,8 @@ vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrol
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
 
 -- encoding
-opt.encoding = "utf-8"
-opt.fileencoding = "utf-8"
+vim.o.encoding = "utf-8"
+vim.o.fileencoding = "utf-8"
 
 -- indentation
 vim.o.expandtab = true -- replace tabs by spaces
@@ -23,7 +23,7 @@ vim.o.tabstop = 2 -- n spaces when using <Tab>
 
 -- interface
 vim.o.mouse = 'a' -- enable mouse support
-vim.o.number = true -- show line numbers
+vim.o.number = false -- don't show line numbers
 vim.o.shortmess = 'aoOsIctF' -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
@@ -36,7 +36,10 @@ vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
 -- performance
 vim.o.lazyredraw = true -- only redraw when needed
 vim.o.ttyfast = true -- we have a fast terminal
-vim.o.updatetime = 1000 -- flush swap file to disk every second
+
+-- safetynet
+vim.o.undofile = true
+vim.o.updatetime = 300 -- flush swap file to disk every second
 
 -- search and replace
 vim.o.ignorecase = true -- ignore case when searching
@@ -51,80 +54,56 @@ vim.o.wildignore = vim.o.wildignore .. '*.pdf,*.dmg' -- ignore binary files
 vim.o.wildignore = vim.o.wildignore .. '.*.sw*,*~' -- ignore editor files
 vim.o.wildignore = vim.o.wildignore .. '.DS_Store' -- ignore OS files
 
--- undo
-vim.o.undofile = true
-
--- autocmds
-
-vim.cmd([[
-augroup initvim
-
-autocmd!
-
-" wrap at 80 characters for markdown
-autocmd BufRead,BufNewFile *.md setlocal textwidth=80
-
-" delete whitespaces
-autocmd BufWritePre * :%s/\s\+$//e
-
-augroup END
-]])
-
 -- mappings
-
--- mappings > leader
-vim.api.nvim_set_keymap('v', '<cr>', '<cmd>w !squeeze -1 --url --open<cr><cr>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>Bwipeout!<cr>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>vc', '<cmd>PackerClean<cr>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>ve', '<cmd>e ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>vs', '<cmd>PackerCompile<cr>:luafile ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>vu', '<cmd>PackerSync<cr>:CocUpdate<cr>:CocCommand go.install.tools<cr>', { noremap = true, silent = true })
-
--- mappings > save current buffer
-vim.api.nvim_set_keymap('n', '<cr>', '<cmd>w<cr>', { noremap = true, silent = true })
-
--- mappings > better `j` and `k`
-vim.api.nvim_set_keymap('n', 'j', 'gj', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', 'j', 'gj', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', 'k', 'gk', { noremap = true, silent = true })
-
--- mappings > copy from the cursor to the end of line using Y (matches D behavior)
-vim.api.nvim_set_keymap('n', 'Y', 'y$', { noremap = true, silent = true })
-
--- mappings > keep the cursor in place while joining lines
-vim.api.nvim_set_keymap('n', 'J', 'mZJ`Z', { noremap = true, silent = true })
-
--- mappings > reselect visual block after indent
-vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true, silent = true })
-
--- mappings > clean screen and reload file
-vim.api.nvim_set_keymap('n', '<c-l>', '<cmd>nohl<cr>:redraw<cr>:checktime<cr><C-L>', { noremap = true, silent = true })
-
--- mappings > keep "teleport" moves vertically centered
-vim.api.nvim_set_keymap('n', 'n', 'nzz', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'N', 'Nzz', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '*', '*zz', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '#', '#zz', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<c-i>', '<c-i>zz', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<c-o>', '<c-o>zz', { noremap = true, silent = true })
-
--- mappings > convenient insert mode mappings
-vim.api.nvim_set_keymap('i', '<c-a>', '<home>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<c-b>', '<left>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<c-d>', '<del>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<c-e>', '<end>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<c-f>', '<right>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<c-h>', '<backspace>', { noremap = true, silent = true })
-
--- mappings > disable some mappings
-vim.api.nvim_set_keymap('n', '<up>', '<nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<down>', '<nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<left>', '<nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<right>', '<nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'Q', '<nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'q:', '<nop>', { noremap = true, silent = true })
+for _, mapping in ipairs({
+  -- leader
+  {'n', '<leader>vc', '<cmd>PackerClean<cr>'},
+  {'n', '<leader>ve', '<cmd>edit ~/.config/nvim/init.lua<cr>'},
+  {'n', '<leader>vr', '<cmd>CocRestart<cr>'},
+  {'n', '<leader>vs', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>'},
+  {'n', '<leader>vu', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>:CocUpdate<cr>:CocCommand go.install.tools<cr>'},
+  -- save current buffer
+  {'n', '<cr>', '<cmd>w<cr>'},
+  -- extract and open url from selection
+  {'v', '<cr>', '<cmd>w !squeeze -1 --url --open<cr><cr>'},
+  -- better `j` and `k`
+  {'n', 'j', 'gj'},
+  {'v', 'j', 'gj'},
+  {'n', 'k', 'gk'},
+  {'v', 'k', 'gk'},
+  -- copy from the cursor to the end of line using Y (matches D behavior)
+  {'n', 'Y', 'y$'},
+  -- keep the cursor in place while joining lines
+  {'n', 'J', 'mZJ`Z'},
+  -- reselect visual block after indent
+  {'v', '<', '<gv'},
+  {'v', '>', '>gv'},
+  -- clean screen and reload file
+  {'n', '<c-l>', '<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>'},
+  -- keep "teleport" moves vertically centered
+  {'n', 'n', 'nzz'},
+  {'n', 'N', 'Nzz'},
+  {'n', '*', '*zz'},
+  {'n', '#', '#zz'},
+  {'n', '<c-i>', '<c-i>zz'},
+  {'n', '<c-o>', '<c-o>zz'},
+  -- convenient insert mode mappings
+  {'i', '<c-a>', '<home>'},
+  {'i', '<c-b>', '<left>'},
+  {'i', '<c-d>', '<del>'},
+  {'i', '<c-e>', '<end>'},
+  {'i', '<c-f>', '<right>'},
+  {'i', '<c-h>', '<backspace>'},
+  -- disable some mappings
+  {'n', '<up>', '<nop>'},
+  {'n', '<down>', '<nop>'},
+  {'n', '<left>', '<nop>'},
+  {'n', '<right>', '<nop>'},
+  {'n', 'Q', '<nop>'},
+  {'n', 'q:', '<nop>'},
+}) do
+vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+end
 
 -- plugins
 require('packer').startup(function(use)
@@ -147,7 +126,25 @@ require('packer').startup(function(use)
   use {
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons'},
-    config = function() require('lualine').setup { options = { theme = 'nord' } } end
+    config = function() require('lualine').setup({ options = { theme = 'nord' } }) end
+  }
+
+  use {
+    'phaazon/hop.nvim',
+    branch = 'v1',
+    config = function()
+      require('hop').setup()
+      for _, mode in ipairs({'n', 'v', 'o'}) do
+        vim.api.nvim_set_keymap(mode, '<leader>s', '<cmd>HopChar1<cr>', { noremap = true, silent = true })
+      end
+    end
+  }
+
+  use {
+    'famiu/bufdelete.nvim',
+    config = function()
+      vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>Bdelete!<cr>', { noremap = true, silent = true })
+    end
   }
 
   use {
@@ -163,11 +160,12 @@ require('packer').startup(function(use)
     'nvim-telescope/telescope.nvim',
     requires = { 'nvim-lua/plenary.nvim' },
     config = function()
-      require('telescope').setup {
+      require('telescope').setup ({
         defaults = { file_ignore_patterns = { ".git" } }
-      }
+      })
       vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>h', '<cmd>Telescope command_history<cr>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep hidden=true<cr>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>', { noremap = true, silent = true })
     end,
@@ -196,15 +194,6 @@ require('packer').startup(function(use)
   }
 
   use {
-    'phaazon/hop.nvim',
-    branch = 'v1',
-    config = function()
-      require('hop').setup()
-      vim.api.nvim_set_keymap('n', '<leader><leader>s', '<cmd>HopChar1<cr>', { noremap = true, silent = true })
-    end
-  }
-
-  use {
     'windwp/nvim-autopairs',
     config = function()
       require('nvim-autopairs').setup({
@@ -214,57 +203,73 @@ require('packer').startup(function(use)
   }
 
   use {
-    'neoclide/coc.nvim',
-    branch = 'release',
-    setup = function()
-      vim.g.coc_global_extensions = {
-        'coc-eslint8',
-        'coc-go',
-        'coc-rust-analyzer',
-        'coc-svelte',
-        'coc-tsserver',
-      }
+    "folke/trouble.nvim",
+    requires = { "kyazdani42/nvim-web-devicons" },
+    config = function()
+      require("trouble").setup()
+    end
+  }
 
-      vim.cmd([[
-      augroup nvim_coc
+  use {
+    'hrsh7th/nvim-cmp',
+    requires = {
+      'neovim/nvim-lspconfig',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      --
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+    },
+    config = function()
+      vim.o.completeopt = 'menu,menuone,noselect'
 
-      autocmd!
+      local cmp = require'cmp'
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ['<C-E>'] = cmp.mapping.confirm({ select = true }),
+          ['<tab>'] = cmp.mapping.confirm({ select = true }),
+          ['<cr>'] = cmp.mapping.confirm({ select = true }),
+        }),
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end,
+        },
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+        }, {
+          { name = 'buffer' },
+        }),
+        window = {
+          documentation = cmp.config.window.bordered(),
+        },
+      })
 
-      " jump to definition
-      autocmd FileType rust,go nnoremap <silent> <buffer> <C-]> :call CocAction('jumpDefinition')<cr>zz
-
-      " auto-import for go on save
-      autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
-
-      augroup END
-
-      " trigger completion
-      "inoremap <silent><expr> <C-SPACE> coc#refresh()
-      "inoremap <silent><expr> <TAB>
-      "\ pumvisible() ? coc#_select_confirm() :
-      "\ <SID>check_back_space() ? "\<TAB>" :
-      "\ coc#refresh()
-      "function! s:check_back_space() abort
-      "let col = col('.') - 1
-      "return !col || getline('.')[col - 1]  =~# '\s'
-      "endfunction
-
-      " navigate diagnostics
-      "nmap <silent> [d <Plug>(coc-diagnostic-prev)
-      "nmap <silent> ]d <Plug>(coc-diagnostic-next)
-
-      " show documentation
-      "nnoremap <silent> K :call <SID>show_documentation()<cr>
-      "function! s:show_documentation()
-      "if (index(['vim','help'], &filetype) >= 0)
-      "execute 'h '.expand('<cword>')
-      "elseif (coc#rpc#ready())
-      "call CocActionAsync('doHover')
-      "else
-      "execute '!' . &keywordprg . " " . expand('<cword>')
-      "endif
-      "endfunction
-      ]])
+      local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+      local flags = { debounce_text_changes = 150 }
+      local on_attach = function(client, bufnr)
+        local opts = { noremap = true, silent = true }
+        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+      end
+      for _, lsp in pairs({ 'gopls', 'rust_analyzer', 'tsserver' }) do
+        require('lspconfig')[lsp].setup({ capabilities = capabilities, flags = flags, on_attach = on_attach })
+      end
     end
   }
 end)
