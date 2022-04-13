@@ -1,26 +1,20 @@
 -- Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 -- Github: @aymericbeaumet/dotfiles
 
--- buffer
-vim.o.autoread = true -- watch for file changes by other programs
-vim.o.hidden = true -- when a tab is closed, do not delete the buffer
-
 -- bindings
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- command
-vim.o.history = 10000 -- increase history size
-
 -- cursor
-vim.o.cursorline = true -- color the cursorline
-vim.o.scrolloff = 8 -- keep at least 8 lines after the cursor when scrolling
+vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
-vim.o.startofline = false -- leave my cursor alone
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
 
+-- encoding
+opt.encoding = "utf-8"
+opt.fileencoding = "utf-8"
+
 -- indentation
-vim.o.autoindent = true -- auto-indentation
 vim.o.expandtab = true -- replace tabs by spaces
 vim.o.shiftwidth = 2 -- number of space to use for indent
 vim.o.smarttab = true -- insert `shiftwidth` spaces instead of tabs
@@ -28,14 +22,10 @@ vim.o.softtabstop = 2 -- n spaces when using <Tab>
 vim.o.tabstop = 2 -- n spaces when using <Tab>
 
 -- interface
-vim.o.fillchars = '' -- remove split separators
-vim.o.laststatus = 2 -- always display status line
 vim.o.mouse = 'a' -- enable mouse support
 vim.o.number = true -- show line numbers
 vim.o.shortmess = 'aoOsIctF' -- disable vim welcome message / enable shorter messages
-vim.o.showcmd = true -- show (partial) command in the last line of the screen
 vim.o.showtabline = 0 -- never show tabline
-vim.o.spell = false -- disable spell checking
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
 
@@ -46,10 +36,10 @@ vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
 -- performance
 vim.o.lazyredraw = true -- only redraw when needed
 vim.o.ttyfast = true -- we have a fast terminal
+vim.o.updatetime = 1000 -- flush swap file to disk every second
 
 -- search and replace
 vim.o.ignorecase = true -- ignore case when searching
-vim.o.incsearch = true -- show matches as soon as possible
 vim.o.smartcase = true -- smarter search case
 vim.o.wildignorecase = true -- ignore case in file completion
 vim.o.wildignore = '' -- remove default ignores
@@ -60,13 +50,9 @@ vim.o.wildignore = vim.o.wildignore .. '*.png,*.jpg,*.jpeg,*.gif' -- ignore imag
 vim.o.wildignore = vim.o.wildignore .. '*.pdf,*.dmg' -- ignore binary files
 vim.o.wildignore = vim.o.wildignore .. '.*.sw*,*~' -- ignore editor files
 vim.o.wildignore = vim.o.wildignore .. '.DS_Store' -- ignore OS files
-vim.o.wildmenu = true -- better command line completion menu
-vim.o.wildmode = 'full' -- ensure better completion
 
 -- undo
 vim.o.undofile = true
-vim.o.undolevels = 1000
-vim.o.undoreload = 10000
 
 -- autocmds
 
@@ -91,7 +77,7 @@ vim.api.nvim_set_keymap('v', '<cr>', '<cmd>w !squeeze -1 --url --open<cr><cr>', 
 vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>Bwipeout!<cr>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>vc', '<cmd>PackerClean<cr>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>ve', '<cmd>e ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>vs', '<cmd>PackerCompile<cr>:source ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>vs', '<cmd>PackerCompile<cr>:luafile ~/.config/nvim/init.lua<cr>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>vu', '<cmd>PackerSync<cr>:CocUpdate<cr>:CocCommand go.install.tools<cr>', { noremap = true, silent = true })
 
 -- mappings > save current buffer
@@ -146,6 +132,7 @@ require('packer').startup(function(use)
   use 'tpope/vim-repeat'
   use 'tpope/vim-surround'
   use 'tpope/vim-unimpaired'
+
   use 'hashivim/vim-terraform'
   use 'evanleck/vim-svelte'
 
@@ -170,11 +157,6 @@ require('packer').startup(function(use)
       require('nvim-tree').setup()
       vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
     end
-  }
-
-  use {
-    'git@github.com:aymericbeaumet/vim-symlink.git',
-    requires = { 'moll/vim-bbye' }
   }
 
   use {
@@ -219,6 +201,15 @@ require('packer').startup(function(use)
     config = function()
       require('hop').setup()
       vim.api.nvim_set_keymap('n', '<leader><leader>s', '<cmd>HopChar1<cr>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
+    'windwp/nvim-autopairs',
+    config = function()
+      require('nvim-autopairs').setup({
+        disable_filetype = { 'TelescopePrompt' , 'vim' },
+      })
     end
   }
 
@@ -274,15 +265,6 @@ require('packer').startup(function(use)
       "endif
       "endfunction
       ]])
-    end
-  }
-
-  use {
-    'windwp/nvim-autopairs',
-    config = function()
-      require('nvim-autopairs').setup({
-        disable_filetype = { 'TelescopePrompt' , 'vim' },
-      })
     end
   }
 end)
