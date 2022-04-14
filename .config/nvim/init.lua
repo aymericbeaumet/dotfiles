@@ -90,8 +90,9 @@ for _, mapping in ipairs({
   {'n', '<c-i>', '<c-i>zz'},
   {'n', '<c-o>', '<c-o>zz'},
   -- emulate permanent global marks
-  {'n', "'A", '<cmd>edit ~/.dotfiles/Brewfile<cr>'},
+  {'n', "'A", '<cmd>edit ~/.config/alacritty/alacritty.yml<cr>'},
   {'n', "'B", '<cmd>edit ~/.dotfiles/Brewfile<cr>'},
+  {'n', "'D", '<cmd>edit ~/.dotfiles<cr>'},
   {'n', "'V", '<cmd>edit ~/.config/nvim/init.lua<cr>'},
   {'n', "'T", '<cmd>edit ~/.tmux.conf<cr>'},
   {'n', "'Z", '<cmd>edit ~/.zshrc<cr>'},
@@ -100,8 +101,6 @@ for _, mapping in ipairs({
   {'n', '<down>', '<nop>'},
   {'n', '<left>', '<nop>'},
   {'n', '<right>', '<nop>'},
-  {'n', 'Q', '<nop>'},
-  {'n', 'q:', '<nop>'},
 }) do
   vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -112,9 +111,6 @@ require('packer').startup(function(use)
   use 'tpope/vim-repeat'
   use 'tpope/vim-surround'
   use 'tpope/vim-unimpaired'
-
-  use 'hashivim/vim-terraform'
-  use 'evanleck/vim-svelte'
 
   use {
     'shaunsingh/nord.nvim',
@@ -134,9 +130,10 @@ require('packer').startup(function(use)
         options = { theme = 'nord' },
         sections = {
           lualine_c = {
-            {'filename', path = 1 }
+            { 'filename', path = 1 }
           },
         },
+        extensions = { 'nvim-tree', 'symbols-outline' }
       })
     end
   }
@@ -183,13 +180,12 @@ require('packer').startup(function(use)
   use {
     'hrsh7th/nvim-cmp',
     requires = {
-      'neovim/nvim-lspconfig',
-      'hrsh7th/cmp-nvim-lsp',
+      'neovim/nvim-lspconfig', -- neovim lsp plugin
+      'L3MON4D3/LuaSnip', -- snippet plugin
+      -- sources
       'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      'hrsh7th/cmp-cmdline',
-      --
-      'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
     },
     config = function()
@@ -209,7 +205,9 @@ require('packer').startup(function(use)
         },
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
+        }, {
           { name = 'luasnip' },
+          { name = 'path', options = { trailing_slash = true } },
         }, {
           { name = 'buffer' },
         }),
@@ -259,8 +257,16 @@ require('packer').startup(function(use)
     'kyazdani42/nvim-tree.lua',
     requires = { 'kyazdani42/nvim-web-devicons' },
     config = function()
-      require('nvim-tree').setup({})
+      require('nvim-tree').setup()
       vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>E', '<cmd>NvimTreeFocus<cr>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
+    'simrat39/symbols-outline.nvim',
+    setup = function()
+      vim.api.nvim_set_keymap('n', '<leader>o', '<cmd>SymbolsOutline<cr>', { noremap = true, silent = true })
     end
   }
 
@@ -283,8 +289,9 @@ require('packer').startup(function(use)
       local actions = require("telescope.actions")
       require('telescope').setup ({
         defaults = {
-          sorting_strategy = "ascending",
           file_ignore_patterns = { ".git" },
+          vimgrep_arguments = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--hidden" },
+          sorting_strategy = "ascending",
           layout_strategy = "horizontal",
           layout_config = {
             height = 0.80,
@@ -300,15 +307,20 @@ require('packer').startup(function(use)
         },
         pickers = {
           find_files = {
-            find_command = { "fd", "--type", "f", "--strip-cwd-prefix" }
+            find_command = { "fd", "--type", "f", "--strip-cwd-prefix", "--hidden" },
           },
         }
       })
-      vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>h', '<cmd>Telescope command_history<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep hidden=true<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>', { noremap = true, silent = true })
+      for lhs, rhs in pairs({
+        ['<leader>/'] = '<cmd>Telescope current_buffer_fuzzy_find<cr>',
+        ['<leader>:'] = '<cmd>Telescope command_history<cr>',
+        ['<leader>b'] = '<cmd>Telescope buffers<cr>',
+        ['<leader>c'] = '<cmd>Telescope commands<cr>',
+        ['<leader>f'] = '<cmd>Telescope find_files<cr>',
+        ['<leader>r'] = '<cmd>Telescope live_grep<cr>',
+      }) do
+        vim.api.nvim_set_keymap('n', lhs, rhs, { noremap = true, silent = true })
+      end
     end,
   }
 end)
