@@ -8,7 +8,7 @@
   a = add
   br = branch -v --sort=-committerdate
   bw = browse
-  c-p = cherry-pick
+  cp = cherry-pick
   ci = commit
   cia = commit --amend
   cl = clone
@@ -26,7 +26,6 @@
   rbi = rebase --interactive
   rmc = rm --cached
   rs = reset
-  rsh = reset --hard
   rv = revert
   sh = stash
   shc = stash clear
@@ -36,7 +35,6 @@
   st = status --short --branch
   sw = show
   #
-  shco = !git sh && git co
   plps = !git pl && git ps
 
 [color]
@@ -48,18 +46,26 @@
 
 [core]
   excludesfile = ~/.gitignore
-  pager = less
+  pager = delta
+
+[delta]
+  navigate = true
 
 [diff]
-  tool = vimdiff
-  mnemonicprefix = true
+  colorMoved = default
 
 [grep]
   lineNumber = true
   patternType = extended
 
+[interactive]
+  diffFilter = delta --color-only
+
 [man]
   viewer = less
+
+[merge]
+  conflictstyle = diff3
 
 [pull]
   rebase = true
