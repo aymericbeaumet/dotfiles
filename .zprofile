@@ -1,11 +1,11 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com>
 # Github: @aymericbeaumet/dotfiles
 
-if [ -z "$RIPGREP_CONFIG_PATH" ]; then
-  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
-fi
+export BAT_THEME="Nord"
+export CGO_CFLAGS_ALLOW="-Xpreprocessor"
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
-if [ -z "$HOMEBREW_PREFIX" ] && [ -x /opt/homebrew/bin/brew ]; then
+if [ -z "$HOMEBREW_PREFIX" ]; then
   eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
@@ -18,6 +18,3 @@ if [ -z "$GOPATH" ]; then
   export GOPATH="$HOME/.go"
   export PATH="$GOPATH/bin:$PATH"
 fi
-
-# temporary fix
-export CGO_CFLAGS_ALLOW="-Xpreprocessor"

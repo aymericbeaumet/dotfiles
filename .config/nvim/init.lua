@@ -59,9 +59,8 @@ for _, mapping in ipairs({
   -- leader
   {'n', '<leader>vc', '<cmd>PackerClean<cr>'},
   {'n', '<leader>ve', '<cmd>edit ~/.config/nvim/init.lua<cr>'},
-  {'n', '<leader>vr', '<cmd>CocRestart<cr>'},
   {'n', '<leader>vs', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>'},
-  {'n', '<leader>vu', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>:CocUpdate<cr>:CocCommand go.install.tools<cr>'},
+  {'n', '<leader>vu', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>'},
   -- save current buffer
   {'n', '<cr>', '<cmd>w<cr>'},
   -- extract and open url from selection
@@ -130,48 +129,6 @@ require('packer').startup(function(use)
   }
 
   use {
-    'phaazon/hop.nvim',
-    branch = 'v1',
-    config = function()
-      require('hop').setup()
-      for _, mode in ipairs({'n', 'v', 'o'}) do
-        vim.api.nvim_set_keymap(mode, '<leader>s', '<cmd>HopChar1<cr>', { noremap = true, silent = true })
-      end
-    end
-  }
-
-  use {
-    'famiu/bufdelete.nvim',
-    config = function()
-      vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>Bdelete!<cr>', { noremap = true, silent = true })
-    end
-  }
-
-  use {
-    'kyazdani42/nvim-tree.lua',
-    requires = { 'kyazdani42/nvim-web-devicons' },
-    config = function()
-      require('nvim-tree').setup()
-      vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
-    end
-  }
-
-  use {
-    'nvim-telescope/telescope.nvim',
-    requires = { 'nvim-lua/plenary.nvim' },
-    config = function()
-      require('telescope').setup ({
-        defaults = { file_ignore_patterns = { ".git" } }
-      })
-      vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>h', '<cmd>Telescope command_history<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep hidden=true<cr>', { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>', { noremap = true, silent = true })
-    end,
-  }
-
-  use {
     'numToStr/Comment.nvim',
     config = function() require('Comment').setup() end
   }
@@ -228,7 +185,7 @@ require('packer').startup(function(use)
       local cmp = require'cmp'
       cmp.setup({
         mapping = cmp.mapping.preset.insert({
-          ['<C-E>'] = cmp.mapping.confirm({ select = true }),
+          ['<c-e>'] = cmp.mapping.confirm({ select = true }),
           ['<tab>'] = cmp.mapping.confirm({ select = true }),
           ['<cr>'] = cmp.mapping.confirm({ select = true }),
         }),
@@ -253,23 +210,59 @@ require('packer').startup(function(use)
       local on_attach = function(client, bufnr)
         local opts = { noremap = true, silent = true }
         vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ld', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
       end
-      for _, lsp in pairs({ 'gopls', 'rust_analyzer', 'tsserver' }) do
+      for _, lsp in pairs({ 'gopls', 'rust_analyzer' }) do
         require('lspconfig')[lsp].setup({ capabilities = capabilities, flags = flags, on_attach = on_attach })
       end
     end
+  }
+
+  use {
+    'phaazon/hop.nvim',
+    branch = 'v1',
+    config = function()
+      require('hop').setup()
+      for _, mode in ipairs({'n', 'v', 'o'}) do
+        vim.api.nvim_set_keymap(mode, '<leader>s', '<cmd>HopChar1<cr>', { noremap = true, silent = true })
+      end
+    end
+  }
+
+  use {
+    'famiu/bufdelete.nvim',
+    config = function()
+      vim.api.nvim_set_keymap('n', '<leader>d', '<cmd>Bdelete!<cr>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+    config = function()
+      require('nvim-tree').setup()
+      vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('telescope').setup ({
+        defaults = { file_ignore_patterns = { ".git" } }
+      })
+      vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>h', '<cmd>Telescope command_history<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep hidden=true<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>Telescope current_buffer_fuzzy_find case_mode=ignore_case<cr>', { noremap = true, silent = true })
+    end,
   }
 end)
