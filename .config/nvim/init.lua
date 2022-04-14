@@ -182,8 +182,10 @@ require('packer').startup(function(use)
     requires = {
       'neovim/nvim-lspconfig', -- neovim lsp plugin
       'L3MON4D3/LuaSnip', -- snippet plugin
+      'ray-x/lsp_signature.nvim', -- lsp signature plugin
       -- sources
       'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-cmdline',
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'saadparwaiz1/cmp_luasnip',
@@ -194,9 +196,10 @@ require('packer').startup(function(use)
       local cmp = require'cmp'
       cmp.setup({
         mapping = cmp.mapping.preset.insert({
-          ['<c-e>'] = cmp.mapping.confirm({ select = true }),
           ['<tab>'] = cmp.mapping.confirm({ select = true }),
           ['<cr>'] = cmp.mapping.confirm({ select = true }),
+          ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-u>"] = cmp.mapping.scroll_docs(4),
         }),
         snippet = {
           expand = function(args)
@@ -216,6 +219,22 @@ require('packer').startup(function(use)
         },
       })
 
+      cmp.setup.cmdline('/', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' }
+        }
+      })
+
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline' }
+        })
+      })
+
       local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
       local flags = { debounce_text_changes = 150 }
       local on_attach = function(client, bufnr)
@@ -228,6 +247,13 @@ require('packer').startup(function(use)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+        require "lsp_signature".on_attach({
+          hi_parameter = "IncSearch",
+          hint_enable = false,
+          handler_opts = {
+            border = "rounded"
+          }
+        }, bufnr)
       end
       for _, lsp in pairs({ 'gopls', 'rust_analyzer' }) do
         require('lspconfig')[lsp].setup({ capabilities = capabilities, flags = flags, on_attach = on_attach })
