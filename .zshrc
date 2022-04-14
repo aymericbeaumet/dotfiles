@@ -13,11 +13,6 @@ source "$HOME/.zsh/bundle/powerlevel10k/powerlevel10k.zsh-theme"
 fpath=("$HOME/.zsh/bundle/zsh-completions/src" $fpath)
 autoload -Uz compinit && compinit
 
-...() {
-  dirpath=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-  cd "$dirpath" || exit 1
-}
-
 g() {
   if (( $# == 0 )); then
     command git status -sb
@@ -156,6 +151,13 @@ unsetopt FLOW_CONTROL
 precmd() {
   echo -ne '\e[5 q'
 }
+
+# expand ... to be the git root directory
+expand-triple-dot () {
+  BUFFER="$(sed "s#\.\.\.#$(git rev-parse --show-toplevel 2>/dev/null || pwd)#g" <<< $BUFFER)"
+  zle .accept-line
+}
+zle -N accept-line expand-triple-dot
 
 # allow command line edition in vim with ^F
 autoload -Uz edit-command-line && zle -N edit-command-line
