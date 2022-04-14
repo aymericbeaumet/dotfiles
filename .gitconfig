@@ -46,10 +46,7 @@
 
 [core]
   excludesfile = ~/.gitignore
-  pager = delta
-
-[delta]
-  navigate = true
+  pager = less
 
 [diff]
   colorMoved = default
@@ -58,14 +55,8 @@
   lineNumber = true
   patternType = extended
 
-[interactive]
-  diffFilter = delta --color-only
-
 [man]
   viewer = less
-
-[merge]
-  conflictstyle = diff3
 
 [pull]
   rebase = true
@@ -79,10 +70,4 @@
   email = hi@aymericbeaumet.com
 
 [github]
-  user = aymericbeaumet
-
-[gitlab]
-  user = aymericbeaumet
-
-[bitbucket]
   user = aymericbeaumet
