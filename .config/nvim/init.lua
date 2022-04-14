@@ -14,6 +14,10 @@ vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
 vim.o.encoding = "utf-8"
 vim.o.fileencoding = "utf-8"
 
+-- filetypes
+vim.g.do_filetype_lua = 1
+vim.g.did_load_filetypes = 0
+
 -- indentation
 vim.o.expandtab = true -- replace tabs by spaces
 vim.o.shiftwidth = 2 -- number of space to use for indent
@@ -37,9 +41,9 @@ vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
 vim.o.lazyredraw = true -- only redraw when needed
 vim.o.ttyfast = true -- we have a fast terminal
 
--- safetynet
-vim.o.undofile = true
-vim.o.updatetime = 300 -- flush swap file to disk every second
+-- safety net
+vim.o.undofile = true -- store undos on disk
+vim.o.updatetime = 300 -- flush swap file to disk on a regular basis
 
 -- search and replace
 vim.o.ignorecase = true -- ignore case when searching
@@ -58,7 +62,6 @@ vim.o.wildignore = vim.o.wildignore .. '.DS_Store' -- ignore OS files
 for _, mapping in ipairs({
   -- leader
   {'n', '<leader>vc', '<cmd>PackerClean<cr>'},
-  {'n', '<leader>ve', '<cmd>edit ~/.config/nvim/init.lua<cr>'},
   {'n', '<leader>vs', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>'},
   {'n', '<leader>vu', '<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>'},
   -- save current buffer
@@ -86,14 +89,13 @@ for _, mapping in ipairs({
   {'n', '#', '#zz'},
   {'n', '<c-i>', '<c-i>zz'},
   {'n', '<c-o>', '<c-o>zz'},
-  -- convenient insert mode mappings
-  {'i', '<c-a>', '<home>'},
-  {'i', '<c-b>', '<left>'},
-  {'i', '<c-d>', '<del>'},
-  {'i', '<c-e>', '<end>'},
-  {'i', '<c-f>', '<right>'},
-  {'i', '<c-h>', '<backspace>'},
-  -- disable some mappings
+  -- emulate permanent global marks
+  {'n', "'A", '<cmd>edit ~/.dotfiles/Brewfile<cr>'},
+  {'n', "'B", '<cmd>edit ~/.dotfiles/Brewfile<cr>'},
+  {'n', "'V", '<cmd>edit ~/.config/nvim/init.lua<cr>'},
+  {'n', "'T", '<cmd>edit ~/.tmux.conf<cr>'},
+  {'n', "'Z", '<cmd>edit ~/.zshrc<cr>'},
+  -- disable mappings
   {'n', '<up>', '<nop>'},
   {'n', '<down>', '<nop>'},
   {'n', '<left>', '<nop>'},
@@ -101,7 +103,7 @@ for _, mapping in ipairs({
   {'n', 'Q', '<nop>'},
   {'n', 'q:', '<nop>'},
 }) do
-vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+  vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
 -- plugins
@@ -118,6 +120,8 @@ require('packer').startup(function(use)
     'shaunsingh/nord.nvim',
     config = function()
       vim.o.termguicolors = true
+      vim.g.nord_borders = true
+      vim.g.nord_italic = true
       vim.cmd('colorscheme nord')
     end
   }
@@ -125,7 +129,16 @@ require('packer').startup(function(use)
   use {
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons'},
-    config = function() require('lualine').setup({ options = { theme = 'nord' } }) end
+    config = function()
+      require('lualine').setup({
+        options = { theme = 'nord' },
+        sections = {
+          lualine_c = {
+            {'filename', path = 1 }
+          },
+        },
+      })
+    end
   }
 
   use {
@@ -246,8 +259,20 @@ require('packer').startup(function(use)
     'kyazdani42/nvim-tree.lua',
     requires = { 'kyazdani42/nvim-web-devicons' },
     config = function()
-      require('nvim-tree').setup()
+      require('nvim-tree').setup({})
       vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
+    'voldikss/vim-floaterm',
+    setup = function()
+      vim.g.floaterm_title = " Zsh "
+      vim.g.floaterm_height = 0.80
+      vim.g.floaterm_width = 0.80
+      vim.g.floaterm_autoclose = 2
+      vim.g.floaterm_autohide = 0
+      vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>FloatermNew --cwd=<root><cr>', { noremap = true, silent = true })
     end
   }
 
@@ -255,8 +280,29 @@ require('packer').startup(function(use)
     'nvim-telescope/telescope.nvim',
     requires = { 'nvim-lua/plenary.nvim' },
     config = function()
+      local actions = require("telescope.actions")
       require('telescope').setup ({
-        defaults = { file_ignore_patterns = { ".git" } }
+        defaults = {
+          sorting_strategy = "ascending",
+          file_ignore_patterns = { ".git" },
+          layout_strategy = "horizontal",
+          layout_config = {
+            height = 0.80,
+            width = 0.80,
+            prompt_position = "top",
+            preview_width = 0.55
+          },
+          mappings = {
+            i = {
+              ["<esc>"] = actions.close,
+            },
+          },
+        },
+        pickers = {
+          find_files = {
+            find_command = { "fd", "--type", "f", "--strip-cwd-prefix" }
+          },
+        }
       })
       vim.api.nvim_set_keymap('n', '<leader>b', '<cmd>Telescope buffers<cr>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true, silent = true })
