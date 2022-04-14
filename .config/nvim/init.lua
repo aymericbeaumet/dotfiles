@@ -218,8 +218,8 @@ require('packer').startup(function(use)
         mapping = cmp.mapping.preset.insert({
           ['<tab>'] = cmp.mapping.confirm({ select = true }),
           ['<cr>'] = cmp.mapping.confirm({ select = true }),
-          ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-u>"] = cmp.mapping.scroll_docs(4),
+          ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-d>"] = cmp.mapping.scroll_docs(4),
         }),
         snippet = {
           expand = function(args)
