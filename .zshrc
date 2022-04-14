@@ -153,7 +153,7 @@ precmd() {
 }
 
 # expand ... to be the git root directory
-expand-triple-dot () {
+expand-triple-dot() {
   BUFFER="$(sed "s#\.\.\.#$(git rev-parse --show-toplevel 2>/dev/null || pwd)#g" <<< $BUFFER)"
   zle .accept-line
 }
