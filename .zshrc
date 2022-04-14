@@ -18,28 +18,6 @@ autoload -Uz compinit && compinit
   cd "$dirpath" || exit 1
 }
 
-b() {
-  if (( $# == 0 )); then
-    filepath=$(command fd --type file --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'bat {}')
-    if [ -z "$filepath" ]; then
-      echo 'wow such empty' 1>&2
-      return
-    fi
-    command bat "$filepath"
-  else
-    command bat "$@"
-  fi
-}
-
-d() {
-  dirpath=$(command fd --type directory --hidden --exclude .git | fzf -0 -1 --query="$1" --preview 'exa -la {}')
-  if [ -z "$dirpath" ]; then
-    echo 'wow such empty' 1>&2
-    return
-  fi
-  cd "$dirpath" || exit 1
-}
-
 g() {
   if (( $# == 0 )); then
     command git status -sb
@@ -52,7 +30,7 @@ compdef g=git
 t() {
   if (( $# == 0 )); then
     if [ -n "$TMUX" ]; then
-      echo "$TMUX"
+      echo "session=$TMUX"
     else
       tmux attach -t default || tmux new -s default
     fi
@@ -60,32 +38,18 @@ t() {
     command tmux "$@"
   fi
 }
-
-z() {
-  if (( $# == 0 )); then
-    directory=$(command zoxide query --score --list | fzf -0 -1 --nth=2 --no-sort --preview 'exa -la {2}' | awk '{ print $2 }')
-    if [ -z "$directory" ]; then
-      echo 'wow such empty' 1>&2
-      return
-    fi
-    cd "$directory" || exit 1
-  else
-    directory=$(command zoxide query "$@" 2>/dev/null)
-    if [ -z "$directory" ]; then
-      echo 'wow such empty' 1>&2
-      return
-    fi
-    cd "$directory" || exit 1
-  fi
-}
+compdef t=tmux
 
 alias brew='arch -arm64 brew'
 
 alias k='kubectl'
-alias kdp='kubectl describe pod'
+alias kdd='kubectl describe deploy'
+alias kdi='kubectl describe ingress'
+alias kdj='kubectl describe job'
 alias kdn='kubectl describe node'
+alias kdp='kubectl describe pod'
 alias kga='kubectl get all'
-alias kgd='kubectl get deployments'
+alias kgd='kubectl get deploy'
 alias kgi='kubectl get ingress'
 alias kgj='kubectl get jobs  --sort-by=.status.startTime'
 alias kgn='kubectl get nodes --sort-by=.metadata.creationTimestamp'
@@ -94,7 +58,7 @@ alias kgp='kubectl get pods  --sort-by=.status.startTime'
 alias ls='exa --group-directories-first'
 alias l='ls -lg'
 alias la='l -a'
-alias tree='la --tree -I .git --git-ignore'
+alias tree='tree -a'
 
 alias v=nvim
 alias vi=nvim
@@ -200,7 +164,7 @@ bindkey "^V" edit-command-line
   export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # zoxide plugin
-[ -x zoxide ] && eval "$(zoxide init zsh --no-aliases)"
+eval "$(zoxide init zsh)"
 
 # zsh-autosuggestions plugin
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
