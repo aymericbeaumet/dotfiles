@@ -157,13 +157,13 @@ precmd() {
   echo -ne '\e[5 q'
 }
 
-# allow command line edition in vim with ^V
+# allow command line edition in vim with ^F
 autoload -Uz edit-command-line && zle -N edit-command-line
-bindkey "^V" edit-command-line
+bindkey "^F" edit-command-line
 
 # fzf plugin
-[ -r /opt/homebrew/opt/fzf/shell/key-bindings.zsh ] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
-  export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
+source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
 
 # zoxide plugin
 eval "$(zoxide init zsh)"

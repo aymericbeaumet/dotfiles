@@ -9,6 +9,13 @@ vim.g.maplocalleader = ' '
 vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
+vim.cmd([[
+augroup CursorLine
+  au!
+  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END
+]])
 
 -- encoding
 vim.o.encoding = "utf-8"
@@ -67,7 +74,7 @@ for _, mapping in ipairs({
   -- save current buffer
   {'n', '<cr>', '<cmd>w<cr>'},
   -- extract and open url from selection
-  {'v', '<cr>', '<cmd>w !squeeze -1 --url --open<cr><cr>'},
+  {'v', '<cr>', "<cmd>'<,'>w !squeeze -1 --url --open<cr><cr>"},
   -- better `j` and `k`
   {'n', 'j', 'gj'},
   {'v', 'j', 'gj'},
@@ -82,13 +89,6 @@ for _, mapping in ipairs({
   {'v', '>', '>gv'},
   -- clean screen and reload file
   {'n', '<c-l>', '<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>'},
-  -- keep "teleport" moves vertically centered
-  {'n', 'n', 'nzz'},
-  {'n', 'N', 'Nzz'},
-  {'n', '*', '*zz'},
-  {'n', '#', '#zz'},
-  {'n', '<c-i>', '<c-i>zz'},
-  {'n', '<c-o>', '<c-o>zz'},
   -- emulate permanent global marks
   {'n', "'A", '<cmd>edit ~/.config/alacritty/alacritty.yml<cr>'},
   {'n', "'B", '<cmd>edit ~/.dotfiles/Brewfile<cr>'},
@@ -96,11 +96,21 @@ for _, mapping in ipairs({
   {'n', "'V", '<cmd>edit ~/.config/nvim/init.lua<cr>'},
   {'n', "'T", '<cmd>edit ~/.tmux.conf<cr>'},
   {'n', "'Z", '<cmd>edit ~/.zshrc<cr>'},
-  -- disable mappings
+  -- disable mappings (let's forget bad habits)
   {'n', '<up>', '<nop>'},
   {'n', '<down>', '<nop>'},
   {'n', '<left>', '<nop>'},
   {'n', '<right>', '<nop>'},
+  {'i', '<c-b>', '<nop>'},
+  {'i', '<c-f>', '<nop>'},
+  {'i', '<c-n>', '<nop>'},
+  {'i', '<c-p>', '<nop>'},
+  {'i', '<c-a>', '<nop>'},
+  {'i', '<c-e>', '<nop>'},
+  {'i', '<c-w>', '<nop>'},
+  {'i', '<m-d>', '<nop>'},
+  {'i', '<m-b>', '<nop>'},
+  {'i', '<m-f>', '<nop>'},
 }) do
   vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -111,6 +121,11 @@ require('packer').startup(function(use)
   use 'tpope/vim-repeat'
   use 'tpope/vim-surround'
   use 'tpope/vim-unimpaired'
+
+  use {
+    'git@github.com:aymericbeaumet/vim-symlink.git',
+    requires = { 'moll/vim-bbye' }
+  }
 
   use {
     'shaunsingh/nord.nvim',
@@ -129,6 +144,11 @@ require('packer').startup(function(use)
       require('lualine').setup({
         options = { theme = 'nord' },
         sections = {
+          lualine_c = {
+            { 'filename', path = 1 }
+          },
+        },
+        inactive_sections = {
           lualine_c = {
             { 'filename', path = 1 }
           },
@@ -299,7 +319,7 @@ require('packer').startup(function(use)
   use {
     'voldikss/vim-floaterm',
     setup = function()
-      vim.g.floaterm_title = " Zsh "
+      vim.g.floaterm_title = ""
       vim.g.floaterm_height = 0.80
       vim.g.floaterm_width = 0.80
       vim.g.floaterm_autoclose = 2
