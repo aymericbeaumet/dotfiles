@@ -198,12 +198,47 @@ require('packer').startup(function(use)
   }
 
   use {
-    'hrsh7th/nvim-cmp',
-    requires = {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      local gitsigns = require('gitsigns')
+
+      gitsigns.setup({
+        current_line_blame = true,
+      })
+
+      -- previous git hunk
+      vim.keymap.set('n', ']h', function()
+        if vim.wo.diff then return ']h' end
+        vim.schedule(function() gitsigns.next_hunk() end)
+        return '<Ignore>'
+      end, {expr=true})
+
+      -- next git hunk
+      vim.keymap.set('n', '[h', function()
+        if vim.wo.diff then return '[h' end
+        vim.schedule(function() gitsigns.prev_hunk() end)
+        return '<Ignore>'
+      end, {expr=true})
+    end
+  }
+
+  use {
+    'tpope/vim-fugitive',
+    requires = { 'tpope/vim-rhubarb' },
+    config = function()
+      vim.cmd('cnoreabbrev GRemove GDelete')
+      vim.api.nvim_set_keymap('n', '<leader>gb', '<cmd>GBrowse<cr>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>gd', '<cmd>Gvdiffsplit<cr>', { noremap = true, silent = true })
+    end
+  }
+
+  use {
       'neovim/nvim-lspconfig', -- neovim lsp plugin
+    requires = {
+      'hrsh7th/nvim-cmp', -- completion plugin
       'L3MON4D3/LuaSnip', -- snippet plugin
       'ray-x/lsp_signature.nvim', -- lsp signature plugin
-      -- sources
+      -- completion source plugins
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-cmdline',
       'hrsh7th/cmp-nvim-lsp',
