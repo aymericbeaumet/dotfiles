@@ -1,10 +1,11 @@
 # dotfiles
 
-Hello there! Here you can find my dotfiles for neovim, zsh, tmux, and many
-other clis. I'm using those on a daily basis, and I'm putting a lot of effort
-trying to keep it [simple](https://www.youtube.com/watch?v=LKtk3HCgTa8). While
-I would not recommend to install this on your machine as it is tailored to my
-needs, I think it is a good source of inspiration for your own dotfiles.
+Hello there! Here you can find my dotfiles for neovim, zsh, tmux, and many other
+clis. I'm using those on a daily basis, and I'm putting a lot of effort trying
+to keep them [simple](https://www.youtube.com/watch?v=LKtk3HCgTa8).
+
+_While I would not recommend to install this on your machine as it is tailored
+to my needs, I think it is a good source of inspiration for your own dotfiles._
 
 ## Install
 
