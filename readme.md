@@ -21,3 +21,13 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.dotfile
 # Install dependencies
 brew bundle --file "$HOME/.dotfiles/Brewfile"
 ```
+
+## Update
+
+```
+# Update submodules
+git submodule foreach git pull origin master
+
+# Update neovim plugins
+nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+```
