@@ -26,6 +26,9 @@ brew bundle --file "$HOME/.dotfiles/Brewfile"
 ## Update
 
 ```
+# Update dependencies
+brew bundle --file "$HOME/.dotfiles/Brewfile"
+
 # Update submodules
 git submodule foreach git pull origin master
 
