@@ -4,18 +4,20 @@ env:
   TERM: xterm-256color
 
 window:
-  startup_mode: Maximized
+  startup_mode: SimpleFullscreen
   decorations: buttonless
-  dynamic_padding: true
-  padding:
-    x: 2
-    y: 3
 
 scrolling:
   history: 0
 
 selection:
   save_to_clipboard: true
+
+mouse:
+  hide_when_typing: true
+
+mouse_bindings:
+  - { mouse: Right,  action: ReceiveChar }
 
 font:
   normal:
@@ -243,5 +245,21 @@ key_bindings:
   - { key: Key6, mods: Alt|Shift, chars: "\x1b^" } # Alt + ^
   - { key: Backslash, mods: Alt, chars: "\x1b\\" } # Alt + \
   - { key: Backslash, mods: Alt|Shift, chars: "\x1b|" } # Alt + |
-  # https://github.com/jwilm/alacritty/issues/1359#issue-330521722
-  - { key: Q, mods: Control, chars: "\x11" }
+  # better tmux integration
+  - { key: Q, mods: Control, chars: "\x11" } # prefix (https://github.com/jwilm/alacritty/issues/1359#issue-330521722)
+  - { key: D, mods: Command, chars: "\x11v" }
+  - { key: T, mods: Command, chars: "\x11t" }
+  - { key: W, mods: Command, chars: "\x11q" }
+  - { key: B, mods: Command, chars: "\x11?" }
+  - { key: F, mods: Command, chars: "\x11/" }
+  - { key: Key1, mods: Command, chars: "\x111" }
+  - { key: Key2, mods: Command, chars: "\x112" }
+  - { key: Key3, mods: Command, chars: "\x113" }
+  - { key: Key4, mods: Command, chars: "\x114" }
+  - { key: Key5, mods: Command, chars: "\x115" }
+  - { key: Key6, mods: Command, chars: "\x116" }
+  - { key: Key7, mods: Command, chars: "\x117" }
+  - { key: Key8, mods: Command, chars: "\x118" }
+  - { key: Key9, mods: Command, chars: "\x119" }
+  - { key: LBracket, mods: Command|Shift, chars: "\x11p" }
+  - { key: RBracket, mods: Command|Shift, chars: "\x11n" }
