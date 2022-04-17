@@ -95,15 +95,14 @@ for _, mapping in ipairs({
 	-- emulate permanent global marks
 	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
-	{ "n", "'D", "<cmd>edit ~/.dotfiles<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
 	-- disable mappings (let's forget bad habits)
-	{ "n", "<up>", "<nop>" },
-	{ "n", "<down>", "<nop>" },
-	{ "n", "<left>", "<nop>" },
-	{ "n", "<right>", "<nop>" },
+	{ "", "<up>", "<nop>" },
+	{ "", "<down>", "<nop>" },
+	{ "", "<left>", "<nop>" },
+	{ "", "<right>", "<nop>" },
 	{ "i", "<c-b>", "<nop>" },
 	{ "i", "<c-f>", "<nop>" },
 	{ "i", "<c-n>", "<nop>" },
@@ -124,6 +123,9 @@ require("packer").startup(function(use)
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
+
+	use("hashivim/vim-packer")
+	use("hashivim/vim-terraform")
 
 	use({
 		"git@github.com:aymericbeaumet/vim-symlink.git",
@@ -207,9 +209,7 @@ require("packer").startup(function(use)
 		config = function()
 			local gitsigns = require("gitsigns")
 
-			gitsigns.setup({
-				current_line_blame = true,
-			})
+			gitsigns.setup({})
 
 			-- previous git hunk
 			vim.keymap.set("n", "]h", function()
@@ -242,6 +242,7 @@ require("packer").startup(function(use)
 			vim.cmd("cnoreabbrev GRemove GDelete")
 			vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 			vim.api.nvim_set_keymap("n", "<leader>gd", "<cmd>Gvdiffsplit<cr>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>gl", "<cmd>G log<cr>", { noremap = true, silent = true })
 		end,
 	})
 
@@ -324,6 +325,9 @@ require("packer").startup(function(use)
 					"<cmd>lua vim.lsp.buf.type_definition()<CR>",
 					opts
 				)
+
+				vim.api.nvim_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+				vim.api.nvim_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 
 				-- we want to use null-ls for formatting
 				client.resolved_capabilities.document_formatting = false
