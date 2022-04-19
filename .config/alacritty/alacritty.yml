@@ -248,6 +248,7 @@ key_bindings:
   # better tmux integration
   - { key: Q, mods: Control, chars: "\x11" } # prefix (https://github.com/jwilm/alacritty/issues/1359#issue-330521722)
   - { key: D, mods: Command, chars: "\x11v" }
+  - { key: D, mods: Command|Shift, chars: "\x11s" }
   - { key: T, mods: Command, chars: "\x11t" }
   - { key: W, mods: Command, chars: "\x11q" }
   - { key: B, mods: Command, chars: "\x11?" }
