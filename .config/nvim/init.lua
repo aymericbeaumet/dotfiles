@@ -307,6 +307,8 @@ require("packer").startup(function(use)
 			local capabilities = require("cmp_nvim_lsp").update_capabilities(
 				vim.lsp.protocol.make_client_capabilities()
 			)
+			capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 			local flags = { debounce_text_changes = 150 }
 			local on_attach = function(client, bufnr)
 				local opts = { noremap = true, silent = true }
@@ -341,7 +343,7 @@ require("packer").startup(function(use)
 					},
 				}, bufnr)
 			end
-			for _, lsp in pairs({ "gopls", "rust_analyzer" }) do
+			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver" }) do
 				require("lspconfig")[lsp].setup({ capabilities = capabilities, flags = flags, on_attach = on_attach })
 			end
 		end,
@@ -372,6 +374,8 @@ require("packer").startup(function(use)
 					null_ls.builtins.diagnostics.zsh,
 					-- terraform
 					null_ls.builtins.formatting.terraform_fmt,
+					-- javascript, typescript, etc
+					null_ls.builtins.formatting.prettier,
 				},
 
 				on_attach = function(client)
