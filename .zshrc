@@ -159,9 +159,14 @@ expand-triple-dot() {
 }
 zle -N accept-line expand-triple-dot
 
-# allow command line edition in vim with ^F
+# trigger nvim command line edition when using emacs bindings
 autoload -Uz edit-command-line && zle -N edit-command-line
+bindkey "^A" edit-command-line
+bindkey "^E" edit-command-line
+bindkey "^B" edit-command-line
 bindkey "^F" edit-command-line
+bindkey "^[B" edit-command-line
+bindkey "^[F" edit-command-line
 
 # fzf plugin
 source /opt/homebrew/opt/fzf/shell/key-bindings.zsh

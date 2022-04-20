@@ -21,6 +21,9 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.dotfile
 
 # Install dependencies
 brew bundle --file "$HOME/.dotfiles/Brewfile"
+
+# npm
+npm i -g npm typescript typescript-language-server vscode-langservers-extracted prettier
 ```
 
 ## Update

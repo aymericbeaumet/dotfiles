@@ -17,7 +17,7 @@ mouse:
   hide_when_typing: true
 
 mouse_bindings:
-  - { mouse: Right,  action: ReceiveChar }
+  - { mouse: Right, action: ReceiveChar }
 
 font:
   normal:
@@ -38,31 +38,35 @@ font:
 colors:
   # Default colors
   primary:
-    background: '0x2E3440'
-    foreground: '0xD8DEE9'
+    background: "0x2E3440"
+    foreground: "0xD8DEE9"
   # Normal colors
   normal:
-    black:   '0x3B4252'
-    red:     '0xBF616A'
-    green:   '0xA3BE8C'
-    yellow:  '0xEBCB8B'
-    blue:    '0x81A1C1'
-    magenta: '0xB48EAD'
-    cyan:    '0x88C0D0'
-    white:   '0xE5E9F0'
+    black: "0x3B4252"
+    red: "0xBF616A"
+    green: "0xA3BE8C"
+    yellow: "0xEBCB8B"
+    blue: "0x81A1C1"
+    magenta: "0xB48EAD"
+    cyan: "0x88C0D0"
+    white: "0xE5E9F0"
   # Bright colors
   bright:
-    black:   '0x4C566A'
-    red:     '0xBF616A'
-    green:   '0xA3BE8C'
-    yellow:  '0xEBCB8B'
-    blue:    '0x81A1C1'
-    magenta: '0xB48EAD'
-    cyan:    '0x8FBCBB'
-    white:   '0xECEFF4'
+    black: "0x4C566A"
+    red: "0xBF616A"
+    green: "0xA3BE8C"
+    yellow: "0xEBCB8B"
+    blue: "0x81A1C1"
+    magenta: "0xB48EAD"
+    cyan: "0x8FBCBB"
+    white: "0xECEFF4"
 
 key_bindings:
-  - { key: Q, mods: Command, command: { program: "killall", args: ["alacritty"] } }
+  - {
+      key: Q,
+      mods: Command,
+      command: { program: "killall", args: ["alacritty"] },
+    }
   - { key: W, mods: Command|Shift, action: Quit }
   - { key: N, mods: Command, action: SpawnNewInstance }
   - { key: V, mods: Command, action: Paste }
@@ -247,20 +251,3 @@ key_bindings:
   - { key: Backslash, mods: Alt|Shift, chars: "\x1b|" } # Alt + |
   # better tmux integration
   - { key: Q, mods: Control, chars: "\x11" } # prefix (https://github.com/jwilm/alacritty/issues/1359#issue-330521722)
-  - { key: D, mods: Command, chars: "\x11v" }
-  - { key: D, mods: Command|Shift, chars: "\x11s" }
-  - { key: T, mods: Command, chars: "\x11t" }
-  - { key: W, mods: Command, chars: "\x11q" }
-  - { key: B, mods: Command, chars: "\x11?" }
-  - { key: F, mods: Command, chars: "\x11/" }
-  - { key: Key1, mods: Command, chars: "\x111" }
-  - { key: Key2, mods: Command, chars: "\x112" }
-  - { key: Key3, mods: Command, chars: "\x113" }
-  - { key: Key4, mods: Command, chars: "\x114" }
-  - { key: Key5, mods: Command, chars: "\x115" }
-  - { key: Key6, mods: Command, chars: "\x116" }
-  - { key: Key7, mods: Command, chars: "\x117" }
-  - { key: Key8, mods: Command, chars: "\x118" }
-  - { key: Key9, mods: Command, chars: "\x119" }
-  - { key: LBracket, mods: Command|Shift, chars: "\x11p" }
-  - { key: RBracket, mods: Command|Shift, chars: "\x11n" }
