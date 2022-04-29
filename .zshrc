@@ -18,24 +18,11 @@ autoload -Uz compinit && compinit
   cd "$dirpath" || exit 1
 }
 
-d() {
-  if (( $# == 0 )); then
-    dirpath=$(command fd --type directory --hidden --exclude .git | fzf --preview 'exa -la {}')
-  else
-    dirpath=$(command fd --type directory --hidden --exclude .git | fzf --filter="$*" | head -1)
-  fi
-  if [ -z "$dirpath" ]; then
-    echo 'wow such empty' 1>&2
-  else
-    cd "$dirpath" || exit 1
-  fi
-}
-
 g() {
   if (( $# == 0 )); then
-    command git status -sb
+    git status -sb
   else
-    command git "$@"
+    git "$@"
   fi
 }
 compdef g=git
@@ -48,16 +35,29 @@ t() {
       tmux attach -t default || tmux new -s default
     fi
   else
-    command tmux "$@"
+    tmux "$@"
   fi
 }
 compdef t=tmux
 
+d() {
+  if (( $# == 0 )); then
+    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --preview 'exa -la {}')
+  else
+    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --filter="$*" | head -1)
+  fi
+  if [ -z "$dirpath" ]; then
+    echo 'wow such empty' 1>&2
+  else
+    cd "$dirpath" || exit 1
+  fi
+}
+
 z() {
   if (( $# == 0 )); then
-    dirpath=$(command zoxide query --list | fzf --preview 'exa -la {}')
+    dirpath=$(zoxide query --list | fzf --preview='exa -la {}')
   else
-    dirpath=$(command zoxide query --list | fzf --filter="$*" | head -1)
+    dirpath=$(zoxide query --list | fzf --filter="$*" | head -1)
   fi
   if [ -z "$dirpath" ]; then
     echo 'wow such empty' 1>&2
