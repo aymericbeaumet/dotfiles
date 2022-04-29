@@ -206,6 +206,28 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Google Chrome",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "c",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Google%20Chrome'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus Firefox",
                         "manipulators": [
                             {

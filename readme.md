@@ -16,14 +16,14 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.dotfile
 # Symlink dotfiles
 "$HOME/.dotfiles/symlink.sh"
 
-# Install homebrew 
+# Install homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install dependencies
 brew bundle --file "$HOME/.dotfiles/Brewfile"
 
 # npm
-npm i -g npm typescript typescript-language-server vscode-langservers-extracted prettier
+npm i -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint
 ```
 
 ## Update

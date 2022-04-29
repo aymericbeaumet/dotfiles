@@ -13,6 +13,24 @@ source "$HOME/.zsh/bundle/powerlevel10k/powerlevel10k.zsh-theme"
 fpath=("$HOME/.zsh/bundle/zsh-completions/src" $fpath)
 autoload -Uz compinit && compinit
 
+...() {
+  dirpath=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+  cd "$dirpath" || exit 1
+}
+
+d() {
+  if (( $# == 0 )); then
+    dirpath=$(command fd --type directory --hidden --exclude .git | fzf --preview 'exa -la {}')
+  else
+    dirpath=$(command fd --type directory --hidden --exclude .git | fzf --filter="$*" | head -1)
+  fi
+  if [ -z "$dirpath" ]; then
+    echo 'wow such empty' 1>&2
+  else
+    cd "$dirpath" || exit 1
+  fi
+}
+
 g() {
   if (( $# == 0 )); then
     command git status -sb
@@ -34,6 +52,19 @@ t() {
   fi
 }
 compdef t=tmux
+
+z() {
+  if (( $# == 0 )); then
+    dirpath=$(command zoxide query --list | fzf --preview 'exa -la {}')
+  else
+    dirpath=$(command zoxide query --list | fzf --filter="$*" | head -1)
+  fi
+  if [ -z "$dirpath" ]; then
+    echo 'wow such empty' 1>&2
+  else
+    cd "$dirpath" || exit 1
+  fi
+}
 
 alias brew='arch -arm64 brew'
 
@@ -152,28 +183,13 @@ precmd() {
   echo -ne '\e[5 q'
 }
 
-# expand ... to be the git root directory
-expand-triple-dot() {
-  BUFFER="$(sed "s#\.\.\.#$(git rev-parse --show-toplevel 2>/dev/null || pwd)#g" <<< $BUFFER)"
-  zle .accept-line
-}
-zle -N accept-line expand-triple-dot
-
-# trigger nvim command line edition when using emacs bindings
+# trigger nvim command line edition on ^V
 autoload -Uz edit-command-line && zle -N edit-command-line
-bindkey "^A" edit-command-line
-bindkey "^E" edit-command-line
-bindkey "^B" edit-command-line
-bindkey "^F" edit-command-line
-bindkey "^[B" edit-command-line
-bindkey "^[F" edit-command-line
+bindkey "^V" edit-command-line
 
 # fzf plugin
 source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
-export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height 40% --layout=reverse'
-
-# zoxide plugin
-eval "$(zoxide init zsh)"
+export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height=40% --layout=reverse'
 
 # zsh-autosuggestions plugin
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
