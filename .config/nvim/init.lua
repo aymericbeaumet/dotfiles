@@ -76,8 +76,6 @@ for _, mapping in ipairs({
 	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" },
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
-	-- extract and open url from selection
-	{ "v", "<cr>", "<cmd>'<,'>w !squeeze -1 --url --open<cr><cr>" },
 	-- better `j` and `k`
 	{ "n", "j", "gj" },
 	{ "v", "j", "gj" },
@@ -98,24 +96,26 @@ for _, mapping in ipairs({
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
+	-- some zsh mappings in insert mode
+	{ "i", "<c-a>", "<Home>" },
+	{ "i", "<c-b>", "<Left>" },
+	{ "i", "<c-d>", "<Del>" },
+	{ "i", "<c-e>", "<End>" },
+	{ "i", "<c-f>", "<Right>" },
+	{ "i", "<c-h>", "<Backspace>" },
 	-- disable mappings (let's forget bad habits)
 	{ "", "<up>", "<nop>" },
 	{ "", "<down>", "<nop>" },
 	{ "", "<left>", "<nop>" },
 	{ "", "<right>", "<nop>" },
-	{ "i", "<c-b>", "<nop>" },
-	{ "i", "<c-f>", "<nop>" },
-	{ "i", "<c-n>", "<nop>" },
-	{ "i", "<c-p>", "<nop>" },
-	{ "i", "<c-a>", "<nop>" },
-	{ "i", "<c-e>", "<nop>" },
-	{ "i", "<c-w>", "<nop>" },
-	{ "i", "<m-d>", "<nop>" },
-	{ "i", "<m-b>", "<nop>" },
-	{ "i", "<m-f>", "<nop>" },
 }) do
 	vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
+
+-- extract and open url from selection
+vim.cmd([[
+  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
+]])
 
 -- plugins
 require("packer").startup(function(use)
@@ -126,6 +126,7 @@ require("packer").startup(function(use)
 
 	use("hashivim/vim-packer")
 	use("hashivim/vim-terraform")
+	use("evanleck/vim-svelte")
 
 	use({
 		"git@github.com:aymericbeaumet/vim-symlink.git",
@@ -250,36 +251,31 @@ require("packer").startup(function(use)
 		"neovim/nvim-lspconfig", -- neovim lsp plugin
 		requires = {
 			"hrsh7th/nvim-cmp", -- completion plugin
-			"L3MON4D3/LuaSnip", -- snippet plugin
 			"ray-x/lsp_signature.nvim", -- lsp signature plugin
 			-- completion source plugins
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-path",
-			"saadparwaiz1/cmp_luasnip",
 		},
 		config = function()
 			vim.o.completeopt = "menu,menuone,noselect"
 
 			local cmp = require("cmp")
 			cmp.setup({
+				preselect = cmp.PreselectMode.None,
+
 				mapping = cmp.mapping.preset.insert({
-					["<tab>"] = cmp.mapping.confirm({ select = true }),
 					["<cr>"] = cmp.mapping.confirm({ select = true }),
+					["<tab>"] = cmp.mapping.confirm({ select = true }),
+					["<C-e>"] = cmp.mapping.confirm({ select = true }),
 					["<C-u>"] = cmp.mapping.scroll_docs(-4),
 					["<C-d>"] = cmp.mapping.scroll_docs(4),
 				}),
-				snippet = {
-					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
-					end,
-				},
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 				}, {
-					{ name = "luasnip" },
-					{ name = "path", options = { trailing_slash = true } },
+					{ name = "path" },
 				}, {
 					{ name = "buffer" },
 				}),
@@ -307,9 +303,9 @@ require("packer").startup(function(use)
 			local capabilities = require("cmp_nvim_lsp").update_capabilities(
 				vim.lsp.protocol.make_client_capabilities()
 			)
-			capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 			local flags = { debounce_text_changes = 150 }
+
 			local on_attach = function(client, bufnr)
 				local opts = { noremap = true, silent = true }
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -328,8 +324,8 @@ require("packer").startup(function(use)
 					opts
 				)
 
-				vim.api.nvim_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
-				vim.api.nvim_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 
 				-- we want to use null-ls for formatting
 				client.resolved_capabilities.document_formatting = false
@@ -343,7 +339,8 @@ require("packer").startup(function(use)
 					},
 				}, bufnr)
 			end
-			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver" }) do
+
+			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver", "svelte" }) do
 				require("lspconfig")[lsp].setup({ capabilities = capabilities, flags = flags, on_attach = on_attach })
 			end
 		end,
@@ -362,20 +359,22 @@ require("packer").startup(function(use)
 					-- golang
 					null_ls.builtins.formatting.gofmt,
 					null_ls.builtins.diagnostics.golangci_lint,
-					-- dockerfile
-					null_ls.builtins.diagnostics.hadolint,
+					-- javascript, typescript, svelte, etc
+					null_ls.builtins.formatting.prettier.with({ extra_filetypes = { "svelte" } }),
+					null_ls.builtins.diagnostics.eslint.with({ extra_filetypes = { "svelte" } }),
 					-- lua
 					null_ls.builtins.formatting.stylua,
 					null_ls.builtins.diagnostics.selene,
-					-- shell/zsh
+					-- shell
 					null_ls.builtins.formatting.shfmt,
 					null_ls.builtins.formatting.shellharden,
 					null_ls.builtins.diagnostics.shellcheck,
+					-- zsh
 					null_ls.builtins.diagnostics.zsh,
+					-- dockerfile
+					null_ls.builtins.diagnostics.hadolint,
 					-- terraform
 					null_ls.builtins.formatting.terraform_fmt,
-					-- javascript, typescript, etc
-					null_ls.builtins.formatting.prettier,
 				},
 
 				on_attach = function(client)
