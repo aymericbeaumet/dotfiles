@@ -18,6 +18,32 @@ autoload -Uz compinit && compinit
   cd "$dirpath" || exit 1
 }
 
+b() {
+  if (( $# == 0 )); then
+    filepath=$(fd --type=directory --hidden --exclude=.git | fzf --preview 'bat')
+  else
+    filepath=$(fd --type=directory --hidden --exclude=.git | fzf --filter="$*" | head -1)
+  fi
+  if [ -z "$filepath" ]; then
+    echo 'wow such empty' 1>&2
+  else
+    bat "$filepath" || exit 1
+  fi
+}
+
+d() {
+  if (( $# == 0 )); then
+    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --preview 'exa -la {}')
+  else
+    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --filter="$*" | head -1)
+  fi
+  if [ -z "$dirpath" ]; then
+    echo 'wow such empty' 1>&2
+  else
+    cd "$dirpath" || exit 1
+  fi
+}
+
 g() {
   if (( $# == 0 )); then
     git status -sb
@@ -39,19 +65,6 @@ t() {
   fi
 }
 compdef t=tmux
-
-d() {
-  if (( $# == 0 )); then
-    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --preview 'exa -la {}')
-  else
-    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --filter="$*" | head -1)
-  fi
-  if [ -z "$dirpath" ]; then
-    echo 'wow such empty' 1>&2
-  else
-    cd "$dirpath" || exit 1
-  fi
-}
 
 z() {
   if (( $# == 0 )); then

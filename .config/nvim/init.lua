@@ -4,21 +4,11 @@
 --# selene: allow(undefined_variable)
 --# selene: allow(unscoped_variables)
 
--- bindings
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
 -- cursor
 vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
-vim.cmd([[
-augroup CursorLine
-  au!
-  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  au WinLeave * setlocal nocursorline
-augroup END
-]])
+vim.o.cursorline = false
 
 -- encoding
 vim.o.encoding = "utf-8"
@@ -53,7 +43,7 @@ vim.o.ttyfast = true -- we have a fast terminal
 
 -- safety net
 vim.o.undofile = true -- store undos on disk
-vim.o.updatetime = 300 -- flush swap file to disk on a regular basis
+vim.o.updatetime = 300 -- flush swap files to disk on a regular basis
 
 -- search and replace
 vim.o.ignorecase = true -- ignore case when searching
@@ -69,11 +59,14 @@ vim.o.wildignore = vim.o.wildignore .. ".*.sw*,*~" -- ignore editor files
 vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
 
 -- mappings
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
 	{ "n", "<leader>vc", "<cmd>PackerClean<cr>" },
 	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" },
 	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" },
+	{ "n", "<leader>q", "<cmd>q<cr>" },
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
 	-- better `j` and `k`
@@ -103,19 +96,16 @@ for _, mapping in ipairs({
 	{ "i", "<c-e>", "<End>" },
 	{ "i", "<c-f>", "<Right>" },
 	{ "i", "<c-h>", "<Backspace>" },
-	-- disable mappings (let's forget bad habits)
-	{ "", "<up>", "<nop>" },
-	{ "", "<down>", "<nop>" },
-	{ "", "<left>", "<nop>" },
-	{ "", "<right>", "<nop>" },
+	-- always center screen on jump commands
+	{ "n", "<c-o>", "<c-o>zz" },
+	{ "n", "N", "Nzz" },
+	{ "n", "n", "nzz" },
 }) do
 	vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
 -- extract and open url from selection
-vim.cmd([[
-  vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>
-]])
+vim.cmd("vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>")
 
 -- plugins
 require("packer").startup(function(use)
@@ -123,10 +113,13 @@ require("packer").startup(function(use)
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
+	use("farmergreg/vim-lastplace")
 
 	use("hashivim/vim-packer")
 	use("hashivim/vim-terraform")
 	use("evanleck/vim-svelte")
+	use("pangloss/vim-javascript")
+	use("HerringtonDarkholme/yats.vim")
 
 	use({
 		"git@github.com:aymericbeaumet/vim-symlink.git",
@@ -148,15 +141,17 @@ require("packer").startup(function(use)
 		requires = { "kyazdani42/nvim-web-devicons" },
 		config = function()
 			require("lualine").setup({
-				options = { theme = "nord" },
+				options = {
+					theme = "nord",
+				},
 				sections = {
 					lualine_c = {
-						{ "filename", path = 1 },
+						{ "filename", path = 1, shorting_target = 0 },
 					},
 				},
 				inactive_sections = {
 					lualine_c = {
-						{ "filename", path = 1 },
+						{ "filename", path = 1, shorting_target = 0 },
 					},
 				},
 				extensions = { "nvim-tree", "symbols-outline" },
@@ -189,50 +184,10 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"windwp/nvim-autopairs",
-		config = function()
-			require("nvim-autopairs").setup({
-				disable_filetype = { "TelescopePrompt", "vim" },
-			})
-		end,
-	})
-
-	use({
 		"folke/trouble.nvim",
 		requires = { "kyazdani42/nvim-web-devicons" },
 		config = function()
 			require("trouble").setup()
-		end,
-	})
-
-	use({
-		"lewis6991/gitsigns.nvim",
-		config = function()
-			local gitsigns = require("gitsigns")
-
-			gitsigns.setup({})
-
-			-- previous git hunk
-			vim.keymap.set("n", "]h", function()
-				if vim.wo.diff then
-					return "]h"
-				end
-				vim.schedule(function()
-					gitsigns.next_hunk()
-				end)
-				return "<Ignore>"
-			end, { expr = true })
-
-			-- next git hunk
-			vim.keymap.set("n", "[h", function()
-				if vim.wo.diff then
-					return "[h"
-				end
-				vim.schedule(function()
-					gitsigns.prev_hunk()
-				end)
-				return "<Ignore>"
-			end, { expr = true })
 		end,
 	})
 
@@ -248,55 +203,84 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"neovim/nvim-lspconfig", -- neovim lsp plugin
+		"neovim/nvim-lspconfig", -- neovim lsp config plugin
+		run = "npm i -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint",
 		requires = {
 			"hrsh7th/nvim-cmp", -- completion plugin
 			"ray-x/lsp_signature.nvim", -- lsp signature plugin
+			"SirVer/ultisnips", -- snippet plugin
+			"windwp/nvim-autopairs", -- autopair plugin
 			-- completion source plugins
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-path",
+			"quangnguyen30192/cmp-nvim-ultisnips",
 		},
 		config = function()
-			vim.o.completeopt = "menu,menuone,noselect"
-
+			local autopairs = require("nvim-autopairs")
 			local cmp = require("cmp")
-			cmp.setup({
-				preselect = cmp.PreselectMode.None,
+			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 
-				mapping = cmp.mapping.preset.insert({
-					["<cr>"] = cmp.mapping.confirm({ select = true }),
-					["<tab>"] = cmp.mapping.confirm({ select = true }),
-					["<C-e>"] = cmp.mapping.confirm({ select = true }),
-					["<C-u>"] = cmp.mapping.scroll_docs(-4),
-					["<C-d>"] = cmp.mapping.scroll_docs(4),
-				}),
+			autopairs.setup({
+				disable_filetype = { "TelescopePrompt", "vim" },
+				map_c_h = true,
+				map_c_w = true,
+			})
+
+			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
+
+			cmp.setup({
+				completion = { completeopt = "menu,menuone,noinsert" },
+				preselect = cmp.PreselectMode.None,
+				window = { documentation = cmp.config.window.bordered() },
+
+				experimental = { ghost_text = true },
+
+				snippet = {
+					expand = function(args)
+						vim.fn["UltiSnips#Anon"](args.body)
+					end,
+				},
+
+				mapping = {
+					["<cr>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
+					["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "c" }),
+					["<C-n>"] = cmp.mapping(
+						cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+						{ "i", "c" }
+					),
+					["<C-p>"] = cmp.mapping(
+						cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+						{ "i", "c" }
+					),
+					["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i" }),
+					["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i" }),
+				},
+
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
+					{ name = "ultisnips" },
 				}, {
 					{ name = "path" },
 				}, {
 					{ name = "buffer" },
 				}),
-				window = {
-					documentation = cmp.config.window.bordered(),
-				},
 			})
 
 			cmp.setup.cmdline("/", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = {
+				sources = cmp.config.sources({
 					{ name = "buffer" },
-				},
+				}),
 			})
 
 			cmp.setup.cmdline(":", {
-				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({
+					{ name = "cmdline" },
+				}, {
 					{ name = "path" },
 				}, {
-					{ name = "cmdline" },
+					{ name = "buffer" },
 				}),
 			})
 
@@ -341,7 +325,11 @@ require("packer").startup(function(use)
 			end
 
 			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver", "svelte" }) do
-				require("lspconfig")[lsp].setup({ capabilities = capabilities, flags = flags, on_attach = on_attach })
+				require("lspconfig")[lsp].setup({
+					capabilities = capabilities,
+					flags = flags,
+					on_attach = on_attach,
+				})
 			end
 		end,
 	})
@@ -384,7 +372,7 @@ require("packer").startup(function(use)
               autocmd! * <buffer>
               autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
               augroup END
-              ]])
+            ]])
 					end
 				end,
 			})
@@ -392,13 +380,14 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"phaazon/hop.nvim",
-		branch = "v1",
-		config = function()
-			require("hop").setup()
-			for _, mode in ipairs({ "n", "v", "o" }) do
-				vim.api.nvim_set_keymap(mode, "<leader>s", "<cmd>HopChar1<cr>", { noremap = true, silent = true })
-			end
+		"easymotion/vim-easymotion",
+		setup = function()
+			vim.g.EasyMotion_keys = "Z/X.C,VMQ;WYFUPLAORISETN"
+			vim.g.EasyMotion_smartcase = 1
+			vim.g.EasyMotion_use_smartsign_us = 1
+			vim.g.EasyMotion_use_upper = 1
+			vim.g.EasyMotion_do_mapping = 0
+			vim.cmd("nmap <Leader><Leader>s <Plug>(easymotion-overwin-f)")
 		end,
 	})
 
