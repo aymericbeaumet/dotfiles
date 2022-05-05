@@ -294,6 +294,28 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Visual Studio Code",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Visual%20Studio%20Code'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus Slack",
                         "manipulators": [
                             {
