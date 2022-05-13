@@ -8,7 +8,8 @@ export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 if [ -z "$HOMEBREW_PREFIX" ]; then
   eval $(/opt/homebrew/bin/brew shellenv)
 
-  # npm
+  # node/npm
+  export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
   export PATH="$(npm config get prefix):$PATH"
 
   # go
