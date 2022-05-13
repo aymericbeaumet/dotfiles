@@ -100,6 +100,8 @@ for _, mapping in ipairs({
 	{ "n", "<c-o>", "<c-o>zz" },
 	{ "n", "N", "Nzz" },
 	{ "n", "n", "nzz" },
+	{ "n", "*", "*zz" },
+	{ "n", "#", "#zz" },
 }) do
 	vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -204,7 +206,7 @@ require("packer").startup(function(use)
 
 	use({
 		"neovim/nvim-lspconfig", -- neovim lsp config plugin
-		run = "npm i -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint",
+		run = "npm update -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint",
 		requires = {
 			"hrsh7th/nvim-cmp", -- completion plugin
 			"ray-x/lsp_signature.nvim", -- lsp signature plugin
@@ -232,10 +234,9 @@ require("packer").startup(function(use)
 
 			cmp.setup({
 				completion = { completeopt = "menu,menuone,noinsert" },
+				experimental = { ghost_text = true },
 				preselect = cmp.PreselectMode.None,
 				window = { documentation = cmp.config.window.bordered() },
-
-				experimental = { ghost_text = true },
 
 				snippet = {
 					expand = function(args)
@@ -278,9 +279,8 @@ require("packer").startup(function(use)
 				sources = cmp.config.sources({
 					{ name = "cmdline" },
 				}, {
-					{ name = "path" },
-				}, {
 					{ name = "buffer" },
+					{ name = "path" },
 				}),
 			})
 
@@ -345,7 +345,8 @@ require("packer").startup(function(use)
 					-- rust
 					null_ls.builtins.formatting.rustfmt,
 					-- golang
-					null_ls.builtins.formatting.gofmt,
+					null_ls.builtins.formatting.gofmt.with({ extra_args = { "-s" } }),
+					null_ls.builtins.formatting.goimports,
 					null_ls.builtins.diagnostics.golangci_lint,
 					-- javascript, typescript, svelte, etc
 					null_ls.builtins.formatting.prettier.with({ extra_filetypes = { "svelte" } }),
@@ -387,7 +388,7 @@ require("packer").startup(function(use)
 			vim.g.EasyMotion_use_smartsign_us = 1
 			vim.g.EasyMotion_use_upper = 1
 			vim.g.EasyMotion_do_mapping = 0
-			vim.cmd("nmap <Leader><Leader>s <Plug>(easymotion-overwin-f)")
+			vim.cmd("nmap <Leader>s <Plug>(easymotion-overwin-f)")
 		end,
 	})
 

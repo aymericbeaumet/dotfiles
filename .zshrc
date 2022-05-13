@@ -200,8 +200,11 @@ precmd() {
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey "^V" edit-command-line
 
+# asdf plugin
+. $(brew --prefix asdf)/libexec/asdf.sh
+
 # fzf plugin
-source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+. $(brew --prefix fzf)/shell/key-bindings.zsh
 export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height=40% --layout=reverse'
 
 # zsh-autosuggestions plugin
