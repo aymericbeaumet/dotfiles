@@ -171,7 +171,9 @@ require("packer").startup(function(use)
 	use({
 		"tpope/vim-eunuch",
 		config = function()
-			vim.cmd("cnoreabbrev Remove Delete")
+			vim.cmd("cnoreabbrev Delete Delete!")
+			vim.cmd("cnoreabbrev Remove Delete!")
+			vim.cmd("cnoreabbrev Remove! Delete!")
 		end,
 	})
 
@@ -247,6 +249,7 @@ require("packer").startup(function(use)
 				mapping = {
 					["<cr>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
 					["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "c" }),
+					["<C-e>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "c" }),
 					["<C-n>"] = cmp.mapping(
 						cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 						{ "i", "c" }
@@ -400,36 +403,9 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"kyazdani42/nvim-tree.lua",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("nvim-tree").setup()
-			vim.api.nvim_set_keymap("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>E", "<cmd>NvimTreeFocus<cr>", { noremap = true, silent = true })
-		end,
-	})
-
-	use({
 		"simrat39/symbols-outline.nvim",
 		setup = function()
 			vim.api.nvim_set_keymap("n", "<leader>o", "<cmd>SymbolsOutline<cr>", { noremap = true, silent = true })
-		end,
-	})
-
-	use({
-		"voldikss/vim-floaterm",
-		setup = function()
-			vim.g.floaterm_title = ""
-			vim.g.floaterm_height = 0.80
-			vim.g.floaterm_width = 0.80
-			vim.g.floaterm_autoclose = 2
-			vim.g.floaterm_autohide = 0
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>t",
-				"<cmd>FloatermNew --cwd=<root><cr>",
-				{ noremap = true, silent = true }
-			)
 		end,
 	})
 

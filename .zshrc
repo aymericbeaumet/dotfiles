@@ -101,6 +101,8 @@ alias l='ls -lg'
 alias la='l -a'
 alias tree='tree -a'
 
+alias rk=rekki
+
 alias v=nvim
 alias vi=nvim
 alias vim=nvim
@@ -199,9 +201,6 @@ precmd() {
 # trigger nvim command line edition on ^V
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey "^V" edit-command-line
-
-# asdf plugin
-. $(brew --prefix asdf)/libexec/asdf.sh
 
 # fzf plugin
 . $(brew --prefix fzf)/shell/key-bindings.zsh
