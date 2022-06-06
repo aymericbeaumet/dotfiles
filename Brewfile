@@ -1,4 +1,3 @@
-brew 'asdf'
 brew 'bat'
 brew 'coreutils'
 brew 'exa'
