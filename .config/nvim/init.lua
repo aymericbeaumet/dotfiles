@@ -172,13 +172,6 @@ require("packer").startup(function(use)
 		end,
 	})
 
-	use({
-		"famiu/bufdelete.nvim",
-		config = function()
-			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bdelete!<cr>", { noremap = true, silent = true })
-		end,
-	})
-
 	use("hashivim/vim-terraform")
 
 	use({
@@ -186,6 +179,32 @@ require("packer").startup(function(use)
 		requires = { "kyazdani42/nvim-web-devicons" },
 		config = function()
 			require("trouble").setup()
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>d",
+				"<cmd>TroubleToggle document_diagnostics<cr>",
+				{ noremap = true, silent = true }
+			)
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>t",
+				"<cmd>TroubleToggle workspace_diagnostics<cr>",
+				{ noremap = true, silent = true }
+			)
+			vim.api.nvim_set_keymap("n", "[t", "", {
+				noremap = true,
+				silent = true,
+				callback = function()
+					require("trouble").previous({ skip_groups = true, jump = true })
+				end,
+			})
+			vim.api.nvim_set_keymap("n", "]t", "", {
+				noremap = true,
+				silent = true,
+				callback = function()
+					require("trouble").next({ skip_groups = true, jump = true })
+				end,
+			})
 		end,
 	})
 
