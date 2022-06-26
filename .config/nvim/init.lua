@@ -134,6 +134,24 @@ require("packer").startup(function(use)
 	use({
 		"junegunn/fzf.vim",
 		config = function()
+			vim.cmd([[
+        command! -bang -nargs=? -complete=dir Files
+            \ call fzf#vim#files(
+            \   <q-args>,
+            \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git --strip-cwd-prefix'}),
+            \   <bang>0,
+            \ )
+
+        function! Ripgrep(query, fullscreen)
+          let command_fmt = 'rg --hidden --glob "!.git" --column --line-number --no-heading --color=always --smart-case -- %s || true'
+          let initial_command = printf(command_fmt, shellescape(a:query))
+          let reload_command = printf(command_fmt, '{q}')
+          let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..']}
+          call fzf#vim#grep(initial_command, 1, spec, a:fullscreen)
+        endfunction
+        command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
+      ]])
+
 			vim.api.nvim_set_keymap("n", "<leader>/", "<cmd>BLines<cr>", { noremap = true, silent = true })
 			vim.api.nvim_set_keymap("n", "<leader>b", "<cmd>Buffers<cr>", { noremap = true, silent = true })
 			vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>Files<cr>", { noremap = true, silent = true })
@@ -269,7 +287,7 @@ require("packer").startup(function(use)
 
 			local flags = { debounce_text_changes = 150 }
 
-			local on_attach = function(client, bufnr)
+			local on_attach = function(_client, bufnr)
 				local opts = { noremap = true, silent = true }
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
@@ -277,10 +295,6 @@ require("packer").startup(function(use)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
-
-				-- we want to use null-ls for formatting
-				client.resolved_capabilities.document_formatting = false
-				client.resolved_capabilities.document_range_formatting = false
 
 				require("lsp_signature").on_attach({
 					hi_parameter = "IncSearch",
