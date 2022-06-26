@@ -32,6 +32,8 @@ vim.o.shortmess = "aoOsIctF" -- disable vim welcome message / enable shorter mes
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
+vim.o.cursorline = true -- highlight cursorline
+vim.o.showmode = false -- do not show mode
 
 -- mappings
 vim.o.timeoutlen = 500 -- time to wait when a part of a mapped sequence is typed
@@ -96,13 +98,6 @@ for _, mapping in ipairs({
 	{ "i", "<c-e>", "<End>" },
 	{ "i", "<c-f>", "<Right>" },
 	{ "i", "<c-h>", "<Backspace>" },
-	-- always center screen on jump commands
-	{ "n", "<c-i>", "<c-i>zz" },
-	{ "n", "<c-o>", "<c-o>zz" },
-	{ "n", "N", "Nzz" },
-	{ "n", "n", "nzz" },
-	{ "n", "*", "*zz" },
-	{ "n", "#", "#zz" },
 }) do
 	vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -200,6 +195,7 @@ require("packer").startup(function(use)
 			require("trouble").setup()
 
 			vim.diagnostic.config({
+				float = { border = "rounded" },
 				signs = false, -- no sign in gutter
 			})
 
@@ -310,24 +306,12 @@ require("packer").startup(function(use)
 				require("lsp_signature").on_attach({
 					hi_parameter = "IncSearch",
 					hint_enable = false,
-					handler_opts = { border = "rounded" },
 				}, bufnr)
 			end
 
-			local border = {
-				{ "/", "FloatBorder" },
-				{ "▔", "FloatBorder" },
-				{ "\\", "FloatBorder" },
-				{ "▕", "FloatBorder" },
-				{ "/", "FloatBorder" },
-				{ "▁", "FloatBorder" },
-				{ "\\", "FloatBorder" },
-				{ "▏", "FloatBorder" },
-			}
-
 			local handlers = {
-				["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
-				["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = border }),
+				["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
+				["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" }),
 			}
 
 			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver", "svelte" }) do
