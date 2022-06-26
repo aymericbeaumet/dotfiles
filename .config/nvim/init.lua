@@ -296,12 +296,14 @@ require("packer").startup(function(use)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 
+				-- we want to use null-ls for formatting
+				client.resolved_capabilities.document_formatting = false
+				client.resolved_capabilities.document_range_formatting = false
+
 				require("lsp_signature").on_attach({
 					hi_parameter = "IncSearch",
 					hint_enable = false,
-					handler_opts = {
-						border = "rounded",
-					},
+					handler_opts = { border = "rounded" },
 				}, bufnr)
 			end
 
