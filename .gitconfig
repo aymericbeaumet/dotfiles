@@ -51,12 +51,18 @@
 [diff]
   colorMoved = default
 
+[github]
+  user = aymericbeaumet
+
 [grep]
   lineNumber = true
   patternType = extended
 
 [man]
   viewer = less
+
+[merge]
+  tool = nvim -d
 
 [pull]
   rebase = true
@@ -68,6 +74,3 @@
 [user]
   name = Aymeric Beaumet
   email = hi@aymericbeaumet.com
-
-[github]
-  user = aymericbeaumet

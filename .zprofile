@@ -23,4 +23,5 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
 
   # rekki
   eval "$("$HOME/.rekki/bin/rekki" shellenv)"
+  export REKKI_CLI_NO_REPORTING=true
 fi

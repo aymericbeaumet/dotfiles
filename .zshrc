@@ -101,8 +101,6 @@ alias l='ls -lg'
 alias la='l -a'
 alias tree='tree -a'
 
-alias rk=rekki
-
 alias v=nvim
 alias vi=nvim
 alias vim=nvim

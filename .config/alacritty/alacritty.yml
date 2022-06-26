@@ -72,6 +72,7 @@ key_bindings:
   - { key: V, mods: Command, action: Paste }
   - { key: Paste, action: Paste }
   - { key: C, mods: Command, action: Copy }
+  - { key: F, mods: Command, action: ReceiveChar }
   - { key: Copy, action: Copy }
   - { key: Home, chars: "\x1bOH", mode: AppCursor }
   - { key: Home, chars: "\x1b[H", mode: ~AppCursor }

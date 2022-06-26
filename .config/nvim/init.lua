@@ -111,23 +111,6 @@ vim.cmd("vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>")
 
 -- plugins
 require("packer").startup(function(use)
-	use("tpope/vim-abolish")
-	use("tpope/vim-repeat")
-	use("tpope/vim-surround")
-	use("tpope/vim-unimpaired")
-	use("farmergreg/vim-lastplace")
-
-	use("hashivim/vim-packer")
-	use("hashivim/vim-terraform")
-	use("evanleck/vim-svelte")
-	use("pangloss/vim-javascript")
-	use("HerringtonDarkholme/yats.vim")
-
-	use({
-		"git@github.com:aymericbeaumet/vim-symlink.git",
-		requires = { "moll/vim-bbye" },
-	})
-
 	use({
 		"shaunsingh/nord.nvim",
 		config = function()
@@ -138,33 +121,23 @@ require("packer").startup(function(use)
 		end,
 	})
 
-	use({
-		"nvim-lualine/lualine.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("lualine").setup({
-				options = {
-					theme = "nord",
-				},
-				sections = {
-					lualine_c = {
-						{ "filename", path = 1, shorting_target = 0 },
-					},
-				},
-				inactive_sections = {
-					lualine_c = {
-						{ "filename", path = 1, shorting_target = 0 },
-					},
-				},
-				extensions = { "nvim-tree", "symbols-outline" },
-			})
-		end,
-	})
+	use({ "git@github.com:aymericbeaumet/vim-symlink.git", requires = { "moll/vim-bbye" } })
+	use("tpope/vim-abolish")
+	use("tpope/vim-repeat")
+	use("tpope/vim-surround")
+	use("tpope/vim-unimpaired")
+	use("farmergreg/vim-lastplace")
+	use("preservim/nerdcommenter")
+	use("jiangmiao/auto-pairs")
 
+	use("/opt/homebrew/opt/fzf")
 	use({
-		"numToStr/Comment.nvim",
+		"junegunn/fzf.vim",
 		config = function()
-			require("Comment").setup()
+			vim.api.nvim_set_keymap("n", "<leader>/", "<cmd>BLines<cr>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>b", "<cmd>Buffers<cr>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>Files<cr>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>r", "<cmd>Ripgrep<cr>", { noremap = true, silent = true })
 		end,
 	})
 
@@ -188,21 +161,31 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"folke/trouble.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("trouble").setup()
+		"easymotion/vim-easymotion",
+		setup = function()
+			vim.g.EasyMotion_keys = "Z/X.C,VMQ;WYFUPLAORISETN"
+			vim.g.EasyMotion_smartcase = 1
+			vim.g.EasyMotion_use_smartsign_us = 1
+			vim.g.EasyMotion_use_upper = 1
+			vim.g.EasyMotion_do_mapping = 0
+			vim.cmd("nmap <Leader>s <Plug>(easymotion-overwin-f)")
 		end,
 	})
 
 	use({
-		"tpope/vim-fugitive",
-		requires = { "tpope/vim-rhubarb" },
+		"famiu/bufdelete.nvim",
 		config = function()
-			vim.cmd("cnoreabbrev GRemove GDelete")
-			vim.api.nvim_set_keymap("n", "<leader>gb", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>gd", "<cmd>Gvdiffsplit<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>gl", "<cmd>G log<cr>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bdelete!<cr>", { noremap = true, silent = true })
+		end,
+	})
+
+	use("hashivim/vim-terraform")
+
+	use({
+		"folke/trouble.nvim",
+		requires = { "kyazdani42/nvim-web-devicons" },
+		config = function()
+			require("trouble").setup()
 		end,
 	})
 
@@ -213,7 +196,6 @@ require("packer").startup(function(use)
 			"hrsh7th/nvim-cmp", -- completion plugin
 			"ray-x/lsp_signature.nvim", -- lsp signature plugin
 			"SirVer/ultisnips", -- snippet plugin
-			"windwp/nvim-autopairs", -- autopair plugin
 			-- completion source plugins
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
@@ -222,17 +204,7 @@ require("packer").startup(function(use)
 			"quangnguyen30192/cmp-nvim-ultisnips",
 		},
 		config = function()
-			local autopairs = require("nvim-autopairs")
 			local cmp = require("cmp")
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-
-			autopairs.setup({
-				disable_filetype = { "TelescopePrompt", "vim" },
-				map_c_h = true,
-				map_c_w = true,
-			})
-
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
 
 			cmp.setup({
 				completion = { completeopt = "menu,menuone,noinsert" },
@@ -272,21 +244,6 @@ require("packer").startup(function(use)
 				}),
 			})
 
-			cmp.setup.cmdline("/", {
-				sources = cmp.config.sources({
-					{ name = "buffer" },
-				}),
-			})
-
-			cmp.setup.cmdline(":", {
-				sources = cmp.config.sources({
-					{ name = "cmdline" },
-				}, {
-					{ name = "buffer" },
-					{ name = "path" },
-				}),
-			})
-
 			local capabilities = require("cmp_nvim_lsp").update_capabilities(
 				vim.lsp.protocol.make_client_capabilities()
 			)
@@ -299,18 +256,6 @@ require("packer").startup(function(use)
 
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>ld", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>li", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(
-					bufnr,
-					"n",
-					"<leader>lt",
-					"<cmd>lua vim.lsp.buf.type_definition()<CR>",
-					opts
-				)
-
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 
@@ -380,83 +325,6 @@ require("packer").startup(function(use)
 					end
 				end,
 			})
-		end,
-	})
-
-	use({
-		"easymotion/vim-easymotion",
-		setup = function()
-			vim.g.EasyMotion_keys = "Z/X.C,VMQ;WYFUPLAORISETN"
-			vim.g.EasyMotion_smartcase = 1
-			vim.g.EasyMotion_use_smartsign_us = 1
-			vim.g.EasyMotion_use_upper = 1
-			vim.g.EasyMotion_do_mapping = 0
-			vim.cmd("nmap <Leader>s <Plug>(easymotion-overwin-f)")
-		end,
-	})
-
-	use({
-		"famiu/bufdelete.nvim",
-		config = function()
-			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bdelete!<cr>", { noremap = true, silent = true })
-		end,
-	})
-
-	use({
-		"simrat39/symbols-outline.nvim",
-		setup = function()
-			vim.api.nvim_set_keymap("n", "<leader>o", "<cmd>SymbolsOutline<cr>", { noremap = true, silent = true })
-		end,
-	})
-
-	use({
-		"nvim-telescope/telescope.nvim",
-		requires = { "nvim-lua/plenary.nvim" },
-		config = function()
-			local actions = require("telescope.actions")
-			require("telescope").setup({
-				defaults = {
-					file_ignore_patterns = { ".git" },
-					vimgrep_arguments = {
-						"rg",
-						"--color=never",
-						"--no-heading",
-						"--with-filename",
-						"--line-number",
-						"--column",
-						"--smart-case",
-						"--hidden",
-					},
-					sorting_strategy = "ascending",
-					layout_strategy = "horizontal",
-					layout_config = {
-						height = 0.80,
-						width = 0.80,
-						prompt_position = "top",
-						preview_width = 0.55,
-					},
-					mappings = {
-						i = {
-							["<esc>"] = actions.close,
-						},
-					},
-				},
-				pickers = {
-					find_files = {
-						find_command = { "fd", "--type", "f", "--strip-cwd-prefix", "--hidden" },
-					},
-				},
-			})
-			for lhs, rhs in pairs({
-				["<leader>/"] = "<cmd>Telescope current_buffer_fuzzy_find<cr>",
-				["<leader>:"] = "<cmd>Telescope command_history<cr>",
-				["<leader>b"] = "<cmd>Telescope buffers<cr>",
-				["<leader>c"] = "<cmd>Telescope commands<cr>",
-				["<leader>f"] = "<cmd>Telescope find_files<cr>",
-				["<leader>r"] = "<cmd>Telescope live_grep<cr>",
-			}) do
-				vim.api.nvim_set_keymap("n", lhs, rhs, { noremap = true, silent = true })
-			end
 		end,
 	})
 end)
