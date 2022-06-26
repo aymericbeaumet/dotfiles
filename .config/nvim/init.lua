@@ -97,6 +97,7 @@ for _, mapping in ipairs({
 	{ "i", "<c-f>", "<Right>" },
 	{ "i", "<c-h>", "<Backspace>" },
 	-- always center screen on jump commands
+	{ "n", "<c-i>", "<c-i>zz" },
 	{ "n", "<c-o>", "<c-o>zz" },
 	{ "n", "N", "Nzz" },
 	{ "n", "n", "nzz" },
@@ -197,12 +198,18 @@ require("packer").startup(function(use)
 		requires = { "kyazdani42/nvim-web-devicons" },
 		config = function()
 			require("trouble").setup()
+
+			vim.diagnostic.config({
+				signs = false, -- no sign in gutter
+			})
+
 			vim.api.nvim_set_keymap(
 				"n",
 				"<leader>d",
 				"<cmd>TroubleToggle document_diagnostics<cr>",
 				{ noremap = true, silent = true }
 			)
+
 			vim.api.nvim_set_keymap(
 				"n",
 				"<leader>t",
@@ -287,14 +294,14 @@ require("packer").startup(function(use)
 
 			local flags = { debounce_text_changes = 150 }
 
-			local on_attach = function(_client, bufnr)
+			local on_attach = function(client, bufnr)
 				local opts = { noremap = true, silent = true }
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
+				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 
 				-- we want to use null-ls for formatting
 				client.resolved_capabilities.document_formatting = false
@@ -307,11 +314,28 @@ require("packer").startup(function(use)
 				}, bufnr)
 			end
 
+			local border = {
+				{ "/", "FloatBorder" },
+				{ "▔", "FloatBorder" },
+				{ "\\", "FloatBorder" },
+				{ "▕", "FloatBorder" },
+				{ "/", "FloatBorder" },
+				{ "▁", "FloatBorder" },
+				{ "\\", "FloatBorder" },
+				{ "▏", "FloatBorder" },
+			}
+
+			local handlers = {
+				["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
+				["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = border }),
+			}
+
 			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver", "svelte" }) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
 					flags = flags,
 					on_attach = on_attach,
+					handlers = handlers,
 				})
 			end
 		end,
