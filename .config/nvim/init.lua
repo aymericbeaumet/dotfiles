@@ -234,12 +234,12 @@ require("packer").startup(function(use)
 		run = "npm update -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint",
 		requires = {
 			"hrsh7th/nvim-cmp", -- completion plugin
-			"ray-x/lsp_signature.nvim", -- lsp signature plugin
 			"SirVer/ultisnips", -- snippet plugin
 			-- completion source plugins
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
 			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
 			"quangnguyen30192/cmp-nvim-ultisnips",
 		},
@@ -276,6 +276,7 @@ require("packer").startup(function(use)
 
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
+					{ name = "nvim_lsp_signature_help" },
 					{ name = "ultisnips" },
 				}, {
 					{ name = "path" },
@@ -302,11 +303,6 @@ require("packer").startup(function(use)
 				-- we want to use null-ls for formatting
 				client.resolved_capabilities.document_formatting = false
 				client.resolved_capabilities.document_range_formatting = false
-
-				require("lsp_signature").on_attach({
-					hi_parameter = "IncSearch",
-					hint_enable = false,
-				}, bufnr)
 			end
 
 			local handlers = {
