@@ -65,9 +65,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
-	{ "n", "<leader>vc", "<cmd>PackerClean<cr>" },
-	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" },
-	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" },
+	{ "n", "<leader>vc", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" },
+	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" },
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
 	-- better `j` and `k`
