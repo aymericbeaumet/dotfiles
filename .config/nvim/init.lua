@@ -291,6 +291,10 @@ require("packer").startup(function(use)
 
 			local flags = { debounce_text_changes = 150 }
 
+			local handlers = {
+				["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
+			}
+
 			local on_attach = function(client, bufnr)
 				local opts = { noremap = true, silent = true }
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -305,17 +309,12 @@ require("packer").startup(function(use)
 				client.resolved_capabilities.document_range_formatting = false
 			end
 
-			local handlers = {
-				["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
-				["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" }),
-			}
-
 			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver", "svelte" }) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
 					flags = flags,
-					on_attach = on_attach,
 					handlers = handlers,
+					on_attach = on_attach,
 				})
 			end
 		end,
