@@ -68,7 +68,6 @@ for _, mapping in ipairs({
 	{ "n", "<leader>vc", "<cmd>PackerClean<cr>" },
 	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" },
 	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" },
-	{ "n", "<leader>q", "<cmd>q<cr>" },
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
 	-- better `j` and `k`
@@ -212,6 +211,7 @@ require("packer").startup(function(use)
 				"<cmd>TroubleToggle workspace_diagnostics<cr>",
 				{ noremap = true, silent = true }
 			)
+
 			vim.api.nvim_set_keymap("n", "[t", "", {
 				noremap = true,
 				silent = true,
@@ -259,9 +259,7 @@ require("packer").startup(function(use)
 				},
 
 				mapping = {
-					["<cr>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
-					["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "c" }),
-					["<C-e>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "c" }),
+					["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
 					["<C-n>"] = cmp.mapping(
 						cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 						{ "i", "c" }
