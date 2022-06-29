@@ -18,32 +18,6 @@ autoload -Uz compinit && compinit
   cd "$dirpath" || exit 1
 }
 
-b() {
-  if (( $# == 0 )); then
-    filepath=$(fd --type=directory --hidden --exclude=.git | fzf --preview 'bat')
-  else
-    filepath=$(fd --type=directory --hidden --exclude=.git | fzf --filter="$*" | head -1)
-  fi
-  if [ -z "$filepath" ]; then
-    echo 'wow such empty' 1>&2
-  else
-    bat "$filepath" || exit 1
-  fi
-}
-
-d() {
-  if (( $# == 0 )); then
-    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --preview 'exa -la {}')
-  else
-    dirpath=$(fd --type=directory --hidden --exclude=.git | fzf --filter="$*" | head -1)
-  fi
-  if [ -z "$dirpath" ]; then
-    echo 'wow such empty' 1>&2
-  else
-    cd "$dirpath" || exit 1
-  fi
-}
-
 g() {
   if (( $# == 0 )); then
     git status -sb
@@ -79,6 +53,8 @@ z() {
   fi
 }
 
+alias b=bat
+
 alias brew='arch -arm64 brew'
 
 alias k='kubectl'
@@ -106,6 +82,11 @@ alias vi=nvim
 alias vim=nvim
 
 alias w='watchexec --restart --clear --'
+
+# global aliases
+alias -g F='| fzf'
+alias -g L='| less'
+alias -g N='>/dev/null'
 
 # global env
 export LANGUAGE=en_US.UTF-8
@@ -202,7 +183,17 @@ bindkey "^V" edit-command-line
 
 # fzf plugin
 . $(brew --prefix fzf)/shell/key-bindings.zsh
-export FZF_DEFAULT_OPTS='--ansi --border --inline-info --height=40% --layout=reverse'
+export FZF_DEFAULT_OPTS="\
+  --ansi --border --inline-info --height=40% --layout=reverse \
+  --preview ' \
+    ([[ -f {} ]] && bat {}) || \
+    ([[ -d {} ]] && tree -C {}) || \
+    echo {} 2>/dev/null \
+  ' \
+"
+export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git' --strip-cwd-prefix"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d"
 
 # zsh-autosuggestions plugin
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"

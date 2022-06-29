@@ -34,6 +34,12 @@ vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
 vim.o.cursorline = true -- highlight cursorline
 vim.o.showmode = false -- do not show mode
+vim.cmd([[
+set statusline=
+set statusline+=%f
+set statusline+=%=
+set statusline+=%{&filetype}\ %p%%\ %l:%c
+]])
 
 -- mappings
 vim.o.timeoutlen = 500 -- time to wait when a part of a mapped sequence is typed
@@ -124,15 +130,15 @@ require("packer").startup(function(use)
 	use("preservim/nerdcommenter")
 	use("jiangmiao/auto-pairs")
 
-	use("/opt/homebrew/opt/fzf")
 	use({
 		"junegunn/fzf.vim",
+		requires = { "/opt/homebrew/opt/fzf" },
 		config = function()
 			vim.cmd([[
         command! -bang -nargs=? -complete=dir Files
             \ call fzf#vim#files(
             \   <q-args>,
-            \   fzf#vim#with_preview({'source': 'fd --type file --hidden --exclude .git --strip-cwd-prefix'}),
+            \   fzf#vim#with_preview({'source': 'fd --type file --hidden --follow --exclude .git --strip-cwd-prefix'}),
             \   <bang>0,
             \ )
 
@@ -165,21 +171,21 @@ require("packer").startup(function(use)
 	use({
 		"airblade/vim-rooter",
 		setup = function()
-			vim.g.rooter_patterns = { ".git" }
 			vim.g.rooter_cd_cmd = "lcd"
-			vim.g.rooter_silent_chdir = 1
+			vim.g.rooter_patterns = { ".git" }
 			vim.g.rooter_resolve_links = 1
+			vim.g.rooter_silent_chdir = 1
 		end,
 	})
 
 	use({
 		"easymotion/vim-easymotion",
 		setup = function()
+			vim.g.EasyMotion_do_mapping = 0
 			vim.g.EasyMotion_keys = "Z/X.C,VMQ;WYFUPLAORISETN"
 			vim.g.EasyMotion_smartcase = 1
 			vim.g.EasyMotion_use_smartsign_us = 1
 			vim.g.EasyMotion_use_upper = 1
-			vim.g.EasyMotion_do_mapping = 0
 			vim.cmd("nmap <Leader>s <Plug>(easymotion-overwin-f)")
 		end,
 	})
@@ -233,14 +239,14 @@ require("packer").startup(function(use)
 		run = "npm update -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint",
 		requires = {
 			"hrsh7th/nvim-cmp", -- completion plugin
-			"SirVer/ultisnips", -- snippet plugin
+			"hrsh7th/vim-vsnip", -- snippet plugin
 			-- completion source plugins
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
-			"quangnguyen30192/cmp-nvim-ultisnips",
+			"hrsh7th/cmp-vsnip",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -253,7 +259,7 @@ require("packer").startup(function(use)
 
 				snippet = {
 					expand = function(args)
-						vim.fn["UltiSnips#Anon"](args.body)
+						vim.fn["vsnip#anonymous"](args.body)
 					end,
 				},
 
@@ -261,11 +267,11 @@ require("packer").startup(function(use)
 					["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
 					["<C-n>"] = cmp.mapping(
 						cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-						{ "i", "c" }
+						{ "i" }
 					),
 					["<C-p>"] = cmp.mapping(
 						cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-						{ "i", "c" }
+						{ "i" }
 					),
 					["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i" }),
 					["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i" }),
@@ -274,7 +280,6 @@ require("packer").startup(function(use)
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lsp_signature_help" },
-					{ name = "ultisnips" },
 				}, {
 					{ name = "path" },
 				}, {
