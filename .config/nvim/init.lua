@@ -38,7 +38,7 @@ vim.cmd([[
 set statusline=
 set statusline+=%f
 set statusline+=%=
-set statusline+=%{&filetype}\ %p%%\ %l:%c
+set statusline+=%{&filetype}\ \|\ %p%%\ \|\ %l:%c
 ]])
 
 -- mappings
