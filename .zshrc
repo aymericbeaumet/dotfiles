@@ -84,9 +84,9 @@ alias vim=nvim
 alias w='watchexec --restart --clear --shell=none --'
 
 # global aliases
-alias -g F='| fzf'
-alias -g G='| grep -E -i --color=auto'
-alias -g L='| less'
+alias -g F='|& fzf'
+alias -g G='|& grep -E -i --color=auto'
+alias -g L='|& less'
 alias -g N='>/dev/null'
 
 # global env
