@@ -81,10 +81,11 @@ alias v=nvim
 alias vi=nvim
 alias vim=nvim
 
-alias w='watchexec --restart --clear --'
+alias w='watchexec --restart --clear --shell=none --'
 
 # global aliases
 alias -g F='| fzf'
+alias -g G='| grep -E -i --color=auto'
 alias -g L='| less'
 alias -g N='>/dev/null'
 
@@ -191,9 +192,9 @@ export FZF_DEFAULT_OPTS="\
     echo {} 2>/dev/null \
   ' \
 "
-export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git' --strip-cwd-prefix"
+export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d"
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 
 # zsh-autosuggestions plugin
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"

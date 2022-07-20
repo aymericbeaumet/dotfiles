@@ -8,11 +8,11 @@
   a = add
   br = branch -v --sort=-committerdate
   bw = browse
-  cp = cherry-pick
   ci = commit
   cia = commit --amend
   cl = clone
   co = checkout
+  cp = cherry-pick
   df = diff
   dfc = diff --cached
   fe = fetch
@@ -34,6 +34,9 @@
   sm = submodule
   st = status --short --branch
   sw = show
+  wa = worktree add
+  wl = worktree list
+  wr = worktree remove
   #
   plps = !git pl && git ps
 

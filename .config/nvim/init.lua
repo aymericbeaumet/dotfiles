@@ -38,7 +38,7 @@ vim.cmd([[
 set statusline=
 set statusline+=%f
 set statusline+=%=
-set statusline+=%{&filetype}\ \|\ %p%%\ \|\ %l:%c
+set statusline+=%l:%c\ %p%%
 ]])
 
 -- mappings
@@ -217,14 +217,14 @@ require("packer").startup(function(use)
 				{ noremap = true, silent = true }
 			)
 
-			vim.api.nvim_set_keymap("n", "[t", "", {
+			vim.api.nvim_set_keymap("n", "[w", "", {
 				noremap = true,
 				silent = true,
 				callback = function()
 					require("trouble").previous({ skip_groups = true, jump = true })
 				end,
 			})
-			vim.api.nvim_set_keymap("n", "]t", "", {
+			vim.api.nvim_set_keymap("n", "]w", "", {
 				noremap = true,
 				silent = true,
 				callback = function()
