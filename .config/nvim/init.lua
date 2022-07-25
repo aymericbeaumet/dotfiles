@@ -1,9 +1,6 @@
 -- Author: Aymeric Beaumet <hi@aymericbeaumet.com> (https://aymericbeaumet.com)
 -- Github: @aymericbeaumet/dotfiles
 
---# selene: allow(undefined_variable)
---# selene: allow(unscoped_variables)
-
 -- cursor
 vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
@@ -28,7 +25,7 @@ vim.o.tabstop = 2 -- n spaces when using <Tab>
 -- interface
 vim.o.mouse = "a" -- enable mouse support
 vim.o.number = false -- don't show line numbers
-vim.o.shortmess = "aoOsIctF" -- disable vim welcome message / enable shorter messages
+vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
@@ -71,8 +68,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
-	{ "n", "<leader>pc", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" },
-	{ "n", "<leader>ps", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" },
+	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim source
+	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" }, -- vim update
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
 	-- better `j` and `k`
@@ -88,7 +85,7 @@ for _, mapping in ipairs({
 	{ "v", "<", "<gv" },
 	{ "v", ">", ">gv" },
 	-- clean screen and reload file
-	{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>" },
+	{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
 	-- emulate permanent global marks
 	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
@@ -155,6 +152,7 @@ require("packer").startup(function(use)
 			vim.api.nvim_set_keymap("n", "<leader>/", "<cmd>BLines<cr>", { noremap = true, silent = true })
 			vim.api.nvim_set_keymap("n", "<leader>b", "<cmd>Buffers<cr>", { noremap = true, silent = true })
 			vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>Files<cr>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>p", "<cmd>Commands<cr>", { noremap = true, silent = true })
 			vim.api.nvim_set_keymap("n", "<leader>r", "<cmd>Ripgrep<cr>", { noremap = true, silent = true })
 		end,
 	})
@@ -190,53 +188,8 @@ require("packer").startup(function(use)
 		end,
 	})
 
-	use("hashivim/vim-terraform")
-
-	use({
-		"folke/trouble.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("trouble").setup()
-
-			vim.diagnostic.config({
-				float = { border = "rounded" },
-				signs = false, -- no sign in gutter
-			})
-
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>d",
-				"<cmd>TroubleToggle document_diagnostics<cr>",
-				{ noremap = true, silent = true }
-			)
-
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>t",
-				"<cmd>TroubleToggle workspace_diagnostics<cr>",
-				{ noremap = true, silent = true }
-			)
-
-			vim.api.nvim_set_keymap("n", "[w", "", {
-				noremap = true,
-				silent = true,
-				callback = function()
-					require("trouble").previous({ skip_groups = true, jump = true })
-				end,
-			})
-			vim.api.nvim_set_keymap("n", "]w", "", {
-				noremap = true,
-				silent = true,
-				callback = function()
-					require("trouble").next({ skip_groups = true, jump = true })
-				end,
-			})
-		end,
-	})
-
 	use({
 		"neovim/nvim-lspconfig", -- neovim lsp config plugin
-		run = "npm update -g npm typescript typescript-language-server vscode-langservers-extracted prettier svelte-language-server eslint",
 		requires = {
 			"hrsh7th/nvim-cmp", -- completion plugin
 			"hrsh7th/vim-vsnip", -- snippet plugin
@@ -247,6 +200,9 @@ require("packer").startup(function(use)
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-vsnip",
+			-- lsp
+			"williamboman/mason-lspconfig.nvim",
+			"williamboman/mason.nvim",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -287,9 +243,8 @@ require("packer").startup(function(use)
 				}),
 			})
 
-			local capabilities = require("cmp_nvim_lsp").update_capabilities(
-				vim.lsp.protocol.make_client_capabilities()
-			)
+			local capabilities =
+				require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 			local flags = { debounce_text_changes = 150 }
 
@@ -311,7 +266,10 @@ require("packer").startup(function(use)
 				client.resolved_capabilities.document_range_formatting = false
 			end
 
-			for _, lsp in pairs({ "gopls", "rust_analyzer", "html", "tsserver", "svelte" }) do
+			for _, lsp in pairs({
+				"gopls",
+				"tsserver",
+			}) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
 					flags = flags,
@@ -319,39 +277,52 @@ require("packer").startup(function(use)
 					on_attach = on_attach,
 				})
 			end
+
+			require("mason").setup()
+			require("mason-lspconfig").setup({ automatic_installation = true })
 		end,
 	})
 
 	use({
 		"jose-elias-alvarez/null-ls.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
+		run = [[
+      brew install gofumpt golangci-lint;
+			npm install --global eslint prettier;
+      brew install stylua;
+      brew install shellharden shfmt shellcheck;
+      brew install hadolint;
+    ]],
 		config = function()
 			local null_ls = require("null-ls")
 
 			null_ls.setup({
 				sources = {
-					-- rust
-					null_ls.builtins.formatting.rustfmt,
 					-- golang
-					null_ls.builtins.formatting.gofmt.with({ extra_args = { "-s" } }),
-					null_ls.builtins.formatting.goimports,
-					null_ls.builtins.diagnostics.golangci_lint,
+					null_ls.builtins.diagnostics.golangci_lint.with({
+						prefer_local = ".bin",
+					}),
+					null_ls.builtins.formatting.gofumpt.with({
+						prefer_local = ".bin",
+						extra_args = { "-extra" },
+					}),
 					-- javascript, typescript, svelte, etc
-					null_ls.builtins.formatting.prettier.with({ extra_filetypes = { "svelte" } }),
-					null_ls.builtins.diagnostics.eslint.with({ extra_filetypes = { "svelte" } }),
+					null_ls.builtins.diagnostics.eslint.with({
+						prefer_local = "node_modules/.bin",
+						extra_filetypes = { "svelte" },
+					}),
+					null_ls.builtins.formatting.prettier.with({
+						prefer_local = "node_modules/.bin",
+						extra_filetypes = { "svelte" },
+					}),
 					-- lua
 					null_ls.builtins.formatting.stylua,
-					null_ls.builtins.diagnostics.selene,
 					-- shell
-					null_ls.builtins.formatting.shfmt,
-					null_ls.builtins.formatting.shellharden,
 					null_ls.builtins.diagnostics.shellcheck,
-					-- zsh
-					null_ls.builtins.diagnostics.zsh,
+					null_ls.builtins.formatting.shellharden,
+					null_ls.builtins.formatting.shfmt,
 					-- dockerfile
 					null_ls.builtins.diagnostics.hadolint,
-					-- terraform
-					null_ls.builtins.formatting.terraform_fmt,
 				},
 
 				on_attach = function(client)
@@ -363,6 +334,48 @@ require("packer").startup(function(use)
               augroup END
             ]])
 					end
+				end,
+			})
+		end,
+	})
+
+	use({
+		"folke/trouble.nvim",
+		requires = { "kyazdani42/nvim-web-devicons" },
+		config = function()
+			require("trouble").setup()
+
+			vim.diagnostic.config({
+				float = { border = "rounded" },
+				signs = false, -- no sign in gutter
+			})
+
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>d",
+				"<cmd>TroubleToggle document_diagnostics<cr>",
+				{ noremap = true, silent = true }
+			)
+
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>t",
+				"<cmd>TroubleToggle workspace_diagnostics<cr>",
+				{ noremap = true, silent = true }
+			)
+
+			vim.api.nvim_set_keymap("n", "[w", "", {
+				noremap = true,
+				silent = true,
+				callback = function()
+					require("trouble").previous({ skip_groups = true, jump = true })
+				end,
+			})
+			vim.api.nvim_set_keymap("n", "]w", "", {
+				noremap = true,
+				silent = true,
+				callback = function()
+					require("trouble").next({ skip_groups = true, jump = true })
 				end,
 			})
 		end,
