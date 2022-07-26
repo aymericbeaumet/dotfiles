@@ -68,7 +68,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
-	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim source
+	{ "n", "<leader>vr", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload
 	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" }, -- vim update
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
@@ -89,6 +89,7 @@ for _, mapping in ipairs({
 	-- emulate permanent global marks
 	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
+	{ "n", "'G", "<cmd>edit ~/.dotfiles/.gitconfig<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
