@@ -129,6 +129,13 @@ require("packer").startup(function(use)
 	use("tpope/vim-unimpaired")
 
 	use({
+		"famiu/bufdelete.nvim",
+		config = function()
+			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bwipeout<CR>", { noremap = true, silent = true })
+		end,
+	})
+
+	use({
 		"junegunn/fzf.vim",
 		requires = { "/opt/homebrew/opt/fzf" },
 		config = function()
@@ -355,32 +362,10 @@ require("packer").startup(function(use)
 
 			vim.api.nvim_set_keymap(
 				"n",
-				"<leader>d",
+				"<leader>t",
 				"<cmd>TroubleToggle document_diagnostics<cr>",
 				{ noremap = true, silent = true }
 			)
-
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>t",
-				"<cmd>TroubleToggle workspace_diagnostics<cr>",
-				{ noremap = true, silent = true }
-			)
-
-			vim.api.nvim_set_keymap("n", "[w", "", {
-				noremap = true,
-				silent = true,
-				callback = function()
-					require("trouble").previous({ skip_groups = true, jump = true })
-				end,
-			})
-			vim.api.nvim_set_keymap("n", "]w", "", {
-				noremap = true,
-				silent = true,
-				callback = function()
-					require("trouble").next({ skip_groups = true, jump = true })
-				end,
-			})
 		end,
 	})
 end)
