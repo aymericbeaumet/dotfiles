@@ -119,13 +119,13 @@ require("packer").startup(function(use)
 	})
 
 	use({ "git@github.com:aymericbeaumet/vim-symlink.git", requires = { "moll/vim-bbye" } })
+	use("farmergreg/vim-lastplace")
+	use("jiangmiao/auto-pairs")
+	use("preservim/nerdcommenter")
 	use("tpope/vim-abolish")
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
-	use("farmergreg/vim-lastplace")
-	use("preservim/nerdcommenter")
-	use("jiangmiao/auto-pairs")
 
 	use({
 		"junegunn/fzf.vim",
@@ -268,7 +268,9 @@ require("packer").startup(function(use)
 
 			for _, lsp in pairs({
 				"gopls",
+				"sumneko_lua",
 				"tsserver",
+				"rust_analyzer",
 			}) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
