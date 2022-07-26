@@ -51,9 +51,6 @@
   excludesfile = ~/.gitignore
   pager = less
 
-[diff]
-  colorMoved = default
-
 [github]
   user = aymericbeaumet
 
