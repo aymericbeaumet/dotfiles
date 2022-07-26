@@ -90,8 +90,8 @@ for _, mapping in ipairs({
 	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 	{ "n", "'G", "<cmd>edit ~/.dotfiles/.gitconfig<cr>" },
-	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
+	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
 	-- some zsh mappings in insert mode
 	{ "i", "<c-a>", "<Home>" },
