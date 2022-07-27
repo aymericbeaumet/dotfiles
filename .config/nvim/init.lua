@@ -196,6 +196,8 @@ require("packer").startup(function(use)
 		end,
 	})
 
+	use({ "hashivim/vim-terraform" })
+
 	use({
 		"neovim/nvim-lspconfig", -- neovim lsp config plugin
 		requires = {
@@ -333,6 +335,8 @@ require("packer").startup(function(use)
 					null_ls.builtins.formatting.shfmt,
 					-- dockerfile
 					null_ls.builtins.diagnostics.hadolint,
+					-- terraform
+					null_ls.builtins.formatting.terraform_fmt,
 				},
 
 				on_attach = function(client)
