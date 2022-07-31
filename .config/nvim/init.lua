@@ -24,7 +24,8 @@ vim.o.tabstop = 2 -- n spaces when using <Tab>
 
 -- interface
 vim.o.mouse = "a" -- enable mouse support
-vim.o.number = false -- don't show line numbers
+vim.o.number = true -- don't show line numbers
+vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
@@ -299,7 +300,7 @@ require("packer").startup(function(use)
 		"jose-elias-alvarez/null-ls.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
 		run = [[
-      brew install gofumpt golangci-lint;
+      brew install golangci-lint; go install golang.org/x/tools/cmd/goimports@latest;
 			npm install --global eslint prettier;
       brew install stylua;
       brew install shellharden shfmt shellcheck;
@@ -314,9 +315,8 @@ require("packer").startup(function(use)
 					null_ls.builtins.diagnostics.golangci_lint.with({
 						prefer_local = ".bin",
 					}),
-					null_ls.builtins.formatting.gofumpt.with({
+					null_ls.builtins.formatting.goimports.with({
 						prefer_local = ".bin",
-						extra_args = { "-extra" },
 					}),
 					-- javascript, typescript, svelte, etc
 					null_ls.builtins.diagnostics.eslint.with({
@@ -359,10 +359,7 @@ require("packer").startup(function(use)
 		config = function()
 			require("trouble").setup()
 
-			vim.diagnostic.config({
-				float = { border = "rounded" },
-				signs = false, -- no sign in gutter
-			})
+			vim.diagnostic.config({ float = { border = "rounded" } })
 
 			vim.api.nvim_set_keymap(
 				"n",
