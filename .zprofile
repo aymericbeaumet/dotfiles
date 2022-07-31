@@ -10,7 +10,7 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
   eval $(/opt/homebrew/bin/brew shellenv)
 
   # node/npm
-  export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
+  export PATH="/opt/vagrant/bin:/opt/homebrew/opt/node@16/bin:$PATH"
   export PATH="$(npm config get prefix):$PATH"
 
   # go
