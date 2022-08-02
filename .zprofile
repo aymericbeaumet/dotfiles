@@ -19,7 +19,7 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
   export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
   # rekki
-  if [ -x "$HOME/.rekki/bin/rekki"]; then
+  if [ -x "$HOME/.rekki/bin/rekki" ]; then
     eval "$("$HOME/.rekki/bin/rekki" shellenv)"
     export REKKI_CLI_NO_REPORTING=true
     export REKKI_CLI_STACKTRACE=true
