@@ -19,7 +19,9 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
   export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
   # ***REMOVED***
-  eval "$("$HOME/.***REMOVED***/bin/***REMOVED***" shellenv)"
-  export ***REMOVED***_CLI_NO_REPORTING=true
-  export ***REMOVED***_CLI_STACKTRACE=true
+  if [ -x "$HOME/.***REMOVED***/bin/***REMOVED***"]; then
+    eval "$("$HOME/.***REMOVED***/bin/***REMOVED***" shellenv)"
+    export ***REMOVED***_CLI_NO_REPORTING=true
+    export ***REMOVED***_CLI_STACKTRACE=true
+  fi
 fi
