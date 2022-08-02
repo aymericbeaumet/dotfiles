@@ -24,7 +24,7 @@ vim.o.tabstop = 2 -- n spaces when using <Tab>
 
 -- interface
 vim.o.mouse = "a" -- enable mouse support
-vim.o.number = true -- don't show line numbers
+vim.o.number = false -- don't show line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
@@ -128,6 +128,8 @@ require("packer").startup(function(use)
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
+	use("vitalk/vim-shebang")
+	use("jparise/vim-graphql")
 
 	use({
 		"famiu/bufdelete.nvim",
@@ -297,6 +299,19 @@ require("packer").startup(function(use)
 	})
 
 	use({
+		"mfussenegger/nvim-dap",
+		requires = {
+			"leoluz/nvim-dap-go",
+		},
+		run = [[
+      brew install delve;
+    ]],
+		config = function()
+			require("dap-go").setup()
+		end,
+	})
+
+	use({
 		"jose-elias-alvarez/null-ls.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
 		run = [[
@@ -359,7 +374,10 @@ require("packer").startup(function(use)
 		config = function()
 			require("trouble").setup()
 
-			vim.diagnostic.config({ float = { border = "rounded" } })
+			vim.diagnostic.config({
+				float = { border = "rounded" },
+				signs = false, -- no sign in gutter
+			})
 
 			vim.api.nvim_set_keymap(
 				"n",
