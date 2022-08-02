@@ -1,17 +1,10 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com>
 # Github: @aymericbeaumet/dotfiles
 
-export BAT_THEME="Nord"
-export CGO_CFLAGS_ALLOW="-Xpreprocessor"
-export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
-
 if [ -z "$HOMEBREW_PREFIX" ]; then
-  # homebrew
-  eval $(/opt/homebrew/bin/brew shellenv)
-
-  # node/npm
-  export PATH="/opt/vagrant/bin:/usr/local/bin:$PATH"
-  export PATH="$(npm config get prefix):$PATH"
+  # homebrew (support both arm64 and amd64 prefixes)
+  export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+  eval $(brew shellenv)
 
   # go
   export GOPATH="$HOME/go"
@@ -20,6 +13,10 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
   # rust/cargo
   export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"
+
+  # tools
+  export BAT_THEME="Nord"
+  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
   # rekki
   eval "$("$HOME/.rekki/bin/rekki" shellenv)"
