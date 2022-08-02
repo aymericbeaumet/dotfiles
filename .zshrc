@@ -54,9 +54,6 @@ z() {
 }
 
 alias b=bat
-
-alias brew='arch -arm64 brew'
-
 alias k='kubectl'
 alias kdd='kubectl describe deploy'
 alias kdi='kubectl describe ingress'
