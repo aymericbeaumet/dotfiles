@@ -1,0 +1,12 @@
+tap 'homebrew/cask'
+cask 'alacritty'
+cask 'alfred'
+cask 'discord'
+cask 'docker'
+cask 'firefox'
+cask 'hammerspoon'
+cask 'karabiner-elements'
+cask 'slack'
+
+tap 'homebrew/cask-fonts'
+cask 'font-fira-code-nerd-font'
