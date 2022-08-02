@@ -120,7 +120,7 @@ require("packer").startup(function(use)
 		end,
 	})
 
-	use({ "git@github.com:aymericbeaumet/vim-symlink.git", requires = { "moll/vim-bbye" } })
+	use({ "aymericbeaumet/vim-symlink.git", requires = { "moll/vim-bbye" } })
 	use("farmergreg/vim-lastplace")
 	use("jiangmiao/auto-pairs")
 	use("preservim/nerdcommenter")

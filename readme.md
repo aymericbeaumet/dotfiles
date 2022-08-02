@@ -10,8 +10,9 @@ to my needs, I think it is a good source of inspiration for your own dotfiles._
 ## Install
 
 ```bash
-# Clone dotfiles
+# Clone dotfiles (read-write or read-only)
 git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.dotfiles"
+git clone --recursive https://github.com/aymericbeaumet/dotfiles.git "$HOME/.dotfiles"
 
 # Symlink dotfiles
 "$HOME/.dotfiles/symlink.sh"
@@ -21,6 +22,7 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.dotfile
 
 # Install dependencies
 brew bundle --file "$HOME/.dotfiles/Brewfile"
+brew bundle --file "$HOME/.dotfiles/Brewfile.casks"
 ```
 
 ## Update
