@@ -60,4 +60,4 @@ crashlytics.properties
 .vscode
 
 # Homebrew
-Brewfile.lock.json
+*.lock.json

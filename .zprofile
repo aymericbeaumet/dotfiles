@@ -23,5 +23,6 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
     eval "$("$HOME/.***REMOVED***/bin/***REMOVED***" shellenv)"
     export ***REMOVED***_CLI_NO_REPORTING=true
     export ***REMOVED***_CLI_STACKTRACE=true
+    export ***REMOVED***_CLI_EXPERIMENT_BSDIFF=true
   fi
 fi

@@ -27,33 +27,43 @@ g() {
 }
 compdef g=git
 
-t() {
+z() {
+  local dirpath
+  if (( $# == 0 )); then
+    dirpath="$(zoxide query --list | fzf --preview='exa -la {}')"
+  else
+    dirpath="$(zoxide query --list | fzf --filter="$*" | head -1)"
+  fi
+  if [ -n "$dirpath" ]; then
+    cd "$dirpath" || exit 1
+  fi
+}
+alias zl='zoxide query --list --score'
+
+tmux() {
   if (( $# == 0 )); then
     if [ -n "$TMUX" ]; then
       echo "session=$TMUX"
     else
-      tmux attach -t default || tmux new -s default
+      command tmux attach -t default || tmux new -s default
     fi
   else
-    tmux "$@"
-  fi
-}
-compdef t=tmux
-
-z() {
-  if (( $# == 0 )); then
-    dirpath=$(zoxide query --list | fzf --preview='exa -la {}')
-  else
-    dirpath=$(zoxide query --list | fzf --filter="$*" | head -1)
-  fi
-  if [ -z "$dirpath" ]; then
-    echo 'wow such empty' 1>&2
-  else
-    cd "$dirpath" || exit 1
+    command tmux "$@"
   fi
 }
 
+# aliases
 alias b=bat
+alias l='exa --group-directories-first -lg'
+alias la='l -a'
+alias t='l --tree --git-ignore'
+alias ta='la --tree --git-ignore'
+alias v=nvim
+alias vi=nvim
+alias vim=nvim
+alias w='watchexec --restart --clear --shell=none --'
+
+# kubernetes aliases
 alias k='kubectl'
 alias kdd='kubectl describe deploy'
 alias kdi='kubectl describe ingress'
@@ -69,22 +79,14 @@ alias kgn='kubectl get nodes --sort-by=.metadata.creationTimestamp'
 alias kgp='kubectl get pods  --sort-by=.status.startTime'
 alias kgs='kubectl get services'
 
-alias ls='exa --group-directories-first'
-alias l='ls -lg'
-alias la='l -a'
-alias tree='tree -a'
-
-alias v=nvim
-alias vi=nvim
-alias vim=nvim
-
-alias w='watchexec --restart --clear --shell=none --'
-
 # global aliases
 alias -g F='|& fzf'
 alias -g G='|& grep -E -i --color=auto'
 alias -g L='|& less'
 alias -g N='>/dev/null'
+
+# utils
+whatismyip() { curl ifconfig.me; echo }
 
 # global env
 export LANGUAGE=en_US.UTF-8
@@ -180,7 +182,7 @@ autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey "^V" edit-command-line
 
 # fzf plugin
-. $(brew --prefix fzf)/shell/key-bindings.zsh
+. "$(brew --prefix fzf)/shell/key-bindings.zsh"
 export FZF_DEFAULT_OPTS="\
   --ansi --border --inline-info --height=40% --layout=reverse \
   --preview ' \
@@ -192,6 +194,9 @@ export FZF_DEFAULT_OPTS="\
 export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
+
+# zoxide plugin
+eval "$(zoxide init zsh --hook=prompt --no-cmd)"
 
 # zsh-autosuggestions plugin
 source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"

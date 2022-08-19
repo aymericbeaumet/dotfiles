@@ -91,6 +91,7 @@ for _, mapping in ipairs({
 	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 	{ "n", "'G", "<cmd>edit ~/.dotfiles/.gitconfig<cr>" },
+	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
@@ -105,7 +106,7 @@ for _, mapping in ipairs({
 	vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
--- extract and open url from selection
+-- squeeze integration https://github.com/aymericbeaumet/squeeze
 vim.cmd("vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>")
 
 -- plugins
