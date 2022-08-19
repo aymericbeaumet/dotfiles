@@ -1,0 +1,7 @@
+.DS_Store
+.Trash/
+.cache/
+.git/
+.git/
+.obsidian/
+node_modules/

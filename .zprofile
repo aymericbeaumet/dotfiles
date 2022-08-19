@@ -23,5 +23,6 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
     eval "$("$HOME/.rekki/bin/rekki" shellenv)"
     export REKKI_CLI_NO_REPORTING=true
     export REKKI_CLI_STACKTRACE=true
+    export REKKI_CLI_EXPERIMENT_BSDIFF=true
   fi
 fi
