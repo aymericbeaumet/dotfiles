@@ -182,7 +182,8 @@ autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey "^V" edit-command-line
 
 # fzf plugin
-. "$(brew --prefix fzf)/shell/key-bindings.zsh"
+source "$(brew --prefix fzf)/shell/completion.zsh" 2>/dev/null
+source "$(brew --prefix fzf)/shell/key-bindings.zsh"
 export FZF_DEFAULT_OPTS="\
   --ansi --border --inline-info --height=40% --layout=reverse \
   --preview ' \
