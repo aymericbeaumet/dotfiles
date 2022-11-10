@@ -5,15 +5,10 @@
 vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
-vim.o.cursorline = false
 
 -- encoding
 vim.o.encoding = "utf-8"
 vim.o.fileencoding = "utf-8"
-
--- filetypes
-vim.g.do_filetype_lua = 1
-vim.g.did_load_filetypes = 0
 
 -- indentation
 vim.o.expandtab = true -- replace tabs by spaces
@@ -30,7 +25,7 @@ vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter me
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
-vim.o.cursorline = true -- highlight cursorline
+vim.o.cursorline = false -- do not highlight cursorline
 vim.o.showmode = false -- do not show mode
 vim.cmd([[
 set statusline=
@@ -69,7 +64,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
-	{ "n", "<leader>vr", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload
+	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload
 	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" }, -- vim update
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
@@ -121,7 +116,7 @@ require("packer").startup(function(use)
 		end,
 	})
 
-	use({ "aymericbeaumet/vim-symlink.git", requires = { "moll/vim-bbye" } })
+	use({ "aymericbeaumet/vim-symlink", requires = { "moll/vim-bbye" } })
 	use("farmergreg/vim-lastplace")
 	use("jiangmiao/auto-pairs")
 	use("preservim/nerdcommenter")
@@ -130,12 +125,17 @@ require("packer").startup(function(use)
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
 	use("vitalk/vim-shebang")
+	use("tpope/vim-fugitive")
+
 	use("jparise/vim-graphql")
+	use("evanleck/vim-svelte")
+	use("lifepillar/pgsql.vim")
+	use("hashivim/vim-terraform")
 
 	use({
 		"famiu/bufdelete.nvim",
 		config = function()
-			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bwipeout<CR>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bwipeout!<CR>", { noremap = true, silent = true })
 		end,
 	})
 
@@ -182,7 +182,7 @@ require("packer").startup(function(use)
 		"airblade/vim-rooter",
 		setup = function()
 			vim.g.rooter_cd_cmd = "lcd"
-			vim.g.rooter_patterns = { ".git" }
+			vim.g.rooter_patterns = { ".git", "go.mod", "package-lock.json", "yarn.lock" }
 			vim.g.rooter_resolve_links = 1
 			vim.g.rooter_silent_chdir = 1
 		end,
@@ -199,8 +199,6 @@ require("packer").startup(function(use)
 			vim.cmd("nmap <Leader>s <Plug>(easymotion-overwin-f)")
 		end,
 	})
-
-	use({ "hashivim/vim-terraform" })
 
 	use({
 		"neovim/nvim-lspconfig", -- neovim lsp config plugin
@@ -257,8 +255,7 @@ require("packer").startup(function(use)
 				}),
 			})
 
-			local capabilities =
-				require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 			local flags = { debounce_text_changes = 150 }
 
@@ -276,15 +273,14 @@ require("packer").startup(function(use)
 				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 
 				-- we want to use null-ls for formatting
-				client.resolved_capabilities.document_formatting = false
-				client.resolved_capabilities.document_range_formatting = false
+				client.server_capabilities.documentFormattingProvider = false
+				client.server_capabilities.documentRangeFormattingProvider = false
 			end
 
 			for _, lsp in pairs({
 				"gopls",
-				"sumneko_lua",
+				"svelte",
 				"tsserver",
-				"rust_analyzer",
 			}) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
@@ -300,25 +296,11 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"mfussenegger/nvim-dap",
-		requires = {
-			"leoluz/nvim-dap-go",
-		},
-		run = [[
-      brew install delve;
-    ]],
-		config = function()
-			require("dap-go").setup()
-		end,
-	})
-
-	use({
 		"jose-elias-alvarez/null-ls.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
 		run = [[
       brew install golangci-lint; go install golang.org/x/tools/cmd/goimports@latest;
-			npm install --global eslint prettier;
-      brew install stylua;
+			npm install --global eslint prettier svelte-language-server tsserver;
       brew install shellharden shfmt shellcheck;
       brew install hadolint;
     ]],
@@ -356,7 +338,7 @@ require("packer").startup(function(use)
 				},
 
 				on_attach = function(client)
-					if client.resolved_capabilities.document_formatting then
+					if client.server_capabilities.documentFormattingProvider then
 						vim.cmd([[
               augroup LspFormatting
               autocmd! * <buffer>
@@ -379,13 +361,6 @@ require("packer").startup(function(use)
 				float = { border = "rounded" },
 				signs = false, -- no sign in gutter
 			})
-
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>t",
-				"<cmd>TroubleToggle document_diagnostics<cr>",
-				{ noremap = true, silent = true }
-			)
 		end,
 	})
 end)
