@@ -27,7 +27,7 @@
   rmc = rm --cached
   rs = reset
   rv = revert
-  sh = stash
+  sh = stash -u
   shc = stash clear
   shl = stash list
   shp = stash pop

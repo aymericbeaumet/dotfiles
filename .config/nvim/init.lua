@@ -64,7 +64,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
-	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload
+	{ "n", "<leader>vr", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload/source
+	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload/source
 	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" }, -- vim update
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
@@ -118,7 +119,6 @@ require("packer").startup(function(use)
 
 	use({ "aymericbeaumet/vim-symlink", requires = { "moll/vim-bbye" } })
 	use("farmergreg/vim-lastplace")
-	use("jiangmiao/auto-pairs")
 	use("preservim/nerdcommenter")
 	use("tpope/vim-abolish")
 	use("tpope/vim-repeat")
