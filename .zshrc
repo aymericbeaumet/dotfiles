@@ -27,6 +27,15 @@ g() {
 }
 compdef g=git
 
+n() {
+  if (( $# == 0 )); then
+    command nvim "$HOME/notes"
+  else
+    command nvim "$HOME/notes/$(echo "$@" | sed 's/ /\ /g').md"
+  fi
+}
+compdef n=nvim
+
 z() {
   local dirpath
   if (( $# == 0 )); then
@@ -54,7 +63,8 @@ tmux() {
 
 # aliases
 alias b=bat
-alias l='exa --group-directories-first -lg'
+alias ls='exa --group-directories-first --sort=Name'
+alias l='ls -lg'
 alias la='l -a'
 alias t='l --tree --git-ignore'
 alias ta='la --tree --git-ignore'

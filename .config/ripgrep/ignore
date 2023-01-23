@@ -1,5 +1,6 @@
 .git/
 Cargo.lock
+_fixtures/
 go.sum
 node_modules/
 package-lock.json
