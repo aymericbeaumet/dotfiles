@@ -20,7 +20,7 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
 
   # rekki
   if [ -x "$HOME/.rekki/bin/rekki" ]; then
-    eval "$("$HOME/.rekki/bin/rekki" shellenv)"
+    #eval "$("$HOME/.rekki/bin/rekki" shellenv)"
     export REKKI_CLI_NO_REPORTING=true
     export REKKI_CLI_STACKTRACE=true
     export REKKI_CLI_EXPERIMENT_BSDIFF=true
