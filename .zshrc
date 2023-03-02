@@ -39,7 +39,7 @@ compdef n=nvim
 z() {
   local dirpath
   if (( $# == 0 )); then
-    dirpath="$(zoxide query --list | fzf --preview='exa -la {}')"
+    dirpath="$(zoxide query --list | fzf)"
   else
     dirpath="$(zoxide query --list | fzf --filter="$*" | head -1)"
   fi
@@ -49,22 +49,10 @@ z() {
 }
 alias zl='zoxide query --list --score'
 
-tmux() {
-  if (( $# == 0 )); then
-    if [ -n "$TMUX" ]; then
-      echo "session=$TMUX"
-    else
-      command tmux attach -t default || tmux new -s default
-    fi
-  else
-    command tmux "$@"
-  fi
-}
-
 # aliases
 alias b=bat
-alias ls='exa --group-directories-first --sort=Name'
-alias l='ls -lg'
+alias ls='exa --group --group-directories-first --sort=Name'
+alias l='ls -l'
 alias la='l -a'
 alias t='l --tree --git-ignore'
 alias ta='la --tree --git-ignore'
@@ -195,11 +183,16 @@ bindkey "^V" edit-command-line
 source "$(brew --prefix fzf)/shell/completion.zsh" 2>/dev/null
 source "$(brew --prefix fzf)/shell/key-bindings.zsh"
 export FZF_DEFAULT_OPTS="\
-  --ansi --border --inline-info --height=40% --layout=reverse \
+  --ansi \
+  --bind ctrl-y:preview-up,ctrl-e:preview-down,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down \
+  --border \
+  --height=40% \
+  --inline-info \
+  --layout=reverse \
+  --preview-window 'right:55%' \
   --preview ' \
-    ([[ -f {} ]] && bat {}) || \
-    ([[ -d {} ]] && tree -C {}) || \
-    echo {} 2>/dev/null \
+    ([[ -f {} ]] && bat --style=numbers --line-range :300 {}) || \
+    ([[ -d {} ]] && exa -la {}) \
   ' \
 "
 export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git'"

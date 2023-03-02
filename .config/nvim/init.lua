@@ -19,20 +19,13 @@ vim.o.tabstop = 2 -- n spaces when using <Tab>
 
 -- interface
 vim.o.mouse = "a" -- enable mouse support
-vim.o.number = false -- don't show line numbers
+vim.o.number = true -- show line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
 vim.o.cursorline = false -- do not highlight cursorline
-vim.o.showmode = false -- do not show mode
-vim.cmd([[
-set statusline=
-set statusline+=%f
-set statusline+=%=
-set statusline+=%l:%c\ %p%%
-]])
 
 -- mappings
 vim.o.timeoutlen = 500 -- time to wait when a part of a mapped sequence is typed
@@ -64,9 +57,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 for _, mapping in ipairs({
 	-- leader
-	{ "n", "<leader>vr", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload/source
-	{ "n", "<leader>vs", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerCompile<cr>" }, -- vim reload/source
-	{ "n", "<leader>vu", "<cmd>luafile ~/.config/nvim/init.lua<cr>:PackerSync<cr>" }, -- vim update
+	{ "n", "<leader>vc", "<cmd>PackerCompile<cr>" }, -- vim compile
+	{ "n", "<leader>vs", "<cmd>PackerSync<cr>" }, -- vim sync
 	-- save current buffer
 	{ "n", "<cr>", "<cmd>w<cr>" },
 	-- better `j` and `k`
@@ -85,8 +77,6 @@ for _, mapping in ipairs({
 	{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
 	-- emulate permanent global marks
 	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
-	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
-	{ "n", "'G", "<cmd>edit ~/.dotfiles/.gitconfig<cr>" },
 	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
@@ -113,12 +103,19 @@ require("packer").startup(function(use)
 			vim.o.termguicolors = true
 			vim.g.nord_borders = true
 			vim.g.nord_italic = true
-			vim.cmd("colorscheme nord")
+			vim.g.nord_contrast = true
+
+			require("nord").set()
+
+			vim.cmd([[
+        sign define DiagnosticSignError text= texthl=LspDiagnosticsError linehl= numhl=
+        sign define DiagnosticSignWarn  text= texthl=LspDiagnosticsWarn  linehl= numhl=
+        sign define DiagnosticSignHint  text= texthl=LspDiagnosticsHint  linehl= numhl=
+        sign define DiagnosticSignInfo  text= texthl=LspDiagnosticsInfo  linehl= numhl=
+      ]])
 		end,
 	})
 
-	use({ "aymericbeaumet/vim-symlink", requires = { "moll/vim-bbye" } })
-	use("farmergreg/vim-lastplace")
 	use("preservim/nerdcommenter")
 	use("tpope/vim-abolish")
 	use("tpope/vim-repeat")
@@ -126,16 +123,43 @@ require("packer").startup(function(use)
 	use("tpope/vim-unimpaired")
 	use("vitalk/vim-shebang")
 	use("tpope/vim-fugitive")
+	use("jiangmiao/auto-pairs")
 
 	use("jparise/vim-graphql")
 	use("evanleck/vim-svelte")
 	use("lifepillar/pgsql.vim")
 	use("hashivim/vim-terraform")
+	use("dcharbon/vim-flatbuffers")
+
+	use({
+		"nvim-lualine/lualine.nvim",
+		requires = { "kyazdani42/nvim-web-devicons" },
+		config = function()
+			require("lualine").setup({
+				sections = {
+					lualine_a = { "mode" },
+					lualine_b = { "branch", "diff", "diagnostics" },
+					lualine_c = {
+						{ "filename", path = 1 },
+					},
+					lualine_x = { "encoding", "fileformat", "filetype" },
+					lualine_y = { "progress" },
+					lualine_z = { "location" },
+				},
+			})
+		end,
+	})
 
 	use({
 		"famiu/bufdelete.nvim",
 		config = function()
 			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bwipeout!<CR>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>D",
+				"<cmd>silent! only<CR>:bufdo Bwipeout!<CR>",
+				{ noremap = true, silent = true }
+			)
 		end,
 	})
 
@@ -147,7 +171,9 @@ require("packer").startup(function(use)
         command! -bang -nargs=? -complete=dir Files
             \ call fzf#vim#files(
             \   <q-args>,
-            \   fzf#vim#with_preview({'source': 'fd --type file --hidden --follow --exclude .git --strip-cwd-prefix'}),
+            \   fzf#vim#with_preview({
+            \     'source': 'fd --type file --hidden --follow --exclude .git --strip-cwd-prefix',
+            \   }),
             \   <bang>0,
             \ )
 
@@ -155,7 +181,9 @@ require("packer").startup(function(use)
           let command_fmt = 'rg --hidden --glob "!.git" --column --line-number --no-heading --color=always --smart-case -- %s || true'
           let initial_command = printf(command_fmt, shellescape(a:query))
           let reload_command = printf(command_fmt, '{q}')
-          let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..']}
+          let spec = {
+          \   'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..'],
+          \ }
           call fzf#vim#grep(initial_command, 1, spec, a:fullscreen)
         endfunction
         command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
@@ -182,7 +210,7 @@ require("packer").startup(function(use)
 		"airblade/vim-rooter",
 		setup = function()
 			vim.g.rooter_cd_cmd = "lcd"
-			vim.g.rooter_patterns = { ".git", "go.mod", "package-lock.json", "yarn.lock" }
+			vim.g.rooter_patterns = { ".git", "go.mod", "package-lock.json", "yarn.lock", "Cargo.lock" }
 			vim.g.rooter_resolve_links = 1
 			vim.g.rooter_silent_chdir = 1
 		end,
@@ -211,7 +239,6 @@ require("packer").startup(function(use)
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-vsnip",
 			-- lsp
 			"williamboman/mason-lspconfig.nvim",
 			"williamboman/mason.nvim",
@@ -256,6 +283,7 @@ require("packer").startup(function(use)
 			})
 
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 			local flags = { debounce_text_changes = 150 }
 
@@ -277,16 +305,30 @@ require("packer").startup(function(use)
 				client.server_capabilities.documentRangeFormattingProvider = false
 			end
 
-			for _, lsp in pairs({
-				"gopls",
-				"svelte",
-				"tsserver",
+			for lsp, settings in pairs({
+				gopls = {},
+				svelte = {},
+				tsserver = {},
+				rust_analyzer = {
+					["rust-analyzer"] = {
+						cargo = {
+							loadOutDirsFromCheck = true,
+						},
+						procMacro = {
+							enable = true,
+						},
+						checkOnSave = {
+							command = "clippy",
+						},
+					},
+				},
 			}) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
 					flags = flags,
 					handlers = handlers,
 					on_attach = on_attach,
+					settings = settings,
 				})
 			end
 
@@ -325,6 +367,8 @@ require("packer").startup(function(use)
 						prefer_local = "node_modules/.bin",
 						extra_filetypes = { "svelte" },
 					}),
+					-- rust
+					null_ls.builtins.formatting.rustfmt,
 					-- lua
 					null_ls.builtins.formatting.stylua,
 					-- shell
@@ -355,12 +399,17 @@ require("packer").startup(function(use)
 		"folke/trouble.nvim",
 		requires = { "kyazdani42/nvim-web-devicons" },
 		config = function()
-			require("trouble").setup()
+			require("trouble").setup({
+				position = "top",
+				icons = true,
+			})
 
 			vim.diagnostic.config({
 				float = { border = "rounded" },
-				signs = false, -- no sign in gutter
+				signs = true,
 			})
 		end,
 	})
 end)
+
+require("notes")

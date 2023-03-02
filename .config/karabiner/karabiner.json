@@ -132,6 +132,25 @@
             ]
           },
           {
+            "description": "[Hammerspoon] Launch or focus Notes",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Notes'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "[Hammerspoon] Launch or focus Alacritty",
             "manipulators": [
               {
@@ -144,44 +163,6 @@
                 "to": [
                   {
                     "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Alacritty'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Aggr",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "r",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Aggr'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Postico",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "p",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postico'"
                   }
                 ],
                 "type": "basic"
@@ -207,44 +188,7 @@
               }
             ]
           },
-          {
-            "description": "[Hammerspoon] Launch or focus Obsidian",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "o",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Obsidian'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Podcasts",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "p",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Podcasts'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
+          ,
           {
             "description": "[Hammerspoon] Launch or focus Discord",
             "manipulators": [
@@ -1092,6 +1036,20 @@
           },
           "ignore": true,
           "manipulate_caps_lock_led": false,
+          "simple_modifications": [],
+          "treat_as_built_in_keyboard": false
+        },
+        {
+          "disable_built_in_keyboard_if_exists": false,
+          "fn_function_keys": [],
+          "identifiers": {
+            "is_keyboard": true,
+            "is_pointing_device": false,
+            "product_id": 8211,
+            "vendor_id": 1241
+          },
+          "ignore": false,
+          "manipulate_caps_lock_led": true,
           "simple_modifications": [],
           "treat_as_built_in_keyboard": false
         }

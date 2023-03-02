@@ -7,6 +7,15 @@ window:
   startup_mode: SimpleFullscreen
   decorations: buttonless
 
+shell:
+  program: /opt/homebrew/bin/tmux
+  args:
+    - new-session
+    - -A
+    - -D
+    - -s
+    - default
+
 scrolling:
   history: 0
 
@@ -14,7 +23,11 @@ selection:
   save_to_clipboard: true
 
 mouse:
-  hide_when_typing: true
+  hide_when_typing: false
+  hints:
+    launcher:
+      program: open
+    modifiers: Command
 
 mouse_bindings:
   - { mouse: Right, action: ReceiveChar }

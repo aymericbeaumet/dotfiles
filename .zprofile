@@ -20,7 +20,7 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
 
   # ***REMOVED***
   if [ -x "$HOME/.***REMOVED***/bin/***REMOVED***" ]; then
-    eval "$("$HOME/.***REMOVED***/bin/***REMOVED***" shellenv)"
+    #eval "$("$HOME/.***REMOVED***/bin/***REMOVED***" shellenv)"
     export ***REMOVED***_CLI_NO_REPORTING=true
     export ***REMOVED***_CLI_STACKTRACE=true
     export ***REMOVED***_CLI_EXPERIMENT_BSDIFF=true
