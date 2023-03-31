@@ -169,7 +169,11 @@ require("packer").startup(function(use)
 		"zbirenbaum/copilot-cmp",
 		after = { "copilot.lua" },
 		config = function()
-			require("copilot_cmp").setup({})
+			require("copilot_cmp").setup({
+				formatters = {
+					insert_text = require("copilot_cmp.format").remove_existing,
+				},
+			})
 		end,
 	})
 
@@ -201,12 +205,15 @@ require("packer").startup(function(use)
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
 			"saadparwaiz1/cmp_luasnip",
+			-- format
+			"onsails/lspkind.nvim",
 		},
 		config = function()
 			local cmp = require("cmp")
 			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 			local luasnip = require("luasnip")
 			local handlers = require("nvim-autopairs.completion.handlers")
+			local lspkind = require("lspkind")
 
 			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
@@ -222,7 +229,7 @@ require("packer").startup(function(use)
 				preselect = cmp.PreselectMode.None,
 
 				window = {
-					--completion = cmp.config.window.bordered(),
+					completion = cmp.config.window.bordered(),
 					documentation = cmp.config.window.bordered(),
 				},
 
@@ -230,6 +237,16 @@ require("packer").startup(function(use)
 					expand = function(args)
 						luasnip.lsp_expand(args.body)
 					end,
+				},
+
+				formatting = {
+					format = lspkind.cmp_format({
+						mode = "symbol_text",
+						max_width = 50,
+						symbol_map = {
+							Copilot = "",
+						},
+					}),
 				},
 
 				mapping = {
@@ -267,6 +284,7 @@ require("packer").startup(function(use)
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lsp_signature_help" },
 					{ name = "path" },
+				}, {
 					{ name = "buffer" },
 				}),
 			})
@@ -456,9 +474,9 @@ require("packer").startup(function(use)
 				{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>" },
 				-- lsp
 				{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>" },
-				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>zz" },
-				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
-				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
+				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>" },
+				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>" },
+				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
 			}) do
 				vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 			end
