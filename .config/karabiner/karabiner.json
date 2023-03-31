@@ -208,6 +208,44 @@
             ]
           },
           {
+            "description": "[Hammerspoon] Launch or focus WhatsApp",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=WhatsApp'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Launch or focus Messages",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Messages'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Trigger hyper if tabs is hold, tab otherwise",
             "manipulators": [
               {
