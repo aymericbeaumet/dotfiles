@@ -2,6 +2,7 @@
 -- Github: @aymericbeaumet/dotfiles
 
 -- cursor
+vim.o.scroll = 5 -- number of lines to scroll with ^U and ^D
 vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
@@ -26,10 +27,13 @@ vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
 vim.o.cursorline = false -- do not highlight cursorline
-
--- mappings
-vim.o.timeoutlen = 500 -- time to wait when a part of a mapped sequence is typed
-vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
+vim.o.showmode = false -- do not show mode
+vim.cmd([[
+set statusline=
+set statusline+=%f
+set statusline+=%=
+set statusline+=%l:%c\ %p%%
+]])
 
 -- performance
 vim.o.lazyredraw = true -- only redraw when needed
@@ -55,45 +59,6 @@ vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
 -- mappings
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-for _, mapping in ipairs({
-	-- leader
-	{ "n", "<leader>vc", "<cmd>PackerCompile<cr>" }, -- vim compile
-	{ "n", "<leader>vs", "<cmd>PackerSync<cr>" }, -- vim sync
-	-- save current buffer
-	{ "n", "<cr>", "<cmd>w<cr>" },
-	-- better `j` and `k`
-	{ "n", "j", "gj" },
-	{ "v", "j", "gj" },
-	{ "n", "k", "gk" },
-	{ "v", "k", "gk" },
-	-- copy from the cursor to the end of line using Y (matches D behavior)
-	{ "n", "Y", "y$" },
-	-- keep the cursor in place while joining lines
-	{ "n", "J", "mZJ`Z" },
-	-- reselect visual block after indent
-	{ "v", "<", "<gv" },
-	{ "v", ">", ">gv" },
-	-- clean screen and reload file
-	{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
-	-- emulate permanent global marks
-	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
-	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
-	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
-	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
-	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
-	-- some zsh mappings in insert mode
-	{ "i", "<c-a>", "<Home>" },
-	{ "i", "<c-b>", "<Left>" },
-	{ "i", "<c-d>", "<Del>" },
-	{ "i", "<c-e>", "<End>" },
-	{ "i", "<c-f>", "<Right>" },
-	{ "i", "<c-h>", "<Backspace>" },
-}) do
-	vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
-end
-
--- squeeze integration https://github.com/aymericbeaumet/squeeze
-vim.cmd("vnoremap <silent> <CR> :<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>")
 
 -- plugins
 require("packer").startup(function(use)
@@ -123,45 +88,8 @@ require("packer").startup(function(use)
 	use("tpope/vim-unimpaired")
 	use("vitalk/vim-shebang")
 	use("tpope/vim-fugitive")
-	use("jiangmiao/auto-pairs")
 
-	use("jparise/vim-graphql")
-	use("evanleck/vim-svelte")
-	use("lifepillar/pgsql.vim")
-	use("hashivim/vim-terraform")
-	use("dcharbon/vim-flatbuffers")
-
-	use({
-		"nvim-lualine/lualine.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("lualine").setup({
-				sections = {
-					lualine_a = { "mode" },
-					lualine_b = { "branch", "diff", "diagnostics" },
-					lualine_c = {
-						{ "filename", path = 1 },
-					},
-					lualine_x = { "encoding", "fileformat", "filetype" },
-					lualine_y = { "progress" },
-					lualine_z = { "location" },
-				},
-			})
-		end,
-	})
-
-	use({
-		"famiu/bufdelete.nvim",
-		config = function()
-			vim.api.nvim_set_keymap("n", "<leader>d", "<cmd>Bwipeout!<CR>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap(
-				"n",
-				"<leader>D",
-				"<cmd>silent! only<CR>:bufdo Bwipeout!<CR>",
-				{ noremap = true, silent = true }
-			)
-		end,
-	})
+	use("famiu/bufdelete.nvim")
 
 	use({
 		"junegunn/fzf.vim",
@@ -188,12 +116,6 @@ require("packer").startup(function(use)
         endfunction
         command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
       ]])
-
-			vim.api.nvim_set_keymap("n", "<leader>/", "<cmd>BLines<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>b", "<cmd>Buffers<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>Files<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>p", "<cmd>Commands<cr>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>r", "<cmd>Ripgrep<cr>", { noremap = true, silent = true })
 		end,
 	})
 
@@ -210,7 +132,7 @@ require("packer").startup(function(use)
 		"airblade/vim-rooter",
 		setup = function()
 			vim.g.rooter_cd_cmd = "lcd"
-			vim.g.rooter_patterns = { ".git", "go.mod", "package-lock.json", "yarn.lock", "Cargo.lock" }
+			vim.g.rooter_patterns = { ".git" }
 			vim.g.rooter_resolve_links = 1
 			vim.g.rooter_silent_chdir = 1
 		end,
@@ -224,66 +146,152 @@ require("packer").startup(function(use)
 			vim.g.EasyMotion_smartcase = 1
 			vim.g.EasyMotion_use_smartsign_us = 1
 			vim.g.EasyMotion_use_upper = 1
-			vim.cmd("nmap <Leader>s <Plug>(easymotion-overwin-f)")
+		end,
+	})
+
+	--
+	-- Completion, autopairs, snippets
+	--
+
+	use({
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		config = function()
+			require("copilot").setup({
+				suggestion = { enabled = false },
+				panel = { enabled = false },
+			})
 		end,
 	})
 
 	use({
-		"neovim/nvim-lspconfig", -- neovim lsp config plugin
+		"zbirenbaum/copilot-cmp",
+		after = { "copilot.lua" },
+		config = function()
+			require("copilot_cmp").setup({})
+		end,
+	})
+
+	use({
+		"windwp/nvim-autopairs",
+		config = function()
+			require("nvim-autopairs").setup({
+				map_c_h = true,
+				map_c_w = true,
+			})
+		end,
+	})
+
+	use({
+		"L3MON4D3/LuaSnip",
+		requires = { "rafamadriz/friendly-snippets" },
+		config = function()
+			require("luasnip.loaders.from_vscode").lazy_load()
+		end,
+	})
+
+	use({
+		"hrsh7th/nvim-cmp",
 		requires = {
-			"hrsh7th/nvim-cmp", -- completion plugin
-			"hrsh7th/vim-vsnip", -- snippet plugin
-			-- completion source plugins
+			-- sources
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
-			-- lsp
-			"williamboman/mason-lspconfig.nvim",
-			"williamboman/mason.nvim",
+			"saadparwaiz1/cmp_luasnip",
 		},
 		config = function()
 			local cmp = require("cmp")
+			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+			local luasnip = require("luasnip")
+			local handlers = require("nvim-autopairs.completion.handlers")
+
+			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 			cmp.setup({
-				completion = { completeopt = "menu,menuone,noinsert" },
-				experimental = { ghost_text = true },
+				completion = {
+					completeopt = "menu,menuone,noinsert",
+				},
+
+				experimental = {
+					ghost_text = true,
+				},
+
 				preselect = cmp.PreselectMode.None,
-				window = { documentation = cmp.config.window.bordered() },
+
+				window = {
+					--completion = cmp.config.window.bordered(),
+					documentation = cmp.config.window.bordered(),
+				},
 
 				snippet = {
 					expand = function(args)
-						vim.fn["vsnip#anonymous"](args.body)
+						luasnip.lsp_expand(args.body)
 					end,
 				},
 
 				mapping = {
-					["<tab>"] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i" }),
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if luasnip.expand_or_locally_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							cmp.confirm({
+								behavior = cmp.ConfirmBehavior.Replace,
+								select = false,
+							})
+						end
+					end, { "i", "s" }),
+
+					["<C-space>"] = cmp.mapping(cmp.mapping.complete({ reason = cmp.ContextReason.Auto }), { "i" }),
+
 					["<C-n>"] = cmp.mapping(
 						cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 						{ "i" }
 					),
+
 					["<C-p>"] = cmp.mapping(
 						cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
 						{ "i" }
 					),
-					["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i" }),
-					["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i" }),
+
+					["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(vim.o.scroll), { "i" }),
+
+					["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-vim.o.scroll), { "i" }),
 				},
 
 				sources = cmp.config.sources({
+					{ name = "luasnip" },
+					{ name = "copilot" },
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lsp_signature_help" },
-				}, {
 					{ name = "path" },
-				}, {
 					{ name = "buffer" },
 				}),
 			})
+		end,
+	})
 
+	--
+	-- LSP, formatting, error reporting and languages support
+	--
+
+	use("jparise/vim-graphql")
+	use("evanleck/vim-svelte")
+	use("lifepillar/pgsql.vim")
+
+	use({
+		"neovim/nvim-lspconfig",
+		after = {
+			"cmp-nvim-lsp",
+		},
+		requires = {
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+		},
+		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 			local flags = { debounce_text_changes = 150 }
 
@@ -292,13 +300,7 @@ require("packer").startup(function(use)
 			}
 
 			local on_attach = function(client, bufnr)
-				local opts = { noremap = true, silent = true }
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
-				vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 
 				-- we want to use null-ls for formatting
 				client.server_capabilities.documentFormattingProvider = false
@@ -341,6 +343,7 @@ require("packer").startup(function(use)
 		"jose-elias-alvarez/null-ls.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
 		run = [[
+      brew install rust-analyzer;
       brew install golangci-lint; go install golang.org/x/tools/cmd/goimports@latest;
 			npm install --global eslint prettier svelte-language-server tsserver;
       brew install shellharden shfmt shellcheck;
@@ -382,14 +385,12 @@ require("packer").startup(function(use)
 				},
 
 				on_attach = function(client)
-					if client.server_capabilities.documentFormattingProvider then
-						vim.cmd([[
+					vim.cmd([[
               augroup LspFormatting
               autocmd! * <buffer>
               autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
               augroup END
             ]])
-					end
 				end,
 			})
 		end,
@@ -410,6 +411,89 @@ require("packer").startup(function(use)
 			})
 		end,
 	})
-end)
 
-require("notes")
+	--
+	-- Mappings
+	--
+
+	use({
+		"folke/which-key.nvim",
+		config = function()
+			vim.o.timeout = true
+			vim.o.timeoutlen = 300 -- time to wait when a part of a mapped sequence is typed
+			vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
+
+			for _, mapping in ipairs({
+				-- save current buffer
+				{ "n", "<cr>", "<cmd>w<cr>" },
+				-- better `j` and `k`
+				{ "n", "j", "gj" },
+				{ "v", "j", "gj" },
+				{ "n", "k", "gk" },
+				{ "v", "k", "gk" },
+				-- copy from the cursor to the end of line using Y (matches D behavior)
+				{ "n", "Y", "y$" },
+				-- keep the cursor in place while joining lines
+				{ "n", "J", "mZJ`Z" },
+				-- reselect visual block after indent
+				{ "v", "<", "<gv" },
+				{ "v", ">", ">gv" },
+				-- clean screen and reload file
+				{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
+				-- emulate permanent global marks
+				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
+				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
+				{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
+				{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
+				{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
+				-- some zsh mappings in insert mode
+				{ "i", "<c-a>", "<Home>" },
+				{ "i", "<c-b>", "<Left>" },
+				{ "i", "<c-d>", "<Del>" },
+				{ "i", "<c-e>", "<End>" },
+				{ "i", "<c-f>", "<Right>" },
+				-- squeeze integration https://github.com/aymericbeaumet/squeeze
+				{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>" },
+				-- lsp
+				{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>" },
+				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>zz" },
+				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
+				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
+			}) do
+				vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+			end
+
+			require("which-key").register({
+				d = { "<cmd>Bwipeout!<cr>", "Close the current buffer" },
+				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
+
+				-- fzf
+				["/"] = { "<cmd>BLines<cr>", "[FZF] Search current file" },
+				b = { "<cmd>Buffers<cr>", "[FZF] Search buffers" },
+				f = { "<cmd>Files<cr>", "[FZF] Search files" },
+				p = { "<cmd>Commands<cr>", "[FZF] Search commands" },
+				r = { "<cmd>Ripgrep<cr>", "[FZF] Search file contents" },
+
+				-- lsp
+				l = {
+					name = "lsp",
+					d = { "<cmd>lua vim.lsp.buf.declaration()<cr>", "Go to declaration" },
+					i = { "<cmd>lua vim.lsp.buf.implementation()<cr>", "Go to implementation" },
+					l = { "<cmd>lua vim.lsp.buf.document_symbol()<cr>", "List symbols" },
+					r = { "<cmd>lua vim.lsp.buf.references()<cr>", "List references" },
+					t = { "<cmd>lua vim.lsp.buf.type_definition()<cr>", "Go to type definition" },
+					A = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code action" },
+					R = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename symbol" },
+				},
+
+				-- vim
+				v = {
+					name = "vim",
+					c = { "<cmd>PackerCompile<cr>", "Compile loader file" },
+					s = { "<cmd>PackerSync<cr>", "Update plugins and compile loader file" },
+					u = { "<cmd>PackerUpdate<cr>", "Update plugins" },
+				},
+			}, { prefix = "<leader>" })
+		end,
+	})
+end)
