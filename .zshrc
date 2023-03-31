@@ -50,6 +50,7 @@ z() {
 alias zl='zoxide query --list --score'
 
 # aliases
+alias ap=ansible-playbook
 alias b=bat
 alias ls='exa --group --group-directories-first --sort=Name'
 alias l='ls -l'
@@ -188,12 +189,7 @@ export FZF_DEFAULT_OPTS="\
   --border \
   --height=40% \
   --inline-info \
-  --layout=reverse \
-  --preview-window 'right:55%' \
-  --preview ' \
-    ([[ -f {} ]] && bat --style=numbers --line-range :300 {}) || \
-    ([[ -d {} ]] && exa -la {}) \
-  ' \
+  --layout=reverse
 "
 export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

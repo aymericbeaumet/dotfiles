@@ -188,77 +188,19 @@
               }
             ]
           },
-          ,
           {
-            "description": "[Hammerspoon] Launch or focus Discord",
+            "description": "[Hammerspoon] Launch or focus Postico",
             "manipulators": [
               {
                 "from": {
-                  "key_code": "d",
+                  "key_code": "p",
                   "modifiers": {
                     "mandatory": ["command", "control"]
                   }
                 },
                 "to": [
                   {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Discord'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Slack",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "s",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Slack'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus WhatsApp",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "w",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=WhatsApp'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Messages",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "i",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Messages'"
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postico'"
                   }
                 ],
                 "type": "basic"
@@ -1050,6 +992,310 @@
           },
           "ignore": false,
           "manipulate_caps_lock_led": true,
+          "simple_modifications": [],
+          "treat_as_built_in_keyboard": false
+        },
+        {
+          "disable_built_in_keyboard_if_exists": false,
+          "fn_function_keys": [
+            {
+              "from": {
+                "key_code": "f1"
+              },
+              "to": [
+                {
+                  "key_code": "f1"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f2"
+              },
+              "to": [
+                {
+                  "key_code": "f2"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f3"
+              },
+              "to": [
+                {
+                  "key_code": "f3"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f4"
+              },
+              "to": [
+                {
+                  "key_code": "f4"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f5"
+              },
+              "to": [
+                {
+                  "key_code": "f5"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f6"
+              },
+              "to": [
+                {
+                  "key_code": "f6"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f7"
+              },
+              "to": [
+                {
+                  "key_code": "f7"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f8"
+              },
+              "to": [
+                {
+                  "key_code": "f8"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f9"
+              },
+              "to": [
+                {
+                  "key_code": "f9"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f10"
+              },
+              "to": [
+                {
+                  "key_code": "f10"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f11"
+              },
+              "to": [
+                {
+                  "key_code": "f11"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "f12"
+              },
+              "to": [
+                {
+                  "key_code": "f12"
+                }
+              ]
+            }
+          ],
+          "identifiers": {
+            "is_keyboard": true,
+            "is_pointing_device": false,
+            "product_id": 6969,
+            "vendor_id": 6940
+          },
+          "ignore": false,
+          "manipulate_caps_lock_led": true,
+          "simple_modifications": [
+            {
+              "from": {
+                "key_code": "application"
+              },
+              "to": [
+                {
+                  "key_code": "left_option"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "delete_forward"
+              },
+              "to": [
+                {
+                  "key_code": "1"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "end"
+              },
+              "to": [
+                {
+                  "key_code": "2"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "home"
+              },
+              "to": [
+                {
+                  "key_code": "5"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "insert"
+              },
+              "to": [
+                {
+                  "key_code": "4"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "left_control"
+              },
+              "to": [
+                {
+                  "key_code": "right_control"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "left_option"
+              },
+              "to": [
+                {
+                  "key_code": "right_command"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "page_down"
+              },
+              "to": [
+                {
+                  "key_code": "3"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "page_up"
+              },
+              "to": [
+                {
+                  "key_code": "6"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "pause"
+              },
+              "to": [
+                {
+                  "key_code": "9"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "print_screen"
+              },
+              "to": [
+                {
+                  "key_code": "7"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "right_control"
+              },
+              "to": [
+                {
+                  "key_code": "left_control"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "right_option"
+              },
+              "to": [
+                {
+                  "key_code": "right_command"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "scroll_lock"
+              },
+              "to": [
+                {
+                  "key_code": "8"
+                }
+              ]
+            }
+          ],
+          "treat_as_built_in_keyboard": false
+        },
+        {
+          "disable_built_in_keyboard_if_exists": false,
+          "fn_function_keys": [],
+          "identifiers": {
+            "is_keyboard": false,
+            "is_pointing_device": true,
+            "product_id": 613,
+            "vendor_id": 76
+          },
+          "ignore": true,
+          "manipulate_caps_lock_led": false,
+          "simple_modifications": [],
+          "treat_as_built_in_keyboard": false
+        },
+        {
+          "disable_built_in_keyboard_if_exists": false,
+          "fn_function_keys": [],
+          "identifiers": {
+            "is_keyboard": false,
+            "is_pointing_device": true,
+            "product_id": 24590,
+            "vendor_id": 6127
+          },
+          "ignore": true,
+          "manipulate_caps_lock_led": false,
           "simple_modifications": [],
           "treat_as_built_in_keyboard": false
         }
