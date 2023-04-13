@@ -150,7 +150,7 @@ require("packer").startup(function(use)
 	})
 
 	--
-	-- Completion, autopairs, snippets
+	-- Completion, autopairs
 	--
 
 	use({
@@ -188,14 +188,6 @@ require("packer").startup(function(use)
 	})
 
 	use({
-		"L3MON4D3/LuaSnip",
-		requires = { "rafamadriz/friendly-snippets" },
-		config = function()
-			require("luasnip.loaders.from_vscode").lazy_load()
-		end,
-	})
-
-	use({
 		"hrsh7th/nvim-cmp",
 		requires = {
 			-- sources
@@ -205,7 +197,9 @@ require("packer").startup(function(use)
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-path",
 			"saadparwaiz1/cmp_luasnip",
-			-- format
+			-- snippets engine
+			"L3MON4D3/LuaSnip",
+			-- style
 			"onsails/lspkind.nvim",
 		},
 		config = function()
@@ -214,6 +208,8 @@ require("packer").startup(function(use)
 			local luasnip = require("luasnip")
 			local handlers = require("nvim-autopairs.completion.handlers")
 			local lspkind = require("lspkind")
+
+			vim.o.pumheight = 15
 
 			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
@@ -250,16 +246,10 @@ require("packer").startup(function(use)
 				},
 
 				mapping = {
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if luasnip.expand_or_locally_jumpable() then
-							luasnip.expand_or_jump()
-						else
-							cmp.confirm({
-								behavior = cmp.ConfirmBehavior.Replace,
-								select = false,
-							})
-						end
-					end, { "i", "s" }),
+					["<Tab>"] = cmp.mapping.confirm({
+						behavior = cmp.ConfirmBehavior.Replace,
+						select = false,
+					}, { "i", "s" }),
 
 					["<C-space>"] = cmp.mapping(cmp.mapping.complete({ reason = cmp.ContextReason.Auto }), { "i" }),
 
@@ -301,15 +291,15 @@ require("packer").startup(function(use)
 
 	use({
 		"neovim/nvim-lspconfig",
-		after = {
-			"cmp-nvim-lsp",
-		},
+		after = { "cmp-nvim-lsp" },
 		requires = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 		},
 		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			-- disable snippets
+			capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 			local flags = { debounce_text_changes = 150 }
 
@@ -319,10 +309,6 @@ require("packer").startup(function(use)
 
 			local on_attach = function(client, bufnr)
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-				-- we want to use null-ls for formatting
-				client.server_capabilities.documentFormattingProvider = false
-				client.server_capabilities.documentRangeFormattingProvider = false
 			end
 
 			for lsp, settings in pairs({
@@ -369,6 +355,7 @@ require("packer").startup(function(use)
     ]],
 		config = function()
 			local null_ls = require("null-ls")
+			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 			null_ls.setup({
 				sources = {
@@ -402,13 +389,22 @@ require("packer").startup(function(use)
 					null_ls.builtins.formatting.terraform_fmt,
 				},
 
-				on_attach = function(client)
-					vim.cmd([[
-              augroup LspFormatting
-              autocmd! * <buffer>
-              autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
-              augroup END
-            ]])
+				on_attach = function(client, bufnr)
+					if client.supports_method("textDocument/formatting") then
+						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+						vim.api.nvim_create_autocmd("BufWritePre", {
+							group = augroup,
+							buffer = bufnr,
+							callback = function()
+								vim.lsp.buf.format({
+									bufnr = bufnr,
+									filter = function(client)
+										return client.name == "null-ls"
+									end,
+								})
+							end,
+						})
+					end
 				end,
 			})
 		end,
