@@ -87,6 +87,15 @@ require("lazy").setup({
 	"tpope/vim-fugitive",
 	"tpope/vim-rhubarb",
 	"preservim/nerdcommenter",
+	"evanleck/vim-svelte",
+	"hashivim/vim-terraform",
+
+	{
+		"lifepillar/pgsql.vim",
+		config = function()
+			vim.g.sql_type_default = "psql"
+		end,
+	},
 
 	{
 		"shaunsingh/nord.nvim",
@@ -239,11 +248,33 @@ require("lazy").setup({
 					completeopt = "menu,menuone,noinsert",
 				},
 
-				experimental = {
-					ghost_text = true,
-				},
+				sources = cmp.config.sources({
+					{ name = "copilot" },
+					{ name = "nvim_lsp" },
+					{ name = "nvim_lsp_signature_help" },
+					{ name = "path" },
+				}, {
+					{ name = "buffer" },
+				}),
 
-				preselect = cmp.PreselectMode.None,
+				sorting = {
+					priority_weight = 2,
+					comparators = {
+						-- https://github.com/zbirenbaum/copilot-cmp#comparators
+						require("copilot_cmp.comparators").prioritize,
+						-- Below is the default comparitor list and order for nvim-cmp
+						cmp.config.compare.offset,
+						-- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+						cmp.config.compare.exact,
+						cmp.config.compare.score,
+						cmp.config.compare.recently_used,
+						cmp.config.compare.locality,
+						cmp.config.compare.kind,
+						cmp.config.compare.sort_text,
+						cmp.config.compare.length,
+						cmp.config.compare.order,
+					},
+				},
 
 				window = {
 					completion = cmp.config.window.bordered(),
@@ -258,11 +289,9 @@ require("lazy").setup({
 
 				formatting = {
 					format = lspkind.cmp_format({
-						mode = "symbol_text",
+						mode = "symbol",
 						max_width = 50,
-						symbol_map = {
-							Copilot = "",
-						},
+						symbol_map = { Copilot = "" },
 					}),
 				},
 
@@ -288,26 +317,7 @@ require("lazy").setup({
 
 					["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-vim.o.scroll), { "i" }),
 				},
-
-				sources = cmp.config.sources({
-					{ name = "copilot" },
-					{ name = "nvim_lsp" },
-					{ name = "nvim_lsp_signature_help" },
-					{ name = "path" },
-				}, {
-					{ name = "buffer" },
-				}),
 			})
-		end,
-	},
-
-	"evanleck/vim-svelte",
-	"hashivim/vim-terraform",
-
-	{
-		"lifepillar/pgsql.vim",
-		config = function()
-			vim.g.sql_type_default = "psql"
 		end,
 	},
 
