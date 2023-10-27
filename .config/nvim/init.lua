@@ -64,8 +64,31 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- plugins
-require("packer").startup(function(use)
-	use({
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable", -- latest stable release
+		lazypath,
+	})
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+	"famiu/bufdelete.nvim",
+	"tpope/vim-abolish",
+	"tpope/vim-repeat",
+	"tpope/vim-surround",
+	"tpope/vim-unimpaired",
+	"vitalk/vim-shebang",
+	"tpope/vim-fugitive",
+	"tpope/vim-rhubarb",
+	"preservim/nerdcommenter",
+
+	{
 		"shaunsingh/nord.nvim",
 		config = function()
 			vim.o.termguicolors = true
@@ -82,35 +105,20 @@ require("packer").startup(function(use)
         sign define DiagnosticSignInfo  text= texthl=LspDiagnosticsInfo  linehl= numhl=
       ]])
 		end,
-	})
+	},
 
-	use("famiu/bufdelete.nvim")
-	use("tpope/vim-abolish")
-	use("tpope/vim-repeat")
-	use("tpope/vim-surround")
-	use("tpope/vim-unimpaired")
-	use("vitalk/vim-shebang")
-
-	use("tpope/vim-fugitive")
-	use("tpope/vim-rhubarb")
-
-	use({
-		"numToStr/Comment.nvim",
-		config = function()
-			require("Comment").setup()
-		end,
-	})
-
-	use({
+	{
 		"milkypostman/vim-togglelist",
 		config = function()
 			vim.g.toggle_list_no_mappings = true
 		end,
-	})
+	},
 
-	use({
+	{
 		"junegunn/fzf.vim",
-		requires = { "/opt/homebrew/opt/fzf" },
+		dependencies = {
+			{ dir = "/opt/homebrew/opt/fzf" },
+		},
 		config = function()
 			vim.cmd([[
         command! -bang -nargs=? -complete=dir Files
@@ -134,18 +142,18 @@ require("packer").startup(function(use)
         command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
       ]])
 		end,
-	})
+	},
 
-	use({
+	{
 		"tpope/vim-eunuch",
 		config = function()
 			vim.cmd("cnoreabbrev Delete Delete!")
 			vim.cmd("cnoreabbrev Remove Delete!")
 			vim.cmd("cnoreabbrev Remove! Delete!")
 		end,
-	})
+	},
 
-	use({
+	{
 		"airblade/vim-rooter",
 		setup = function()
 			vim.g.rooter_cd_cmd = "lcd"
@@ -153,9 +161,9 @@ require("packer").startup(function(use)
 			vim.g.rooter_resolve_links = 1
 			vim.g.rooter_silent_chdir = 1
 		end,
-	})
+	},
 
-	use({
+	{
 		"easymotion/vim-easymotion",
 		setup = function()
 			vim.g.EasyMotion_do_mapping = 0
@@ -164,13 +172,9 @@ require("packer").startup(function(use)
 			vim.g.EasyMotion_use_smartsign_us = 1
 			vim.g.EasyMotion_use_upper = 1
 		end,
-	})
+	},
 
-	--
-	-- Completion, autopairs
-	--
-
-	use({
+	{
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
@@ -180,9 +184,9 @@ require("packer").startup(function(use)
 				panel = { enabled = false },
 			})
 		end,
-	})
+	},
 
-	use({
+	{
 		"zbirenbaum/copilot-cmp",
 		after = { "copilot.lua" },
 		config = function()
@@ -192,9 +196,9 @@ require("packer").startup(function(use)
 				},
 			})
 		end,
-	})
+	},
 
-	use({
+	{
 		"windwp/nvim-autopairs",
 		config = function()
 			require("nvim-autopairs").setup({
@@ -202,11 +206,11 @@ require("packer").startup(function(use)
 				map_c_w = true,
 			})
 		end,
-	})
+	},
 
-	use({
+	{
 		"hrsh7th/nvim-cmp",
-		requires = {
+		dependencies = {
 			-- sources
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-cmdline",
@@ -295,26 +299,22 @@ require("packer").startup(function(use)
 				}),
 			})
 		end,
-	})
+	},
 
-	--
-	-- LSP, formatting, error reporting and languages support
-	--
+	"evanleck/vim-svelte",
+	"hashivim/vim-terraform",
 
-	use("evanleck/vim-svelte")
-	use("hashivim/vim-terraform")
-
-	use({
+	{
 		"lifepillar/pgsql.vim",
 		config = function()
 			vim.g.sql_type_default = "psql"
 		end,
-	})
+	},
 
-	use({
+	{
 		"neovim/nvim-lspconfig",
 		after = { "cmp-nvim-lsp" },
-		requires = {
+		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 		},
@@ -360,11 +360,11 @@ require("packer").startup(function(use)
 				})
 			end
 		end,
-	})
+	},
 
-	use({
+	{
 		"jose-elias-alvarez/null-ls.nvim",
-		requires = { "nvim-lua/plenary.nvim" },
+		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			local null_ls = require("null-ls")
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -420,11 +420,11 @@ require("packer").startup(function(use)
 				end,
 			})
 		end,
-	})
+	},
 
-	use({
+	{
 		"folke/trouble.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
+		dependencies = { "kyazdani42/nvim-web-devicons" },
 		config = function()
 			require("trouble").setup({
 				position = "top",
@@ -436,13 +436,9 @@ require("packer").startup(function(use)
 				signs = true,
 			})
 		end,
-	})
+	},
 
-	--
-	-- Mappings
-	--
-
-	use({
+	{
 		"folke/which-key.nvim",
 		config = function()
 			vim.o.timeout = true
@@ -522,5 +518,5 @@ require("packer").startup(function(use)
 				},
 			}, { prefix = "<leader>", mode = "n" })
 		end,
-	})
-end)
+	},
+})

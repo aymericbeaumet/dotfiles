@@ -33,7 +33,4 @@ brew upgrade
 
 # Update submodules
 git submodule foreach git pull origin master
-
-# Update neovim plugins
-nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 ```

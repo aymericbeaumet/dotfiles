@@ -55,3 +55,6 @@ crashlytics.properties
 
 # Homebrew
 *.lock.json
+
+# lazy.nvim
+lazy-lock.json
