@@ -15,7 +15,7 @@
   cp = cherry-pick
   df = diff
   dfc = diff --cached
-  fe = fetch
+  fe = fetch --prune
   l = log
   me = merge
   pl = pull
@@ -73,4 +73,9 @@
 
 [user]
   name = Aymeric Beaumet
-  email = hi@aymericbeaumet.com
+	email = aymeric@beaumet.me
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
