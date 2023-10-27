@@ -5,3 +5,6 @@
 .git/
 .obsidian/
 node_modules/
+*.pb.go
+*.connect.go
+mock_*.go

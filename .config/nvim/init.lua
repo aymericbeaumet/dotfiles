@@ -2,7 +2,7 @@
 -- Github: @aymericbeaumet/dotfiles
 
 -- cursor
-vim.o.scroll = 5 -- number of lines to scroll with ^U and ^D
+vim.o.scroll = 10 -- number of lines to scroll with ^U and ^D
 vim.o.scrolloff = 10 -- keep at least 8 lines after the cursor when scrolling
 vim.o.sidescrolloff = 10 -- (same as `scrolloff` about columns during side scrolling)
 vim.o.virtualedit = "block" -- allow the cursor to go in to virtual places
@@ -17,17 +17,20 @@ vim.o.shiftwidth = 2 -- number of space to use for indent
 vim.o.smarttab = true -- insert `shiftwidth` spaces instead of tabs
 vim.o.softtabstop = 2 -- n spaces when using <Tab>
 vim.o.tabstop = 2 -- n spaces when using <Tab>
+vim.o.textwidth = 80 -- wrap lines at 80 characters
 
 -- interface
 vim.o.mouse = "a" -- enable mouse support
+vim.o.mousemodel = extend -- right mouse extend selection
 vim.o.number = true -- show line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
 vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
-vim.o.cursorline = false -- do not highlight cursorline
+vim.o.cursorline = true -- highlight cursorline
 vim.o.showmode = false -- do not show mode
+vim.opt.termguicolors = true
 vim.cmd([[
 set statusline=
 set statusline+=%f
@@ -81,15 +84,29 @@ require("packer").startup(function(use)
 		end,
 	})
 
-	use("preservim/nerdcommenter")
+	use("famiu/bufdelete.nvim")
 	use("tpope/vim-abolish")
 	use("tpope/vim-repeat")
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
 	use("vitalk/vim-shebang")
-	use("tpope/vim-fugitive")
 
-	use("famiu/bufdelete.nvim")
+	use("tpope/vim-fugitive")
+	use("tpope/vim-rhubarb")
+
+	use({
+		"numToStr/Comment.nvim",
+		config = function()
+			require("Comment").setup()
+		end,
+	})
+
+	use({
+		"milkypostman/vim-togglelist",
+		config = function()
+			vim.g.toggle_list_no_mappings = true
+		end,
+	})
 
 	use({
 		"junegunn/fzf.vim",
@@ -132,7 +149,7 @@ require("packer").startup(function(use)
 		"airblade/vim-rooter",
 		setup = function()
 			vim.g.rooter_cd_cmd = "lcd"
-			vim.g.rooter_patterns = { ".git" }
+			vim.g.rooter_patterns = { ".git", "package-lock.json" }
 			vim.g.rooter_resolve_links = 1
 			vim.g.rooter_silent_chdir = 1
 		end,
@@ -269,7 +286,6 @@ require("packer").startup(function(use)
 				},
 
 				sources = cmp.config.sources({
-					{ name = "luasnip" },
 					{ name = "copilot" },
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lsp_signature_help" },
@@ -285,9 +301,15 @@ require("packer").startup(function(use)
 	-- LSP, formatting, error reporting and languages support
 	--
 
-	use("jparise/vim-graphql")
 	use("evanleck/vim-svelte")
-	use("lifepillar/pgsql.vim")
+	use("hashivim/vim-terraform")
+
+	use({
+		"lifepillar/pgsql.vim",
+		config = function()
+			vim.g.sql_type_default = "psql"
+		end,
+	})
 
 	use({
 		"neovim/nvim-lspconfig",
@@ -337,36 +359,28 @@ require("packer").startup(function(use)
 					settings = settings,
 				})
 			end
-
-			require("mason").setup()
-			require("mason-lspconfig").setup({ automatic_installation = true })
 		end,
 	})
 
 	use({
 		"jose-elias-alvarez/null-ls.nvim",
 		requires = { "nvim-lua/plenary.nvim" },
-		run = [[
-      brew install rust-analyzer;
-      brew install golangci-lint; go install golang.org/x/tools/cmd/goimports@latest;
-			npm install --global eslint prettier svelte-language-server tsserver;
-      brew install shellharden shfmt shellcheck;
-      brew install hadolint;
-    ]],
 		config = function()
 			local null_ls = require("null-ls")
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 			null_ls.setup({
 				sources = {
+					-- rust
+					null_ls.builtins.formatting.rustfmt,
 					-- golang
-					null_ls.builtins.diagnostics.golangci_lint.with({
-						prefer_local = ".bin",
-					}),
-					null_ls.builtins.formatting.goimports.with({
-						prefer_local = ".bin",
-					}),
-					-- javascript, typescript, svelte, etc
+					null_ls.builtins.diagnostics.golangci_lint.with({ prefer_local = ".bin" }),
+					null_ls.builtins.formatting.goimports.with({ prefer_local = ".bin" }),
+					null_ls.builtins.formatting.gofumpt.with({ prefer_local = ".bin" }),
+					-- proto
+					null_ls.builtins.diagnostics.buf.with({ prefer_local = ".bin" }),
+					null_ls.builtins.formatting.buf.with({ prefer_local = ".bin" }),
+					-- javascript, typescript, svelte
 					null_ls.builtins.diagnostics.eslint.with({
 						prefer_local = "node_modules/.bin",
 						extra_filetypes = { "svelte" },
@@ -375,8 +389,6 @@ require("packer").startup(function(use)
 						prefer_local = "node_modules/.bin",
 						extra_filetypes = { "svelte" },
 					}),
-					-- rust
-					null_ls.builtins.formatting.rustfmt,
 					-- lua
 					null_ls.builtins.formatting.stylua,
 					-- shell
@@ -480,13 +492,14 @@ require("packer").startup(function(use)
 			require("which-key").register({
 				d = { "<cmd>Bwipeout!<cr>", "Close the current buffer" },
 				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
+				q = { "<cmd>call ToggleQuickfixList()<cr>", "Toggle quickfix list" },
 
 				-- fzf
 				["/"] = { "<cmd>BLines<cr>", "[FZF] Search current file" },
 				b = { "<cmd>Buffers<cr>", "[FZF] Search buffers" },
 				f = { "<cmd>Files<cr>", "[FZF] Search files" },
 				p = { "<cmd>Commands<cr>", "[FZF] Search commands" },
-				r = { "<cmd>Ripgrep<cr>", "[FZF] Search file contents" },
+				r = { "<cmd>Ripgrep<cr>", "[FZF] Search files contents" },
 
 				-- lsp
 				l = {
@@ -507,7 +520,7 @@ require("packer").startup(function(use)
 					s = { "<cmd>PackerSync<cr>", "Update plugins and compile loader file" },
 					u = { "<cmd>PackerUpdate<cr>", "Update plugins" },
 				},
-			}, { prefix = "<leader>" })
+			}, { prefix = "<leader>", mode = "n" })
 		end,
 	})
 end)

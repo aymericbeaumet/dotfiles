@@ -1,7 +1,13 @@
+*.connect.go
+*.pb.go
 .git/
 Cargo.lock
 _fixtures/
+android/modules/
 go.sum
+mock_*.go
+models/
 node_modules/
 package-lock.json
+vendor/
 yarn.lock

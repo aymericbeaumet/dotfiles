@@ -20,9 +20,9 @@ autoload -Uz compinit && compinit
 
 g() {
   if (( $# == 0 )); then
-    git status -sb
+    command git status -sb
   else
-    git "$@"
+    command git "$@"
   fi
 }
 compdef g=git
@@ -35,6 +35,14 @@ n() {
   fi
 }
 compdef n=nvim
+
+tf() {
+  if (( $# == 0 )); then
+    command terraform state list
+  else
+    command terraform "$@"
+  fi
+}
 
 z() {
   local dirpath
@@ -49,6 +57,10 @@ z() {
 }
 alias zl='zoxide query --list --score'
 
+awslocal() {
+  AWS_ACCESS_KEY_ID=localstack AWS_SECRET_ACCESS_KEY=localstack command aws --output=json --region=eu-west-1 '--endpoint-url=http://localhost:4566' "$@"
+}
+
 # aliases
 alias ap=ansible-playbook
 alias b=bat
@@ -62,27 +74,16 @@ alias vi=nvim
 alias vim=nvim
 alias w='watchexec --restart --clear --shell=none --'
 
-# kubernetes aliases
-alias k='kubectl'
-alias kdd='kubectl describe deploy'
-alias kdi='kubectl describe ingress'
-alias kdj='kubectl describe job'
-alias kdn='kubectl describe node'
-alias kdp='kubectl describe pod'
-alias kds='kubectl describe service'
-alias kga='kubectl get all'
-alias kgd='kubectl get deploy'
-alias kgi='kubectl get ingress'
-alias kgj='kubectl get jobs  --sort-by=.status.startTime'
-alias kgn='kubectl get nodes --sort-by=.metadata.creationTimestamp'
-alias kgp='kubectl get pods  --sort-by=.status.startTime'
-alias kgs='kubectl get services'
-
 # global aliases
 alias -g F='|& fzf'
 alias -g G='|& grep -E -i --color=auto'
 alias -g L='|& less'
 alias -g N='>/dev/null'
+
+# ripgrep aliases
+alias mdlinks="   rg '.*(\[[^]]*\]\([^)]*\)).*'          --replace '\$1' --type md"
+alias mdlinks_abs="rg '.*(\[[^]]*\]\(https?://[^)]*\)).*' --replace '\$1' --type md"
+alias mdlinks_rel="rg '.*(\[[^]]*\]\(\./[^)]*\)).*'       --replace '\$1' --type md"
 
 # utils
 whatismyip() { curl ifconfig.me; echo }

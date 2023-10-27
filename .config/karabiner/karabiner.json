@@ -113,6 +113,25 @@
             ]
           },
           {
+            "description": "[Hyper-Backslash] Centered",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "backslash",
+                  "modifiers": {
+                    "mandatory": ["shift", "control", "option", "command"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://setCurrentWindowFrame?x=0.2&y=0.15&w=0.6&h=0.7'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "[Hyper-N] Next Screen",
             "manipulators": [
               {
@@ -144,6 +163,101 @@
                 "to": [
                   {
                     "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Notes'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Launch or focus Spotify",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "y",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Spotify'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Launch or focus Linear",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "l",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Linear'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Launch or focus Postman",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "slash",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postman'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Launch or focus Twitter",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "x",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Twitter'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Hammerspoon] Launch or focus Slack",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "s",
+                  "modifiers": {
+                    "mandatory": ["command", "control"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Slack'"
                   }
                 ],
                 "type": "basic"
@@ -208,37 +322,18 @@
             ]
           },
           {
-            "description": "[Hammerspoon] Launch or focus WhatsApp",
+            "description": "[Hammerspoon] Launch or focus Beeper",
             "manipulators": [
               {
                 "from": {
-                  "key_code": "w",
+                  "key_code": "b",
                   "modifiers": {
                     "mandatory": ["command", "control"]
                   }
                 },
                 "to": [
                   {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=WhatsApp'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "[Hammerspoon] Launch or focus Messages",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "i",
-                  "modifiers": {
-                    "mandatory": ["command", "control"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Messages'"
+                    "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Beeper'"
                   }
                 ],
                 "type": "basic"
