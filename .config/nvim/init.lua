@@ -23,6 +23,7 @@ vim.o.textwidth = 80 -- wrap lines at 80 characters
 vim.o.mouse = "a" -- enable mouse support
 vim.o.mousemodel = extend -- right mouse extend selection
 vim.o.number = true -- show line numbers
+vim.o.relativenumber = true -- relative line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
@@ -89,6 +90,7 @@ require("lazy").setup({
 	"preservim/nerdcommenter",
 	"evanleck/vim-svelte",
 	"hashivim/vim-terraform",
+	"RRethy/vim-illuminate",
 
 	{
 		"lifepillar/pgsql.vim",
@@ -219,6 +221,8 @@ require("lazy").setup({
 
 	{
 		"hrsh7th/nvim-cmp",
+		version = false,
+		event = "InsertEnter",
 		dependencies = {
 			-- sources
 			"hrsh7th/cmp-buffer",
@@ -517,14 +521,6 @@ require("lazy").setup({
 					t = { "<cmd>lua vim.lsp.buf.type_definition()<cr>", "Go to type definition" },
 					A = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code action" },
 					R = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename symbol" },
-				},
-
-				-- vim
-				v = {
-					name = "vim",
-					c = { "<cmd>PackerCompile<cr>", "Compile loader file" },
-					s = { "<cmd>PackerSync<cr>", "Update plugins and compile loader file" },
-					u = { "<cmd>PackerUpdate<cr>", "Update plugins" },
 				},
 			}, { prefix = "<leader>", mode = "n" })
 		end,
