@@ -31,13 +31,9 @@ vim.o.splitbelow = true -- slit below
 vim.o.splitright = true -- split right
 vim.o.cursorline = true -- highlight cursorline
 vim.o.showmode = false -- do not show mode
-vim.opt.termguicolors = true
-vim.cmd([[
-set statusline=
-set statusline+=%f
-set statusline+=%=
-set statusline+=%l:%c\ %p%%
-]])
+vim.o.termguicolors = true -- enable true colors
+vim.o.laststatus = 2 -- always show statusline
+vim.o.statusline = "%f %{FugitiveStatusline()}%=%l:%c %p%%" -- statusline format
 
 -- performance
 vim.o.lazyredraw = true -- only redraw when needed
@@ -64,6 +60,17 @@ vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- terminal
+vim.api.nvim_create_augroup("TerminalGroup", { clear = true })
+vim.api.nvim_create_autocmd("TermOpen", {
+	command = "setlocal nonumber norelativenumber | startinsert",
+	group = "TerminalGroup",
+})
+vim.api.nvim_create_autocmd("TermClose", {
+	command = 'call feedkeys("q")',
+	group = "TerminalGroup",
+})
+
 -- plugins
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -79,7 +86,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	"famiu/bufdelete.nvim",
 	"tpope/vim-abolish",
 	"tpope/vim-repeat",
 	"tpope/vim-surround",
@@ -93,6 +99,31 @@ require("lazy").setup({
 	"RRethy/vim-illuminate",
 
 	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-lua/popup.nvim",
+			"jvgrootveld/telescope-zoxide",
+			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		},
+		config = function()
+			require("telescope").setup({
+				extensions = {
+					fzf = {
+						fuzzy = true,
+						override_generic_sorter = true,
+						override_file_sorter = true,
+						case_mode = "smart_case",
+					},
+				},
+			})
+
+			require("telescope").load_extension("fzf")
+			require("telescope").load_extension("zoxide")
+		end,
+	},
+
+	{
 		"lifepillar/pgsql.vim",
 		config = function()
 			vim.g.sql_type_default = "psql"
@@ -102,7 +133,6 @@ require("lazy").setup({
 	{
 		"shaunsingh/nord.nvim",
 		config = function()
-			vim.o.termguicolors = true
 			vim.g.nord_borders = true
 			vim.g.nord_italic = true
 			vim.g.nord_contrast = true
@@ -126,47 +156,18 @@ require("lazy").setup({
 	},
 
 	{
-		"junegunn/fzf.vim",
-		dependencies = {
-			{ dir = "/opt/homebrew/opt/fzf" },
-		},
-		config = function()
-			vim.cmd([[
-        command! -bang -nargs=? -complete=dir Files
-            \ call fzf#vim#files(
-            \   <q-args>,
-            \   fzf#vim#with_preview({
-            \     'source': 'fd --type file --hidden --follow --exclude .git --strip-cwd-prefix',
-            \   }),
-            \   <bang>0,
-            \ )
-
-        function! Ripgrep(query, fullscreen)
-          let command_fmt = 'rg --hidden --glob "!.git" --column --line-number --no-heading --color=always --smart-case -- %s || true'
-          let initial_command = printf(command_fmt, shellescape(a:query))
-          let reload_command = printf(command_fmt, '{q}')
-          let spec = {
-          \   'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command, '--delimiter=:', '--nth=4..'],
-          \ }
-          call fzf#vim#grep(initial_command, 1, spec, a:fullscreen)
-        endfunction
-        command! -nargs=* -bang Ripgrep call Ripgrep(<q-args>, <bang>0)
-      ]])
-		end,
-	},
-
-	{
 		"tpope/vim-eunuch",
 		config = function()
-			vim.cmd("cnoreabbrev Delete Delete!")
-			vim.cmd("cnoreabbrev Remove Delete!")
+			vim.cmd("cnoreabbrev Delete  Delete!")
+			vim.cmd("cnoreabbrev Delete! Delete!")
+			vim.cmd("cnoreabbrev Remove  Delete!")
 			vim.cmd("cnoreabbrev Remove! Delete!")
 		end,
 	},
 
 	{
 		"airblade/vim-rooter",
-		setup = function()
+		config = function()
 			vim.g.rooter_cd_cmd = "lcd"
 			vim.g.rooter_patterns = { ".git", "package-lock.json" }
 			vim.g.rooter_resolve_links = 1
@@ -176,9 +177,9 @@ require("lazy").setup({
 
 	{
 		"easymotion/vim-easymotion",
-		setup = function()
+		config = function()
 			vim.g.EasyMotion_do_mapping = 0
-			vim.g.EasyMotion_keys = "Z/X.C,VMQ;WYFUPLAORISETN"
+			vim.g.EasyMotion_keys = "AORISEDHTN"
 			vim.g.EasyMotion_smartcase = 1
 			vim.g.EasyMotion_use_smartsign_us = 1
 			vim.g.EasyMotion_use_upper = 1
@@ -378,7 +379,9 @@ require("lazy").setup({
 
 	{
 		"jose-elias-alvarez/null-ls.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
 		config = function()
 			local null_ls = require("null-ls")
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -438,7 +441,9 @@ require("lazy").setup({
 
 	{
 		"folke/trouble.nvim",
-		dependencies = { "kyazdani42/nvim-web-devicons" },
+		dependencies = {
+			"kyazdani42/nvim-web-devicons",
+		},
 		config = function()
 			require("trouble").setup({
 				position = "top",
@@ -492,24 +497,43 @@ require("lazy").setup({
 				{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>" },
 				-- lsp
 				{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>" },
-				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>" },
-				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>" },
-				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>" },
+				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>zz" },
+				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
+				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
+				-- navigation
+				{ "n", "<c-o>", "<c-o>zz" },
+				{ "n", "n", "nzz" },
+				{ "n", "N", "Nzz" },
 			}) do
-				vim.api.nvim_set_keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+				vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 			end
 
 			require("which-key").register({
-				d = { "<cmd>Bwipeout!<cr>", "Close the current buffer" },
-				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
+				d = { "<cmd>bdelete!<cr>", "Close the current buffer" },
+				D = { "<cmd>%bd|e#|bd#<cr>|'\"<cr>", "Close the current buffer" },
 				q = { "<cmd>call ToggleQuickfixList()<cr>", "Toggle quickfix list" },
+				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
 
-				-- fzf
-				["/"] = { "<cmd>BLines<cr>", "[FZF] Search current file" },
-				b = { "<cmd>Buffers<cr>", "[FZF] Search buffers" },
-				f = { "<cmd>Files<cr>", "[FZF] Search files" },
-				p = { "<cmd>Commands<cr>", "[FZF] Search commands" },
-				r = { "<cmd>Ripgrep<cr>", "[FZF] Search files contents" },
+				-- terminal
+				e = { "<cmd>term yazi<cr>", "Start yazi" },
+				g = { "<cmd>term lazygit<cr>", "Start Lazygit" },
+				t = { "<cmd>term<cr>", "Start a terminal" },
+
+				-- telescope
+				b = { "<cmd>Telescope buffers<cr>", "Search buffers" },
+				f = {
+					"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--exclude,.git,--strip-cwd-prefix<cr>",
+					"Search files",
+				},
+				p = { "<cmd>Telescope commands<cr>", "Search commands" },
+				r = {
+					"<cmd>Telescope live_grep prompt_title=Search\\ files vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden,--glob,!git<cr>",
+					"Search for a string",
+				},
+				z = {
+					"<cmd>Telescope zoxide list prompt_title=Zoxide<cr>",
+					"Search frequent directories",
+				},
 
 				-- lsp
 				l = {

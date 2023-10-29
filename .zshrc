@@ -61,6 +61,14 @@ awslocal() {
   AWS_ACCESS_KEY_ID=localstack AWS_SECRET_ACCESS_KEY=localstack command aws --output=json --region=eu-west-1 '--endpoint-url=http://localhost:4566' "$@"
 }
 
+# global env
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+export EDITOR='nvr -s'
+export PAGER=less
+
 # aliases
 alias ap=ansible-playbook
 alias b=bat
@@ -69,9 +77,9 @@ alias l='ls -l'
 alias la='l -a'
 alias t='l --tree --git-ignore'
 alias ta='la --tree --git-ignore'
-alias v=nvim
-alias vi=nvim
-alias vim=nvim
+alias v=$EDITOR
+alias vi=$EDITOR
+alias vim=$EDITOR
 alias w='watchexec --restart --clear --shell=none --'
 
 # global aliases
@@ -87,14 +95,6 @@ alias mdlinks_rel="rg '.*(\[[^]]*\]\(\./[^)]*\)).*'       --replace '\$1' --type
 
 # utils
 whatismyip() { curl ifconfig.me; echo }
-
-# global env
-export LANGUAGE=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
-export EDITOR=nvim
-export PAGER=less
 
 # bindings
 bindkey -e
