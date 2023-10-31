@@ -21,8 +21,7 @@ git clone --recursive https://github.com/aymericbeaumet/dotfiles.git "$HOME/.dot
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install dependencies
-brew bundle --file "$HOME/.dotfiles/Brewfile"
-brew bundle --file "$HOME/.dotfiles/Brewfile.casks"
+brew bundle
 ```
 
 ## Update
