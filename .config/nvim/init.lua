@@ -22,7 +22,7 @@ vim.o.textwidth = 80 -- wrap lines at 80 characters
 -- interface
 vim.o.mouse = "a" -- enable mouse support
 vim.o.mousemodel = extend -- right mouse extend selection
-vim.o.number = false -- show line numbers
+vim.o.number = true -- show line numbers
 vim.o.relativenumber = false -- relative line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
@@ -79,7 +79,7 @@ if not vim.loop.fs_stat(lazypath) then
 		"clone",
 		"--filter=blob:none",
 		"https://github.com/folke/lazy.nvim.git",
-		"--branch=stable", -- latest stable release
+		"--branch=stable",
 		lazypath,
 	})
 end
@@ -97,8 +97,8 @@ require("lazy").setup({
 	"evanleck/vim-svelte",
 	"hashivim/vim-terraform",
 	"RRethy/vim-illuminate",
-  "farmergreg/vim-lastplace",
-  "lewis6991/gitsigns.nvim",
+	"farmergreg/vim-lastplace",
+	"lewis6991/gitsigns.nvim",
 
 	{
 		"nvim-telescope/telescope.nvim",
@@ -110,12 +110,12 @@ require("lazy").setup({
 		},
 		config = function()
 			require("telescope").setup({
-        defaults = {
-          sorting_strategy = "ascending",
-          layout_config = {
-            prompt_position = "top",
-          },
-        },
+				defaults = {
+					sorting_strategy = "ascending",
+					layout_config = {
+						prompt_position = "top",
+					},
+				},
 				extensions = {
 					fzf = {
 						fuzzy = true,
@@ -342,10 +342,10 @@ require("lazy").setup({
 			"williamboman/mason-lspconfig.nvim",
 		},
 		config = function()
-      require("mason").setup()
-      require("mason-lspconfig").setup({
-        ensure_installed = { "gopls", "rust_analyzer" },
-      })
+			require("mason").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = { "gopls", "rust_analyzer" },
+			})
 
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			-- disable snippets
@@ -430,7 +430,6 @@ require("lazy").setup({
 					-- terraform
 					null_ls.builtins.formatting.terraform_fmt,
 				},
-
 				on_attach = function(client, bufnr)
 					if client.supports_method("textDocument/formatting") then
 						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
