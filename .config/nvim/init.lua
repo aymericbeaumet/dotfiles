@@ -22,8 +22,8 @@ vim.o.textwidth = 80 -- wrap lines at 80 characters
 -- interface
 vim.o.mouse = "a" -- enable mouse support
 vim.o.mousemodel = extend -- right mouse extend selection
-vim.o.number = true -- show line numbers
-vim.o.relativenumber = true -- relative line numbers
+vim.o.number = false -- show line numbers
+vim.o.relativenumber = false -- relative line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
 vim.o.shortmess = "AaoOsIctF" -- disable vim welcome message / enable shorter messages
 vim.o.showtabline = 0 -- never show tabline
@@ -97,6 +97,8 @@ require("lazy").setup({
 	"evanleck/vim-svelte",
 	"hashivim/vim-terraform",
 	"RRethy/vim-illuminate",
+  "farmergreg/vim-lastplace",
+  "lewis6991/gitsigns.nvim",
 
 	{
 		"nvim-telescope/telescope.nvim",
@@ -108,6 +110,12 @@ require("lazy").setup({
 		},
 		config = function()
 			require("telescope").setup({
+        defaults = {
+          sorting_strategy = "ascending",
+          layout_config = {
+            prompt_position = "top",
+          },
+        },
 				extensions = {
 					fzf = {
 						fuzzy = true,
@@ -334,6 +342,11 @@ require("lazy").setup({
 			"williamboman/mason-lspconfig.nvim",
 		},
 		config = function()
+      require("mason").setup()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "gopls", "rust_analyzer" },
+      })
+
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			-- disable snippets
 			capabilities.textDocument.completion.completionItem.snippetSupport = false
@@ -378,7 +391,7 @@ require("lazy").setup({
 	},
 
 	{
-		"jose-elias-alvarez/null-ls.nvim",
+		"nvimtools/none-ls.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},
