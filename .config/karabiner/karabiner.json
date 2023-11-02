@@ -376,7 +376,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postico'"
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postico%202'"
                                     }
                                 ],
                                 "type": "basic"
