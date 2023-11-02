@@ -114,6 +114,8 @@ require("lazy").setup({
 					sorting_strategy = "ascending",
 					layout_config = {
 						prompt_position = "top",
+						width = 0.99999,
+						height = 0.99999,
 					},
 				},
 				extensions = {
@@ -166,10 +168,10 @@ require("lazy").setup({
 	{
 		"tpope/vim-eunuch",
 		config = function()
-			vim.cmd("cnoreabbrev Delete  Delete!")
-			vim.cmd("cnoreabbrev Delete! Delete!")
-			vim.cmd("cnoreabbrev Remove  Delete!")
-			vim.cmd("cnoreabbrev Remove! Delete!")
+			vim.cmd("cnoreabbrev Delete  silent! Delete!")
+			vim.cmd("cnoreabbrev Delete! silent! Delete!")
+			vim.cmd("cnoreabbrev Remove  silent! Delete!")
+			vim.cmd("cnoreabbrev Remove! silent! Delete!")
 		end,
 	},
 
@@ -495,6 +497,7 @@ require("lazy").setup({
 				{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
 				-- emulate permanent global marks
 				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
+				{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
 				{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 				{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
