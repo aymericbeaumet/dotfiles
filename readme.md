@@ -1,7 +1,7 @@
 # dotfiles
 
 Hello there! Here you can find my dotfiles for neovim, zsh, tmux, and many other
-clis. I'm using those on a daily basis, and I'm putting a lot of effort trying
+CLIs. I'm using those on a daily basis, and I'm putting a lot of effort trying
 to keep them [simple](https://www.youtube.com/watch?v=LKtk3HCgTa8).
 
 _While I would not recommend to install this on your machine as it is tailored
@@ -28,7 +28,7 @@ brew bundle
 
 ```bash
 # Update dependencies
-brew upgrade
+brew bundle --cleanup
 
 # Update submodules
 git submodule foreach git pull origin master

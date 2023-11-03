@@ -10,7 +10,7 @@ symlink() {
 	ln -svf "$PWD/$1" "$target"
 }
 
-/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'blog' -o -name 'notes' \) \! -name '.gitmodules' | while read -r file; do
+/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \) \! -name '.gitmodules' | while read -r file; do
 	symlink "${file#./}"
 done
 

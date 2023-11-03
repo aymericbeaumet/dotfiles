@@ -296,6 +296,28 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Figma",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Figma'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus Slack",
                         "manipulators": [
                             {
