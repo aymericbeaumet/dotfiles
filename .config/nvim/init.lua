@@ -109,13 +109,50 @@ require("lazy").setup({
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
 		config = function()
+			local actions = require("telescope.actions")
+
+			require("telescope.pickers.layout_strategies").horizontal_merged = function(
+				picker,
+				max_columns,
+				max_lines,
+				layout_config
+			)
+				local layout = require("telescope.pickers.layout_strategies").horizontal(
+					picker,
+					max_columns,
+					max_lines,
+					layout_config
+				)
+
+				layout.prompt.title = ""
+				layout.prompt.borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" }
+
+				layout.results.title = ""
+				layout.results.borderchars = { "─", "│", "─", "│", "├", "┤", "┘", "└" }
+				layout.results.line = layout.results.line - 1
+				layout.results.height = layout.results.height + 1
+
+				if layout.preview then
+					layout.preview.title = ""
+					layout.preview.borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" }
+				end
+
+				return layout
+			end
+
 			require("telescope").setup({
 				defaults = {
 					sorting_strategy = "ascending",
+					layout_strategy = "horizontal_merged",
 					layout_config = {
 						prompt_position = "top",
-						width = 0.99999,
-						height = 0.99999,
+						width = 0.999,
+						height = 0.999,
+					},
+					mappings = {
+						i = {
+							["<esc>"] = actions.close,
+						},
 					},
 				},
 				extensions = {
@@ -509,9 +546,9 @@ require("lazy").setup({
 				{ "i", "<c-e>", "<End>" },
 				{ "i", "<c-f>", "<Right>" },
 				-- squeeze integration https://github.com/aymericbeaumet/squeeze
-				{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<CR><CR>" },
+				{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<cr><cr>" },
 				-- lsp
-				{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>" },
+				{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>" },
 				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>zz" },
 				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
 				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
@@ -525,7 +562,7 @@ require("lazy").setup({
 
 			require("which-key").register({
 				d = { "<cmd>bdelete!<cr>", "Close the current buffer" },
-				D = { "<cmd>%bd|e#|bd#<cr>|'\"<cr>", "Close the current buffer" },
+				D = { "<cmd>%bd|e#|bd#<cr>|'\"<cr>", "Close all the other buffers" },
 				q = { "<cmd>call ToggleQuickfixList()<cr>", "Toggle quickfix list" },
 				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
 
@@ -535,18 +572,28 @@ require("lazy").setup({
 				t = { "<cmd>term<cr>", "Start a terminal" },
 
 				-- telescope
-				b = { "<cmd>Telescope buffers<cr>", "Search buffers" },
+				["/"] = {
+					"<cmd>Telescope current_buffer_fuzzy_find<cr>",
+					"Search current buffer",
+				},
+				b = {
+					"<cmd>Telescope buffers<cr>",
+					"Search buffers",
+				},
 				f = {
 					"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--exclude,.git,--strip-cwd-prefix<cr>",
-					"Search files",
+					"Search file names in current working directory",
 				},
-				p = { "<cmd>Telescope commands<cr>", "Search commands" },
+				p = {
+					"<cmd>Telescope commands<cr>",
+					"Search commands",
+				},
 				r = {
-					"<cmd>Telescope live_grep prompt_title=Search\\ files vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden,--glob,!git<cr>",
-					"Search for a string",
+					"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
+					"Search file contents in current working directory",
 				},
 				z = {
-					"<cmd>Telescope zoxide list prompt_title=Zoxide<cr>",
+					"<cmd>Telescope zoxide list<cr>",
 					"Search frequent directories",
 				},
 
