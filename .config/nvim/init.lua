@@ -146,8 +146,12 @@ require("lazy").setup({
 					layout_strategy = "horizontal_merged",
 					layout_config = {
 						prompt_position = "top",
-						width = 0.999,
-						height = 0.999,
+						width = function(_, max_columns)
+							return max_columns
+						end,
+						height = function(_, _, max_lines)
+							return max_lines
+						end,
 					},
 					mappings = {
 						i = {
