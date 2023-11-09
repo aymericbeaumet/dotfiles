@@ -2,76 +2,77 @@
 ; Github: @aymericbeaumet/dotfiles
 
 [advice]
-  statusHints = false
+	statusHints = false
 
 [alias]
-  a = add
-  br = branch -v --sort=-committerdate
-  bw = browse
-  ci = commit
-  cia = commit --amend
-  cl = clone
-  co = checkout
-  cp = cherry-pick
-  df = diff
-  dfc = diff --cached
-  fe = fetch --prune
-  l = log
-  me = merge
-  pl = pull
-  ps = push -u
-  rb = rebase
-  rba = rebase --abort
-  rbc = rebase --continue
-  rbi = rebase --interactive
-  rmc = rm --cached
-  rs = reset
-  rv = revert
-  sh = stash -u
-  shc = stash clear
-  shl = stash list
-  shp = stash pop
-  sm = submodule
-  st = status --short --branch
-  sw = show
-  wa = worktree add
-  wl = worktree list
-  wr = worktree remove
-  #
-  plps = !git pl && git ps
+	a = add
+	br = branch -v --sort=-committerdate
+	bw = browse
+	ci = commit
+	cia = commit --amend
+	cl = clone
+	co = checkout
+	cp = cherry-pick
+	df = diff
+	dfc = diff --cached
+	fe = fetch --prune
+	l = log
+	me = merge
+	pl = pull
+	ps = push -u
+	rb = rebase
+	rba = rebase --abort
+	rbc = rebase --continue
+	rbi = rebase --interactive
+	rmc = rm --cached
+	rs = reset
+	rv = revert
+	sh = stash -u
+	shc = stash clear
+	shl = stash list
+	shp = stash pop
+	sm = submodule
+	st = status --short --branch
+	sw = show
+	wa = worktree add
+	wl = worktree list
+	wr = worktree remove
+	#
+	plps = !git pl && git ps
 
 [color]
-  ui = auto
+	ui = auto
 
 [commit]
-  verbose = true
+	verbose = true
 
 [core]
-  excludesfile = ~/.gitignore
-  pager = less
+	excludesfile = ~/.gitignore
+	pager = less
 
 [github]
-  user = aymericbeaumet
+	user = aymericbeaumet
 
 [grep]
-  lineNumber = true
-  patternType = extended
+	lineNumber = true
+	patternType = extended
 
 [man]
-  viewer = less
+	viewer = less
 
 [merge]
-  tool = nvim -d
+	tool = nvim -d
+	conflictstyle = diff3
 
 [pull]
-  rebase = true
+	rebase = true
 
 [push]
-  default = current
-  followTags = true
+	default = current
+	followTags = true
 
 [user]
-  name = Aymeric Beaumet
+	name = Aymeric Beaumet
 	email = aymeric@beaumet.me
 [filter "lfs"]
 	process = git-lfs filter-process

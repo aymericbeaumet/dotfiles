@@ -585,7 +585,7 @@ require("lazy").setup({
 					"Search buffers",
 				},
 				f = {
-					"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--exclude,.git,--strip-cwd-prefix<cr>",
+					"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
 					"Search file names in current working directory",
 				},
 				p = {

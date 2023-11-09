@@ -20,21 +20,12 @@ autoload -Uz compinit && compinit
 
 g() {
   if (( $# == 0 )); then
-    command git status -sb
+    command lazygit
   else
     command git "$@"
   fi
 }
 compdef g=git
-
-n() {
-  if (( $# == 0 )); then
-    command nvim "$HOME/notes"
-  else
-    command nvim "$HOME/notes/$(echo "$@" | sed 's/ /\ /g').md"
-  fi
-}
-compdef n=nvim
 
 tf() {
   if (( $# == 0 )); then
@@ -55,7 +46,6 @@ z() {
     cd "$dirpath" || exit 1
   fi
 }
-alias zl='zoxide query --list --score'
 
 awslocal() {
   AWS_ACCESS_KEY_ID=localstack AWS_SECRET_ACCESS_KEY=localstack command aws --output=json --region=eu-west-1 '--endpoint-url=http://localhost:4566' "$@"
@@ -68,6 +58,7 @@ export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 export EDITOR=nvim
 export PAGER=less
+export XDG_CONFIG_HOME="$HOME/.config"
 
 # aliases
 alias ap=ansible-playbook
