@@ -2,7 +2,6 @@
 .Trash/
 .cache/
 .git/
-.git/
 .obsidian/
 node_modules/
 *.pb.go
