@@ -33,7 +33,7 @@ vim.o.cursorline = true -- highlight cursorline
 vim.o.showmode = false -- do not show mode
 vim.o.termguicolors = true -- enable true colors
 vim.o.laststatus = 2 -- always show statusline
-vim.o.statusline = "%f %{FugitiveStatusline()}%=%l:%c %p%%" -- statusline format
+vim.o.statusline = "%f%=%l:%c %p%%" -- statusline format
 
 -- performance
 vim.o.lazyredraw = true -- only redraw when needed
@@ -99,6 +99,21 @@ require("lazy").setup({
 	"RRethy/vim-illuminate",
 	"farmergreg/vim-lastplace",
 	"lewis6991/gitsigns.nvim",
+
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		config = function()
+			local configs = require("nvim-treesitter.configs")
+
+			configs.setup({
+				ensure_installed = { "vim", "go", "rust", "lua", "svelte", "typescript", "javascript", "proto", "html" },
+				sync_install = false,
+				highlight = { enable = true },
+				indent = { enable = true },
+			})
+		end,
+	},
 
 	{
 		"nvim-telescope/telescope.nvim",
@@ -453,14 +468,14 @@ require("lazy").setup({
 					-- proto
 					null_ls.builtins.diagnostics.buf.with({ prefer_local = ".bin" }),
 					null_ls.builtins.formatting.buf.with({ prefer_local = ".bin" }),
-					-- javascript, typescript, svelte
+					-- javascript, typescript, svelte, html
 					null_ls.builtins.diagnostics.eslint.with({
 						prefer_local = "node_modules/.bin",
 						extra_filetypes = { "svelte" },
 					}),
 					null_ls.builtins.formatting.prettier.with({
 						prefer_local = "node_modules/.bin",
-						extra_filetypes = { "svelte" },
+						extra_filetypes = { "svelte", "html" },
 					}),
 					-- lua
 					null_ls.builtins.formatting.stylua,
@@ -539,9 +554,11 @@ require("lazy").setup({
 				-- emulate permanent global marks
 				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
 				{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
+				{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
 				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
 				{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 				{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
+				{ "n", "'W", "<cmd>edit ~/.wezterm.lua<cr>" },
 				{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
 				-- some zsh mappings in insert mode
 				{ "i", "<c-a>", "<Home>" },

@@ -18,6 +18,7 @@
 	fe = fetch --prune
 	l = log
 	me = merge
+	mt = mergetool
 	pl = pull
 	ps = push -u
 	rb = rebase
@@ -48,7 +49,7 @@
 
 [core]
 	excludesfile = ~/.gitignore
-	pager = less
+	pager = delta
 
 [github]
 	user = aymericbeaumet
@@ -60,8 +61,14 @@
 [man]
 	viewer = less
 
+[mergetool "nvim"]
+  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+
+[mergetool]
+  prompt = false
+
 [merge]
-	tool = nvim -d
+	tool = nvim
 	conflictstyle = diff3
 
 [pull]
@@ -74,8 +81,19 @@
 [user]
 	name = Aymeric Beaumet
 	email = aymeric@beaumet.me
+
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	light = false
+
+[diff]
+    colorMoved = default

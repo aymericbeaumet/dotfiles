@@ -1,7 +1,8 @@
 lastupdatecheck: 0
 recentrepos:
-- /Users/aymericbeaumet/.dotfiles
 - /Users/aymericbeaumet/Workspace/hearthands/backend
+- /Users/aymericbeaumet/Workspace/hearthands/experiment-web-canvas
+- /Users/aymericbeaumet/.dotfiles
 startuppopupversion: 5
 customcommandshistory: []
 hidecommandlog: true

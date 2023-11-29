@@ -20,7 +20,7 @@ autoload -Uz compinit && compinit
 
 g() {
   if (( $# == 0 )); then
-    command lazygit
+    command git st
   else
     command git "$@"
   fi
