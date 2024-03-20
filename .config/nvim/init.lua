@@ -108,7 +108,7 @@ require("lazy").setup({
 
 			configs.setup({
 				ensure_installed = { "vim", "go", "rust", "lua", "svelte", "typescript", "javascript", "proto", "html" },
-				sync_install = false,
+				sync_install = true,
 				highlight = { enable = true },
 				indent = { enable = true },
 			})
@@ -277,16 +277,6 @@ require("lazy").setup({
 	},
 
 	{
-		"windwp/nvim-autopairs",
-		config = function()
-			require("nvim-autopairs").setup({
-				map_c_h = true,
-				map_c_w = true,
-			})
-		end,
-	},
-
-	{
 		"hrsh7th/nvim-cmp",
 		version = false,
 		event = "InsertEnter",
@@ -305,14 +295,10 @@ require("lazy").setup({
 		},
 		config = function()
 			local cmp = require("cmp")
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 			local luasnip = require("luasnip")
-			local handlers = require("nvim-autopairs.completion.handlers")
 			local lspkind = require("lspkind")
 
 			vim.o.pumheight = 15
-
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 			cmp.setup({
 				completion = {
@@ -460,7 +446,6 @@ require("lazy").setup({
 			null_ls.setup({
 				sources = {
 					-- rust
-					null_ls.builtins.formatting.rustfmt,
 					-- golang
 					null_ls.builtins.diagnostics.golangci_lint.with({ prefer_local = ".bin" }),
 					null_ls.builtins.formatting.goimports.with({ prefer_local = ".bin" }),
@@ -469,10 +454,6 @@ require("lazy").setup({
 					null_ls.builtins.diagnostics.buf.with({ prefer_local = ".bin" }),
 					null_ls.builtins.formatting.buf.with({ prefer_local = ".bin" }),
 					-- javascript, typescript, svelte, html
-					null_ls.builtins.diagnostics.eslint.with({
-						prefer_local = "node_modules/.bin",
-						extra_filetypes = { "svelte" },
-					}),
 					null_ls.builtins.formatting.prettier.with({
 						prefer_local = "node_modules/.bin",
 						extra_filetypes = { "svelte", "html" },
@@ -480,7 +461,6 @@ require("lazy").setup({
 					-- lua
 					null_ls.builtins.formatting.stylua,
 					-- shell
-					null_ls.builtins.diagnostics.shellcheck,
 					null_ls.builtins.formatting.shellharden,
 					null_ls.builtins.formatting.shfmt,
 					-- dockerfile
@@ -552,7 +532,7 @@ require("lazy").setup({
 				-- clean screen and reload file
 				{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
 				-- emulate permanent global marks
-				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.yml<cr>" },
+				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.toml<cr>" },
 				{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 				{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
 				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
@@ -582,8 +562,7 @@ require("lazy").setup({
 			end
 
 			require("which-key").register({
-				d = { "<cmd>bdelete!<cr>", "Close the current buffer" },
-				D = { "<cmd>%bd|e#|bd#<cr>|'\"<cr>", "Close all the other buffers" },
+				d = { "<cmd>bp | sp | bn | bd<cr>", "Close the current buffer" },
 				q = { "<cmd>call ToggleQuickfixList()<cr>", "Toggle quickfix list" },
 				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
 

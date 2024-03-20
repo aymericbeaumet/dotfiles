@@ -69,7 +69,6 @@
 
 [merge]
 	tool = nvim
-	conflictstyle = diff3
 
 [pull]
 	rebase = true
@@ -96,4 +95,4 @@
 	light = false
 
 [diff]
-    colorMoved = default
+	colorMoved = default

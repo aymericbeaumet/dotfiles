@@ -1,8 +1,8 @@
 {
     "global": {
-        "ask_for_confirmation_before_quitting": true,
+        "ask_for_confirmation_before_quitting": false,
         "check_for_updates_on_startup": true,
-        "show_in_menu_bar": false,
+        "show_in_menu_bar": true,
         "show_profile_name_in_menu_bar": false,
         "unsafe_ui": false
     },
@@ -186,72 +186,6 @@
                         ]
                     },
                     {
-                        "description": "[Hammerspoon] Launch or focus Calendar",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "c",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Calendar'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Hammerspoon] Launch or focus Reminders",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "r",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Reminders'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Hammerspoon] Launch or focus Notes",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "n",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Notes'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "[Hammerspoon] Launch or focus Spotify",
                         "manipulators": [
                             {
@@ -311,28 +245,6 @@
                                 "to": [
                                     {
                                         "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postman'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Hammerspoon] Launch or focus Twitter",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "x",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Twitter'"
                                     }
                                 ],
                                 "type": "basic"
@@ -406,6 +318,116 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Discord",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "d",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Discord'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus Messages",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "i",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Messages'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus Telegram",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "t",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Telegram'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus WhatsApp",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=WhatsApp'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus Calendar",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "c",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Calendar'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus Slack",
                         "manipulators": [
                             {
@@ -450,6 +472,50 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Reminders",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "r",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Reminders'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Hammerspoon] Launch or focus Notes",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "n",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Notes'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus Postico",
                         "manipulators": [
                             {
@@ -465,28 +531,6 @@
                                 "to": [
                                     {
                                         "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Postico%202'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Hammerspoon] Launch or focus Beeper",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "b",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Beeper'"
                                     }
                                 ],
                                 "type": "basic"
@@ -1507,7 +1551,7 @@
                             },
                             "to": [
                                 {
-                                    "key_code": "left_option"
+                                    "key_code": "right_option"
                                 }
                             ]
                         },
@@ -1553,11 +1597,11 @@
                         },
                         {
                             "from": {
-                                "key_code": "left_control"
+                                "key_code": "left_command"
                             },
                             "to": [
                                 {
-                                    "key_code": "right_control"
+                                    "key_code": "left_option"
                                 }
                             ]
                         },
@@ -1567,7 +1611,7 @@
                             },
                             "to": [
                                 {
-                                    "key_code": "right_command"
+                                    "key_code": "left_command"
                                 }
                             ]
                         },
@@ -1608,16 +1652,6 @@
                             "to": [
                                 {
                                     "key_code": "7"
-                                }
-                            ]
-                        },
-                        {
-                            "from": {
-                                "key_code": "right_control"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
                                 }
                             ]
                         },
