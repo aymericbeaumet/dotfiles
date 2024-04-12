@@ -60,17 +60,6 @@ vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- terminal
-vim.api.nvim_create_augroup("TerminalGroup", { clear = true })
-vim.api.nvim_create_autocmd("TermOpen", {
-	command = "setlocal nonumber norelativenumber | startinsert",
-	group = "TerminalGroup",
-})
-vim.api.nvim_create_autocmd("TermClose", {
-	command = 'call feedkeys("q")',
-	group = "TerminalGroup",
-})
-
 -- plugins
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -94,22 +83,32 @@ require("lazy").setup({
 	"tpope/vim-fugitive",
 	"tpope/vim-rhubarb",
 	"preservim/nerdcommenter",
-	"evanleck/vim-svelte",
 	"hashivim/vim-terraform",
 	"RRethy/vim-illuminate",
 	"farmergreg/vim-lastplace",
 	"lewis6991/gitsigns.nvim",
+	"joerdav/templ.vim",
 
 	{
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
 		config = function()
 			local configs = require("nvim-treesitter.configs")
 
 			configs.setup({
-				ensure_installed = { "vim", "go", "rust", "lua", "svelte", "typescript", "javascript", "proto", "html" },
+				auto_install = true,
 				sync_install = true,
-				highlight = { enable = true },
+				ensure_installed = {
+					"go",
+					"html",
+					"javascript",
+					"lua",
+					"proto",
+					"rust",
+					"templ",
+					"typescript",
+					"vim",
+				},
+				highlight = { enable = false },
 				indent = { enable = true },
 			})
 		end,
@@ -276,6 +275,7 @@ require("lazy").setup({
 		end,
 	},
 
+	-- completion
 	{
 		"hrsh7th/nvim-cmp",
 		version = false,
@@ -378,6 +378,7 @@ require("lazy").setup({
 		end,
 	},
 
+	-- LSP configuration
 	{
 		"neovim/nvim-lspconfig",
 		after = { "cmp-nvim-lsp" },
@@ -387,13 +388,10 @@ require("lazy").setup({
 		},
 		config = function()
 			require("mason").setup()
-			require("mason-lspconfig").setup({
-				ensure_installed = { "gopls", "rust_analyzer" },
-			})
+			require("mason-lspconfig").setup({ automatic_installation = true })
 
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			-- disable snippets
-			capabilities.textDocument.completion.completionItem.snippetSupport = false
+			capabilities.textDocument.completion.completionItem.snippetSupport = false -- disable snippets
 
 			local flags = { debounce_text_changes = 150 }
 
@@ -407,21 +405,15 @@ require("lazy").setup({
 
 			for lsp, settings in pairs({
 				gopls = {},
-				svelte = {},
-				tsserver = {},
 				rust_analyzer = {
 					["rust-analyzer"] = {
-						cargo = {
-							loadOutDirsFromCheck = true,
-						},
-						procMacro = {
-							enable = true,
-						},
-						checkOnSave = {
-							command = "clippy",
-						},
+						cargo = { loadOutDirsFromCheck = true },
+						procMacro = { enable = true },
+						checkOnSave = { command = "clippy" },
 					},
 				},
+				tsserver = {},
+				templ = {},
 			}) do
 				require("lspconfig")[lsp].setup({
 					capabilities = capabilities,
@@ -434,61 +426,65 @@ require("lazy").setup({
 		end,
 	},
 
+	-- linting
 	{
-		"nvimtools/none-ls.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
+		"mfussenegger/nvim-lint",
 		config = function()
-			local null_ls = require("null-ls")
-			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+			require("lint").linters_by_ft = {
+				dockerfile = { "hadolint" },
+				go = { "golangcilint" },
+				proto = { "buf_lint" },
+				template = { "templ" },
+			}
 
-			null_ls.setup({
-				sources = {
-					-- rust
-					-- golang
-					null_ls.builtins.diagnostics.golangci_lint.with({ prefer_local = ".bin" }),
-					null_ls.builtins.formatting.goimports.with({ prefer_local = ".bin" }),
-					null_ls.builtins.formatting.gofumpt.with({ prefer_local = ".bin" }),
-					-- proto
-					null_ls.builtins.diagnostics.buf.with({ prefer_local = ".bin" }),
-					null_ls.builtins.formatting.buf.with({ prefer_local = ".bin" }),
-					-- javascript, typescript, svelte, html
-					null_ls.builtins.formatting.prettier.with({
-						prefer_local = "node_modules/.bin",
-						extra_filetypes = { "svelte", "html" },
-					}),
-					-- lua
-					null_ls.builtins.formatting.stylua,
-					-- shell
-					null_ls.builtins.formatting.shellharden,
-					null_ls.builtins.formatting.shfmt,
-					-- dockerfile
-					null_ls.builtins.diagnostics.hadolint,
-					-- terraform
-					null_ls.builtins.formatting.terraform_fmt,
-				},
-				on_attach = function(client, bufnr)
-					if client.supports_method("textDocument/formatting") then
-						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-						vim.api.nvim_create_autocmd("BufWritePre", {
-							group = augroup,
-							buffer = bufnr,
-							callback = function()
-								vim.lsp.buf.format({
-									bufnr = bufnr,
-									filter = function(client)
-										return client.name == "null-ls"
-									end,
-								})
-							end,
-						})
-					end
+			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+				callback = function()
+					require("lint").try_lint()
 				end,
 			})
 		end,
 	},
 
+	-- formatting
+	{
+		"stevearc/conform.nvim",
+		config = function()
+			require("conform").setup({
+				format_after_save = {
+					lsp_fallback = true,
+				},
+				formatters_by_ft = {
+					go = { "goimports", "gofumpt" },
+					html = { "prettier" },
+					javascript = { "prettier" },
+					lua = { "stylua" },
+					proto = { "buf" },
+					python = { "ruff" },
+					rust = { "rustfmt" },
+					shell = { "shellharden" },
+					svelte = { "prettier" },
+					template = { "templ" },
+					terraform = { "terraform_fmt" },
+					typescript = { "prettier" },
+				},
+			})
+
+			vim.api.nvim_create_autocmd("BufWritePre", {
+				pattern = "*",
+				callback = function(args)
+					require("conform").format({
+						async = true,
+						bufnr = args.buf,
+					})
+				end,
+			})
+		end,
+		init = function()
+			vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+		end,
+	},
+
+	-- error reporting
 	{
 		"folke/trouble.nvim",
 		dependencies = {
@@ -538,7 +534,6 @@ require("lazy").setup({
 				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
 				{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 				{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
-				{ "n", "'W", "<cmd>edit ~/.wezterm.lua<cr>" },
 				{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
 				-- some zsh mappings in insert mode
 				{ "i", "<c-a>", "<Home>" },
@@ -565,11 +560,6 @@ require("lazy").setup({
 				d = { "<cmd>bp | sp | bn | bd<cr>", "Close the current buffer" },
 				q = { "<cmd>call ToggleQuickfixList()<cr>", "Toggle quickfix list" },
 				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
-
-				-- terminal
-				e = { "<cmd>term yazi<cr>", "Start yazi" },
-				g = { "<cmd>term lazygit<cr>", "Start Lazygit" },
-				t = { "<cmd>term<cr>", "Start a terminal" },
 
 				-- telescope
 				["/"] = {
