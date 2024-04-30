@@ -531,6 +531,7 @@ require("lazy").setup({
 				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.toml<cr>" },
 				{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 				{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
+				{ "n", "'H", "<cmd>edit ~/.hammerspoon/init.lua<cr>" },
 				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
 				{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 				{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
