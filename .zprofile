@@ -14,15 +14,12 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
   export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"
 
-  # tools
+  # bat
   export BAT_THEME="Nord"
-  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
-  # ***REMOVED***
-  if [ -x "$HOME/.***REMOVED***/bin/***REMOVED***" ]; then
-    #eval "$("$HOME/.***REMOVED***/bin/***REMOVED***" shellenv)"
-    export ***REMOVED***_CLI_NO_REPORTING=true
-    export ***REMOVED***_CLI_STACKTRACE=true
-    export ***REMOVED***_CLI_EXPERIMENT_BSDIFF=true
-  fi
+  # homebrew
+  export HOMEBREW_NO_ENV_HINTS=true
+
+  # ripgrep
+  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 fi
