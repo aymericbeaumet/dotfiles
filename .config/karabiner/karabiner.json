@@ -362,6 +362,28 @@
                         ]
                     },
                     {
+                        "description": "[Hammerspoon] Launch or focus Notes",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "n",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Notes'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "[Hammerspoon] Launch or focus WhatsApp",
                         "manipulators": [
                             {
@@ -377,28 +399,6 @@
                                 "to": [
                                     {
                                         "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=WhatsApp'"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Hammerspoon] Launch or focus Obsidian",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "o",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "shell_command": "open -gjFu 'hammerspoon://launchOrFocusApplication?name=Obsidian'"
                                     }
                                 ],
                                 "type": "basic"

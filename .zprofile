@@ -14,15 +14,12 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
   export CARGO_HOME="$HOME/.cargo"
   export PATH="$CARGO_HOME/bin:$PATH"
 
-  # tools
+  # bat
   export BAT_THEME="Nord"
-  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 
-  # rekki
-  if [ -x "$HOME/.rekki/bin/rekki" ]; then
-    #eval "$("$HOME/.rekki/bin/rekki" shellenv)"
-    export REKKI_CLI_NO_REPORTING=true
-    export REKKI_CLI_STACKTRACE=true
-    export REKKI_CLI_EXPERIMENT_BSDIFF=true
-  fi
+  # homebrew
+  export HOMEBREW_NO_ENV_HINTS=true
+
+  # ripgrep
+  export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
 fi
