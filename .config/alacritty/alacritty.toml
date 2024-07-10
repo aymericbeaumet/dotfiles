@@ -47,7 +47,6 @@ style = "Retina"
 [[keyboard.bindings]]
 key = "Q"
 mods = "Command"
-
 [keyboard.bindings.command]
 args = ["alacritty"]
 program = "killall"
@@ -58,8 +57,13 @@ key = "W"
 mods = "Command|Shift"
 
 [[keyboard.bindings]]
-action = "SpawnNewInstance"
-key = "N"
+action = "ReceiveChar"
+key = "F"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "ReceiveChar"
+key = "B"
 mods = "Command"
 
 [[keyboard.bindings]]
@@ -74,11 +78,6 @@ key = "Paste"
 [[keyboard.bindings]]
 action = "Copy"
 key = "C"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "ReceiveChar"
-key = "F"
 mods = "Command"
 
 [[keyboard.bindings]]
@@ -502,66 +501,6 @@ mods = "Alt"
 chars = "\u001B[24;6~"
 key = "F12"
 mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001B[1;3P"
-key = "F1"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[1;3Q"
-key = "F2"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[1;3R"
-key = "F3"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[1;3S"
-key = "F4"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[15;3~"
-key = "F5"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[17;3~"
-key = "F6"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[18;3~"
-key = "F7"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[19;3~"
-key = "F8"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[20;3~"
-key = "F9"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[21;3~"
-key = "F10"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[23;3~"
-key = "F11"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B[24;3~"
-key = "F12"
-mods = "Command"
 
 [[keyboard.bindings]]
 chars = """
