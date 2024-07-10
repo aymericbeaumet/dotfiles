@@ -88,6 +88,9 @@ require("lazy").setup({
 	"farmergreg/vim-lastplace",
 	"lewis6991/gitsigns.nvim",
 	"joerdav/templ.vim",
+	"evanleck/vim-svelte",
+	"pangloss/vim-javascript",
+	"othree/html5.vim",
 
 	{
 		"nvim-treesitter/nvim-treesitter",
