@@ -18,6 +18,7 @@ vim.o.smarttab = true -- insert `shiftwidth` spaces instead of tabs
 vim.o.softtabstop = 2 -- n spaces when using <Tab>
 vim.o.tabstop = 2 -- n spaces when using <Tab>
 vim.o.textwidth = 80 -- wrap lines at 80 characters
+vim.o.autoindent = true -- auto-indent new lines
 
 -- interface
 vim.o.mouse = "a" -- enable mouse support
@@ -59,6 +60,55 @@ vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
 -- mappings
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+vim.o.timeout = true
+vim.o.timeoutlen = 300 -- time to wait when a part of a mapped sequence is typed
+vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
+for _, mapping in ipairs({
+	-- save current buffer
+	{ "n", "<cr>", "<cmd>w<cr>" },
+	-- better `j` and `k`
+	{ "n", "j", "gj" },
+	{ "v", "j", "gj" },
+	{ "n", "k", "gk" },
+	{ "v", "k", "gk" },
+	-- copy from the cursor to the end of line using Y (matches D behavior)
+	{ "n", "Y", "y$" },
+	-- keep the cursor in place while joining lines
+	{ "n", "J", "mZJ`Z" },
+	-- reselect visual block after indent
+	{ "v", "<", "<gv" },
+	{ "v", ">", ">gv" },
+	-- clean screen and reload file
+	{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
+	-- emulate permanent global marks
+	{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.toml<cr>" },
+	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
+	{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
+	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
+	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
+	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
+	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
+	-- some zsh mappings in insert mode
+	{ "i", "<c-a>", "<Home>" },
+	{ "i", "<c-b>", "<Left>" },
+	{ "i", "<c-d>", "<Del>" },
+	{ "i", "<c-e>", "<End>" },
+	{ "i", "<c-f>", "<Right>" },
+	-- squeeze integration https://github.com/aymericbeaumet/squeeze
+	{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<cr><cr>" },
+	-- lsp
+	{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>" },
+	{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>zz" },
+	{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
+	{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
+	-- navigation
+	{ "n", "<c-o>", "<c-o>zz" },
+	{ "n", "n", "nzz" },
+	{ "n", "N", "Nzz" },
+	{ "n", "<c-]>", "<c-]>zz" },
+}) do
+	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+end
 
 -- plugins
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -506,103 +556,39 @@ require("lazy").setup({
 		end,
 	},
 
+	-- bindings
 	{
 		"folke/which-key.nvim",
-		config = function()
-			vim.o.timeout = true
-			vim.o.timeoutlen = 300 -- time to wait when a part of a mapped sequence is typed
-			vim.o.ttimeoutlen = 0 -- instant insert mode exit using escape
-
-			for _, mapping in ipairs({
-				-- save current buffer
-				{ "n", "<cr>", "<cmd>w<cr>" },
-				-- better `j` and `k`
-				{ "n", "j", "gj" },
-				{ "v", "j", "gj" },
-				{ "n", "k", "gk" },
-				{ "v", "k", "gk" },
-				-- copy from the cursor to the end of line using Y (matches D behavior)
-				{ "n", "Y", "y$" },
-				-- keep the cursor in place while joining lines
-				{ "n", "J", "mZJ`Z" },
-				-- reselect visual block after indent
-				{ "v", "<", "<gv" },
-				{ "v", ">", ">gv" },
-				-- clean screen and reload file
-				{ "n", "<c-l>", "<cmd>nohl<cr>:redraw<cr>:checktime<cr><c-l>gjgk" },
-				-- emulate permanent global marks
-				{ "n", "'A", "<cmd>edit ~/.config/alacritty/alacritty.toml<cr>" },
-				{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
-				{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
-				{ "n", "'H", "<cmd>edit ~/.hammerspoon/init.lua<cr>" },
-				{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
-				{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
-				{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
-				{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
-				-- some zsh mappings in insert mode
-				{ "i", "<c-a>", "<Home>" },
-				{ "i", "<c-b>", "<Left>" },
-				{ "i", "<c-d>", "<Del>" },
-				{ "i", "<c-e>", "<End>" },
-				{ "i", "<c-f>", "<Right>" },
-				-- squeeze integration https://github.com/aymericbeaumet/squeeze
-				{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<cr><cr>" },
-				-- lsp
-				{ "n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>" },
-				{ "n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>zz" },
-				{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
-				{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
-				-- navigation
-				{ "n", "<c-o>", "<c-o>zz" },
-				{ "n", "n", "nzz" },
-				{ "n", "N", "Nzz" },
-			}) do
-				vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
-			end
-
-			require("which-key").register({
-				d = { "<cmd>bp | sp | bn | bd<cr>", "Close the current buffer" },
-				q = { "<cmd>call ToggleQuickfixList()<cr>", "Toggle quickfix list" },
-				s = { "<Plug>(easymotion-overwin-f)", "Easymotion search" },
-
-				-- telescope
-				["/"] = {
-					"<cmd>Telescope current_buffer_fuzzy_find<cr>",
-					"Search current buffer",
-				},
-				b = {
-					"<cmd>Telescope buffers<cr>",
-					"Search buffers",
-				},
-				f = {
-					"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
-					"Search file names in current working directory",
-				},
-				p = {
-					"<cmd>Telescope commands<cr>",
-					"Search commands",
-				},
-				r = {
-					"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
-					"Search file contents in current working directory",
-				},
-				z = {
-					"<cmd>Telescope zoxide list<cr>",
-					"Search frequent directories",
-				},
-
-				-- lsp
-				l = {
-					name = "lsp",
-					d = { "<cmd>lua vim.lsp.buf.declaration()<cr>", "Go to declaration" },
-					i = { "<cmd>lua vim.lsp.buf.implementation()<cr>", "Go to implementation" },
-					l = { "<cmd>lua vim.lsp.buf.document_symbol()<cr>", "List symbols" },
-					r = { "<cmd>lua vim.lsp.buf.references()<cr>", "List references" },
-					t = { "<cmd>lua vim.lsp.buf.type_definition()<cr>", "Go to type definition" },
-					A = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code action" },
-					R = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename symbol" },
-				},
-			}, { prefix = "<leader>", mode = "n" })
-		end,
+		event = "VeryLazy",
+		opts = {
+			delay = 350,
+		},
+		keys = {
+			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
+			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
+			{ "<leader>d", "<cmd>bp | sp | bn | bd<cr>", desc = "Close the current buffer" },
+			{
+				"<leader>f",
+				"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
+				desc = "Search file names in current working directory",
+			},
+			{ "<leader>l", group = "lsp" },
+			{ "<leader>lA", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code action" },
+			{ "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename symbol" },
+			{ "<leader>ld", "<cmd>lua vim.lsp.buf.declaration()<cr>zz", desc = "Go to declaration" },
+			{ "<leader>li", "<cmd>lua vim.lsp.buf.implementation()<cr>zz", desc = "Go to implementation" },
+			{ "<leader>ll", "<cmd>lua vim.lsp.buf.document_symbol()<cr>", desc = "List symbols" },
+			{ "<leader>lr", "<cmd>lua vim.lsp.buf.references()<cr>", desc = "List references" },
+			{ "<leader>lt", "<cmd>lua vim.lsp.buf.type_definition()<cr>zz", desc = "Go to type definition" },
+			{ "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
+			{ "<leader>q", "<cmd>call ToggleQuickfixList()<cr>", desc = "Toggle quickfix list" },
+			{
+				"<leader>r",
+				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
+				desc = "Search file contents in current working directory",
+			},
+			{ "<leader>s", "<Plug>(easymotion-overwin-f)", desc = "Easymotion search" },
+			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
+		},
 	},
 })

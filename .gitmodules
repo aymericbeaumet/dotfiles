@@ -14,3 +14,9 @@
 [submodule ".zsh/bundle/zsh-syntax-highlighting"]
 	path = .zsh/bundle/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule ".zsh/bundle/ohmyzsh"]
+	path = .zsh/bundle/ohmyzsh
+	url = git@github.com:ohmyzsh/ohmyzsh.git
+[submodule ".zsh/bundle/fzf-git"]
+	path = .zsh/bundle/fzf-git
+	url = git@github.com:junegunn/fzf-git.sh.git

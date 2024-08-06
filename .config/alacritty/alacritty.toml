@@ -897,4 +897,5 @@ program = "/opt/homebrew/bin/tmux"
 
 [window]
 decorations = "buttonless"
-startup_mode = "SimpleFullscreen"
+padding = { x = 8, y = 8 }
+dynamic_padding = true

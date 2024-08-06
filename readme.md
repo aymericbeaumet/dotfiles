@@ -27,9 +27,15 @@ brew bundle
 ## Update
 
 ```bash
-# Update dependencies
-brew bundle --cleanup
+git -C ~/.dotfiles submodule foreach git pull;
+brew bundle --cleanup --file ~/.dotfiles/Brewfile;
+nvim --headless '+Lazy! sync' +qa
+```
 
-# Update submodules
-git submodule foreach git pull origin master
+## System config
+
+```
+defaults write com.apple.dock "expose-group-apps" -bool "true" && killall Dock
+defaults write com.apple.spaces "spans-displays" -bool "true" && killall SystemUIServer
+defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
 ```
