@@ -10,7 +10,11 @@ fi
 source "$HOME/.p10k.zsh"
 source "$HOME/.zsh/bundle/powerlevel10k/powerlevel10k.zsh-theme"
 
-fpath=("$HOME/.zsh/bundle/zsh-completions/src" $fpath)
+fpath=(
+  "$HOME/.zsh/bundle/ohmyzsh/plugins/gitfast"
+  "$HOME/.zsh/bundle/zsh-completions/src"
+  $fpath
+)
 autoload -Uz compinit && compinit
 
 ...() {
@@ -26,14 +30,6 @@ g() {
   fi
 }
 compdef g=git
-
-tf() {
-  if (( $# == 0 )); then
-    command terraform state list
-  else
-    command terraform "$@"
-  fi
-}
 
 z() {
   local dirpath
@@ -63,30 +59,17 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # aliases
 alias ap=ansible-playbook
 alias b=bat
-alias ls='exa --group --group-directories-first --sort=Name'
+alias ls='eza --group --group-directories-first --sort=Name'
 alias l='ls -l'
 alias la='l -a'
 alias tree='l --tree --git-ignore'
 alias t='tree'
 alias ta='la --tree --git-ignore'
+alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
 alias vim=$EDITOR
 alias w='watchexec --restart --clear --'
-
-# global aliases
-alias -g F='|& fzf'
-alias -g G='|& grep -E -i --color=auto'
-alias -g L='|& less'
-alias -g N='>/dev/null'
-
-# ripgrep aliases
-alias mdlinks="   rg '.*(\[[^]]*\]\([^)]*\)).*'          --replace '\$1' --type md"
-alias mdlinks_abs="rg '.*(\[[^]]*\]\(https?://[^)]*\)).*' --replace '\$1' --type md"
-alias mdlinks_rel="rg '.*(\[[^]]*\]\(\./[^)]*\)).*'       --replace '\$1' --type md"
-
-# utils
-whatismyip() { curl ifconfig.me; echo }
 
 # bindings
 bindkey -e
@@ -169,9 +152,9 @@ precmd() {
   echo -ne '\e[5 q'
 }
 
-# trigger nvim command line edition on ^V
+# trigger command line edition with $EDITOR on ^X^E
 autoload -Uz edit-command-line && zle -N edit-command-line
-bindkey "^V" edit-command-line
+bindkey "^X^E" edit-command-line
 
 # fzf plugin
 source "$(brew --prefix fzf)/shell/completion.zsh" 2>/dev/null
@@ -187,6 +170,9 @@ export FZF_DEFAULT_OPTS="\
 export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
+
+# fzf-git plugin
+source "$HOME/.zsh/bundle/fzf-git/fzf-git.sh"
 
 # zoxide plugin
 eval "$(zoxide init zsh --hook=prompt --no-cmd)"

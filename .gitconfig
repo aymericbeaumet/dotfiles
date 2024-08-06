@@ -12,13 +12,11 @@
 	cia = commit --amend
 	cl = clone
 	co = checkout
-	cp = cherry-pick
 	df = diff
 	dfc = diff --cached
 	fe = fetch --prune
 	l = log
 	me = merge
-	mt = mergetool
 	pl = pull
 	ps = push -u
 	rb = rebase
@@ -38,6 +36,7 @@
 	wa = worktree add
 	wl = worktree list
 	wr = worktree remove
+  rt = root
 	#
 	plps = !git pl && git ps
 
@@ -60,15 +59,6 @@
 
 [man]
 	viewer = less
-
-[mergetool "nvim"]
-  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
-
-[mergetool]
-  prompt = false
-
-[merge]
-	tool = nvim
 
 [pull]
 	rebase = true

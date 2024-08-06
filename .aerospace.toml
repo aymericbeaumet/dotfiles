@@ -1,0 +1,92 @@
+start-at-login = true
+after-login-command = []
+after-startup-command = []
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+default-root-container-layout = 'acordion'
+default-root-container-orientation = 'auto'
+accordion-padding = 0
+
+key-mapping.preset = 'qwerty'
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'main'
+3 = ['secondary', 'main']
+4 = ['secondary', 'main']
+
+[gaps]
+inner.horizontal = [{ monitor."^built-in retina display$" = 32 }, 24]
+inner.vertical =   [{ monitor."^built-in retina display$" = 32 }, 24]
+outer.top =        [{ monitor."^built-in retina display$" = 0 }, 24]
+outer.right =      [{ monitor."^built-in retina display$" = 32 }, 24]
+outer.bottom =     [{ monitor."^built-in retina display$" = 32 }, 24]
+outer.left =       [{ monitor."^built-in retina display$" = 32 }, 24]
+
+[mode.main.binding]
+
+# disable useless shortcuts
+cmd-h = [] # "hide application"
+cmd-alt-h = [] # "hide others"
+
+# reload config
+alt-r = ['mode service', 'reload-config', 'mode main']
+
+# workspace manipulation
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+
+# layout manipulation
+alt-a = 'layout accordion'
+alt-t = 'layout tiles'
+
+# node resize
+alt-minus = 'resize smart -100'
+alt-equal = 'resize smart +100'
+alt-0 = 'balance-sizes'
+
+# focus apps
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+cmd-ctrl-a     = 'exec-and-forget open -a "Alacritty.app"'
+cmd-ctrl-f     = 'exec-and-forget open -a "Firefox.app"'
+cmd-ctrl-g     = 'exec-and-forget open -a "Figma.app"'
+cmd-ctrl-i     = 'exec-and-forget open -a "Messages.app"'
+cmd-ctrl-l     = 'exec-and-forget open -a "Linear.app"'
+cmd-ctrl-n     = 'exec-and-forget open -a "Notes.app"'
+cmd-ctrl-p     = 'exec-and-forget open -a "Postico 2.app"'
+cmd-ctrl-r     = 'exec-and-forget open -a "Reminders.app"'
+cmd-ctrl-s     = 'exec-and-forget open -a "Slack.app"'
+cmd-ctrl-t     = 'exec-and-forget open -a "Thunderbird.app"'
+cmd-ctrl-w     = 'exec-and-forget open -a "WhatsApp.app"'
+cmd-ctrl-y     = 'exec-and-forget open -a "Spotify.app"'
+cmd-ctrl-slash = 'exec-and-forget open -a "Postman.app"'
+
+# move apps
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+[[on-window-detected]] # alacritty
+if.app-id = 'org.alacritty'
+run = ['move-node-to-workspace 1']
+
+[[on-window-detected]] # firefox
+if.app-id = 'org.mozilla.firefox'
+run = ['move-node-to-workspace 1']
+
+[[on-window-detected]] # fallback
+run = ['move-node-to-workspace 2']
