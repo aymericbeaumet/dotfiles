@@ -29,7 +29,7 @@ brew bundle
 ```bash
 git -C ~/.dotfiles submodule foreach git pull;
 brew bundle --cleanup --file ~/.dotfiles/Brewfile;
-nvim --headless '+Lazy! sync' +qa
+nvim --headless '+Lazy! sync' +qa;
 ```
 
 ## System config
