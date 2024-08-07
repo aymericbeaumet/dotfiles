@@ -46,7 +46,7 @@ tap 'oven-sh/bun'
 brew 'bun'
 
 tap 'FelixKratz/formulae'
-brew 'FelixKratz/formulae/sketchybar'
+brew 'FelixKratz/formulae/borders'
 
 cask 'alacritty'
 cask 'alfred'

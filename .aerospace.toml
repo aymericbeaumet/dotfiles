@@ -1,11 +1,15 @@
 start-at-login = true
+
 after-login-command = []
-after-startup-command = []
+
+after-startup-command = [
+  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
+]
 
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
-default-root-container-layout = 'acordion'
+default-root-container-layout = 'accordion'
 default-root-container-orientation = 'auto'
 accordion-padding = 0
 
@@ -22,7 +26,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 [gaps]
 inner.horizontal = [{ monitor."^built-in retina display$" = 32 }, 24]
 inner.vertical =   [{ monitor."^built-in retina display$" = 32 }, 24]
-outer.top =        [{ monitor."^built-in retina display$" = 0 }, 24]
+outer.top =        [{ monitor."^built-in retina display$" =  0 }, 24]
 outer.right =      [{ monitor."^built-in retina display$" = 32 }, 24]
 outer.bottom =     [{ monitor."^built-in retina display$" = 32 }, 24]
 outer.left =       [{ monitor."^built-in retina display$" = 32 }, 24]
@@ -50,12 +54,7 @@ alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
 alt-a = 'layout accordion'
 alt-t = 'layout tiles'
 
-# node resize
-alt-minus = 'resize smart -100'
-alt-equal = 'resize smart +100'
-alt-0 = 'balance-sizes'
-
-# focus apps
+# focus tiles/apps
 alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
@@ -74,11 +73,16 @@ cmd-ctrl-w     = 'exec-and-forget open -a "WhatsApp.app"'
 cmd-ctrl-y     = 'exec-and-forget open -a "Spotify.app"'
 cmd-ctrl-slash = 'exec-and-forget open -a "Postman.app"'
 
-# move apps
+# move tile
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
+
+# resize tile
+alt-minus = 'resize smart -100'
+alt-equal = 'resize smart +100'
+alt-0 = 'balance-sizes'
 
 [[on-window-detected]] # alacritty
 if.app-id = 'org.alacritty'
