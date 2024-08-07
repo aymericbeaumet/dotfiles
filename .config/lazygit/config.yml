@@ -1,9 +1,0 @@
-gui:
-  scrollHeight: 10 # keep in sync with nvim config
-  scrollOffMargin: 10 # keep in sync with nvim config
-  showBottomLine: false
-  showPanelJumps: false
-  nerdFontsVersion: 3
-
-os:
-  editPreset: "nvim-remote"
