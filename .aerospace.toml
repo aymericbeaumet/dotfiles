@@ -24,12 +24,12 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 4 = ['secondary', 'main']
 
 [gaps]
-inner.horizontal = [{ monitor."^built-in retina display$" = 32 }, 24]
-inner.vertical =   [{ monitor."^built-in retina display$" = 32 }, 24]
-outer.top =        [{ monitor."^built-in retina display$" =  0 }, 24]
-outer.right =      [{ monitor."^built-in retina display$" = 32 }, 24]
-outer.bottom =     [{ monitor."^built-in retina display$" = 32 }, 24]
-outer.left =       [{ monitor."^built-in retina display$" = 32 }, 24]
+inner.horizontal = [{ monitor."^built-in retina display$" = 16 }, 24]
+inner.vertical =   [{ monitor."^built-in retina display$" = 16 }, 24]
+outer.top =        [{ monitor."^built-in retina display$" = 16 }, 24]
+outer.right =      [{ monitor."^built-in retina display$" = 16 }, 24]
+outer.bottom =     [{ monitor."^built-in retina display$" = 16 }, 24]
+outer.left =       [{ monitor."^built-in retina display$" = 16 }, 24]
 
 [mode.main.binding]
 
@@ -51,20 +51,22 @@ alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
 alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
 
 # layout manipulation
-alt-a = 'layout accordion'
-alt-t = 'layout tiles'
+alt-a = ['flatten-workspace-tree', 'layout accordion']
+alt-t = ['flatten-workspace-tree', 'layout tiles']
 
 # focus tiles/apps
 alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
+cmd-ctrl-1     = 'exec-and-forget open -a "M1.app"'
 cmd-ctrl-a     = 'exec-and-forget open -a "Alacritty.app"'
 cmd-ctrl-f     = 'exec-and-forget open -a "Firefox.app"'
 cmd-ctrl-g     = 'exec-and-forget open -a "Figma.app"'
 cmd-ctrl-i     = 'exec-and-forget open -a "Messages.app"'
 cmd-ctrl-l     = 'exec-and-forget open -a "Linear.app"'
 cmd-ctrl-n     = 'exec-and-forget open -a "Notes.app"'
+cmd-ctrl-o     = 'exec-and-forget open -a "Notion.app"'
 cmd-ctrl-p     = 'exec-and-forget open -a "Postico 2.app"'
 cmd-ctrl-r     = 'exec-and-forget open -a "Reminders.app"'
 cmd-ctrl-s     = 'exec-and-forget open -a "Slack.app"'
