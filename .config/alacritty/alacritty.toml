@@ -891,7 +891,7 @@ history = 0
 [selection]
 save_to_clipboard = true
 
-[shell]
+[terminal.shell]
 args = ["new-session", "-A", "-D", "-s", "default"]
 program = "/opt/homebrew/bin/tmux"
 
@@ -899,3 +899,5 @@ program = "/opt/homebrew/bin/tmux"
 decorations = "buttonless"
 padding = { x = 8, y = 8 }
 dynamic_padding = true
+
+[terminal]

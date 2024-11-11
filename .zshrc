@@ -62,9 +62,9 @@ alias b=bat
 alias ls='eza --group --group-directories-first --sort=Name'
 alias l='ls -l'
 alias la='l -a'
-alias tree='l --tree --git-ignore'
+alias tree='l -R --tree'
 alias t='tree'
-alias ta='la --tree --git-ignore'
+alias ta='la -R --tree'
 alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
