@@ -85,6 +85,7 @@ for _, mapping in ipairs({
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 	{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
 	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
+	{ "n", "'R", "<cmd>edit ~/.aerospace.toml<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
@@ -162,7 +163,7 @@ require("lazy").setup({
 					"vim",
 				},
 				highlight = { enable = false },
-				indent = { enable = true },
+				indent = { enable = false },
 			})
 		end,
 	},
@@ -465,7 +466,7 @@ require("lazy").setup({
 						checkOnSave = { command = "clippy" },
 					},
 				},
-				tsserver = {},
+				ts_ls = {},
 				templ = {},
 			}) do
 				require("lspconfig")[lsp].setup({

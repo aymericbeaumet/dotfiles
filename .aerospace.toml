@@ -2,9 +2,7 @@ start-at-login = true
 
 after-login-command = []
 
-after-startup-command = [
-  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
-]
+after-startup-command = []
 
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
@@ -19,9 +17,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 [workspace-to-monitor-force-assignment]
 1 = 'main'
-2 = 'main'
-3 = ['secondary', 'main']
-4 = ['secondary', 'main']
+2 = ['secondary', 'main']
 
 [gaps]
 inner.horizontal = [{ monitor."^built-in retina display$" = 16 }, 24]
@@ -43,12 +39,8 @@ alt-r = ['mode service', 'reload-config', 'mode main']
 # workspace manipulation
 alt-1 = 'workspace 1'
 alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
 alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
 alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
-alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
-alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
 
 # layout manipulation
 alt-a = ['flatten-workspace-tree', 'layout accordion']
@@ -59,21 +51,22 @@ alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
-cmd-ctrl-1     = 'exec-and-forget open -a "M1.app"'
-cmd-ctrl-a     = 'exec-and-forget open -a "Alacritty.app"'
-cmd-ctrl-f     = 'exec-and-forget open -a "Firefox.app"'
-cmd-ctrl-g     = 'exec-and-forget open -a "Figma.app"'
-cmd-ctrl-i     = 'exec-and-forget open -a "Messages.app"'
-cmd-ctrl-l     = 'exec-and-forget open -a "Linear.app"'
-cmd-ctrl-n     = 'exec-and-forget open -a "Notes.app"'
-cmd-ctrl-o     = 'exec-and-forget open -a "Notion.app"'
-cmd-ctrl-p     = 'exec-and-forget open -a "Postico 2.app"'
-cmd-ctrl-r     = 'exec-and-forget open -a "Reminders.app"'
-cmd-ctrl-s     = 'exec-and-forget open -a "Slack.app"'
-cmd-ctrl-t     = 'exec-and-forget open -a "Thunderbird.app"'
-cmd-ctrl-w     = 'exec-and-forget open -a "WhatsApp.app"'
-cmd-ctrl-y     = 'exec-and-forget open -a "Spotify.app"'
-cmd-ctrl-slash = 'exec-and-forget open -a "Postman.app"'
+cmd-ctrl-1        = 'exec-and-forget osascript -e "tell application \"M1.app\" to activate"'
+cmd-ctrl-a        = 'exec-and-forget osascript -e "tell application \"Alacritty.app\" to activate"'
+cmd-ctrl-c        = 'exec-and-forget osascript -e "tell application \"ChatGPT.app\" to activate"'
+cmd-ctrl-f        = 'exec-and-forget osascript -e "tell application \"Firefox.app\" to activate"'
+cmd-ctrl-g        = 'exec-and-forget osascript -e "tell application \"Figma.app\" to activate"'
+cmd-ctrl-i        = 'exec-and-forget osascript -e "tell application \"Messages.app\" to activate"'
+cmd-ctrl-l        = 'exec-and-forget osascript -e "tell application \"Linear.app\" to activate"'
+cmd-ctrl-n        = 'exec-and-forget osascript -e "tell application \"Notion.app\" to activate"'
+cmd-ctrl-o        = 'exec-and-forget osascript -e "tell application \"Obsidian.app\" to activate"'
+cmd-ctrl-p        = 'exec-and-forget osascript -e "tell application \"Postico 2.app\" to activate"'
+cmd-ctrl-s        = 'exec-and-forget osascript -e "tell application \"Slack.app\" to activate"'
+cmd-ctrl-slash    = 'exec-and-forget osascript -e "tell application \"Postman.app\" to activate"'
+cmd-ctrl-w        = 'exec-and-forget osascript -e "tell application \"WhatsApp.app\" to activate"'
+cmd-ctrl-y        = 'exec-and-forget osascript -e "tell application \"Spotify.app\" to activate"'
+cmd-ctrl-z        = 'exec-and-forget osascript -e "tell application \"zoom.us.app\" to activate"'
+cmd-ctrl-backtick = 'exec-and-forget open "obsidian://open?vault=%F0%9F%A7%A0%20Brain&file=Scratchpad"'
 
 # move tile
 alt-shift-h = 'move left'
@@ -86,13 +79,5 @@ alt-minus = 'resize smart -100'
 alt-equal = 'resize smart +100'
 alt-0 = 'balance-sizes'
 
-[[on-window-detected]] # alacritty
-if.app-id = 'org.alacritty'
+[[on-window-detected]] # move to workspace 1 by default
 run = ['move-node-to-workspace 1']
-
-[[on-window-detected]] # firefox
-if.app-id = 'org.mozilla.firefox'
-run = ['move-node-to-workspace 1']
-
-[[on-window-detected]] # fallback
-run = ['move-node-to-workspace 2']
