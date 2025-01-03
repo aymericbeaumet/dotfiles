@@ -198,7 +198,7 @@
                         ]
                     },
                     {
-                        "description": "[Unix/Alacritty] Ctrl-H",
+                        "description": "Ctrl-H",
                         "manipulators": [
                             {
                                 "from": {
@@ -242,7 +242,6 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^org.alacritty$",
                                             "^com\\.utmapp\\.UTM$"
                                         ],
                                         "type": "frontmost_application_unless"

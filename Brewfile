@@ -1,3 +1,5 @@
+tap 'homebrew/services'
+
 brew 'awscli'
 brew 'bat'
 brew 'coreutils'
@@ -13,7 +15,6 @@ brew 'git-lfs'
 brew 'gpg'
 brew 'graphviz'
 brew 'grpcurl'
-brew 'hugo'
 brew 'inetutils'
 brew 'jq'
 brew 'neovim'
@@ -51,16 +52,19 @@ brew 'bun'
 
 cask 'alacritty'
 cask 'alfred'
+cask 'beeper'
 cask 'chatgpt'
 cask 'docker'
 cask 'figma'
 cask 'firefox'
+cask 'ghostty'
 cask 'google-drive'
 cask 'istat-menus'
 cask 'karabiner-elements'
 cask 'ledger-live'
 cask 'linear-linear'
 cask 'loom'
+cask 'luniistore'
 cask 'ngrok'
 cask 'notion'
 cask 'obsidian'
@@ -79,6 +83,9 @@ cask 'zoom'
 
 tap 'nikitabobko/tap'
 cask 'nikitabobko/tap/aerospace'
+
+tap FelixKratz/formulae
+cask sketchybar
 
 tap 'homebrew/cask-fonts'
 cask 'homebrew/cask-fonts/font-fira-code-nerd-font'

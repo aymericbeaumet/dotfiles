@@ -892,12 +892,10 @@ history = 0
 save_to_clipboard = true
 
 [terminal.shell]
-args = ["new-session", "-A", "-D", "-s", "default"]
 program = "/opt/homebrew/bin/tmux"
+args = ["new-session", "-A", "-D", "-s", "default"]
 
 [window]
 decorations = "buttonless"
 padding = { x = 8, y = 8 }
 dynamic_padding = true
-
-[terminal]
