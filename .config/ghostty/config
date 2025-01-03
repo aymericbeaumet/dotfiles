@@ -1,0 +1,7 @@
+macos-titlebar-style = hidden
+command = /opt/homebrew/bin/tmux new-session -A -D -s default
+window-padding-x = 6
+window-padding-y = 6
+font-family = "FiraCode Nerd Font Mono"
+quit-after-last-window-closed = true
+confirm-close-surface = false

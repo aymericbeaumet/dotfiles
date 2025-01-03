@@ -103,6 +103,7 @@ for _, mapping in ipairs({
 	{ "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>zz" },
 	{ "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>zz" },
 	-- navigation
+	{ "n", "<c-w><bs>", "<c-w>h" },
 	{ "n", "<c-o>", "<c-o>zz" },
 	{ "n", "n", "nzz" },
 	{ "n", "N", "Nzz" },
@@ -144,27 +145,10 @@ require("lazy").setup({
 	"othree/html5.vim",
 
 	{
-		"nvim-treesitter/nvim-treesitter",
+		"stevearc/oil.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			local configs = require("nvim-treesitter.configs")
-
-			configs.setup({
-				auto_install = true,
-				sync_install = true,
-				ensure_installed = {
-					"go",
-					"html",
-					"javascript",
-					"lua",
-					"proto",
-					"rust",
-					"templ",
-					"typescript",
-					"vim",
-				},
-				highlight = { enable = false },
-				indent = { enable = false },
-			})
+			require("oil").setup()
 		end,
 	},
 
@@ -541,9 +525,7 @@ require("lazy").setup({
 	-- error reporting
 	{
 		"folke/trouble.nvim",
-		dependencies = {
-			"kyazdani42/nvim-web-devicons",
-		},
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("trouble").setup({
 				position = "top",
