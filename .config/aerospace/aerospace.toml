@@ -22,12 +22,12 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 2 = ['secondary', 'main']
 
 [gaps]
-inner.horizontal = [{ monitor."^built-in retina display$" = 16 }, 24]
-inner.vertical =   [{ monitor."^built-in retina display$" = 16 }, 24]
-outer.top =        [{ monitor."^built-in retina display$" = 16 }, 24]
-outer.right =      [{ monitor."^built-in retina display$" = 16 }, 24]
-outer.bottom =     [{ monitor."^built-in retina display$" = 16 }, 24]
-outer.left =       [{ monitor."^built-in retina display$" = 16 }, 24]
+inner.horizontal = [{ monitor."^built-in retina display$" = 16 }, 16]
+inner.vertical =   [{ monitor."^built-in retina display$" = 16 }, 16]
+outer.top =        [{ monitor."^built-in retina display$" = 16 }, 48]
+outer.right =      [{ monitor."^built-in retina display$" = 16 }, 16]
+outer.bottom =     [{ monitor."^built-in retina display$" = 16 }, 16]
+outer.left =       [{ monitor."^built-in retina display$" = 16 }, 16]
 
 [mode.main.binding]
 
@@ -81,5 +81,6 @@ alt-minus = 'resize smart -100'
 alt-equal = 'resize smart +100'
 alt-0 = 'balance-sizes'
 
-[[on-window-detected]] # move to workspace 1 by default
+# move to workspace 1 by default
+[[on-window-detected]]
 run = ['move-node-to-workspace 1']
