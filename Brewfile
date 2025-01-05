@@ -84,8 +84,8 @@ cask 'zoom'
 tap 'nikitabobko/tap'
 cask 'nikitabobko/tap/aerospace'
 
-tap FelixKratz/formulae
-cask sketchybar
+tap 'FelixKratz/formulae'
+cask 'FelixKratz/formulae/sketchybar'
 
 tap 'homebrew/cask-fonts'
 cask 'homebrew/cask-fonts/font-fira-code-nerd-font'

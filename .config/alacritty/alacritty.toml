@@ -879,7 +879,7 @@ key = "Q"
 mods = "Control"
 
 [mouse]
-hide_when_typing = false
+hide_when_typing = true
 
 [[mouse.bindings]]
 action = "ReceiveChar"
