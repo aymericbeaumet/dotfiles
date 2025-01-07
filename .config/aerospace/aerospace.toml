@@ -2,7 +2,9 @@ start-at-login = true
 
 after-login-command = []
 
-after-startup-command = ['exec-and-forget sketchybar']
+after-startup-command = [
+  'exec-and-forget sketchybar',
+]
 
 exec-on-workspace-change = ['/bin/bash', '-c', 'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE']
 
@@ -53,7 +55,6 @@ alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
-cmd-ctrl-1        = 'exec-and-forget osascript -e "tell application \"M1.app\" to activate"'
 cmd-ctrl-a        = 'exec-and-forget osascript -e "tell application \"Alacritty.app\" to activate"'
 cmd-ctrl-c        = 'exec-and-forget osascript -e "tell application \"ChatGPT.app\" to activate"'
 cmd-ctrl-f        = 'exec-and-forget osascript -e "tell application \"Firefox.app\" to activate"'
@@ -67,7 +68,6 @@ cmd-ctrl-s        = 'exec-and-forget osascript -e "tell application \"Slack.app\
 cmd-ctrl-slash    = 'exec-and-forget osascript -e "tell application \"Postman.app\" to activate"'
 cmd-ctrl-w        = 'exec-and-forget osascript -e "tell application \"WhatsApp.app\" to activate"'
 cmd-ctrl-y        = 'exec-and-forget osascript -e "tell application \"Spotify.app\" to activate"'
-cmd-ctrl-z        = 'exec-and-forget osascript -e "tell application \"zoom.us.app\" to activate"'
 cmd-ctrl-backtick = 'exec-and-forget open "obsidian://open?vault=%F0%9F%A7%A0%20Brain&file=Scratchpad"'
 
 # move tile
