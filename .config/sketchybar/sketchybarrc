@@ -1,4 +1,4 @@
-PLUGINS_DIR="$CONFIG_DIR/plugins"
+PLUGIN_DIR="$CONFIG_DIR/plugins"
 
 global_defaults=(
   background.color=0x44ffffff
@@ -7,6 +7,8 @@ global_defaults=(
   background.height=20
   icon.color=0xffffffff
   icon.font="FiraCode Nerd Font Mono:Bold:20.0"
+  icon.padding_left=10
+  icon.padding_right=10
   label.color=0xffffffff
   label.font="FiraCode Nerd Font Mono:SemBd:13.0"
   label.padding_left=10
@@ -29,24 +31,35 @@ sketchybar --bar "${bar_options[@]}"
 ###
 
 sketchybar --add event aerospace_workspace_change
-
 for sid in $(aerospace list-workspaces --all); do
-  sketchybar \
-    --add item space.$sid left \
-    --subscribe space.$sid aerospace_workspace_change \
-    --set space.$sid \
-        label="$sid" \
-        click_script="aerospace workspace $sid" \
-        script="$PLUGINS_DIR/aerospace.sh $sid"
+  sketchybar --add item space.$sid left \
+             --subscribe space.$sid aerospace_workspace_change \
+             --set space.$sid \
+                label="$sid" \
+                icon.drawing=off \
+                click_script="aerospace workspace $sid" \
+                script="$PLUGIN_DIR/aerospace.sh $sid"
 done
+
+sketchybar --add item chevron left \
+           --set chevron \
+              icon= \
+              label.drawing=off \
+           --add item front_app left \
+           --set front_app \
+              icon.drawing=off \
+              script="$PLUGIN_DIR/front_app.sh" \
+           --subscribe front_app front_app_switched
 
 ###
 # right
 ###
 
 sketchybar \
-  \
   --add item clock right \
-  --set clock update_freq=10 script="$PLUGINS_DIR/clock.sh" \
+  --set clock \
+    update_freq=10 \
+    icon.drawing=off \
+    script="$PLUGIN_DIR/clock.sh"
 
 sketchybar --update
