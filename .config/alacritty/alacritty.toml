@@ -879,7 +879,7 @@ key = "Q"
 mods = "Control"
 
 [mouse]
-hide_when_typing = true
+hide_when_typing = false
 
 [[mouse.bindings]]
 action = "ReceiveChar"
@@ -897,5 +897,6 @@ args = ["new-session", "-A", "-D", "-s", "default"]
 
 [window]
 decorations = "buttonless"
-padding = { x = 8, y = 8 }
-dynamic_padding = true
+padding = { x = 0, y = 0 }
+dynamic_padding = false
+startup_mode = "SimpleFullscreen"
