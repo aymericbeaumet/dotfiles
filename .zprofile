@@ -3,7 +3,7 @@
 
 # homebrew
 export HOMEBREW_NO_ENV_HINTS=true
-eval $(brew shellenv)
+eval $(/opt/homebrew/bin/brew shellenv)
 
 # go
 export GOPATH="$HOME/go"
