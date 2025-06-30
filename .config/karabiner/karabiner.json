@@ -1,5 +1,8 @@
 {
-    "global": { "ask_for_confirmation_before_quitting": false },
+    "global": {
+        "ask_for_confirmation_before_quitting": false,
+        "show_profile_name_in_menu_bar": true
+    },
     "profiles": [
         {
             "complex_modifications": {
@@ -26,6 +29,19 @@
                                     "modifiers": { "mandatory": ["command", "control"] }
                                 },
                                 "to": [{ "shell_command": "open -Fa '/Applications/Firefox.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Launch or focus Cursor",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "c",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/Applications/Cursor.app'" }],
                                 "type": "basic"
                             }
                         ]
