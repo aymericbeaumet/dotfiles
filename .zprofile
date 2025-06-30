@@ -12,6 +12,7 @@ export PATH="$GOPATH/bin:$PATH"
 # rust/cargo
 export CARGO_HOME="$HOME/.cargo"
 export PATH="$CARGO_HOME/bin:$PATH"
+export PATH="$(brew --prefix rustup)/bin:$PATH"
 
 # bat
 export BAT_THEME="Nord"

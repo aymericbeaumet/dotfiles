@@ -33,7 +33,7 @@ vim.o.splitright = true -- split right
 vim.o.cursorline = true -- highlight cursorline
 vim.o.showmode = false -- do not show mode
 vim.o.termguicolors = true -- enable true colors
-vim.o.laststatus = 2 -- always show statusline
+vim.o.laststatus = 3 -- always show statusline in the last window
 vim.o.statusline = "%f%=%l:%c %p%%" -- statusline format
 
 -- performance
@@ -543,39 +543,101 @@ require("lazy").setup({
 		end,
 	},
 
-	-- bindings
-	{
-		"folke/which-key.nvim",
-		event = "VeryLazy",
-		opts = {
-			delay = 350,
-		},
-		keys = {
-			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
-			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
-			{ "<leader>d", "<cmd>bp | sp | bn | bd<cr>", desc = "Close the current buffer" },
-			{
-				"<leader>f",
-				"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
-				desc = "Search file names in current working directory",
-			},
-			{ "<leader>l", group = "lsp" },
-			{ "<leader>lA", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code action" },
-			{ "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename symbol" },
-			{ "<leader>ld", "<cmd>lua vim.lsp.buf.declaration()<cr>zz", desc = "Go to declaration" },
-			{ "<leader>li", "<cmd>lua vim.lsp.buf.implementation()<cr>zz", desc = "Go to implementation" },
-			{ "<leader>ll", "<cmd>lua vim.lsp.buf.document_symbol()<cr>", desc = "List symbols" },
-			{ "<leader>lr", "<cmd>lua vim.lsp.buf.references()<cr>", desc = "List references" },
-			{ "<leader>lt", "<cmd>lua vim.lsp.buf.type_definition()<cr>zz", desc = "Go to type definition" },
-			{ "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
-			{ "<leader>q", "<cmd>call ToggleQuickfixList()<cr>", desc = "Toggle quickfix list" },
-			{
-				"<leader>r",
-				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
-				desc = "Search file contents in current working directory",
-			},
-			{ "<leader>s", "<Plug>(easymotion-overwin-f)", desc = "Easymotion search" },
-			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
-		},
-	},
+  -- bindings
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      delay = 350,
+    },
+    keys = {
+      { "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
+      { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
+      { "<leader>d", "<cmd>bp | sp | bn | bd<cr>", desc = "Close the current buffer" },
+      {
+        "<leader>f",
+        "<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
+        desc = "Search file names in current working directory",
+      },
+      { "<leader>l", group = "lsp" },
+      { "<leader>lA", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code action" },
+      { "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename symbol" },
+      { "<leader>ld", "<cmd>lua vim.lsp.buf.declaration()<cr>zz", desc = "Go to declaration" },
+      { "<leader>li", "<cmd>lua vim.lsp.buf.implementation()<cr>zz", desc = "Go to implementation" },
+      { "<leader>ll", "<cmd>lua vim.lsp.buf.document_symbol()<cr>", desc = "List symbols" },
+      { "<leader>lr", "<cmd>lua vim.lsp.buf.references()<cr>", desc = "List references" },
+      { "<leader>lt", "<cmd>lua vim.lsp.buf.type_definition()<cr>zz", desc = "Go to type definition" },
+      { "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
+      { "<leader>q", "<cmd>call ToggleQuickfixList()<cr>", desc = "Toggle quickfix list" },
+      {
+        "<leader>r",
+        "<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
+        desc = "Search file contents in current working directory",
+      },
+      { "<leader>s", "<Plug>(easymotion-overwin-f)", desc = "Easymotion search" },
+      { "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
+    },
+  },
+
+  -- avante
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    version = false, -- Never set this value to "*"! Never!
+    opts = {
+      provider = "claude",
+      providers = {
+        claude = {
+          endpoint = "https://api.anthropic.com",
+          model = "claude-sonnet-4-20250514",
+          extra_request_body = {
+            temperature = 0.75,
+            max_tokens = 4096,
+          },
+        },
+      },
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = "make",
+    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "echasnovski/mini.pick", -- for file_selector provider mini.pick
+      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+      "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+      "ibhagwan/fzf-lua", -- for file_selector provider fzf
+      "stevearc/dressing.nvim", -- for input provider dressing
+      "folke/snacks.nvim", -- for input provider snacks
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "zbirenbaum/copilot.lua", -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
+  }
 })
