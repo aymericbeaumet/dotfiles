@@ -182,3 +182,8 @@ source "$HOME/.zsh/bundle/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # zsh-syntax-highlighting plugin
 source "$HOME/.zsh/bundle/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/aymericbeaumet/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

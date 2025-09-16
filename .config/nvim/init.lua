@@ -33,7 +33,7 @@ vim.o.splitright = true -- split right
 vim.o.cursorline = true -- highlight cursorline
 vim.o.showmode = false -- do not show mode
 vim.o.termguicolors = true -- enable true colors
-vim.o.laststatus = 3 -- always show statusline in the last window
+vim.o.laststatus = 2 -- always show statusline in the last window
 vim.o.statusline = "%f%=%l:%c %p%%" -- statusline format
 
 -- performance
@@ -286,7 +286,7 @@ require("lazy").setup({
 		"easymotion/vim-easymotion",
 		config = function()
 			vim.g.EasyMotion_do_mapping = 0
-			vim.g.EasyMotion_keys = "AORISEDHTN"
+			vim.g.EasyMotion_keys = "TNSERIAOPLFUWYQ"
 			vim.g.EasyMotion_smartcase = 1
 			vim.g.EasyMotion_use_smartsign_us = 1
 			vim.g.EasyMotion_use_upper = 1
@@ -446,7 +446,9 @@ require("lazy").setup({
 			end
 
 			for lsp, settings in pairs({
-				gopls = {},
+        gopls = {
+          directoryFilters = { "-mocks" },
+        },
 				rust_analyzer = {
 					["rust-analyzer"] = {
 						cargo = { loadOutDirsFromCheck = true },

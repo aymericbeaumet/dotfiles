@@ -21,6 +21,19 @@
                         ]
                     },
                     {
+                        "description": "Launch or focus Bruno",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "b",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/Applications/Bruno.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Launch or focus Firefox",
                         "manipulators": [
                             {
@@ -42,6 +55,19 @@
                                     "modifiers": { "mandatory": ["command", "control"] }
                                 },
                                 "to": [{ "shell_command": "open -Fa '/Applications/Cursor.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Launch or focus Figma",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/Applications/Figma.app'" }],
                                 "type": "basic"
                             }
                         ]
