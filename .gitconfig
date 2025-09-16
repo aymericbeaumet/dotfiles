@@ -18,6 +18,7 @@
 	l = log
 	me = merge
 	pl = pull
+	plps = !git pl && git ps
 	ps = push -u
 	psu = push -u
 	rb = rebase
@@ -26,6 +27,7 @@
 	rbi = rebase --interactive
 	rmc = rm --cached
 	rs = reset
+	rt = root
 	rv = revert
 	sh = stash -u
 	shc = stash clear
@@ -37,9 +39,6 @@
 	wa = worktree add
 	wl = worktree list
 	wr = worktree remove
-	rt = root
-	#
-	plps = !git pl && git ps
 
 [color]
 	ui = auto
