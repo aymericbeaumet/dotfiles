@@ -37,7 +37,7 @@
 	wa = worktree add
 	wl = worktree list
 	wr = worktree remove
-  rt = root
+	rt = root
 	#
 	plps = !git pl && git ps
 

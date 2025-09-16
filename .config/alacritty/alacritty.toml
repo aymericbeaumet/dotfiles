@@ -28,6 +28,10 @@ TERM = "xterm-256color"
 [font]
 size = 13
 
+[font.normal]
+family = "FiraCode Nerd Font"
+style = "Retina"
+
 [font.bold]
 family = "FiraCode Nerd Font"
 style = "Retina"
@@ -37,10 +41,6 @@ family = "FiraCode Nerd Font"
 style = "Retina"
 
 [font.italic]
-family = "FiraCode Nerd Font"
-style = "Retina"
-
-[font.normal]
 family = "FiraCode Nerd Font"
 style = "Retina"
 
