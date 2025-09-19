@@ -1,5 +1,3 @@
-tap 'homebrew/services'
-
 brew 'awscli'
 brew 'bat'
 brew 'coreutils'
@@ -33,6 +31,7 @@ brew 'zsh'
 
 brew 'buf'
 brew 'cmake'
+brew 'docker' # cli only
 brew 'golang'
 brew 'hadolint'
 brew 'node'
