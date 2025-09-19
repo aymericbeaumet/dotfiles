@@ -21,19 +21,6 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus Bruno",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "b",
-                                    "modifiers": { "mandatory": ["command", "control"] }
-                                },
-                                "to": [{ "shell_command": "open -Fa '/Applications/Bruno.app'" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Launch or focus Firefox",
                         "manipulators": [
                             {
@@ -60,19 +47,6 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus Figma",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "g",
-                                    "modifiers": { "mandatory": ["command", "control"] }
-                                },
-                                "to": [{ "shell_command": "open -Fa '/Applications/Figma.app'" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Launch or focus Linear",
                         "manipulators": [
                             {
@@ -86,11 +60,24 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus Notion",
+                        "description": "Launch or focus Notes",
                         "manipulators": [
                             {
                                 "from": {
                                     "key_code": "n",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/System/Applications/Notes.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Launch or focus Notion",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "o",
                                     "modifiers": { "mandatory": ["command", "control"] }
                                 },
                                 "to": [{ "shell_command": "open -Fa '/Applications/Notion.app'" }],
@@ -146,6 +133,19 @@
                                     "modifiers": { "mandatory": ["command", "control"] }
                                 },
                                 "to": [{ "shell_command": "open -Fa '/Applications/Spotify.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Launch or focus M1 Desktop",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "1",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/Applications/M1 Desktop.app'" }],
                                 "type": "basic"
                             }
                         ]
