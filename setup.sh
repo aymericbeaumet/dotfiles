@@ -51,7 +51,7 @@ defaults write com.apple.spaces "spans-displays" -bool "true" && killall SystemU
 defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
 
 #
-# Update brew and nvim plugins
+# Update brew dependencies and nvim plugins
 #
 
 brew bundle --cleanup --file ./Brewfile
