@@ -22,7 +22,7 @@ vim.o.autoindent = true -- auto-indent new lines
 
 -- interface
 vim.o.mouse = "a" -- enable mouse support
-vim.o.mousemodel = extend -- right mouse extend selection
+vim.o.mousemodel = "extend" -- right mouse extend selection
 vim.o.number = true -- show line numbers
 vim.o.relativenumber = false -- relative line numbers
 vim.o.signcolumn = "number" -- display warnings/errors in the number column
@@ -35,10 +35,8 @@ vim.o.showmode = false -- do not show mode
 vim.o.termguicolors = true -- enable true colors
 vim.o.laststatus = 2 -- always show statusline in the last window
 vim.o.statusline = "%f%=%l:%c %p%%" -- statusline format
-
--- performance
-vim.o.lazyredraw = true -- only redraw when needed
-vim.o.ttyfast = true -- we have a fast terminal
+vim.o.lazyredraw = true -- redraw only when needed
+vim.o.ttyfast = true -- faster terminal redraw
 
 -- safety net
 vim.o.undofile = true -- store undos on disk
@@ -48,14 +46,39 @@ vim.o.updatetime = 300 -- flush swap files to disk on a regular basis
 vim.o.ignorecase = true -- ignore case when searching
 vim.o.smartcase = true -- smarter search case
 vim.o.wildignorecase = true -- ignore case in file completion
-vim.o.wildignore = "" -- remove default ignores
-vim.o.wildignore = vim.o.wildignore .. "*.o,*.obj,*.so,*.a,*.dylib,*.pyc,*.hi" -- ignore compiled files
-vim.o.wildignore = vim.o.wildignore .. "*.zip,*.gz,*.xz,*.tar,*.rar" -- ignore compressed files
-vim.o.wildignore = vim.o.wildignore .. "*/.git/*,*/.hg/*,*/.svn/*" -- ignore SCM files
-vim.o.wildignore = vim.o.wildignore .. "*.png,*.jpg,*.jpeg,*.gif" -- ignore image files
-vim.o.wildignore = vim.o.wildignore .. "*.pdf,*.dmg" -- ignore binary files
-vim.o.wildignore = vim.o.wildignore .. ".*.sw*,*~" -- ignore editor files
-vim.o.wildignore = vim.o.wildignore .. ".DS_Store" -- ignore OS files
+vim.opt.wildignore = {
+	-- ignore compiled files
+	"*.o",
+	"*.obj",
+	"*.so",
+	"*.a",
+	"*.dylib",
+	"*.pyc",
+	"*.hi",
+	-- ignore compressed files
+	"*.zip",
+	"*.gz",
+	"*.xz",
+	"*.tar",
+	"*.rar",
+	-- ignore SCM files
+	"*/.git/*",
+	"*/.hg/*",
+	"*/.svn/*",
+	-- ignore image files
+	"*.png",
+	"*.jpg",
+	"*.jpeg",
+	"*.gif",
+	-- ignore binary files
+	"*.pdf",
+	"*.dmg",
+	-- ignore editor files
+	".*.sw*",
+	"*~",
+	-- ignore OS files
+	".DS_Store",
+}
 
 -- mappings
 vim.g.mapleader = " "
@@ -85,7 +108,6 @@ for _, mapping in ipairs({
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 	{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
 	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
-	{ "n", "'R", "<cmd>edit ~/.aerospace.toml<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
@@ -107,12 +129,21 @@ for _, mapping in ipairs({
 	{ "n", "<c-o>", "<c-o>zz" },
 	{ "n", "n", "nzz" },
 	{ "n", "N", "Nzz" },
-	{ "n", "<c-]>", "<c-]>zz" },
 }) do
 	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
+-- let Oil handle <CR>
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "oil",
+	callback = function()
+		vim.keymap.del("n", "<CR>", { buffer = 0 })
+	end,
+})
+
 -- plugins
+vim.loader.enable()
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
@@ -134,25 +165,41 @@ require("lazy").setup({
 	"vitalk/vim-shebang",
 	"tpope/vim-fugitive",
 	"tpope/vim-rhubarb",
-	"preservim/nerdcommenter",
-	"hashivim/vim-terraform",
-	"RRethy/vim-illuminate",
 	"farmergreg/vim-lastplace",
 	"lewis6991/gitsigns.nvim",
-	"joerdav/templ.vim",
-	"evanleck/vim-svelte",
-	"pangloss/vim-javascript",
-	"othree/html5.vim",
 
 	{
 		"stevearc/oil.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("oil").setup({
-        view_options = {
-          show_hidden = true,
-        },
-      })
+				view_options = {
+					show_hidden = true,
+				},
+			})
+		end,
+	},
+
+	{
+		"numToStr/Comment.nvim",
+		dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
+		config = function()
+			local comment = require("Comment")
+
+			comment.setup({
+				pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+				mappings = false, -- turn off default mappings
+			})
+
+			-- normal mode: comment current line
+			vim.keymap.set("n", "<leader>c<space>", function()
+				return require("Comment.api").toggle.linewise.current()
+			end, { desc = "Toggle comment (line)", silent = true })
+
+			-- visual mode: comment selection
+			vim.keymap.set("x", "<leader>c<space>", function()
+				return require("Comment.api").toggle.linewise(vim.fn.visualmode())
+			end, { desc = "Toggle comment (visual selection)", silent = true })
 		end,
 	},
 
@@ -160,7 +207,6 @@ require("lazy").setup({
 		"nvim-telescope/telescope.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"nvim-lua/popup.nvim",
 			"jvgrootveld/telescope-zoxide",
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
@@ -246,16 +292,17 @@ require("lazy").setup({
 
 			require("nord").set()
 
-      vim.diagnostic.config({
-        signs = {
-          text = {
-            [vim.diagnostic.severity.ERROR] = "",
-            [vim.diagnostic.severity.WARN]  = "",
-            [vim.diagnostic.severity.INFO]  = "",
-            [vim.diagnostic.severity.HINT]  = "",
-          },
-        },
-      })
+			vim.diagnostic.config({
+				float = { border = "rounded" },
+				signs = {
+					text = {
+						[vim.diagnostic.severity.ERROR] = "",
+						[vim.diagnostic.severity.WARN] = "",
+						[vim.diagnostic.severity.INFO] = "",
+						[vim.diagnostic.severity.HINT] = "",
+					},
+				},
+			})
 		end,
 	},
 
@@ -301,9 +348,9 @@ require("lazy").setup({
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
-    dependencies = {
-      "copilotlsp-nvim/copilot-lsp",
-    },
+		dependencies = {
+			"copilotlsp-nvim/copilot-lsp",
+		},
 		config = function()
 			require("copilot").setup({
 				suggestion = { enabled = false },
@@ -314,7 +361,7 @@ require("lazy").setup({
 
 	{
 		"zbirenbaum/copilot-cmp",
-		after = { "copilot.lua" },
+		dependencies = { "copilot.lua" },
 		config = function()
 			require("copilot_cmp").setup({
 				formatters = {
@@ -430,67 +477,107 @@ require("lazy").setup({
 	-- LSP configuration
 	{
 		"neovim/nvim-lspconfig",
-		after = { "cmp-nvim-lsp" },
 		dependencies = {
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
+			"hrsh7th/cmp-nvim-lsp",
+			{ "mason-org/mason.nvim", config = true },
+			{
+				"mason-org/mason-lspconfig.nvim",
+				opts = {
+					ensure_installed = { "gopls", "rust_analyzer", "ts_ls", "lua_ls", "pyright", "bashls" },
+					automatic_enable = true,
+				},
+			},
 		},
 		config = function()
-			require("mason").setup()
-			require("mason-lspconfig").setup({ automatic_installation = true })
-
+			local lsp = vim.lsp
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			capabilities.textDocument.completion.completionItem.snippetSupport = false -- disable snippets
-
 			local flags = { debounce_text_changes = 150 }
 
-			local handlers = {
-				["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
-			}
+			-- Global defaults for all servers
+			lsp.config("*", {
+				capabilities = capabilities,
+				flags = flags,
+				handlers = {
+					["textDocument/hover"] = lsp.with(lsp.handlers.hover, { border = "rounded" }),
+				},
+			})
 
-			local on_attach = function(client, bufnr)
-				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-			end
-
-			for lsp, settings in pairs({
-        gopls = {
-          directoryFilters = { "-mocks" },
-        },
-				rust_analyzer = {
+			-- Per-server tweaks
+			lsp.config("gopls", {
+				settings = { gopls = { directoryFilters = { "-mocks" } } },
+			})
+			lsp.config("rust_analyzer", {
+				settings = {
 					["rust-analyzer"] = {
 						cargo = { loadOutDirsFromCheck = true },
 						procMacro = { enable = true },
-						checkOnSave = { command = "clippy" },
+						check = { command = "clippy" },
 					},
 				},
-				ts_ls = {},
-				templ = {},
-			}) do
-				vim.lsp.enable(lsp, {
-					capabilities = capabilities,
-					flags = flags,
-					handlers = handlers,
-					on_attach = on_attach,
-					settings = settings,
-				})
-			end
+			})
+			lsp.config("ts_ls", {}) -- stick with ts_ls; consider vtsls if you want more TS features
+			lsp.config("lua_ls", {
+				settings = {
+					Lua = {
+						diagnostics = { globals = { "vim" } },
+						workspace = { checkThirdParty = false },
+						telemetry = { enable = false },
+					},
+				},
+			})
+			lsp.config("pyright", {})
+			lsp.config("bashls", {})
+
+			-- Enable everything above
+			lsp.enable({ "gopls", "rust_analyzer", "ts_ls", "lua_ls", "pyright", "bashls" })
+
+			-- LSP UX niceties
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("aym.lsp", {}),
+				callback = function(args)
+					local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+					vim.bo[args.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+					-- inlay hints & reference highlights when supported
+					pcall(vim.lsp.inlay_hint.enable, true, { bufnr = args.buf })
+					if client:supports_method("textDocument/documentHighlight") then
+						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+							buffer = args.buf,
+							callback = vim.lsp.buf.document_highlight,
+						})
+						vim.api.nvim_create_autocmd("CursorMoved", {
+							buffer = args.buf,
+							callback = vim.lsp.buf.clear_references,
+						})
+					end
+				end,
+			})
 		end,
 	},
 
 	-- linting
 	{
 		"mfussenegger/nvim-lint",
+		event = { "BufReadPost", "BufWritePost", "InsertLeave" },
 		config = function()
-			require("lint").linters_by_ft = {
+			local lint = require("lint")
+			lint.linters_by_ft = {
 				dockerfile = { "hadolint" },
 				go = { "golangcilint" },
 				proto = { "buf_lint" },
-				template = { "templ" },
+				python = { "ruff" },
+				rust = { "clippy" },
+				sh = { "shellcheck" },
+				-- web
+				javascript = { "eslint_d" },
+				typescript = { "eslint_d" },
+				javascriptreact = { "eslint_d" },
+				typescriptreact = { "eslint_d" },
 			}
-
-			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+			local grp = vim.api.nvim_create_augroup("aym.lint", {})
+			vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
+				group = grp,
 				callback = function()
-					require("lint").try_lint()
+					lint.try_lint()
 				end,
 			})
 		end,
@@ -499,39 +586,94 @@ require("lazy").setup({
 	-- formatting
 	{
 		"stevearc/conform.nvim",
-		config = function()
-			require("conform").setup({
-				format_after_save = {
-					lsp_format = "fallback",
-				},
-				formatters_by_ft = {
-					go = { "golangci-lint" },
-					html = { "prettier" },
-					javascript = { "prettier" },
-					lua = { "stylua" },
-					proto = { "buf" },
-					python = { "ruff" },
-					rust = { "rustfmt" },
-					shell = { "shellharden" },
-					svelte = { "prettier" },
-					template = { "templ" },
-					terraform = { "terraform_fmt" },
-					typescript = { "prettier" },
-				},
-			})
-
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				pattern = "*",
-				callback = function(args)
-					require("conform").format({
-						async = true,
-						bufnr = args.buf,
-					})
-				end,
-			})
-		end,
+		opts = {
+			format_on_save = {
+				timeout_ms = 500,
+				lsp_format = "fallback",
+			},
+			formatters_by_ft = {
+				-- Go
+				go = { "golangci-lint" },
+				-- Web
+				javascript = { "prettierd", "prettier", stop_after_first = true },
+				typescript = { "prettierd", "prettier", stop_after_first = true },
+				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+				html = { "prettierd", "prettier", stop_after_first = true },
+				css = { "prettierd", "prettier", stop_after_first = true },
+				json = { "prettierd", "prettier", stop_after_first = true },
+				yaml = { "prettierd", "prettier", stop_after_first = true },
+				-- Rust / Lua / Shell / Proto / Python
+				rust = { "rustfmt" },
+				lua = { "stylua" },
+				sh = { "shfmt" },
+				proto = { "buf" },
+				python = { "isort", "black" },
+			},
+		},
 		init = function()
 			vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+		end,
+	},
+
+	-- debugging
+	{
+		"mfussenegger/nvim-dap",
+		dependencies = {
+			"nvim-neotest/nvim-nio",
+			"rcarriga/nvim-dap-ui",
+			"theHamsta/nvim-dap-virtual-text",
+			{ "mason-org/mason.nvim", config = true },
+			{
+				"jay-babu/mason-nvim-dap.nvim",
+				opts = {
+					ensure_installed = { "delve", "codelldb", "js-debug-adapter", "python" },
+					automatic_installation = true,
+					handlers = {}, -- use default mappings from the plugin
+				},
+			},
+			{ "leoluz/nvim-dap-go", ft = "go" }, -- nice Go ergonomics
+		},
+		config = function()
+			local dap, dapui = require("dap"), require("dapui")
+			require("nvim-dap-virtual-text").setup()
+			dapui.setup()
+
+			-- Basic keymaps
+			vim.keymap.set("n", "<F5>", dap.continue, { desc = "DAP continue" })
+			vim.keymap.set("n", "<F10>", dap.step_over, { desc = "DAP step over" })
+			vim.keymap.set("n", "<F11>", dap.step_into, { desc = "DAP step into" })
+			vim.keymap.set("n", "<F12>", dap.step_out, { desc = "DAP step out" })
+			vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
+			vim.keymap.set("n", "<leader>B", function()
+				dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+			end, { desc = "DAP conditional breakpoint" })
+			vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "DAP UI" })
+
+			-- Go adapter helpers
+			pcall(function()
+				require("dap-go").setup()
+			end)
+
+			-- JS/TS with js-debug-adapter (pwa-node)
+			dap.adapters["pwa-node"] = {
+				type = "server",
+				host = "127.0.0.1",
+				port = "${port}",
+				executable = { command = "js-debug-adapter", args = { "${port}" } },
+			}
+			for _, ft in ipairs({ "javascript", "typescript", "javascriptreact", "typescriptreact" }) do
+				dap.configurations[ft] = {
+					{
+						type = "pwa-node",
+						request = "launch",
+						name = "Launch file",
+						program = "${file}",
+						cwd = "${workspaceFolder}",
+						runtimeExecutable = "node",
+					},
+				}
+			end
 		end,
 	},
 
@@ -544,109 +686,173 @@ require("lazy").setup({
 				position = "top",
 				icons = true,
 			})
-
-			vim.diagnostic.config({
-				float = { border = "rounded" },
-				signs = true,
-			})
 		end,
 	},
 
-  -- bindings
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    opts = {
-      delay = 350,
-    },
-    keys = {
-      { "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
-      { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
-      { "<leader>d", "<cmd>bp | sp | bn | bd<cr>", desc = "Close the current buffer" },
-      {
-        "<leader>f",
-        "<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
-        desc = "Search file names in current working directory",
-      },
-      { "<leader>l", group = "lsp" },
-      { "<leader>lA", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code action" },
-      { "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename symbol" },
-      { "<leader>ld", "<cmd>lua vim.lsp.buf.declaration()<cr>zz", desc = "Go to declaration" },
-      { "<leader>li", "<cmd>lua vim.lsp.buf.implementation()<cr>zz", desc = "Go to implementation" },
-      { "<leader>ll", "<cmd>lua vim.lsp.buf.document_symbol()<cr>", desc = "List symbols" },
-      { "<leader>lr", "<cmd>lua vim.lsp.buf.references()<cr>", desc = "List references" },
-      { "<leader>lt", "<cmd>lua vim.lsp.buf.type_definition()<cr>zz", desc = "Go to type definition" },
-      { "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
-      { "<leader>q", "<cmd>call ToggleQuickfixList()<cr>", desc = "Toggle quickfix list" },
-      {
-        "<leader>r",
-        "<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
-        desc = "Search file contents in current working directory",
-      },
-      { "<leader>s", "<Plug>(easymotion-overwin-f)", desc = "Easymotion search" },
-      { "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
-    },
-  },
+	-- bindings
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		opts = {
+			delay = 350,
+		},
+		keys = {
+			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
+			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
+			{ "<leader>d", "<cmd>bp | sp | bn | bd<cr>", desc = "Close the current buffer" },
+			{
+				"<leader>f",
+				"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
+				desc = "Search file names in current working directory",
+			},
+			{ "<leader>l", group = "lsp" },
+			{ "<leader>lA", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code action" },
+			{ "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename symbol" },
+			{ "<leader>ld", "<cmd>lua vim.lsp.buf.declaration()<cr>zz", desc = "Go to declaration" },
+			{ "<leader>li", "<cmd>lua vim.lsp.buf.implementation()<cr>zz", desc = "Go to implementation" },
+			{ "<leader>ll", "<cmd>lua vim.lsp.buf.document_symbol()<cr>", desc = "List symbols" },
+			{ "<leader>lr", "<cmd>lua vim.lsp.buf.references()<cr>", desc = "List references" },
+			{ "<leader>lt", "<cmd>lua vim.lsp.buf.type_definition()<cr>zz", desc = "Go to type definition" },
+			{ "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
+			{ "<leader>q", "<cmd>call ToggleQuickfixList()<cr>", desc = "Toggle quickfix list" },
+			{
+				"<leader>r",
+				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
+				desc = "Search file contents in current working directory",
+			},
+			{ "<leader>s", "<Plug>(easymotion-overwin-f)", desc = "Easymotion search" },
+			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
+		},
+	},
 
-  -- avante
-  {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    version = false, -- Never set this value to "*"! Never!
-    opts = {
-      provider = "claude",
-      providers = {
-        claude = {
-          endpoint = "https://api.anthropic.com",
-          model = "claude-sonnet-4-20250514",
-          extra_request_body = {
-            temperature = 0.75,
-            max_tokens = 4096,
-          },
-        },
-      },
-    },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = "make",
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "echasnovski/mini.pick", -- for file_selector provider mini.pick
-      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-      "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-      "ibhagwan/fzf-lua", -- for file_selector provider fzf
-      "stevearc/dressing.nvim", -- for input provider dressing
-      "folke/snacks.nvim", -- for input provider snacks
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-      "zbirenbaum/copilot.lua", -- for providers='copilot'
-      {
-        -- support for image pasting
-        "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
-          },
-        },
-      },
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { "markdown", "Avante" },
-        },
-        ft = { "markdown", "Avante" },
-      },
-    },
-  }
+	-- treesitter
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		event = { "BufReadPost", "BufNewFile" },
+		dependencies = {
+			-- Structural selections/motions
+			"nvim-treesitter/nvim-treesitter-textobjects",
+			-- Auto-close & rename tags (HTML/TSX/Svelte)
+			"windwp/nvim-ts-autotag",
+			-- Better comment contexts for JSX/Svelte/etc.
+			{ "JoosepAlviste/nvim-ts-context-commentstring", opts = { enable_autocmd = false } },
+		},
+		opts = function()
+			-- languages you use daily
+			local ensure = {
+				-- Core/editor
+				"lua",
+				"vim",
+				"vimdoc",
+				"query",
+				"regex",
+				"markdown",
+				"markdown_inline",
+				-- Go
+				"go",
+				"gomod",
+				"gowork",
+				"gosum",
+				-- Rust
+				"rust",
+				-- Web
+				"javascript",
+				"typescript",
+				"tsx",
+				"json",
+				"jsonc",
+				"yaml",
+				"toml",
+				"html",
+				"css",
+				"scss",
+				"svelte",
+				-- Infra / data
+				"proto",
+				"terraform",
+				"hcl",
+				"sql",
+				-- Shell & tooling
+				"bash",
+				"dockerfile",
+			}
+
+			return {
+				ensure_installed = ensure,
+				sync_install = false,
+
+				highlight = {
+					enable = true,
+					additional_vim_regex_highlighting = false, -- avoid double-highlighting
+					-- disable Treesitter on very large files
+					disable = function(_, buf)
+						local max = 200 * 1024 -- 200 KB
+						local ok2, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+						return ok2 and stats and stats.size > max
+					end,
+				},
+
+				indent = { enable = true },
+
+				incremental_selection = {
+					enable = true,
+					-- mnemonic: gnn (init), grn (grow), grm (shrink), grc (scope)
+					keymaps = {
+						init_selection = "gnn",
+						node_incremental = "grn",
+						node_decremental = "grm",
+						scope_incremental = "grc",
+					},
+				},
+
+				-- Provided by windwp/nvim-ts-autotag
+				autotag = { enable = true },
+
+				textobjects = {
+					select = {
+						enable = true,
+						lookahead = true,
+						keymaps = {
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["ac"] = "@class.outer",
+							["ic"] = "@class.inner",
+							["ap"] = "@parameter.outer",
+							["ip"] = "@parameter.inner",
+						},
+						selection_modes = {
+							["@function.outer"] = "V",
+							["@class.outer"] = "V",
+						},
+					},
+					move = {
+						enable = true,
+						set_jumps = true,
+						goto_next_start = {
+							["]f"] = "@function.outer",
+							["]c"] = "@class.outer",
+						},
+						goto_previous_start = {
+							["[f"] = "@function.outer",
+							["[c"] = "@class.outer",
+						},
+					},
+					swap = {
+						enable = true,
+						swap_next = { ["<leader>a"] = "@parameter.inner" },
+						swap_previous = { ["<leader>A"] = "@parameter.inner" },
+					},
+				},
+			}
+		end,
+		config = function(_, opts)
+			require("nvim-treesitter.configs").setup(opts)
+
+			-- Modern Treesitter-based folds (open by default)
+			vim.o.foldmethod = "expr"
+			vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+			vim.o.foldlevel = 99
+		end,
+	},
 })
