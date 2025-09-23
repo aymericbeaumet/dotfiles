@@ -3,25 +3,17 @@
 set -ex
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-#
 # Install homebrew if missing
-#
-
 if ! command -v brew &>/dev/null; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-#
 # Sync git submodules
-#
-
 git submodule update --init --recursive
 git submodule update --remote --merge
 
-#
 # Symlink dotfiles
-#
 
 symlink() {
 	target="$HOME/$1"
@@ -42,17 +34,15 @@ done
 	symlink "$dir"
 done
 
-#
 # Configure system
-#
-
 defaults write com.apple.dock "expose-group-apps" -bool "true" && killall Dock
 defaults write com.apple.spaces "spans-displays" -bool "true" && killall SystemUIServer
 defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
+defaults write -g KeyRepeat -int 1 && killall Dock
+defaults write -g InitialKeyRepeat -int 15 && killall Dock
 
-#
-# Update brew dependencies and nvim plugins
-#
-
+# Install or update brew dependencies
 brew bundle --cleanup --file ./Brewfile
+
+# Install or update neovim plugins
 nvim --headless '+Lazy! sync' +qa

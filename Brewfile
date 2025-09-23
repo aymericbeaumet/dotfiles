@@ -41,6 +41,8 @@ brew 'railway'
 brew 'redis'
 brew 'rust-analyzer'
 brew 'rustup'
+brew 'shellcheck'
+brew 'stylua'
 brew 'tflint'
 
 tap 'hashicorp/tap'
