@@ -246,12 +246,16 @@ require("lazy").setup({
 
 			require("nord").set()
 
-			vim.cmd([[
-        sign define DiagnosticSignError text= texthl=LspDiagnosticsError linehl= numhl=
-        sign define DiagnosticSignWarn  text= texthl=LspDiagnosticsWarn  linehl= numhl=
-        sign define DiagnosticSignHint  text= texthl=LspDiagnosticsHint  linehl= numhl=
-        sign define DiagnosticSignInfo  text= texthl=LspDiagnosticsInfo  linehl= numhl=
-      ]])
+      vim.diagnostic.config({
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN]  = "",
+            [vim.diagnostic.severity.INFO]  = "",
+            [vim.diagnostic.severity.HINT]  = "",
+          },
+        },
+      })
 		end,
 	},
 
@@ -297,6 +301,9 @@ require("lazy").setup({
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
+    dependencies = {
+      "copilotlsp-nvim/copilot-lsp",
+    },
 		config = function()
 			require("copilot").setup({
 				suggestion = { enabled = false },
@@ -459,7 +466,7 @@ require("lazy").setup({
 				ts_ls = {},
 				templ = {},
 			}) do
-				require("lspconfig")[lsp].setup({
+				vim.lsp.enable(lsp, {
 					capabilities = capabilities,
 					flags = flags,
 					handlers = handlers,
@@ -495,10 +502,10 @@ require("lazy").setup({
 		config = function()
 			require("conform").setup({
 				format_after_save = {
-					lsp_fallback = true,
+					lsp_format = "fallback",
 				},
 				formatters_by_ft = {
-					go = { "goimports", "gofumpt" },
+					go = { "golangci-lint" },
 					html = { "prettier" },
 					javascript = { "prettier" },
 					lua = { "stylua" },
