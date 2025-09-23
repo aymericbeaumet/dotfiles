@@ -21,6 +21,19 @@
                         ]
                     },
                     {
+                        "description": "Launch or focus Journal",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "j",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/System/Applications/Journal.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Launch or focus Firefox",
                         "manipulators": [
                             {
