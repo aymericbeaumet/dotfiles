@@ -13,10 +13,9 @@ if ! command -v brew &>/dev/null; then
 fi
 
 #
-# Change origin to read/write and sync submodules
+# Sync git submodules
 #
 
-git remote set-url origin git@github.com:aymericbeaumet/dotfiles.git
 git submodule update --init --recursive
 git submodule update --remote --merge
 
