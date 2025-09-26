@@ -108,6 +108,7 @@ for _, mapping in ipairs({
 	{ "n", "'B", "<cmd>edit ~/.dotfiles/Brewfile<cr>" },
 	{ "n", "'G", "<cmd>edit ~/.gitconfig<cr>" },
 	{ "n", "'K", "<cmd>edit ~/.config/karabiner/karabiner.json<cr>" },
+	{ "n", "'S", "<cmd>edit ~/.dotfiles/setup.sh<cr>" },
 	{ "n", "'T", "<cmd>edit ~/.tmux.conf<cr>" },
 	{ "n", "'V", "<cmd>edit ~/.config/nvim/init.lua<cr>" },
 	{ "n", "'Z", "<cmd>edit ~/.zshrc<cr>" },
@@ -132,14 +133,6 @@ for _, mapping in ipairs({
 }) do
 	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
-
--- let Oil handle <CR>
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "oil",
-	callback = function()
-		vim.keymap.del("n", "<CR>", { buffer = 0 })
-	end,
-})
 
 -- plugins
 vim.loader.enable()
