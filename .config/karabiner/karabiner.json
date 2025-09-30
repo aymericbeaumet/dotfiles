@@ -34,6 +34,19 @@
                         ]
                     },
                     {
+                        "description": "Launch or focus Figma",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/Applications/Figma.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Launch or focus Firefox",
                         "manipulators": [
                             {
