@@ -164,14 +164,14 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus M1 Desktop",
+                        "description": "Launch or focus Beside",
                         "manipulators": [
                             {
                                 "from": {
-                                    "key_code": "1",
+                                    "key_code": "b",
                                     "modifiers": { "mandatory": ["command", "control"] }
                                 },
-                                "to": [{ "shell_command": "open -Fa '/Applications/M1 Desktop.app'" }],
+                                "to": [{ "shell_command": "open -Fa '/Applications/Beside.app'" }],
                                 "type": "basic"
                             }
                         ]
