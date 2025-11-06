@@ -1,114 +1,212 @@
 #!/usr/bin/env bash
 
-set -ex
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Enforce working directory to the script's location
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-################
-# System Setup #
-################
+# Color definitions
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
 
-# install brew if not installed
+# Log functions
+banner() {
+    echo
+    echo -e "${BLUE}${BOLD}╔══════════════════════════════════════════════════════════════════╗${NC}"
+    printf "${BLUE}${BOLD}║${NC} ${CYAN}${BOLD}%-64s ${BLUE}${BOLD}║${NC}\n" "$1"
+    echo -e "${BLUE}${BOLD}╚══════════════════════════════════════════════════════════════════╝${NC}"
+    echo
+}
+info() { echo -e "${CYAN}  ℹ${NC} $1"; }
+warning() { echo -e "${YELLOW}  ⚠${NC} $1"; }
+error() { echo -e "${RED}  ✗${NC} $1" >&2; }
+
+# Error handler with enhanced output
+trap 'error "Script failed at line $LINENO in $BASH_SOURCE"; exit 1' ERR
+
+# Start script
+banner "DOTFILES SETUP SCRIPT"
+info "Starting dotfiles installation and system configuration..."
+info "Working directory: $(pwd)"
+info "Date: $(date '+%Y-%m-%d %H:%M:%S')"
+
+banner "HOMEBREW INSTALLATION"
 if ! command -v brew &>/dev/null; then
+  warning "Homebrew not found. Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  info "Homebrew is already installed at $(which brew)"
+  info "Homebrew version: $(brew --version | head -n1)"
 fi
 
-# install brew dependencies
-brew bundle --cleanup --file ./Brewfile
+banner "HOMEBREW DEPENDENCIES"
+info "Installing packages from Brewfile..."
+if [[ -f ./Brewfile ]]; then
+  brew bundle --cleanup --file ./Brewfile
+else
+  warning "Brewfile not found, skipping Homebrew dependencies"
+fi
 
-# install git submodules
+banner "GIT SUBMODULES"
+info "Updating git submodules..."
 git submodule update --init --recursive
 git submodule update --remote --merge
 
-# symlink dotfiles
+banner "SYMLINKING DOTFILES"
+info "Creating symbolic links for configuration files..."
 
 symlink() {
-	target="$HOME/$1"
-	rm -rf "$target"
+	local source="$1"
+	local target="$HOME/$1"
+	
+	# Show progress for each symlink
+	if [[ -e "$target" ]] || [[ -L "$target" ]]; then
+		rm -rf "$target"
+	fi
+	
 	mkdir -p "$(dirname "$target")"
-	ln -svf "$PWD/$1" "$target"
+	ln -sf "$PWD/$source" "$target"
 }
 
-/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \) \! -name '.gitmodules' | while read -r file; do
+# Symlink dotfiles and Brewfile
+info "Linking dotfiles and Brewfile..."
+while IFS= read -r file; do
 	symlink "${file#./}"
-done
+done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \) \! -name '.gitmodules')
 
-/usr/bin/find . -mindepth 1 -maxdepth 1 -type dir -name '.*' \! -name '.config' \! -name '.git' | while read -r dir; do
+# Symlink hidden directories
+info "Linking hidden directories..."
+while IFS= read -r dir; do
 	symlink "${dir#./}"
-done
+done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type dir -name '.*' \! -name '.config' \! -name '.git')
 
-/usr/bin/find .config -mindepth 1 -maxdepth 1 -type dir | while read -r dir; do
-	symlink "$dir"
-done
+# Symlink .config directories
+if [[ -d .config ]]; then
+	info "Linking .config directories..."
+	while IFS= read -r dir; do
+		symlink "$dir"
+	done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type dir)
+else
+	info "No .config directory found, skipping"
+fi
 
-# install neovim plugins
-nvim --headless '+Lazy! sync' +qa
+banner "NEOVIM SETUP"
+if command -v nvim &>/dev/null; then
+	info "Installing Neovim plugins..."
+	
+	# Function to clean problematic plugins
+	clean_problematic_plugins() {
+		local lazy_dir="$HOME/.local/share/nvim/lazy"
+		local cleaned=0
+		
+		if [[ -d "$lazy_dir" ]]; then
+			# Check for plugins with local changes
+			for plugin_dir in "$lazy_dir"/*; do
+				if [[ -d "$plugin_dir/.git" ]]; then
+					plugin_name=$(basename "$plugin_dir")
+					
+					# Check if there are local changes
+					if ! git -C "$plugin_dir" diff --quiet 2>/dev/null || \
+					   ! git -C "$plugin_dir" diff --cached --quiet 2>/dev/null || \
+					   [[ -n $(git -C "$plugin_dir" status --porcelain 2>/dev/null) ]]; then
+						warning "Found local changes in $plugin_name, cleaning..."
+						rm -rf "$plugin_dir"
+						((cleaned++))
+					fi
+				fi
+			done
+			
+			if [[ $cleaned -gt 0 ]]; then
+				info "Cleaned $cleaned plugin(s) with local changes"
+			fi
+		fi
+	}
+	
+	# Clean any problematic plugins before sync
+	clean_problematic_plugins
+	
+	nvim --headless '+Lazy! sync' +qa
+else
+	warning "Neovim not found, skipping plugin installation"
+fi
 
-########################
-# System Configuration #
-########################
+banner "SYSTEM CONFIGURATION"
 
-# keyboard & input
-defaults write -g InitialKeyRepeat -int 15                                     # delay before key repeat starts (lower = faster, default ~25)
-defaults write -g KeyRepeat -int 2                                             # speed of key repeat (lower = faster, default ~6)
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3                       # full keyboard access (tab through all controls, not just text boxes)
+info "Keyboard & Input Settings"
+defaults write -g InitialKeyRepeat -int 15
+defaults write -g KeyRepeat -int 2
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-# typing & text substitutions
-defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false     # disable auto-capitalization
-defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false  # disable smart quotes
-defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false   # disable smart dashes
-defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false # disable double-space = period
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false # disable automatic spelling correction
+info "Text & Typing Preferences"
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
-# windows & animations
-defaults write -g NSAutomaticWindowAnimationsEnabled -bool false               # disable smooth animations for opening/closing windows
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001                  # speed up window resize animation
-defaults write -g QLPanelAnimationDuration -float 0                            # disable quick look panel animation
+info "Windows & Animations"
+defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+defaults write -g QLPanelAnimationDuration -float 0
 
-# mission control & spaces
-defaults write com.apple.dock "expose-group-apps" -bool "true"                 # group windows by app in mission control
-defaults write com.apple.dock expose-animation-duration -float 0.1             # shorten mission control animation
-defaults write com.apple.spaces "spans-displays" -bool "true"                  # use separate spaces across multiple displays
+info "Mission Control & Spaces"
+defaults write com.apple.dock "expose-group-apps" -bool "true"
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.spaces "spans-displays" -bool "true"
 
-# dock
-defaults write com.apple.dock autohide -bool true                              # auto-hide the dock
-defaults write com.apple.dock autohide-delay -float 0                          # remove delay when auto-hiding dock
-defaults write com.apple.dock autohide-time-modifier -float 0.1                # shorten animation time when showing/hiding dock
-defaults write com.apple.dock minimize-to-application -bool true               # minimize windows into app’s icon instead of right side of dock
-defaults write com.apple.dock orientation -string "left"                       # move dock to the left of the screen
-defaults write com.apple.dock springboard-show-duration -float 0.1             # shorten launchpad show animation
-defaults write com.apple.dock springboard-hide-duration -float 0.1             # shorten launchpad hide animation
-defaults write com.apple.dock springboard-page-duration -float 0.1             # shorten launchpad page animation
+info "Dock Configuration"
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0.1
+defaults write com.apple.dock minimize-to-application -bool true
+defaults write com.apple.dock orientation -string "left"
+defaults write com.apple.dock springboard-show-duration -float 0.1
+defaults write com.apple.dock springboard-hide-duration -float 0.1
+defaults write com.apple.dock springboard-page-duration -float 0.1
 
-# finder
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true                # always show file extensions
-defaults write com.apple.finder AppleShowAllFiles -bool true                   # show hidden files by default
-defaults write com.apple.finder ShowPathbar -bool true                         # show path bar at bottom of finder windows
-defaults write com.apple.finder ShowStatusBar -bool true                       # show status bar (file counts, free space)
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true   # don’t create .ds_store files on network volumes
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true       # don’t create .ds_store files on usb volumes
+info "Finder Preferences"
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults write com.apple.finder AppleShowAllFiles -bool true
+defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.finder ShowStatusBar -bool true
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
-# save & print panels
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true    # expand save panel by default
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true   # expand save panel by default
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true       # expand print panel by default
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true      # expand print panel by default
+info "Save & Print Dialogs"
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
-# screenshots
-defaults write com.apple.screencapture type -string "png"                      # save screenshots as png
+info "Screenshot Settings"
+defaults write com.apple.screencapture type -string "png"
 
-# textedit
-defaults write com.apple.TextEdit RichText -int 0                              # use plain text by default in textedit
+info "TextEdit Configuration"
+defaults write com.apple.TextEdit RichText -int 0
 
-# security
-defaults write com.apple.screensaver askForPassword -int 1                     # require password after sleep or screen saver begins
-defaults write com.apple.screensaver askForPasswordDelay -int 0                # require password immediately
+info "Security Settings"
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
+sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
 
-# disable all hot corners
+info "Hot Corners"
 for corner in tl tr bl br; do
   defaults write com.apple.dock wvous-$corner-corner -int 0
   defaults write com.apple.dock wvous-$corner-modifier -int 0
 done
 
-# restart affected processes
-killall Dock Finder SystemUIServer
+info "Restarting affected system processes..."
+killall Dock Finder SystemUIServer 2>/dev/null || true
+
+banner "SETUP COMPLETE"
+info "You may need to log out and back in for some changes to take full effect."
+info "Script completed at: $(date '+%Y-%m-%d %H:%M:%S')"
+echo

@@ -8,6 +8,7 @@ eval $(/opt/homebrew/bin/brew shellenv)
 # go
 export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
+export PATH="/usr/local/go/bin:$PATH"
 
 # rust/cargo
 export CARGO_HOME="$HOME/.cargo"
