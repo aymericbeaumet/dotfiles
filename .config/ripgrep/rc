@@ -7,4 +7,4 @@
 --type-add=svelte:*.svelte
 
 # TODO: use $HOME when supported
---ignore-file=/Users/aymericbeaumet/.config/ripgrep/ignore
+--ignore-file=/Users/ab/.config/ripgrep/ignore
