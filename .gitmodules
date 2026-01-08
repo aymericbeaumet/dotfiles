@@ -27,3 +27,11 @@
 	path = .zsh/bundle/fzf-git
 	url = git@github.com:junegunn/fzf-git.sh.git
 	branch = main
+[submodule ".zsh/bundle/fzf-tab"]
+	path = .zsh/bundle/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab.git
+	branch = master
+[submodule ".tmux/plugins/tpm"]
+	path = .tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm
+	branch = master
