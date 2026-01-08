@@ -17,6 +17,16 @@ fpath=(
 )
 autoload -Uz compinit && compinit
 
+# fzf-tab plugin (must be loaded after compinit, before zsh-autosuggestions)
+source "$HOME/.zsh/bundle/fzf-tab/fzf-tab.plugin.zsh"
+# show git branch preview when completing `g co`
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline --graph --color=always -n 20 $word'
+zstyle ':fzf-tab:complete:g:argument-rest' fzf-preview 'git log --oneline --graph --color=always -n 20 $word 2>/dev/null || git diff --color=always $word 2>/dev/null'
+# use tmux popup if available
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# disable sort when completing options (keep order from completion function)
+zstyle ':completion:*:git-checkout:*' sort false
+
 ...() {
   dirpath=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
   cd "$dirpath" || exit 1

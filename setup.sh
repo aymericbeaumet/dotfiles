@@ -55,6 +55,14 @@ else
   warning "Brewfile not found, skipping Homebrew dependencies"
 fi
 
+banner "NPM GLOBAL PACKAGES"
+if command -v npm &>/dev/null; then
+  info "Installing global npm packages..."
+  npm install -g @anthropic-ai/claude-code
+else
+  warning "npm not found, skipping global npm packages"
+fi
+
 banner "GIT SUBMODULES"
 info "Updating git submodules..."
 git submodule update --init --recursive
@@ -136,6 +144,16 @@ if command -v nvim &>/dev/null; then
 	nvim --headless '+Lazy! sync' +qa
 else
 	warning "Neovim not found, skipping plugin installation"
+fi
+
+banner "TMUX SETUP"
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
+	info "Installing/updating tmux plugins..."
+	"$TPM_DIR/bin/install_plugins"
+	"$TPM_DIR/bin/update_plugins" all
+else
+	warning "TPM not found (should be installed via git submodules), skipping"
 fi
 
 banner "SYSTEM CONFIGURATION"
