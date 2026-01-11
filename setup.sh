@@ -58,7 +58,7 @@ fi
 banner "NPM GLOBAL PACKAGES"
 if command -v npm &>/dev/null; then
   info "Installing global npm packages..."
-  npm install -g @anthropic-ai/claude-code
+  npm install -g @anthropic-ai/claude-code @fsouza/prettierd eslint_d
 else
   warning "npm not found, skipping global npm packages"
 fi
@@ -127,7 +127,7 @@ if command -v nvim &>/dev/null; then
 					   [[ -n $(git -C "$plugin_dir" status --porcelain 2>/dev/null) ]]; then
 						warning "Found local changes in $plugin_name, cleaning..."
 						rm -rf "$plugin_dir"
-						((cleaned++))
+						((cleaned++)) || true
 					fi
 				fi
 			done
@@ -141,7 +141,7 @@ if command -v nvim &>/dev/null; then
 	# Clean any problematic plugins before sync
 	clean_problematic_plugins
 	
-	nvim --headless '+Lazy! sync' +qa
+	nvim --headless '+Lazy! sync' +qa || true
 else
 	warning "Neovim not found, skipping plugin installation"
 fi
@@ -150,6 +150,9 @@ banner "TMUX SETUP"
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
 	info "Installing/updating tmux plugins..."
+	# TPM scripts use 'tmux start-server; show-environment' to find the plugin path.
+	# Set it directly in tmux's global environment so TPM can find it.
+	tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "$HOME/.tmux/plugins"
 	"$TPM_DIR/bin/install_plugins"
 	"$TPM_DIR/bin/update_plugins" all
 else

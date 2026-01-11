@@ -1,0 +1,25 @@
+gui:
+  scrollHeight: 10
+  showFileTree: true
+  showListFooter: false
+  showRandomTip: false
+  nerdFontsVersion: "3"
+  border: rounded
+
+os:
+  editPreset: nvim
+
+git:
+  pagers:
+    - pager: delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+  autoFetch: true
+  autoRefresh: true
+  branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --
+
+keybinding:
+  universal:
+    quit: q
+    quit-alt1: <c-c>
+
+confirmOnQuit: false
+quitOnTopLevelReturn: true

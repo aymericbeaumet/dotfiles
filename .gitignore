@@ -58,3 +58,13 @@ crashlytics.properties
 
 # lazy.nvim
 lazy-lock.json
+
+# tmux
+.tmux/plugins/
+
+# zsh
+.zsh/bundle/
+
+# claude
+.claude/
+*.lock
