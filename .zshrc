@@ -53,10 +53,6 @@ z() {
   fi
 }
 
-awslocal() {
-  AWS_ACCESS_KEY_ID=localstack AWS_SECRET_ACCESS_KEY=localstack command aws --output=json --region=eu-west-1 '--endpoint-url=http://localhost:4566' "$@"
-}
-
 # global env
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8

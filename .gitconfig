@@ -82,7 +82,9 @@
 
 [delta]
 	navigate = true
-	light = false
+	dark = true
+	side-by-side = false
+	line-numbers = false
 
 [diff]
 	colorMoved = default

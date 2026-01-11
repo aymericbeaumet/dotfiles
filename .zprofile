@@ -1,6 +1,9 @@
 # Author: Aymeric Beaumet <hi@aymericbeaumet.com>
 # Github: @aymericbeaumet/dotfiles
 
+# xdg
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # homebrew
 export HOMEBREW_NO_ENV_HINTS=true
 eval $(/opt/homebrew/bin/brew shellenv)
