@@ -21,7 +21,7 @@ fpath=("$HOME/.docker/completions" $fpath)
 
 # plugins (turbo mode: deferred loading for faster startup)
 zinit wait lucid for \
-  atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+  atinit"zicompinit; zicdreplay" \
     zdharma-continuum/fast-syntax-highlighting \
   blockf \
     zsh-users/zsh-completions \
@@ -146,4 +146,4 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 
 # zoxide: smart cd (we define custom `z` function above)
-eval "$(zoxide init zsh --hook=prompt --no-cmd)"
+eval "$(zoxide init zsh --hook=pwd --no-cmd)"
