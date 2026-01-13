@@ -3,34 +3,6 @@
 	url = https://github.com/wbthomason/packer.nvim
 	branch = master
 
-[submodule ".zsh/bundle/powerlevel10k"]
-	path = .zsh/bundle/powerlevel10k
-	url = https://github.com/romkatv/powerlevel10k.git
-	branch = master
-[submodule ".zsh/bundle/zsh-autosuggestions"]
-	path = .zsh/bundle/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions
-	branch = master
-[submodule ".zsh/bundle/zsh-completions"]
-	path = .zsh/bundle/zsh-completions
-	url = https://github.com/zsh-users/zsh-completions.git
-	branch = master
-[submodule ".zsh/bundle/zsh-syntax-highlighting"]
-	path = .zsh/bundle/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-	branch = master
-[submodule ".zsh/bundle/ohmyzsh"]
-	path = .zsh/bundle/ohmyzsh
-	url = git@github.com:ohmyzsh/ohmyzsh.git
-	branch = master
-[submodule ".zsh/bundle/fzf-git"]
-	path = .zsh/bundle/fzf-git
-	url = git@github.com:junegunn/fzf-git.sh.git
-	branch = main
-[submodule ".zsh/bundle/fzf-tab"]
-	path = .zsh/bundle/fzf-tab
-	url = https://github.com/Aloxaf/fzf-tab.git
-	branch = master
 [submodule ".tmux/plugins/tpm"]
 	path = .tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm

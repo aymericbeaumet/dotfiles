@@ -47,6 +47,29 @@ else
   info "Homebrew version: $(brew --version | head -n1)"
 fi
 
+banner "NIX INSTALLATION"
+# Check for Nix installation via command, /nix directory, or backup files
+if command -v nix &>/dev/null; then
+  info "Nix is already installed at $(which nix)"
+  info "Nix version: $(nix --version)"
+elif [[ -d /nix ]] || [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc.backup-before-nix ]]; then
+  warning "Nix installation detected but not in PATH"
+  info "Sourcing Nix profile..."
+  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    info "Nix version: $(nix --version 2>/dev/null || echo 'unknown')"
+  else
+    warning "Could not source Nix profile, but Nix appears to be installed"
+  fi
+else
+  warning "Nix not found. Installing Nix..."
+  curl -L https://nixos.org/nix/install | sh -s -- --daemon
+  # Source nix profile for current session
+  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  fi
+fi
+
 banner "HOMEBREW DEPENDENCIES"
 info "Installing packages from Brewfile..."
 if [[ -f ./Brewfile ]]; then
@@ -226,6 +249,14 @@ done
 
 info "Restarting affected system processes..."
 killall Dock Finder SystemUIServer 2>/dev/null || true
+
+banner "SYSTEM CLEANUP"
+if command -v mo &>/dev/null; then
+	info "Running Mole cleanup..."
+	mo clean --yes
+else
+	warning "Mole (mo) not found, skipping system cleanup"
+fi
 
 banner "SETUP COMPLETE"
 info "You may need to log out and back in for some changes to take full effect."
