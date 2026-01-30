@@ -55,16 +55,41 @@ zstyle ':fzf-tab:*' popup-min-size 80 20
 zstyle ':fzf-tab:complete:g:argument-rest' fzf-preview 'git log --oneline --graph --color=always -n 20 $word 2>/dev/null || git diff --color=always $word 2>/dev/null'
 zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline --graph --color=always -n 20 $word'
 
-# cd to git root (or stay in pwd if not in a repo)
-...() { cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" || return 1; }
+# git root: global alias expands anywhere (e.g., `ls ...`, `cat .../file.txt`, `...` to cd)
+alias -g ...='$(git rev-parse --show-toplevel 2>/dev/null || pwd)'
 
 # git wrapper: `g` runs `git st`, `g <args>` runs `git <args>`
 g() { (( $# )) && command git "$@" || command git st; }
 
-# zoxide interactive: `z` opens fzf, `z <query>` filters then jumps
+# zoxide: `z` opens fzf for interactive selection, `z <query>` jumps to best match
 z() {
   local dir
-  dir=$(zoxide query --list | fzf ${@:+--filter="$*" --select-1 --exit-0}) && cd "$dir"
+  if (( $# )); then
+    dir=$(zoxide query -- "$@") && cd "$dir"
+  else
+    dir=$(zoxide query --list | fzf) && cd "$dir"
+  fi
+}
+
+# man: `man` opens fzf to search all man pages, `man <page>` opens that page
+# cache man -k output async on shell startup (refreshes if older than 1 day)
+_MAN_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/man-k-cache"
+[[ -s "$_MAN_CACHE" && -z $(find "$_MAN_CACHE" -mtime +1 2>/dev/null) ]] || \
+  ( command man -k . > "$_MAN_CACHE" 2>/dev/null & )
+man() {
+  if (( $# )); then
+    command man "$@"
+  else
+    local page
+    page=$({ [[ -s "$_MAN_CACHE" ]] && < "$_MAN_CACHE" || command man -k . 2>/dev/null; } \
+      | awk '!seen[$1]++' \
+      | fzf \
+        --nth=1 \
+        --tiebreak=begin,length \
+        --preview 'command man $(echo {1} | sed -E "s/\([^)]+\)$//")' \
+      | awk '{print $1}' | sed -E 's/\([^)]+\)$//') \
+      && command man "$page"
+  fi
 }
 
 # environment
@@ -146,4 +171,4 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 
 # zoxide: smart cd (we define custom `z` function above)
-eval "$(zoxide init zsh --hook=pwd --no-cmd)"
+eval "$(zoxide init zsh --hook=prompt --no-cmd)"
