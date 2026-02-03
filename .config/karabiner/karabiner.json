@@ -109,19 +109,6 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus Obsidian",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "o",
-                                    "modifiers": { "mandatory": ["command", "control"] }
-                                },
-                                "to": [{ "shell_command": "open -Fa '/Applications/Obsidian.app'" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Launch or focus Postico",
                         "manipulators": [
                             {

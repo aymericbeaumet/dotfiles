@@ -6,5 +6,4 @@
 --type-add=rs:*.rs
 --type-add=svelte:*.svelte
 
-# TODO: use $HOME when supported
---ignore-file=/Users/ab/.config/ripgrep/ignore
+--ignore-file=$HOME/.config/ripgrep/ignore
