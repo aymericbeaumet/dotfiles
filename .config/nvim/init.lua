@@ -131,12 +131,30 @@ vim.loader.enable()
 
 -- Disable unused built-in plugins for faster startup
 for _, plugin in ipairs({
-	"2html_plugin", "getscript", "getscriptPlugin", "gzip",
-	"logipat", "netrw", "netrwPlugin", "netrwSettings",
-	"netrwFileHandlers", "matchit", "tar", "tarPlugin",
-	"rrhelper", "spellfile_plugin", "vimball", "vimballPlugin",
-	"zip", "zipPlugin", "tutor", "rplugin", "synmenu",
-	"optwin", "compiler", "bugreport",
+	"2html_plugin",
+	"getscript",
+	"getscriptPlugin",
+	"gzip",
+	"logipat",
+	"netrw",
+	"netrwPlugin",
+	"netrwSettings",
+	"netrwFileHandlers",
+	"matchit",
+	"tar",
+	"tarPlugin",
+	"rrhelper",
+	"spellfile_plugin",
+	"vimball",
+	"vimballPlugin",
+	"zip",
+	"zipPlugin",
+	"tutor",
+	"rplugin",
+	"synmenu",
+	"optwin",
+	"compiler",
+	"bugreport",
 }) do
 	vim.g["loaded_" .. plugin] = 1
 end
@@ -191,20 +209,32 @@ require("lazy").setup({
 					vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc })
 				end
 				-- Navigation
-				map("n", "]h", function() gs.nav_hunk("next") end, "Next hunk")
-				map("n", "[h", function() gs.nav_hunk("prev") end, "Previous hunk")
+				map("n", "]h", function()
+					gs.nav_hunk("next")
+				end, "Next hunk")
+				map("n", "[h", function()
+					gs.nav_hunk("prev")
+				end, "Previous hunk")
 				-- Actions
 				map("n", "<leader>hs", gs.stage_hunk, "Stage hunk")
 				map("n", "<leader>hr", gs.reset_hunk, "Reset hunk")
-				map("v", "<leader>hs", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Stage hunk")
-				map("v", "<leader>hr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Reset hunk")
+				map("v", "<leader>hs", function()
+					gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end, "Stage hunk")
+				map("v", "<leader>hr", function()
+					gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+				end, "Reset hunk")
 				map("n", "<leader>hS", gs.stage_buffer, "Stage buffer")
 				map("n", "<leader>hu", gs.undo_stage_hunk, "Undo stage hunk")
 				map("n", "<leader>hR", gs.reset_buffer, "Reset buffer")
 				map("n", "<leader>hp", gs.preview_hunk, "Preview hunk")
-				map("n", "<leader>hb", function() gs.blame_line({ full = true }) end, "Blame line")
+				map("n", "<leader>hb", function()
+					gs.blame_line({ full = true })
+				end, "Blame line")
 				map("n", "<leader>hd", gs.diffthis, "Diff this")
-				map("n", "<leader>hD", function() gs.diffthis("~") end, "Diff this ~")
+				map("n", "<leader>hD", function()
+					gs.diffthis("~")
+				end, "Diff this ~")
 				-- Text object
 				map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "Select hunk")
 			end,
@@ -377,10 +407,16 @@ require("lazy").setup({
 				char = { enabled = false }, -- disable f/F/t/T enhancement
 			},
 		},
-	keys = {
-		{ "<leader>s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-		{ "<leader>S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-	},
+		keys = {
+			{
+				"<leader>s",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+				desc = "Flash",
+			},
+		},
 	},
 
 	{
@@ -465,8 +501,20 @@ require("lazy").setup({
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = {},
 		keys = {
-			{ "]t", function() require("todo-comments").jump_next() end, desc = "Next TODO" },
-			{ "[t", function() require("todo-comments").jump_prev() end, desc = "Previous TODO" },
+			{
+				"]t",
+				function()
+					require("todo-comments").jump_next()
+				end,
+				desc = "Next TODO",
+			},
+			{
+				"[t",
+				function()
+					require("todo-comments").jump_prev()
+				end,
+				desc = "Previous TODO",
+			},
 			{ "<leader>xt", "<cmd>TodoTelescope<cr>", desc = "Search TODOs" },
 		},
 	},
@@ -479,8 +527,8 @@ require("lazy").setup({
 		opts = function()
 			-- Nerd Font powerline glyphs
 			local separators = {
-				round = { left = "\u{e0b4}", right = "\u{e0b6}" },  -- rounded
-				arrow = { left = "\u{e0b0}", right = "\u{e0b2}" },  -- triangles
+				round = { left = "\u{e0b4}", right = "\u{e0b6}" }, -- rounded
+				arrow = { left = "\u{e0b0}", right = "\u{e0b2}" }, -- triangles
 			}
 			return {
 				options = {
@@ -679,13 +727,23 @@ require("lazy").setup({
 				opts = {
 					ensure_installed = {
 						-- LSP servers (your stacks)
-						"gopls", "rust-analyzer", "typescript-language-server",
-						"bash-language-server", "lua-language-server",
-						"dockerfile-language-server", "html-lsp", "css-lsp", "tailwindcss-language-server",
+						"gopls",
+						"rust-analyzer",
+						"typescript-language-server",
+						"bash-language-server",
+						"lua-language-server",
+						"dockerfile-language-server",
+						"html-lsp",
+						"css-lsp",
+						"tailwindcss-language-server",
 						-- Linters
-						"eslint_d", "shellcheck", "hadolint", "golangci-lint",
+						"eslint_d",
+						"shellcheck",
+						"hadolint",
+						"golangci-lint",
 						-- Formatters
-						"stylua", "rustfmt",
+						"stylua",
+						"rustfmt",
 					},
 					auto_update = true,
 					run_on_start = true,
@@ -860,16 +918,19 @@ require("lazy").setup({
 			require("nvim-dap-virtual-text").setup()
 			dapui.setup()
 
-			-- Basic keymaps
-			vim.keymap.set("n", "<F5>", dap.continue, { desc = "DAP continue" })
-			vim.keymap.set("n", "<F10>", dap.step_over, { desc = "DAP step over" })
-			vim.keymap.set("n", "<F11>", dap.step_into, { desc = "DAP step into" })
-			vim.keymap.set("n", "<F12>", dap.step_out, { desc = "DAP step out" })
-			vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
-			vim.keymap.set("n", "<leader>B", function()
+			-- Debugging keymaps under <leader>d
+			vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Continue" })
+			vim.keymap.set("n", "<leader>ds", dap.step_over, { desc = "Step over" })
+			vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "Step into" })
+			vim.keymap.set("n", "<leader>do", dap.step_out, { desc = "Step out" })
+			vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+			vim.keymap.set("n", "<leader>dB", function()
 				dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-			end, { desc = "DAP conditional breakpoint" })
-			vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "DAP UI" })
+			end, { desc = "Conditional breakpoint" })
+			vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "Toggle DAP UI" })
+			vim.keymap.set("n", "<leader>dr", dap.repl.open, { desc = "Open REPL" })
+			vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "Run last" })
+			vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "Terminate" })
 
 			-- Go adapter helpers
 			pcall(function()
@@ -920,12 +981,48 @@ require("lazy").setup({
 		keys = {
 			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
 			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
-			{ "<leader>d", "<cmd>bp | sp | bn | bd<cr>", desc = "Close the current buffer" },
 			{
 				"<leader>f",
 				"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
-				desc = "Search file names in current working directory",
+				desc = "Search file names (cwd)",
 			},
+			{
+				"<leader>F",
+				function()
+					require("telescope.builtin").find_files({
+						find_command = { "fd", "--type", "file", "--hidden", "--follow" },
+						cwd = vim.fn.expand("%:p:h"),
+					})
+				end,
+				desc = "Search file names (file dir)",
+			},
+			{
+				"<leader>r",
+				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
+				desc = "Search file contents (cwd)",
+			},
+			{
+				"<leader>R",
+				function()
+					require("telescope.builtin").live_grep({
+						vimgrep_arguments = {
+							"rg",
+							"--color=never",
+							"--no-heading",
+							"--with-filename",
+							"--line-number",
+							"--column",
+							"--smart-case",
+							"--hidden",
+						},
+						cwd = vim.fn.expand("%:p:h"),
+					})
+				end,
+				desc = "Search file contents (file dir)",
+			},
+			-- Debug group
+			{ "<leader>d", group = "debug" },
+			-- LSP group
 			{ "<leader>l", group = "lsp" },
 			{ "<leader>lA", vim.lsp.buf.code_action, desc = "Code action" },
 			{ "<leader>lR", vim.lsp.buf.rename, desc = "Rename symbol" },
@@ -961,16 +1058,18 @@ require("lazy").setup({
 				function()
 					local qf_exists = false
 					for _, win in pairs(vim.fn.getwininfo()) do
-						if win.quickfix == 1 then qf_exists = true break end
+						if win.quickfix == 1 then
+							qf_exists = true
+							break
+						end
 					end
-					if qf_exists then vim.cmd("cclose") else vim.cmd("copen") end
+					if qf_exists then
+						vim.cmd("cclose")
+					else
+						vim.cmd("copen")
+					end
 				end,
 				desc = "Toggle quickfix list",
-			},
-			{
-				"<leader>r",
-				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
-				desc = "Search file contents in current working directory",
 			},
 			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
 			-- Git group
