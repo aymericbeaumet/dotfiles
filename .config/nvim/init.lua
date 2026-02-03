@@ -434,17 +434,6 @@ require("lazy").setup({
 		end,
 	},
 
-	{
-		"zbirenbaum/copilot-cmp",
-		dependencies = { "copilot.lua" },
-		config = function()
-			require("copilot_cmp").setup({
-				formatters = {
-					insert_text = require("copilot_cmp.format").remove_existing,
-				},
-			})
-		end,
-	},
 
 	-- Claude Code integration
 	{
@@ -475,11 +464,6 @@ require("lazy").setup({
 			check_ts = true,
 			fast_wrap = { map = "<M-e>" },
 		},
-		config = function(_, opts)
-			require("nvim-autopairs").setup(opts)
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-			require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-		end,
 	},
 
 	-- Indent guides
@@ -586,138 +570,79 @@ require("lazy").setup({
 		end,
 	},
 
-	-- completion
+	-- completion (blink.cmp - faster than nvim-cmp)
 	{
-		"hrsh7th/nvim-cmp",
-		version = false,
-		event = "InsertEnter",
+		"saghen/blink.cmp",
 		dependencies = {
-			-- sources
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-cmdline",
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-nvim-lsp-signature-help",
-			"hrsh7th/cmp-path",
-			"saadparwaiz1/cmp_luasnip",
-			-- snippets engine
-			"L3MON4D3/LuaSnip",
-			-- style
-			"onsails/lspkind.nvim",
+			"rafamadriz/friendly-snippets",
+			{
+				"giuxtaposition/blink-cmp-copilot",
+				dependencies = { "zbirenbaum/copilot.lua" },
+			},
 		},
-		config = function()
-			local cmp = require("cmp")
-			local luasnip = require("luasnip")
-			local lspkind = require("lspkind")
-
-			vim.o.pumheight = 15
-
-			cmp.setup({
-				completion = {
-					completeopt = "menu,menuone,noinsert",
-				},
-
-				sources = cmp.config.sources({
-					{ name = "copilot" },
-					{ name = "nvim_lsp" },
-					{ name = "nvim_lsp_signature_help" },
-					{ name = "path" },
-				}, {
-					{ name = "buffer" },
-				}),
-
-				sorting = {
-					priority_weight = 2,
-					comparators = {
-						-- https://github.com/zbirenbaum/copilot-cmp#comparators
-						require("copilot_cmp.comparators").prioritize,
-						-- Below is the default comparitor list and order for nvim-cmp
-						cmp.config.compare.offset,
-						-- cmp.config.compare.scopes, --this is commented in nvim-cmp too
-						cmp.config.compare.exact,
-						cmp.config.compare.score,
-						cmp.config.compare.recently_used,
-						cmp.config.compare.locality,
-						cmp.config.compare.kind,
-						cmp.config.compare.sort_text,
-						cmp.config.compare.length,
-						cmp.config.compare.order,
+		version = "*",
+		event = "InsertEnter",
+		opts = {
+			keymap = {
+				preset = "default",
+				["<Tab>"] = { "select_and_accept", "fallback" },
+				["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+				["<C-n>"] = { "select_next", "fallback" },
+				["<C-p>"] = { "select_prev", "fallback" },
+				["<C-d>"] = { "scroll_documentation_down", "fallback" },
+				["<C-u>"] = { "scroll_documentation_up", "fallback" },
+			},
+			appearance = {
+				use_nvim_cmp_as_default = true,
+				nerd_font_variant = "mono",
+			},
+			sources = {
+				default = { "lsp", "path", "snippets", "buffer", "copilot" },
+				providers = {
+					copilot = {
+						name = "copilot",
+						module = "blink-cmp-copilot",
+						score_offset = 100,
+						async = true,
 					},
 				},
-
-				window = {
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
+			},
+			completion = {
+				accept = { auto_brackets = { enabled = true } },
+				menu = { border = "rounded" },
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 200,
+					window = { border = "rounded" },
 				},
-
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-
-				formatting = {
-					format = lspkind.cmp_format({
-						mode = "symbol",
-						max_width = 50,
-						symbol_map = { Copilot = "" },
-					}),
-				},
-
-				mapping = {
-					["<Tab>"] = cmp.mapping.confirm({
-						behavior = cmp.ConfirmBehavior.Replace,
-						select = false,
-					}, { "i", "s" }),
-
-					["<C-space>"] = cmp.mapping(cmp.mapping.complete({ reason = cmp.ContextReason.Auto }), { "i" }),
-
-					["<C-n>"] = cmp.mapping(
-						cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-						{ "i" }
-					),
-
-					["<C-p>"] = cmp.mapping(
-						cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-						{ "i" }
-					),
-
-					["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(vim.o.scroll), { "i" }),
-
-					["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-vim.o.scroll), { "i" }),
-				},
-			})
-
-			-- Cmdline completion for search (/)
-			cmp.setup.cmdline({ "/", "?" }, {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = {
-					{ name = "buffer" },
-				},
-			})
-
-			-- Cmdline completion for commands (:)
-			cmp.setup.cmdline(":", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = cmp.config.sources({
-					{ name = "path" },
-				}, {
-					{ name = "cmdline" },
-				}),
-				matching = { disallow_symbol_nonprefix_matching = false },
-			})
-		end,
+			},
+			signature = { enabled = true, window = { border = "rounded" } },
+		},
 	},
 
 	-- LSP configuration
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
+			"saghen/blink.cmp",
 			{ "mason-org/mason.nvim", config = true },
 			{
 				"mason-org/mason-lspconfig.nvim",
 				opts = {
-					ensure_installed = { "gopls", "rust_analyzer", "ts_ls", "lua_ls", "bashls" },
+					ensure_installed = {
+						"gopls",
+						"rust_analyzer",
+						"ts_ls",
+						"lua_ls",
+						"bashls",
+						"terraformls",
+						"bufls",
+						"dockerls",
+						"html",
+						"cssls",
+						"tailwindcss",
+						"svelte",
+					},
 					automatic_enable = true,
 				},
 			},
@@ -736,6 +661,9 @@ require("lazy").setup({
 						"html-lsp",
 						"css-lsp",
 						"tailwindcss-language-server",
+						"terraform-ls",
+						"buf-language-server",
+						"svelte-language-server",
 						-- Linters
 						"eslint_d",
 						"shellcheck",
@@ -744,6 +672,8 @@ require("lazy").setup({
 						-- Formatters
 						"stylua",
 						"rustfmt",
+						"gofumpt",
+						"goimports",
 					},
 					auto_update = true,
 					run_on_start = true,
@@ -752,7 +682,7 @@ require("lazy").setup({
 		},
 		config = function()
 			local lsp = vim.lsp
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			local flags = { debounce_text_changes = 150 }
 
 			-- Global defaults for all servers
@@ -788,9 +718,29 @@ require("lazy").setup({
 				},
 			})
 			lsp.config("bashls", {})
+			lsp.config("terraformls", {})
+			lsp.config("bufls", {})
+			lsp.config("dockerls", {})
+			lsp.config("html", {})
+			lsp.config("cssls", {})
+			lsp.config("tailwindcss", {})
+			lsp.config("svelte", {})
 
 			-- Enable everything above
-			lsp.enable({ "gopls", "rust_analyzer", "ts_ls", "lua_ls", "bashls" })
+			lsp.enable({
+				"gopls",
+				"rust_analyzer",
+				"ts_ls",
+				"lua_ls",
+				"bashls",
+				"terraformls",
+				"bufls",
+				"dockerls",
+				"html",
+				"cssls",
+				"tailwindcss",
+				"svelte",
+			})
 
 			-- LSP UX niceties
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -868,12 +818,12 @@ require("lazy").setup({
 		"stevearc/conform.nvim",
 		opts = {
 			format_on_save = {
-				timeout_ms = 500,
+				timeout_ms = 2000,
 				lsp_format = "fallback",
 			},
 			formatters_by_ft = {
 				-- Go
-				go = { "golangci-lint" },
+				go = { "gofumpt", "goimports" },
 				-- Web
 				javascript = { "prettierd", "prettier", stop_after_first = true },
 				typescript = { "prettierd", "prettier", stop_after_first = true },
@@ -979,6 +929,7 @@ require("lazy").setup({
 			delay = 350,
 		},
 		keys = {
+			{ "<leader><leader>", "<cmd>Telescope resume<cr>", desc = "Resume last search" },
 			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
 			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
 			{
@@ -1077,7 +1028,18 @@ require("lazy").setup({
 			{ "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git status" },
 			{ "<leader>gB", "<cmd>Telescope git_branches<cr>", desc = "Git branches" },
 			{ "<leader>gC", "<cmd>Telescope git_commits<cr>", desc = "Git commits" },
+			{ "<leader>gw", "<cmd>Telescope git_worktree<cr>", desc = "Git worktrees" },
+			{ "<leader>gW", "<cmd>Telescope git_worktree create_git_worktree<cr>", desc = "Create worktree" },
 		},
+	},
+
+	-- git worktree integration
+	{
+		"ThePrimeagen/git-worktree.nvim",
+		dependencies = { "nvim-telescope/telescope.nvim" },
+		config = function()
+			require("telescope").load_extension("git_worktree")
+		end,
 	},
 
 	-- treesitter
