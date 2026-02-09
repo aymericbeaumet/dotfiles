@@ -229,6 +229,7 @@ return {
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		opts = {
+			labels = "tnseridhaoplfuwygjq",
 			modes = {
 				char = { enabled = false }, -- disable f/F/t/T enhancement
 			},

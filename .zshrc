@@ -6,8 +6,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# zinit plugin manager (installed by setup.sh; source only if present)
+# zinit plugin manager (auto-install if missing, then source)
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+if [[ ! -d "$ZINIT_HOME" ]]; then
+  git clone --depth=1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
 if [[ -d "$ZINIT_HOME" ]]; then
   source "${ZINIT_HOME}/zinit.zsh"
 
@@ -98,6 +101,7 @@ man() {
       && command man "$page"
   fi
 }
+alias m=man
 
 # environment (path deduplication is in .zprofile)
 export EDITOR=nvim

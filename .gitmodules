@@ -1,9 +1,0 @@
-[submodule ".config/nvim/pack/packer/start/packer.nvim"]
-	path = .config/nvim/pack/packer/start/packer.nvim
-	url = https://github.com/wbthomason/packer.nvim
-	branch = master
-
-[submodule ".tmux/plugins/tpm"]
-	path = .tmux/plugins/tpm
-	url = https://github.com/tmux-plugins/tpm
-	branch = master
