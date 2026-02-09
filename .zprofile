@@ -10,9 +10,15 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
-# homebrew
+# homebrew (support both Apple Silicon and Intel)
 export HOMEBREW_NO_ENV_HINTS=true
-eval $(/opt/homebrew/bin/brew shellenv)
+if command -v brew &>/dev/null; then
+  eval "$(brew shellenv)"
+elif [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
 
 # nix
 if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then

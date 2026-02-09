@@ -40,6 +40,9 @@ info "Date: $(date '+%Y-%m-%d %H:%M:%S')"
 banner "HOMEBREW INSTALLATION"
 if ! command -v brew &>/dev/null; then
   warning "Homebrew not found. Installing Homebrew..."
+  warning "About to download and run the official Homebrew install script (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)."
+  warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+  read -r
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   eval "$(/opt/homebrew/bin/brew shellenv)"
 else
@@ -63,6 +66,9 @@ elif [[ -d /nix ]] || [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc
   fi
 else
   warning "Nix not found. Installing Nix..."
+  warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
+  warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+  read -r
   curl -L https://nixos.org/nix/install | sh -s -- --daemon
   # Source nix profile for current session
   if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
@@ -84,6 +90,17 @@ if command -v npm &>/dev/null; then
   npm install -g @anthropic-ai/claude-code @fsouza/prettierd eslint_d
 else
   warning "npm not found, skipping global npm packages"
+fi
+
+banner "ZINIT INSTALLATION"
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+if [[ -d "$ZINIT_HOME" ]]; then
+  info "Zinit is already installed at $ZINIT_HOME"
+else
+  info "Installing zinit plugin manager..."
+  mkdir -p "$(dirname "$ZINIT_HOME")"
+  git clone --depth=1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+  info "Zinit installed successfully"
 fi
 
 banner "GIT SUBMODULES"
@@ -239,7 +256,13 @@ defaults write com.apple.TextEdit RichText -int 0
 info "Security Settings"
 defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
-sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
+if sudo -n true 2>/dev/null; then
+  sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
+elif sudo -v 2>/dev/null; then
+  sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
+else
+  warning "Skipping immediate-lock-on-sleep setting (requires administrator password). Run manually: sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true"
+fi
 
 info "Hot Corners"
 for corner in tl tr bl br; do

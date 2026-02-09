@@ -6,6 +6,7 @@
 
 [alias]
 	a = add
+	amend = commit --amend --no-edit
 	br = branch -v --sort=-committerdate
 	bw = browse
 	ci = commit
@@ -15,7 +16,10 @@
 	df = diff
 	dfc = diff --cached
 	fe = fetch --prune
+	fixup = commit --fixup
+	graph = log --graph --oneline --all --decorate
 	l = log
+	last = log -1 HEAD
 	me = merge
 	pl = pull
 	plps = !git pl && git ps
@@ -36,6 +40,9 @@
 	sm = submodule
 	st = status --short --branch
 	sw = show
+	unadd = reset HEAD --
+	uncommit = reset --soft HEAD~1
+	unstage = reset HEAD --
 	wa = worktree add
 	wl = worktree list
 	wr = worktree remove
@@ -52,6 +59,7 @@
 [core]
 	excludesfile = ~/.gitignore
 	pager = delta
+	untrackedCache = true
 
 [github]
 	user = aymericbeaumet
@@ -70,6 +78,13 @@
 	default = current
 	followTags = true
 
+[rebase]
+	autoStash = true
+	autoSquash = true
+
+[rerere]
+	enabled = true
+
 [user]
 	name = Aymeric Beaumet
 	email = aymeric@beaumet.me
@@ -87,7 +102,11 @@
 	navigate = true
 	dark = true
 	side-by-side = false
-	line-numbers = false
+	line-numbers = true
+	syntax-theme = Dracula
+	hyperlinks = true
+	hyperlinks-file-link-format = "file://{path}:{line}"
 
 [diff]
+	algorithm = patience
 	colorMoved = default

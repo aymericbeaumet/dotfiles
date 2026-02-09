@@ -6,33 +6,40 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# zinit plugin manager (auto-install if missing)
+# zinit plugin manager (installed by setup.sh; source only if present)
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-[[ -d "$ZINIT_HOME" ]] || git clone --depth=1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-source "${ZINIT_HOME}/zinit.zsh"
+if [[ -d "$ZINIT_HOME" ]]; then
+  source "${ZINIT_HOME}/zinit.zsh"
 
-# theme: powerlevel10k (load immediately for instant prompt)
-zinit ice depth=1
-zinit light romkatv/powerlevel10k
-[[ -f "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
+  # theme: powerlevel10k (load immediately for instant prompt)
+  zinit ice depth=1
+  zinit light romkatv/powerlevel10k
 
-# completions: add docker completions to fpath
-fpath=("$HOME/.docker/completions" $fpath)
+  # completions: add docker completions to fpath (if directory exists)
+  [[ -d "$HOME/.docker/completions" ]] && fpath=("$HOME/.docker/completions" $fpath)
 
-# plugins (turbo mode: deferred loading for faster startup)
-zinit wait lucid for \
-  atinit"zicompinit; zicdreplay" \
-    zdharma-continuum/fast-syntax-highlighting \
-  blockf \
-    zsh-users/zsh-completions \
-  atload"!_zsh_autosuggest_start" \
-    zsh-users/zsh-autosuggestions \
-  atload"compdef g=git" \
-    OMZL::git.zsh \
-  Aloxaf/fzf-tab
+  # plugins (turbo mode: deferred loading for faster startup)
+  zinit wait lucid for \
+    atinit"zicompinit; zicdreplay" \
+      zdharma-continuum/fast-syntax-highlighting \
+    blockf \
+      zsh-users/zsh-completions \
+    atload"!_zsh_autosuggest_start" \
+      zsh-users/zsh-autosuggestions \
+    atload"compdef g=git" \
+      OMZL::git.zsh \
+    Aloxaf/fzf-tab
 
-# fzf-git: git keybindings (ctrl-g ctrl-f for files, ctrl-g ctrl-b for branches, etc.)
-zinit wait lucid for junegunn/fzf-git.sh
+  # fzf-git: git keybindings (ctrl-g ctrl-f for files, ctrl-g ctrl-b for branches, etc.)
+  zinit wait lucid for junegunn/fzf-git.sh
+fi
+
+# theme: powerlevel10k config (outside zinit block; prefer dotfiles path, else symlinked)
+if [[ -f "${DOTFILES:-$HOME/.dotfiles}/.p10k.zsh" ]]; then
+  source "${DOTFILES:-$HOME/.dotfiles}/.p10k.zsh"
+elif [[ -f "$HOME/.p10k.zsh" ]]; then
+  source "$HOME/.p10k.zsh"
+fi
 
 # zstyles
 zstyle ':completion:*' menu select
@@ -99,8 +106,7 @@ export PAGER=less
 export REPORTTIME=5                # show timing for commands >5s
 export KEYTIMEOUT=1                # reduce key sequence delay
 export ZLE_RPROMPT_INDENT=0        # fix right-prompt spacing
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+# LANG/LC_ALL set in .zprofile
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # aliases: tools
@@ -158,9 +164,11 @@ add-zsh-hook precmd _reset_cursor
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
-# fzf: shell integration
-source "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/completion.zsh" 2>/dev/null
-source "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
+# fzf: shell integration (only if fzf is installed via Homebrew)
+_fzf_prefix="${HOMEBREW_PREFIX:-$(command -v brew &>/dev/null && brew --prefix 2>/dev/null)}"
+[[ -n "$_fzf_prefix" ]] && [[ -f "$_fzf_prefix/opt/fzf/shell/completion.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/completion.zsh" 2>/dev/null
+[[ -n "$_fzf_prefix" ]] && [[ -f "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
+unset _fzf_prefix
 export FZF_DEFAULT_OPTS="
   --ansi --border --height=40% --layout=reverse --inline-info
   --bind tab:accept,ctrl-n:down,ctrl-p:up
@@ -170,5 +178,5 @@ export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 
-# zoxide: smart cd (we define custom `z` function above)
+# zoxide: prompt hook updates DB on cd; custom `z` above overrides command (--no-cmd)
 eval "$(zoxide init zsh --hook=prompt --no-cmd)"
