@@ -27,8 +27,8 @@ end
 local prettier = { "prettierd", "prettier", stop_after_first = true }
 
 local languages = {
-	core = {
-		treesitter = { "lua", "vim", "vimdoc", "query", "regex", "markdown", "markdown_inline" },
+	lua = {
+		treesitter = { "lua", "vim", "vimdoc", "query", "regex" },
 		lsp = {
 			lua_ls = {
 				settings = {
@@ -44,6 +44,14 @@ local languages = {
 		formatters = {
 			lua = { "stylua" },
 		},
+		dap = {},
+	},
+
+	markdown = {
+		treesitter = { "markdown", "markdown_inline" },
+		lsp = {},
+		linters = {},
+		formatters = {},
 		dap = {},
 	},
 
@@ -92,35 +100,13 @@ local languages = {
 		},
 	},
 
-	web = {
-		treesitter = {
-			"javascript", "typescript", "tsx",
-			"json", "jsonc", "yaml", "toml",
-			"html", "css", "scss", "svelte",
-		},
+	typescript = {
+		treesitter = { "javascript", "typescript", "tsx" },
 		lsp = {
 			vtsls = {},
-			html = {},
-			cssls = {},
-			tailwindcss = {},
-			svelte = {
-				settings = {
-					svelte = {
-						plugin = {
-							svelte = { defaultScriptLanguage = "ts" },
-						},
-					},
-				},
-			},
 		},
-		linters = for_filetypes(
-			{ "javascript", "typescript", "javascriptreact", "typescriptreact" },
-			{ "eslint_d" }
-		),
-		formatters = for_filetypes(
-			{ "javascript", "typescript", "javascriptreact", "typescriptreact", "html", "css", "json", "yaml" },
-			prettier
-		),
+		linters = for_filetypes({ "javascript", "typescript", "javascriptreact", "typescriptreact" }, { "eslint_d" }),
+		formatters = for_filetypes({ "javascript", "typescript", "javascriptreact", "typescriptreact" }, prettier),
 		dap = {
 			adapters = { "js-debug-adapter" },
 			setup = function(dap)
@@ -146,7 +132,78 @@ local languages = {
 		},
 	},
 
-	shell = {
+	html = {
+		treesitter = { "html" },
+		lsp = {
+			html = {},
+		},
+		linters = {},
+		formatters = {
+			html = prettier,
+		},
+		dap = {},
+	},
+
+	css = {
+		treesitter = { "css", "scss" },
+		lsp = {
+			cssls = {},
+			tailwindcss = {},
+		},
+		linters = {},
+		formatters = {
+			css = prettier,
+		},
+		dap = {},
+	},
+
+	svelte = {
+		treesitter = { "svelte" },
+		lsp = {
+			svelte = {
+				settings = {
+					svelte = {
+						plugin = {
+							svelte = { defaultScriptLanguage = "ts" },
+						},
+					},
+				},
+			},
+		},
+		linters = {},
+		formatters = {},
+		dap = {},
+	},
+
+	json = {
+		treesitter = { "json", "jsonc" },
+		lsp = {},
+		linters = {},
+		formatters = {
+			json = prettier,
+		},
+		dap = {},
+	},
+
+	yaml = {
+		treesitter = { "yaml" },
+		lsp = {},
+		linters = {},
+		formatters = {
+			yaml = prettier,
+		},
+		dap = {},
+	},
+
+	toml = {
+		treesitter = { "toml" },
+		lsp = {},
+		linters = {},
+		formatters = {},
+		dap = {},
+	},
+
+	bash = {
 		treesitter = { "bash" },
 		lsp = {
 			bashls = {},
@@ -160,20 +217,47 @@ local languages = {
 		dap = {},
 	},
 
-	infra = {
-		treesitter = { "proto", "terraform", "hcl", "sql", "dockerfile" },
+	terraform = {
+		treesitter = { "terraform", "hcl" },
 		lsp = {
 			terraformls = {},
+		},
+		linters = {},
+		formatters = {},
+		dap = {},
+	},
+
+	proto = {
+		treesitter = { "proto" },
+		lsp = {
 			buf_ls = {},
-			dockerls = {},
 		},
 		linters = {
-			dockerfile = { "hadolint" },
 			proto = { "buf_lint" },
 		},
 		formatters = {
 			proto = { "buf" },
 		},
+		dap = {},
+	},
+
+	docker = {
+		treesitter = { "dockerfile" },
+		lsp = {
+			dockerls = {},
+		},
+		linters = {
+			dockerfile = { "hadolint" },
+		},
+		formatters = {},
+		dap = {},
+	},
+
+	sql = {
+		treesitter = { "sql" },
+		lsp = {},
+		linters = {},
+		formatters = {},
 		dap = {},
 	},
 }
