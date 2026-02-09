@@ -120,7 +120,15 @@ fi
 banner "HOMEBREW DEPENDENCIES"
 info "Installing packages from Brewfile..."
 if [[ -f ./Brewfile ]]; then
-  brew bundle --cleanup --file ./Brewfile
+  warning "brew bundle --cleanup will uninstall any formulae/casks not listed in the Brewfile."
+  printf "  Continue with cleanup? [y/N] "
+  read -r confirm
+  if [[ "$confirm" =~ ^[Yy]$ ]]; then
+    brew bundle --cleanup --file ./Brewfile
+  else
+    info "Installing/upgrading from Brewfile without cleanup..."
+    brew bundle --file ./Brewfile
+  fi
 else
   warning "Brewfile not found, skipping Homebrew dependencies"
 fi
@@ -235,6 +243,8 @@ else
 fi
 
 banner "SYSTEM CONFIGURATION"
+warning "Some steps require administrator privileges (sudo). You may be prompted for your password."
+sudo -v
 
 info "Keyboard & Input Settings"
 defaults write -g InitialKeyRepeat -int 15

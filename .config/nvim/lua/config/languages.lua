@@ -33,8 +33,11 @@ local languages = {
 			lua_ls = {
 				settings = {
 					Lua = {
-						diagnostics = { globals = { "vim" } },
-						workspace = { checkThirdParty = false },
+						runtime = { version = "LuaJIT" },
+						workspace = {
+							checkThirdParty = false,
+							library = { vim.env.VIMRUNTIME },
+						},
 						telemetry = { enable = false },
 					},
 				},
@@ -84,7 +87,6 @@ local languages = {
 			rust_analyzer = {
 				settings = {
 					["rust-analyzer"] = {
-						cargo = { loadOutDirsFromCheck = true },
 						procMacro = { enable = true },
 						check = { command = "clippy" },
 					},
@@ -171,13 +173,17 @@ local languages = {
 			},
 		},
 		linters = {},
-		formatters = {},
+		formatters = {
+			svelte = prettier,
+		},
 		dap = {},
 	},
 
 	json = {
 		treesitter = { "json", "jsonc" },
-		lsp = {},
+		lsp = {
+			jsonls = {},
+		},
 		linters = {},
 		formatters = {
 			json = prettier,
@@ -187,7 +193,9 @@ local languages = {
 
 	yaml = {
 		treesitter = { "yaml" },
-		lsp = {},
+		lsp = {
+			yamlls = {},
+		},
 		linters = {},
 		formatters = {
 			yaml = prettier,
@@ -197,9 +205,13 @@ local languages = {
 
 	toml = {
 		treesitter = { "toml" },
-		lsp = {},
+		lsp = {
+			taplo = {},
+		},
 		linters = {},
-		formatters = {},
+		formatters = {
+			toml = { "taplo" },
+		},
 		dap = {},
 	},
 
@@ -258,6 +270,20 @@ local languages = {
 		lsp = {},
 		linters = {},
 		formatters = {},
+		dap = {},
+	},
+
+	python = {
+		treesitter = { "python" },
+		lsp = {
+			basedpyright = {},
+		},
+		linters = {
+			python = { "ruff" },
+		},
+		formatters = {
+			python = { "ruff_format" },
+		},
 		dap = {},
 	},
 }

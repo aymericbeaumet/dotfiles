@@ -56,6 +56,31 @@ vim.o.timeout = true
 vim.o.timeoutlen = 300
 vim.o.ttimeoutlen = 0
 
+-- Diagnostics (independent of colorscheme)
+vim.diagnostic.config({
+	virtual_text = {
+		spacing = 4,
+		prefix = "●",
+	},
+	underline = true,
+	update_in_insert = false,
+	severity_sort = true,
+	float = {
+		border = "rounded",
+		source = true,
+		header = "",
+		prefix = "",
+	},
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "\u{f057}",
+			[vim.diagnostic.severity.WARN] = "\u{f071}",
+			[vim.diagnostic.severity.INFO] = "\u{f05a}",
+			[vim.diagnostic.severity.HINT] = "\u{f044}",
+		},
+	},
+})
+
 -- Disable unused built-in plugins for faster startup
 for _, plugin in ipairs({
 	"2html_plugin", "getscript", "getscriptPlugin", "gzip", "logipat",

@@ -8,7 +8,6 @@ return {
 		opts = {},
 	},
 	{ "tpope/vim-unimpaired", event = "VeryLazy" },
-	{ "vitalk/vim-shebang", event = "VeryLazy" },
 	{
 		"ethanholz/nvim-lastplace",
 		event = "BufReadPost",
@@ -311,32 +310,7 @@ return {
 			vim.g.nord_borders = true
 			vim.g.nord_italic = true
 			vim.g.nord_contrast = true
-
 			require("nord").set()
-
-			vim.diagnostic.config({
-				virtual_text = {
-					spacing = 4,
-					prefix = "●",
-				},
-				underline = true,
-				update_in_insert = false,
-				severity_sort = true,
-				float = {
-					border = "rounded",
-					source = true,
-					header = "",
-					prefix = "",
-				},
-				signs = {
-					text = {
-						[vim.diagnostic.severity.ERROR] = "",
-						[vim.diagnostic.severity.WARN] = "",
-						[vim.diagnostic.severity.INFO] = "",
-						[vim.diagnostic.severity.HINT] = "",
-					},
-				},
-			})
 		end,
 	},
 
@@ -655,7 +629,6 @@ return {
 			lsp.config("*", {
 				capabilities = capabilities,
 				flags = flags,
-			handlers = {},
 			})
 
 			-- Per-server settings from config/languages.lua
@@ -680,6 +653,22 @@ return {
 						vim.lsp.buf.definition()
 						vim.cmd("normal! zz")
 					end, "LSP go to definition")
+					map("n", "<leader>lA", vim.lsp.buf.code_action, "Code action")
+					map("n", "<leader>lR", vim.lsp.buf.rename, "Rename symbol")
+					map("n", "<leader>ld", function()
+						vim.lsp.buf.declaration()
+						vim.cmd("normal! zz")
+					end, "Go to declaration")
+					map("n", "<leader>li", function()
+						vim.lsp.buf.implementation()
+						vim.cmd("normal! zz")
+					end, "Go to implementation")
+					map("n", "<leader>ll", vim.lsp.buf.document_symbol, "List symbols")
+					map("n", "<leader>lr", vim.lsp.buf.references, "List references")
+					map("n", "<leader>lt", function()
+						vim.lsp.buf.type_definition()
+						vim.cmd("normal! zz")
+					end, "Go to type definition")
 
 					-- reference highlights when supported (skip on large files)
 					if client:supports_method("textDocument/documentHighlight") and not vim.b[buf].large_file then
@@ -811,36 +800,8 @@ return {
 		keys = {
 			-- Debug group (keymaps on nvim-dap)
 			{ "<leader>d", group = "debug" },
-			-- LSP group
+			-- LSP group (keymaps set buffer-locally in LspAttach)
 			{ "<leader>l", group = "lsp" },
-			{ "<leader>lA", vim.lsp.buf.code_action, desc = "Code action" },
-			{ "<leader>lR", vim.lsp.buf.rename, desc = "Rename symbol" },
-			{
-				"<leader>ld",
-				function()
-					vim.lsp.buf.declaration()
-					vim.cmd("normal! zz")
-				end,
-				desc = "Go to declaration",
-			},
-			{
-				"<leader>li",
-				function()
-					vim.lsp.buf.implementation()
-					vim.cmd("normal! zz")
-				end,
-				desc = "Go to implementation",
-			},
-			{ "<leader>ll", vim.lsp.buf.document_symbol, desc = "List symbols" },
-			{ "<leader>lr", vim.lsp.buf.references, desc = "List references" },
-			{
-				"<leader>lt",
-				function()
-					vim.lsp.buf.type_definition()
-					vim.cmd("normal! zz")
-				end,
-				desc = "Go to type definition",
-			},
 			-- Git group (telescope/git-worktree keymaps on their plugins)
 			{ "<leader>g", group = "git" },
 		},

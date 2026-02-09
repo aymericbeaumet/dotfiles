@@ -61,6 +61,9 @@
 	lineNumber = true
 	patternType = extended
 
+[merge]
+	conflictstyle = zdiff3
+
 [man]
 	viewer = less
 
@@ -111,5 +114,5 @@
 	hyperlinks-file-link-format = "file://{path}:{line}"
 
 [diff]
-	algorithm = patience
+	algorithm = histogram
 	colorMoved = default
