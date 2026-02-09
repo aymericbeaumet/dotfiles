@@ -111,6 +111,7 @@ export KEYTIMEOUT=1                # reduce key sequence delay
 export ZLE_RPROMPT_INDENT=0        # fix right-prompt spacing
 # LANG/LC_ALL set in .zprofile
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export BAT_PAGER="less -RFX"
 
 # aliases: tools
 alias ap=ansible-playbook
