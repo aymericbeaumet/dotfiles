@@ -7,6 +7,9 @@
       "Edit",
       "mcp__*"
     ],
-    "deny": []
+    "deny": [
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
   }
 }
