@@ -16,6 +16,7 @@ vim.o.textwidth = 80
 vim.o.autoindent = true
 
 -- interface
+vim.o.winborder = "rounded"
 vim.o.mouse = "a"
 vim.o.mousemodel = "extend"
 vim.o.number = true

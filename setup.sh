@@ -159,7 +159,7 @@ symlink() {
 info "Linking dotfiles and Brewfile..."
 while IFS= read -r file; do
   symlink "${file#./}"
-done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \) \! -name '.gitmodules')
+done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \))
 
 # Symlink hidden directories
 info "Linking hidden directories..."
@@ -218,7 +218,7 @@ if command -v tmux &>/dev/null; then
   # TPM auto-installs from .tmux.conf; start a detached session to trigger it,
   # then wait-for the deterministic signal sent at the end of .tmux.conf
   info "Installing tmux plugins (TPM bootstraps from .tmux.conf)..."
-  tmux new-session -d -s _setup
+  tmux new-session -d -s __setup__
   tmux wait-for tpm-ready
 
   TPM_DIR="$HOME/.tmux/plugins/tpm"
