@@ -32,6 +32,21 @@ Session.vim
 DerivedData
 xcuserdata
 
+# Secrets
+.env
+.env.local
+.env*.local
+
+# Python
+__pycache__/
+*.pyc
+
+# Terraform
+.terraform/
+
+# Logs
+*.log
+
 # Node.js
 npm-debug.log
 

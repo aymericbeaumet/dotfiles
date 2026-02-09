@@ -99,8 +99,7 @@ man() {
   fi
 }
 
-# environment
-typeset -U path                    # deduplicate PATH
+# environment (path deduplication is in .zprofile)
 export EDITOR=nvim
 export PAGER=less
 export REPORTTIME=5                # show timing for commands >5s
@@ -149,6 +148,7 @@ export SAVEHIST=50000
 setopt EXTENDED_HISTORY HIST_EXPIRE_DUPS_FIRST HIST_FCNTL_LOCK
 setopt HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_NO_FUNCTIONS HIST_NO_STORE
 setopt HIST_REDUCE_BLANKS HIST_SAVE_BY_COPY HIST_SAVE_NO_DUPS SHARE_HISTORY
+# SHARE_HISTORY implies INC_APPEND_HISTORY_TIME; unsetting APPEND/INC_APPEND is redundant but explicit
 unsetopt APPEND_HISTORY INC_APPEND_HISTORY
 
 # options: input/output

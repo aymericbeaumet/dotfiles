@@ -1,21 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 
+# Colors (shared by work, _work_open, _work_ensure_repos, _work_list_and_select)
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[0;33m'
+readonly BLUE='\033[0;34m'
+readonly CYAN='\033[0;36m'
+readonly BOLD='\033[1m'
+readonly NC='\033[0m' # No Color
+
 work() {
   set -euo pipefail
 
   # Configurable via env vars
   local WORKDIR="${WORKDIR:-$HOME/beside}"
   local GIT_BRANCH_PREFIX="${GIT_BRANCH_PREFIX:-$USER/}"
-
-  # Colors
-  local RED='\033[0;31m'
-  local GREEN='\033[0;32m'
-  local YELLOW='\033[0;33m'
-  local BLUE='\033[0;34m'
-  local CYAN='\033[0;36m'
-  local BOLD='\033[1m'
-  local NC='\033[0m' # No Color
 
   local only_repo=""
   local positional_args=()
@@ -197,11 +197,6 @@ _work_open() {
   local slug="$1"
   local target_dir="$2"
 
-  # Colors
-  local GREEN='\033[0;32m'
-  local CYAN='\033[0;36m'
-  local NC='\033[0m'
-
   echo -e "${CYAN}Preparing${NC} ${target_dir}"
 
   # Create tmux window with nvim+ClaudeCode on left (62%), shell on right (38%)
@@ -220,12 +215,6 @@ _work_open() {
 
 _work_ensure_repos() {
   local base_root="$1"
-
-  # Colors
-  local GREEN='\033[0;32m'
-  local BLUE='\033[0;34m'
-  local CYAN='\033[0;36m'
-  local NC='\033[0m'
 
   # Define all TMA repos
   local repos=("tma-backend" "tma-clients" "tma-infra" "tma-data")
@@ -253,14 +242,6 @@ _work_ensure_repos() {
 _work_list_and_select() {
   local workdir="$1"
   local only_repo="$2"
-
-  # Colors (need to redefine since we're in a subshell-ish context)
-  local RED='\033[0;31m'
-  local GREEN='\033[0;32m'
-  local YELLOW='\033[0;33m'
-  local CYAN='\033[0;36m'
-  local BOLD='\033[1m'
-  local NC='\033[0m'
 
   # Check if fzf is available
   if ! command -v fzf &>/dev/null; then
