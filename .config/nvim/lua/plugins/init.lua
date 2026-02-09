@@ -405,17 +405,48 @@ return {
 		dependencies = { "nvim-lua/plenary.nvim" },
 		keys = {
 			{ "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code" },
+			{ "<leader>cP", "<cmd>ClaudeCode<cr>", desc = "Pause Claude conversation" },
 			{ "<leader>cC", "<cmd>ClaudeCodeContinue<cr>", desc = "Continue Claude conversation" },
 			{ "<leader>cR", "<cmd>ClaudeCodeResume<cr>", desc = "Resume Claude conversation" },
+			{
+				"<leader>cs",
+				function()
+					-- Yank visual selection
+					vim.cmd('noautocmd normal! "vy')
+					local text = vim.fn.getreg("v")
+					-- Find the Claude Code terminal buffer and send text
+					for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+						if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "terminal" then
+							local name = vim.api.nvim_buf_get_name(buf)
+							if name:match("claude") then
+								local chan = vim.b[buf].terminal_job_id
+								if chan then
+									-- Bracketed paste so multiline text doesn't trigger submit
+									vim.fn.chansend(chan, "\x1b[200~" .. text .. "\x1b[201~")
+									-- Focus the terminal window
+									for _, win in ipairs(vim.api.nvim_list_wins()) do
+										if vim.api.nvim_win_get_buf(win) == buf then
+											vim.api.nvim_set_current_win(win)
+											vim.cmd("startinsert")
+											return
+										end
+									end
+								end
+							end
+						end
+					end
+					vim.notify("Claude Code is not running. Open it with <leader>cc first", vim.log.levels.WARN)
+				end,
+				mode = "v",
+				desc = "Send selection to Claude Code",
+			},
 		},
 		opts = {
+			close_on_exit = true,
 			window = {
-				position = "float",
-				float = {
-					width = "90%",
-					height = "90%",
-					border = "rounded",
-				},
+				position = "vsplit",
+				split_side = "right",
+				width = 80,
 			},
 		},
 	},
