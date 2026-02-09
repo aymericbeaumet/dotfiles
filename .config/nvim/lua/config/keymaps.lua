@@ -9,7 +9,17 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 	end,
 })
 
+-- Auto-show diagnostic float on CursorHold
+vim.api.nvim_create_autocmd("CursorHold", {
+	callback = function()
+		vim.diagnostic.open_float(nil, { focusable = false, scope = "cursor" })
+	end,
+})
+
 for _, mapping in ipairs({
+	{ "n", "gl", vim.diagnostic.open_float, desc = "Show diagnostic float" },
+	{ "n", "[d", function() vim.diagnostic.jump({ count = -1 }) vim.cmd("normal! zz") end, desc = "Previous diagnostic" },
+	{ "n", "]d", function() vim.diagnostic.jump({ count = 1 }) vim.cmd("normal! zz") end, desc = "Next diagnostic" },
 	{ "n", "j", "gj", desc = "Move down (display line)" },
 	{ "v", "j", "gj", desc = "Move down (display line)" },
 	{ "n", "k", "gk", desc = "Move up (display line)" },

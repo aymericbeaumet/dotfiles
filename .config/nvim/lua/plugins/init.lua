@@ -79,6 +79,73 @@ return {
 		end,
 	},
 
+	-- File tree explorer
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+			"MunifTanjim/nui.nvim",
+		},
+		keys = {
+			{ "<leader>t", "<cmd>Neotree toggle<cr>", desc = "Toggle tree explorer" },
+		},
+		opts = {
+			event_handlers = {
+				{
+					event = "neo_tree_buffer_enter",
+					handler = function()
+						vim.schedule(function()
+							-- quit nvim if neo-tree is the last open window
+							local wins = vim.api.nvim_list_wins()
+							local non_floating = vim.tbl_filter(function(w)
+								return vim.api.nvim_win_get_config(w).relative == ""
+							end, wins)
+							if #non_floating == 1 then
+								vim.cmd("quit")
+							end
+						end)
+					end,
+				},
+			},
+			filesystem = {
+				follow_current_file = { enabled = true },
+				use_libuv_file_watcher = true,
+				filtered_items = {
+					visible = true,
+					hide_dotfiles = false,
+					hide_gitignored = false,
+				},
+			},
+			window = {
+				width = 35,
+				mappings = {
+					["<space>"] = "none", -- don't conflict with leader
+					["<LeftRelease>"] = "open", -- single click to toggle folder / open file
+				},
+			},
+			default_component_configs = {
+				indent = {
+					with_expanders = true,
+				},
+				git_status = {
+					symbols = {
+						added = "+",
+						modified = "~",
+						deleted = "-",
+						renamed = "→",
+						untracked = "?",
+						ignored = "◌",
+						unstaged = "○",
+						staged = "●",
+						conflict = "",
+					},
+				},
+			},
+		},
+	},
+
 	{
 		"numToStr/Comment.nvim",
 		dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
@@ -145,15 +212,11 @@ return {
 				defaults = {
 					sorting_strategy = "ascending",
 					layout_strategy = "horizontal_merged",
-					layout_config = {
-						prompt_position = "top",
-						width = function(_, max_columns)
-							return max_columns
-						end,
-						height = function(_, _, max_lines)
-							return max_lines
-						end,
-					},
+				layout_config = {
+					prompt_position = "top",
+					width = 0.8,
+					height = 0.8,
+				},
 					mappings = {
 						i = {
 							["<esc>"] = actions.close,
@@ -192,7 +255,19 @@ return {
 			require("nord").set()
 
 			vim.diagnostic.config({
-				float = { border = "rounded" },
+				virtual_text = {
+					spacing = 4,
+					prefix = "●",
+				},
+				underline = true,
+				update_in_insert = false,
+				severity_sort = true,
+				float = {
+					border = "rounded",
+					source = true,
+					header = "",
+					prefix = "",
+				},
 				signs = {
 					text = {
 						[vim.diagnostic.severity.ERROR] = "",
@@ -301,7 +376,7 @@ return {
 		opts = {
 			indent = { char = "│" },
 			scope = { enabled = true, show_start = false, show_end = false },
-			exclude = { filetypes = { "help", "lazy", "mason", "oil" } },
+			exclude = { filetypes = { "help", "lazy", "mason", "neo-tree", "oil" } },
 		},
 	},
 
@@ -326,6 +401,7 @@ return {
 				end,
 				desc = "Previous TODO",
 			},
+			{ "<leader>x", group = "diagnostics" },
 			{ "<leader>xt", "<cmd>TodoTelescope<cr>", desc = "Search TODOs" },
 		},
 	},
@@ -456,20 +532,7 @@ return {
 			{
 				"mason-org/mason-lspconfig.nvim",
 				opts = {
-					ensure_installed = {
-						"gopls",
-						"rust_analyzer",
-						"vtsls",
-						"lua_ls",
-						"bashls",
-						"terraformls",
-						"buf_ls",
-						"dockerls",
-						"html",
-						"cssls",
-						"tailwindcss",
-						"svelte",
-					},
+					ensure_installed = require("config.languages").lsp_servers(),
 					automatic_enable = true,
 				},
 			},
@@ -477,19 +540,7 @@ return {
 			{
 				"WhoIsSethDaniel/mason-tool-installer.nvim",
 				opts = {
-					ensure_installed = {
-						-- Linters
-						"eslint_d",
-						"shellcheck",
-						"hadolint",
-						"golangci-lint",
-						-- Formatters
-						"stylua",
-						"gofumpt",
-						"goimports",
-						"prettierd",
-						"shfmt",
-					},
+					ensure_installed = require("config.languages").mason_tools(),
 					auto_update = true,
 					run_on_start = true,
 				},
@@ -504,42 +555,13 @@ return {
 			lsp.config("*", {
 				capabilities = capabilities,
 				flags = flags,
-				handlers = {
-					["textDocument/hover"] = lsp.with(lsp.handlers.hover, { border = "rounded" }),
-				},
+			handlers = {},
 			})
 
-			-- Per-server tweaks
-			lsp.config("gopls", {
-				settings = { gopls = { directoryFilters = { "-mocks" } } },
-			})
-			lsp.config("rust_analyzer", {
-				settings = {
-					["rust-analyzer"] = {
-						cargo = { loadOutDirsFromCheck = true },
-						procMacro = { enable = true },
-						check = { command = "clippy" },
-					},
-				},
-			})
-			lsp.config("lua_ls", {
-				settings = {
-					Lua = {
-						diagnostics = { globals = { "vim" } },
-						workspace = { checkThirdParty = false },
-						telemetry = { enable = false },
-					},
-				},
-			})
-			lsp.config("svelte", {
-				settings = {
-					svelte = {
-						plugin = {
-							svelte = { defaultScriptLanguage = "ts" },
-						},
-					},
-				},
-			})
+			-- Per-server settings from config/languages.lua
+			for server, cfg in pairs(require("config.languages").lsp_configs()) do
+				lsp.config(server, cfg)
+			end
 
 			-- LSP UX niceties
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -558,17 +580,8 @@ return {
 						vim.lsp.buf.definition()
 						vim.cmd("normal! zz")
 					end, "LSP go to definition")
-					map("n", "[d", function()
-						vim.diagnostic.jump({ count = -1 })
-						vim.cmd("normal! zz")
-					end, "Previous diagnostic")
-					map("n", "]d", function()
-						vim.diagnostic.jump({ count = 1 })
-						vim.cmd("normal! zz")
-					end, "Next diagnostic")
 
-					-- inlay hints & reference highlights when supported
-					pcall(vim.lsp.inlay_hint.enable, true, { bufnr = buf })
+					-- reference highlights when supported
 					if client:supports_method("textDocument/documentHighlight") then
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = buf,
@@ -590,17 +603,7 @@ return {
 		event = { "BufReadPost", "BufWritePost", "InsertLeave" },
 		config = function()
 			local lint = require("lint")
-			lint.linters_by_ft = {
-				dockerfile = { "hadolint" },
-				go = { "golangcilint" },
-				proto = { "buf_lint" },
-				sh = { "shellcheck" },
-				-- web
-				javascript = { "eslint_d" },
-				typescript = { "eslint_d" },
-				javascriptreact = { "eslint_d" },
-				typescriptreact = { "eslint_d" },
-			}
+			lint.linters_by_ft = require("config.languages").linters_by_ft()
 			local grp = vim.api.nvim_create_augroup("aym.lint", {})
 			vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
 				group = grp,
@@ -619,24 +622,7 @@ return {
 				timeout_ms = 2000,
 				lsp_format = "fallback",
 			},
-			formatters_by_ft = {
-				-- Go
-				go = { "gofumpt", "goimports" },
-				-- Web
-				javascript = { "prettierd", "prettier", stop_after_first = true },
-				typescript = { "prettierd", "prettier", stop_after_first = true },
-				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-				html = { "prettierd", "prettier", stop_after_first = true },
-				css = { "prettierd", "prettier", stop_after_first = true },
-				json = { "prettierd", "prettier", stop_after_first = true },
-				yaml = { "prettierd", "prettier", stop_after_first = true },
-				-- Rust / Lua / Shell / Proto
-				rust = { "rustfmt" },
-				lua = { "stylua" },
-				sh = { "shfmt" },
-				proto = { "buf" },
-			},
+			formatters_by_ft = require("config.languages").formatters_by_ft(),
 		},
 		init = function()
 			vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
@@ -654,7 +640,7 @@ return {
 			{
 				"jay-babu/mason-nvim-dap.nvim",
 				opts = {
-					ensure_installed = { "delve", "codelldb", "js-debug-adapter" },
+					ensure_installed = require("config.languages").dap_adapters(),
 					automatic_installation = true,
 					handlers = {}, -- use default mappings from the plugin
 				},
@@ -680,30 +666,8 @@ return {
 			vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "Run last" })
 			vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "Terminate" })
 
-			-- Go adapter helpers
-			pcall(function()
-				require("dap-go").setup()
-			end)
-
-			-- JS/TS with js-debug-adapter (pwa-node)
-			dap.adapters["pwa-node"] = {
-				type = "server",
-				host = "127.0.0.1",
-				port = "${port}",
-				executable = { command = "js-debug-adapter", args = { "${port}" } },
-			}
-			for _, ft in ipairs({ "javascript", "typescript", "javascriptreact", "typescriptreact" }) do
-				dap.configurations[ft] = {
-					{
-						type = "pwa-node",
-						request = "launch",
-						name = "Launch file",
-						program = "${file}",
-						cwd = "${workspaceFolder}",
-						runtimeExecutable = "node",
-					},
-				}
-			end
+			-- Language-specific DAP adapters/configurations from config/languages.lua
+			require("config.languages").setup_dap(dap)
 		end,
 	},
 
@@ -711,11 +675,14 @@ return {
 	{
 		"folke/trouble.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("trouble").setup({
-				win = { position = "top" },
-			})
-		end,
+		opts = {
+			win = { position = "top" },
+		},
+		keys = {
+			{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (workspace)" },
+			{ "<leader>xd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Diagnostics (buffer)" },
+			{ "<leader>xl", "<cmd>Trouble loclist toggle<cr>", desc = "Location list" },
+		},
 	},
 
 	-- bindings
@@ -801,24 +768,6 @@ return {
 				desc = "Go to type definition",
 			},
 			{ "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
-			{
-				"<leader>q",
-				function()
-					local qf_exists = false
-					for _, win in pairs(vim.fn.getwininfo()) do
-						if win.quickfix == 1 then
-							qf_exists = true
-							break
-						end
-					end
-					if qf_exists then
-						vim.cmd("cclose")
-					else
-						vim.cmd("copen")
-					end
-				end,
-				desc = "Toggle quickfix list",
-			},
 			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
 			-- Git group
 			{ "<leader>g", group = "git" },
@@ -855,47 +804,8 @@ return {
 			{ "nvim-treesitter/nvim-treesitter-context", opts = { max_lines = 3, trim_scope = "outer" } },
 		},
 		opts = function()
-			-- languages you use daily
-			local ensure = {
-				-- Core/editor
-				"lua",
-				"vim",
-				"vimdoc",
-				"query",
-				"regex",
-				"markdown",
-				"markdown_inline",
-				-- Go
-				"go",
-				"gomod",
-				"gowork",
-				"gosum",
-				-- Rust
-				"rust",
-				-- Web
-				"javascript",
-				"typescript",
-				"tsx",
-				"json",
-				"jsonc",
-				"yaml",
-				"toml",
-				"html",
-				"css",
-				"scss",
-				"svelte",
-				-- Infra / data
-				"proto",
-				"terraform",
-				"hcl",
-				"sql",
-				-- Shell & tooling
-				"bash",
-				"dockerfile",
-			}
-
 			return {
-				ensure_installed = ensure,
+				ensure_installed = require("config.languages").treesitter_parsers(),
 				sync_install = false,
 
 				highlight = {
