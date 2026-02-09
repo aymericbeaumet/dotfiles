@@ -10,6 +10,9 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
+# Deduplicate PATH early (before any PATH modifications)
+typeset -U path
+
 # homebrew (support both Apple Silicon and Intel)
 export HOMEBREW_NO_ENV_HINTS=true
 if command -v brew &>/dev/null; then
@@ -27,13 +30,14 @@ fi
 
 # go
 export GOPATH="$HOME/go"
-export PATH="$GOPATH/bin:$PATH"
-export PATH="/usr/local/go/bin:$PATH"
+[[ -d "$GOPATH/bin" ]] && export PATH="$GOPATH/bin:$PATH"
+[[ -d /usr/local/go/bin ]] && export PATH="/usr/local/go/bin:$PATH"
 
 # rust/cargo
 export CARGO_HOME="$HOME/.cargo"
-export PATH="$CARGO_HOME/bin:$PATH"
-export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+[[ -d "$CARGO_HOME/bin" ]] && export PATH="$CARGO_HOME/bin:$PATH"
+[[ -d /opt/homebrew/opt/rustup/bin ]] && export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+[[ -d /usr/local/opt/rustup/bin ]] && export PATH="/usr/local/opt/rustup/bin:$PATH"
 
 # bat
 export BAT_THEME="Nord"

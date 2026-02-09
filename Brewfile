@@ -39,7 +39,6 @@ brew 'docker' # cli only
 brew 'golang'
 brew 'gradle'
 brew 'node'
-brew 'prettier'
 brew 'railway'
 brew 'redis'
 brew 'rustup'

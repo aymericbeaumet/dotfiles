@@ -462,7 +462,7 @@ return {
 						"lua_ls",
 						"bashls",
 						"terraformls",
-						"bufls",
+						"buf_ls",
 						"dockerls",
 						"html",
 						"cssls",
@@ -545,28 +545,12 @@ return {
 			})
 			lsp.config("bashls", {})
 			lsp.config("terraformls", {})
-			lsp.config("bufls", {})
+			lsp.config("buf_ls", {})
 			lsp.config("dockerls", {})
 			lsp.config("html", {})
 			lsp.config("cssls", {})
 			lsp.config("tailwindcss", {})
 			lsp.config("svelte", {})
-
-			-- Enable everything above
-			lsp.enable({
-				"gopls",
-				"rust_analyzer",
-				"vtsls",
-				"lua_ls",
-				"bashls",
-				"terraformls",
-				"bufls",
-				"dockerls",
-				"html",
-				"cssls",
-				"tailwindcss",
-				"svelte",
-			})
 
 			-- LSP UX niceties
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -861,7 +845,7 @@ return {
 
 	-- git worktree integration
 	{
-		"ThePrimeagen/git-worktree.nvim",
+		"polarmutex/git-worktree.nvim",
 		dependencies = { "nvim-telescope/telescope.nvim" },
 		config = function()
 			require("telescope").load_extension("git_worktree")

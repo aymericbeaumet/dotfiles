@@ -17,3 +17,4 @@ git clone --recursive git@github.com:aymericbeaumet/dotfiles.git "$HOME/.dotfile
 
 # Setup system
 "$HOME/.dotfiles/setup.sh"
+```

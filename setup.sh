@@ -31,20 +31,43 @@ error() { echo -e "${RED}  ✗${NC} $1" >&2; }
 # Error handler with enhanced output
 trap 'error "Script failed at line $LINENO in $BASH_SOURCE"; exit 1' ERR
 
+# Parse --dry-run
+DRY_RUN=false
+for arg in "$@"; do
+  if [[ "$arg" == "--dry-run" ]]; then
+    DRY_RUN=true
+    break
+  fi
+done
+
+# Helper: run command or print what would be run
+run_cmd() {
+  if [[ "$DRY_RUN" == true ]]; then
+    info "Would run: $*"
+  else
+    "$@"
+  fi
+}
+
 # Start script
 banner "DOTFILES SETUP SCRIPT"
 info "Starting dotfiles installation and system configuration..."
 info "Working directory: $(pwd)"
 info "Date: $(date '+%Y-%m-%d %H:%M:%S')"
+[[ "$DRY_RUN" == true ]] && warning "DRY RUN MODE - no changes will be made"
 
 banner "HOMEBREW INSTALLATION"
 if ! command -v brew &>/dev/null; then
-  warning "Homebrew not found. Installing Homebrew..."
-  warning "About to download and run the official Homebrew install script (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)."
-  warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
-  read -r
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  if [[ "$DRY_RUN" == true ]]; then
+    info "Would install Homebrew (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  else
+    warning "Homebrew not found. Installing Homebrew..."
+    warning "About to download and run the official Homebrew install script (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)."
+    warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+    read -r
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
 else
   info "Homebrew is already installed at $(which brew)"
   info "Homebrew version: $(brew --version | head -n1)"
@@ -65,21 +88,25 @@ elif [[ -d /nix ]] || [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc
     warning "Could not source Nix profile, but Nix appears to be installed"
   fi
 else
-  warning "Nix not found. Installing Nix..."
-  warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
-  warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
-  read -r
-  curl -L https://nixos.org/nix/install | sh -s -- --daemon
-  # Source nix profile for current session
-  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  if [[ "$DRY_RUN" == true ]]; then
+    info "Would install Nix (https://nixos.org/nix/install --daemon)"
+  else
+    warning "Nix not found. Installing Nix..."
+    warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
+    warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+    read -r
+    curl -L https://nixos.org/nix/install | sh -s -- --daemon
+    # Source nix profile for current session
+    if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+      . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    fi
   fi
 fi
 
 banner "HOMEBREW DEPENDENCIES"
 info "Installing packages from Brewfile..."
 if [[ -f ./Brewfile ]]; then
-  brew bundle --cleanup --file ./Brewfile
+  run_cmd brew bundle --cleanup --file ./Brewfile
 else
   warning "Brewfile not found, skipping Homebrew dependencies"
 fi
@@ -87,7 +114,7 @@ fi
 banner "NPM GLOBAL PACKAGES"
 if command -v npm &>/dev/null; then
   info "Installing global npm packages..."
-  npm install -g @anthropic-ai/claude-code @fsouza/prettierd eslint_d
+  run_cmd npm install -g @anthropic-ai/claude-code @fsouza/prettierd eslint_d
 else
   warning "npm not found, skipping global npm packages"
 fi
@@ -98,15 +125,15 @@ if [[ -d "$ZINIT_HOME" ]]; then
   info "Zinit is already installed at $ZINIT_HOME"
 else
   info "Installing zinit plugin manager..."
-  mkdir -p "$(dirname "$ZINIT_HOME")"
-  git clone --depth=1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+  run_cmd mkdir -p "$(dirname "$ZINIT_HOME")"
+  run_cmd git clone --depth=1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
   info "Zinit installed successfully"
 fi
 
 banner "GIT SUBMODULES"
 info "Updating git submodules..."
-git submodule update --init --recursive
-git submodule update --remote --merge
+run_cmd git submodule update --init --recursive
+run_cmd git submodule update --remote --merge
 
 banner "SYMLINKING DOTFILES"
 info "Creating symbolic links for configuration files..."
@@ -114,14 +141,37 @@ info "Creating symbolic links for configuration files..."
 symlink() {
 	local source="$1"
 	local target="$HOME/$1"
-	
-	# Show progress for each symlink
-	if [[ -e "$target" ]] || [[ -L "$target" ]]; then
-		rm -rf "$target"
+	local want_link="$PWD/$source"
+
+	# Skip if symlink already points to the correct target
+	if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$want_link" ]]; then
+		info "Symlink already correct: $target"
+		return 0
 	fi
-	
+
+	if [[ "$DRY_RUN" == true ]]; then
+		if [[ -e "$target" ]] && [[ ! -L "$target" ]]; then
+			info "Would backup $target and link $source -> $target"
+		else
+			info "Would link $source -> $target"
+		fi
+		return 0
+	fi
+
+	# Backup existing non-symlink file or directory before overwriting
+	if [[ -e "$target" ]] && [[ ! -L "$target" ]]; then
+		local backup="${target}.bak.$(date +%s)"
+		warning "Backing up existing: $target -> $backup"
+		mv "$target" "$backup"
+	fi
+
+	# Remove existing symlink if it points elsewhere
+	if [[ -L "$target" ]]; then
+		rm -f "$target"
+	fi
+
 	mkdir -p "$(dirname "$target")"
-	ln -sf "$PWD/$source" "$target"
+	ln -sf "$want_link" "$target"
 }
 
 # Symlink dotfiles and Brewfile
@@ -166,7 +216,9 @@ if command -v nvim &>/dev/null; then
 					   ! git -C "$plugin_dir" diff --cached --quiet 2>/dev/null || \
 					   [[ -n $(git -C "$plugin_dir" status --porcelain 2>/dev/null) ]]; then
 						warning "Found local changes in $plugin_name, cleaning..."
-						rm -rf "$plugin_dir"
+						if [[ "$DRY_RUN" != true ]]; then
+							rm -rf "$plugin_dir"
+						fi
 						((cleaned++)) || true
 					fi
 				fi
@@ -180,8 +232,8 @@ if command -v nvim &>/dev/null; then
 	
 	# Clean any problematic plugins before sync
 	clean_problematic_plugins
-	
-	nvim --headless '+Lazy! sync' +qa || true
+
+	run_cmd bash -c 'nvim --headless "+Lazy! sync" +qa' || true
 else
 	warning "Neovim not found, skipping plugin installation"
 fi
@@ -192,9 +244,9 @@ if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
 	info "Installing/updating tmux plugins..."
 	# TPM scripts use 'tmux start-server; show-environment' to find the plugin path.
 	# Set it directly in tmux's global environment so TPM can find it.
-	tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "$HOME/.tmux/plugins"
-	"$TPM_DIR/bin/install_plugins"
-	"$TPM_DIR/bin/update_plugins" all
+	run_cmd tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "$HOME/.tmux/plugins"
+	run_cmd "$TPM_DIR/bin/install_plugins"
+	run_cmd "$TPM_DIR/bin/update_plugins" all
 else
 	warning "TPM not found (should be installed via git submodules), skipping"
 fi
@@ -202,61 +254,63 @@ fi
 banner "SYSTEM CONFIGURATION"
 
 info "Keyboard & Input Settings"
-defaults write -g InitialKeyRepeat -int 15
-defaults write -g KeyRepeat -int 2
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+run_cmd defaults write -g InitialKeyRepeat -int 15
+run_cmd defaults write -g KeyRepeat -int 2
+run_cmd defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
 info "Text & Typing Preferences"
-defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+run_cmd defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+run_cmd defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+run_cmd defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+run_cmd defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+run_cmd defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 info "Windows & Animations"
-defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-defaults write -g QLPanelAnimationDuration -float 0
+run_cmd defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
+run_cmd defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+run_cmd defaults write -g QLPanelAnimationDuration -float 0
 
 info "Mission Control & Spaces"
-defaults write com.apple.dock "expose-group-apps" -bool "true"
-defaults write com.apple.dock expose-animation-duration -float 0.1
-defaults write com.apple.spaces "spans-displays" -bool "true"
+run_cmd defaults write com.apple.dock "expose-group-apps" -bool "true"
+run_cmd defaults write com.apple.dock expose-animation-duration -float 0.1
+run_cmd defaults write com.apple.spaces "spans-displays" -bool "true"
 
 info "Dock Configuration"
-defaults write com.apple.dock autohide -bool true
-defaults write com.apple.dock autohide-delay -float 0
-defaults write com.apple.dock autohide-time-modifier -float 0.1
-defaults write com.apple.dock minimize-to-application -bool true
-defaults write com.apple.dock orientation -string "left"
-defaults write com.apple.dock springboard-show-duration -float 0.1
-defaults write com.apple.dock springboard-hide-duration -float 0.1
-defaults write com.apple.dock springboard-page-duration -float 0.1
+run_cmd defaults write com.apple.dock autohide -bool true
+run_cmd defaults write com.apple.dock autohide-delay -float 0
+run_cmd defaults write com.apple.dock autohide-time-modifier -float 0.1
+run_cmd defaults write com.apple.dock minimize-to-application -bool true
+run_cmd defaults write com.apple.dock orientation -string "left"
+run_cmd defaults write com.apple.dock springboard-show-duration -float 0.1
+run_cmd defaults write com.apple.dock springboard-hide-duration -float 0.1
+run_cmd defaults write com.apple.dock springboard-page-duration -float 0.1
 
 info "Finder Preferences"
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-defaults write com.apple.finder AppleShowAllFiles -bool true
-defaults write com.apple.finder ShowPathbar -bool true
-defaults write com.apple.finder ShowStatusBar -bool true
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+run_cmd defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+run_cmd defaults write com.apple.finder AppleShowAllFiles -bool true
+run_cmd defaults write com.apple.finder ShowPathbar -bool true
+run_cmd defaults write com.apple.finder ShowStatusBar -bool true
+run_cmd defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+run_cmd defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 info "Save & Print Dialogs"
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+run_cmd defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+run_cmd defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+run_cmd defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+run_cmd defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 info "Screenshot Settings"
-defaults write com.apple.screencapture type -string "png"
+run_cmd defaults write com.apple.screencapture type -string "png"
 
 info "TextEdit Configuration"
-defaults write com.apple.TextEdit RichText -int 0
+run_cmd defaults write com.apple.TextEdit RichText -int 0
 
 info "Security Settings"
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
-if sudo -n true 2>/dev/null; then
+run_cmd defaults write com.apple.screensaver askForPassword -int 1
+run_cmd defaults write com.apple.screensaver askForPasswordDelay -int 0
+if [[ "$DRY_RUN" == true ]]; then
+  info "Would run: sudo defaults write ... LoginwindowSecurityImmediateLock (if permitted)"
+elif sudo -n true 2>/dev/null; then
   sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
 elif sudo -v 2>/dev/null; then
   sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
@@ -266,17 +320,17 @@ fi
 
 info "Hot Corners"
 for corner in tl tr bl br; do
-  defaults write com.apple.dock wvous-$corner-corner -int 0
-  defaults write com.apple.dock wvous-$corner-modifier -int 0
+  run_cmd defaults write com.apple.dock wvous-$corner-corner -int 0
+  run_cmd defaults write com.apple.dock wvous-$corner-modifier -int 0
 done
 
 info "Restarting affected system processes..."
-killall Dock Finder SystemUIServer 2>/dev/null || true
+run_cmd bash -c 'killall Dock Finder SystemUIServer 2>/dev/null || true'
 
 banner "SYSTEM CLEANUP"
 if command -v mo &>/dev/null; then
 	info "Running Mole cleanup..."
-	mo clean --yes
+	run_cmd mo clean --yes
 else
 	warning "Mole (mo) not found, skipping system cleanup"
 fi

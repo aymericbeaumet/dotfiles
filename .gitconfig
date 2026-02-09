@@ -24,7 +24,6 @@
 	pl = pull
 	plps = !git pl && git ps
 	ps = push -u
-	psu = push -u
 	rb = rebase
 	rba = rebase --abort
 	rbc = rebase --continue
@@ -40,9 +39,9 @@
 	sm = submodule
 	st = status --short --branch
 	sw = show
-	unadd = reset HEAD --
-	uncommit = reset --soft HEAD~1
+	; unstage/unadd: reset HEAD --
 	unstage = reset HEAD --
+	uncommit = reset --soft HEAD~1
 	wa = worktree add
 	wl = worktree list
 	wr = worktree remove
@@ -74,9 +73,19 @@
 [pull]
 	rebase = true
 
+[init]
+	defaultBranch = main
+
 [push]
 	default = current
 	followTags = true
+	autoSetupRemote = true
+
+[fetch]
+	writeCommitGraph = true
+
+[column]
+	ui = auto
 
 [rebase]
 	autoStash = true
@@ -103,7 +112,7 @@
 	dark = true
 	side-by-side = false
 	line-numbers = true
-	syntax-theme = Dracula
+	syntax-theme = Nord
 	hyperlinks = true
 	hyperlinks-file-link-format = "file://{path}:{line}"
 
