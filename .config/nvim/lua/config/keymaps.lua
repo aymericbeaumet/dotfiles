@@ -11,8 +11,24 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 
 for _, mapping in ipairs({
 	{ "n", "gl", vim.diagnostic.open_float, desc = "Show diagnostic float" },
-	{ "n", "[d", function() vim.diagnostic.jump({ count = -1 }) vim.cmd("normal! zz") end, desc = "Previous diagnostic" },
-	{ "n", "]d", function() vim.diagnostic.jump({ count = 1 }) vim.cmd("normal! zz") end, desc = "Next diagnostic" },
+	{
+		"n",
+		"[d",
+		function()
+			vim.diagnostic.jump({ count = -1 })
+			vim.cmd("normal! zz")
+		end,
+		desc = "Previous diagnostic",
+	},
+	{
+		"n",
+		"]d",
+		function()
+			vim.diagnostic.jump({ count = 1 })
+			vim.cmd("normal! zz")
+		end,
+		desc = "Next diagnostic",
+	},
 	{ "n", "j", "gj", desc = "Move down (display line)" },
 	{ "v", "j", "gj", desc = "Move down (display line)" },
 	{ "n", "k", "gk", desc = "Move up (display line)" },
@@ -36,10 +52,15 @@ for _, mapping in ipairs({
 	{ "i", "<c-e>", "<End>", desc = "Go to line end" },
 	{ "i", "<c-f>", "<Right>", desc = "Move right" },
 	{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<cr><cr>", desc = "Open URLs with squeeze" },
-	{ "n", "<c-w><bs>", "<c-w>h", desc = "Go to left window" },
 	{ "n", "<c-o>", "<c-o>zz", desc = "Jump back (centered)" },
 	{ "n", "n", "nzz", desc = "Next search result (centered)" },
 	{ "n", "N", "Nzz", desc = "Prev search result (centered)" },
+	{ "n", "<c-w><bs>", "<c-w>h", desc = "Go to left window" },
+	{ "t", "<c-w><bs>", "<Cmd>wincmd h<CR>", desc = "Go to left window" },
+	{ "t", "<c-w>h", "<Cmd>wincmd h<CR>", desc = "Go to left window" },
+	{ "t", "<c-w>j", "<Cmd>wincmd j<CR>", desc = "Go to below window" },
+	{ "t", "<c-w>k", "<Cmd>wincmd k<CR>", desc = "Go to above window" },
+	{ "t", "<c-w>l", "<Cmd>wincmd l<CR>", desc = "Go to right window" },
 }) do
 	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true, desc = mapping.desc })
 end

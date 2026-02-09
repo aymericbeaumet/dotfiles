@@ -51,7 +51,9 @@ else
 fi
 
 # Check if the SSH key is already authorized on GitHub
-if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+# Note: ssh -T always exits 1 (no shell access), so avoid pipefail by capturing output first
+SSH_TEST=$(ssh -T git@github.com 2>&1 || true)
+if echo "$SSH_TEST" | grep -q "successfully authenticated"; then
   info "SSH key is already authorized on GitHub"
 else
   echo
@@ -121,14 +123,6 @@ if [[ -f ./Brewfile ]]; then
   brew bundle --cleanup --file ./Brewfile
 else
   warning "Brewfile not found, skipping Homebrew dependencies"
-fi
-
-banner "NPM GLOBAL PACKAGES"
-if command -v npm &>/dev/null; then
-  info "Installing global npm packages..."
-  npm install -g @anthropic-ai/claude-code @fsouza/prettierd eslint_d
-else
-  warning "npm not found, skipping global npm packages"
 fi
 
 banner "SYMLINKING DOTFILES"
@@ -221,11 +215,11 @@ fi
 
 banner "TMUX SETUP"
 if command -v tmux &>/dev/null; then
-  # TPM auto-installs from .tmux.conf; start a detached session to trigger it,
-  # then wait-for the deterministic signal sent at the end of .tmux.conf
+  # Start a detached session to ensure the tmux server is running and .tmux.conf
+  # has been sourced (which auto-installs TPM if missing). new-session -d is
+  # synchronous, so by the time it returns the config is fully loaded.
   info "Installing tmux plugins (TPM bootstraps from .tmux.conf)..."
   tmux new-session -d -s __setup__
-  tmux wait-for tpm-ready
 
   TPM_DIR="$HOME/.tmux/plugins/tpm"
   if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
@@ -235,7 +229,7 @@ if command -v tmux &>/dev/null; then
     warning "TPM not available after sourcing .tmux.conf"
   fi
 
-  tmux kill-session -t _setup 2>/dev/null || true
+  tmux kill-session -t __setup__ 2>/dev/null || true
 else
   warning "tmux not found, skipping plugin installation"
 fi
@@ -312,7 +306,7 @@ bash -c 'killall Dock Finder SystemUIServer 2>/dev/null || true'
 banner "SYSTEM CLEANUP"
 if command -v mo &>/dev/null; then
   info "Running Mole cleanup..."
-  mo clean --yes
+  mo clean --yes | cat
 else
   warning "Mole (mo) not found, skipping system cleanup"
 fi
