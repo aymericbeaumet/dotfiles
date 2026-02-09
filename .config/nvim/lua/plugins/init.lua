@@ -11,6 +11,7 @@ return {
 	{ "vitalk/vim-shebang", event = "VeryLazy" },
 	{
 		"ethanholz/nvim-lastplace",
+		event = "BufReadPost",
 		opts = {
 			lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
 			lastplace_ignore_filetype = { "gitcommit", "gitrebase" },
@@ -69,7 +70,9 @@ return {
 
 	{
 		"stevearc/oil.nvim",
+		cmd = "Oil",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
+		keys = { { "-", "<cmd>Oil<cr>", desc = "Open parent directory in Oil" } },
 		config = function()
 			require("oil").setup({
 				view_options = {
@@ -148,6 +151,10 @@ return {
 
 	{
 		"numToStr/Comment.nvim",
+		keys = {
+			{ "<leader>c<space>", mode = "n", desc = "Toggle comment (line)" },
+			{ "<leader>c<space>", mode = "x", desc = "Toggle comment (visual selection)" },
+		},
 		dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
 		config = function()
 			local comment = require("Comment")
@@ -171,10 +178,60 @@ return {
 
 	{
 		"nvim-telescope/telescope.nvim",
+		cmd = "Telescope",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"jvgrootveld/telescope-zoxide",
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		},
+		keys = {
+			{ "<leader><leader>", "<cmd>Telescope resume<cr>", desc = "Resume last search" },
+			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
+			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
+			{
+				"<leader>f",
+				"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
+				desc = "Search file names (cwd)",
+			},
+			{
+				"<leader>F",
+				function()
+					require("telescope.builtin").find_files({
+						find_command = { "fd", "--type", "file", "--hidden", "--follow" },
+						cwd = vim.fn.expand("%:p:h"),
+					})
+				end,
+				desc = "Search file names (file dir)",
+			},
+			{
+				"<leader>r",
+				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
+				desc = "Search file contents (cwd)",
+			},
+			{
+				"<leader>R",
+				function()
+					require("telescope.builtin").live_grep({
+						vimgrep_arguments = {
+							"rg",
+							"--color=never",
+							"--no-heading",
+							"--with-filename",
+							"--line-number",
+							"--column",
+							"--smart-case",
+							"--hidden",
+						},
+						cwd = vim.fn.expand("%:p:h"),
+					})
+				end,
+				desc = "Search file contents (file dir)",
+			},
+			{ "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
+			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
+			{ "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git status" },
+			{ "<leader>gB", "<cmd>Telescope git_branches<cr>", desc = "Git branches" },
+			{ "<leader>gC", "<cmd>Telescope git_commits<cr>", desc = "Git commits" },
 		},
 		config = function()
 			local actions = require("telescope.actions")
@@ -240,6 +297,7 @@ return {
 
 	{
 		"lifepillar/pgsql.vim",
+		ft = { "sql", "pgsql" },
 		config = function()
 			vim.g.sql_type_default = "psql"
 		end,
@@ -247,6 +305,8 @@ return {
 
 	{
 		"shaunsingh/nord.nvim",
+		priority = 1000,
+		lazy = false,
 		config = function()
 			vim.g.nord_borders = true
 			vim.g.nord_italic = true
@@ -282,6 +342,7 @@ return {
 
 	{
 		"tpope/vim-eunuch",
+		event = "VeryLazy",
 		config = function()
 			vim.cmd("cnoreabbrev Delete  silent! Delete!")
 			vim.cmd("cnoreabbrev Delete! silent! Delete!")
@@ -292,6 +353,7 @@ return {
 
 	{
 		"airblade/vim-rooter",
+		event = "VeryLazy",
 		config = function()
 			vim.g.rooter_cd_cmd = "lcd"
 			vim.g.rooter_patterns = { ".git", "package-lock.json" }
@@ -378,6 +440,13 @@ return {
 			scope = { enabled = true, show_start = false, show_end = false },
 			exclude = { filetypes = { "help", "lazy", "mason", "neo-tree", "oil" } },
 		},
+		config = function(_, opts)
+			require("ibl").setup(opts)
+			local hooks = require("ibl.hooks")
+			hooks.register(hooks.type.ACTIVE, function(bufnr)
+				return not vim.b[bufnr].large_file
+			end)
+		end,
 	},
 
 	-- TODO/FIXME highlighting
@@ -541,7 +610,7 @@ return {
 				"WhoIsSethDaniel/mason-tool-installer.nvim",
 				opts = {
 					ensure_installed = require("config.languages").mason_tools(),
-					auto_update = true,
+					auto_update = false,
 					run_on_start = true,
 				},
 			},
@@ -581,13 +650,16 @@ return {
 						vim.cmd("normal! zz")
 					end, "LSP go to definition")
 
-					-- reference highlights when supported
-					if client:supports_method("textDocument/documentHighlight") then
+					-- reference highlights when supported (skip on large files)
+					if client:supports_method("textDocument/documentHighlight") and not vim.b[buf].large_file then
+						local hl_group = vim.api.nvim_create_augroup("aym.lsp_hl_" .. buf, {})
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+							group = hl_group,
 							buffer = buf,
 							callback = vim.lsp.buf.document_highlight,
 						})
-						vim.api.nvim_create_autocmd("CursorMoved", {
+						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+							group = hl_group,
 							buffer = buf,
 							callback = vim.lsp.buf.clear_references,
 						})
@@ -617,6 +689,7 @@ return {
 	-- formatting
 	{
 		"stevearc/conform.nvim",
+		event = "BufWritePre",
 		opts = {
 			format_on_save = {
 				timeout_ms = 2000,
@@ -632,6 +705,18 @@ return {
 	-- debugging
 	{
 		"mfussenegger/nvim-dap",
+		keys = {
+			{ "<leader>dc", desc = "Continue" },
+			{ "<leader>ds", desc = "Step over" },
+			{ "<leader>di", desc = "Step into" },
+			{ "<leader>do", desc = "Step out" },
+			{ "<leader>db", desc = "Toggle breakpoint" },
+			{ "<leader>dB", desc = "Conditional breakpoint" },
+			{ "<leader>du", desc = "Toggle DAP UI" },
+			{ "<leader>dr", desc = "Open REPL" },
+			{ "<leader>dl", desc = "Run last" },
+			{ "<leader>dt", desc = "Terminate" },
+		},
 		dependencies = {
 			"nvim-neotest/nvim-nio",
 			"rcarriga/nvim-dap-ui",
@@ -693,49 +778,7 @@ return {
 			delay = 350,
 		},
 		keys = {
-			{ "<leader><leader>", "<cmd>Telescope resume<cr>", desc = "Resume last search" },
-			{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search current buffer" },
-			{ "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
-			{
-				"<leader>f",
-				"<cmd>Telescope find_files find_command=fd,--type,file,--hidden,--follow,--strip-cwd-prefix<cr>",
-				desc = "Search file names (cwd)",
-			},
-			{
-				"<leader>F",
-				function()
-					require("telescope.builtin").find_files({
-						find_command = { "fd", "--type", "file", "--hidden", "--follow" },
-						cwd = vim.fn.expand("%:p:h"),
-					})
-				end,
-				desc = "Search file names (file dir)",
-			},
-			{
-				"<leader>r",
-				"<cmd>Telescope live_grep vimgrep_arguments=rg,--color=never,--no-heading,--with-filename,--line-number,--column,--smart-case,--hidden<cr>",
-				desc = "Search file contents (cwd)",
-			},
-			{
-				"<leader>R",
-				function()
-					require("telescope.builtin").live_grep({
-						vimgrep_arguments = {
-							"rg",
-							"--color=never",
-							"--no-heading",
-							"--with-filename",
-							"--line-number",
-							"--column",
-							"--smart-case",
-							"--hidden",
-						},
-						cwd = vim.fn.expand("%:p:h"),
-					})
-				end,
-				desc = "Search file contents (file dir)",
-			},
-			-- Debug group
+			-- Debug group (keymaps on nvim-dap)
 			{ "<leader>d", group = "debug" },
 			-- LSP group
 			{ "<leader>l", group = "lsp" },
@@ -767,15 +810,8 @@ return {
 				end,
 				desc = "Go to type definition",
 			},
-			{ "<leader>p", "<cmd>Telescope commands<cr>", desc = "Search commands" },
-			{ "<leader>z", "<cmd>Telescope zoxide list<cr>", desc = "Search frequent directories" },
-			-- Git group
+			-- Git group (telescope/git-worktree keymaps on their plugins)
 			{ "<leader>g", group = "git" },
-			{ "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git status" },
-			{ "<leader>gB", "<cmd>Telescope git_branches<cr>", desc = "Git branches" },
-			{ "<leader>gC", "<cmd>Telescope git_commits<cr>", desc = "Git commits" },
-			{ "<leader>gw", "<cmd>Telescope git_worktree<cr>", desc = "Git worktrees" },
-			{ "<leader>gW", "<cmd>Telescope git_worktree create_git_worktree<cr>", desc = "Create worktree" },
 		},
 	},
 
@@ -783,6 +819,10 @@ return {
 	{
 		"polarmutex/git-worktree.nvim",
 		dependencies = { "nvim-telescope/telescope.nvim" },
+		keys = {
+			{ "<leader>gw", "<cmd>Telescope git_worktree<cr>", desc = "Git worktrees" },
+			{ "<leader>gW", "<cmd>Telescope git_worktree create_git_worktree<cr>", desc = "Create worktree" },
+		},
 		config = function()
 			require("telescope").load_extension("git_worktree")
 		end,

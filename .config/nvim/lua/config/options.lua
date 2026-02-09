@@ -65,3 +65,20 @@ for _, plugin in ipairs({
 }) do
 	vim.g["loaded_" .. plugin] = 1
 end
+
+-- Large-file guard: disable expensive features for files >200KB
+vim.api.nvim_create_autocmd("BufReadPre", {
+	callback = function(args)
+		local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(args.buf))
+		if ok and stats and stats.size > 200 * 1024 then
+			vim.b[args.buf].large_file = true
+			vim.opt_local.foldmethod = "manual"
+			vim.opt_local.spell = false
+			vim.opt_local.swapfile = false
+			vim.opt_local.undofile = false
+			vim.schedule(function()
+				pcall(vim.treesitter.stop, args.buf)
+			end)
+		end
+	end,
+})

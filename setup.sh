@@ -46,6 +46,14 @@ if [[ ! -f "$SSH_KEY" ]]; then
   chmod 700 "$HOME/.ssh"
   ssh-keygen -t ed25519 -f "$SSH_KEY" -C "$(whoami)@$(hostname)"
   info "SSH key generated successfully"
+else
+  info "SSH key found at $SSH_KEY"
+fi
+
+# Check if the SSH key is already authorized on GitHub
+if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+  info "SSH key is already authorized on GitHub"
+else
   echo
   info "Your public SSH key:"
   echo
@@ -55,8 +63,6 @@ if [[ ! -f "$SSH_KEY" ]]; then
   echo
   warning "Press Enter once the key is added to GitHub..."
   read -r
-else
-  info "SSH key found at $SSH_KEY"
 fi
 
 # Switch the dotfiles remote from HTTPS (read-only clone) to SSH (read-write)
