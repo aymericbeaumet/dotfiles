@@ -6,7 +6,6 @@
 
 [alias]
 	a = add
-	amend = commit --amend --no-edit
 	br = branch -v --sort=-committerdate
 	bw = browse
 	ci = commit
@@ -16,8 +15,6 @@
 	df = diff
 	dfc = diff --cached
 	fe = fetch --prune
-	fixup = commit --fixup
-	graph = log --graph --oneline --all --decorate
 	l = log
 	last = log -1 HEAD
 	me = merge
@@ -39,9 +36,6 @@
 	sm = submodule
 	st = status --short --branch
 	sw = show
-	; unstage/unadd: reset HEAD --
-	unstage = reset HEAD --
-	uncommit = reset --soft HEAD~1
 	wa = worktree add
 	wl = worktree list
 	wr = worktree remove
