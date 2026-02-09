@@ -121,8 +121,10 @@ alias w='watchexec --restart --clear --'
 alias ls='eza --group --group-directories-first --sort=Name'
 alias l='ls -l'
 alias la='l -a'
+# tree emulation
 alias t='l --tree'
-alias ta='la --tree'
+alias ta='t -a'
+alias tree='t'
 
 # keybindings
 bindkey -e

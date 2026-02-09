@@ -1,7 +1,15 @@
 -- Global keymaps (leader is set in config/options.lua)
 
+-- <CR> = save only in normal file buffers (not quickfix, help, etc.)
+vim.api.nvim_create_autocmd("BufWinEnter", {
+	callback = function(args)
+		if vim.bo[args.buf].buftype == "" then
+			vim.keymap.set("n", "<cr>", "<cmd>w<cr>", { buffer = args.buf, silent = true, desc = "Save buffer" })
+		end
+	end,
+})
+
 for _, mapping in ipairs({
-	{ "n", "<cr>", "<cmd>w<cr>", desc = "Save buffer" },
 	{ "n", "j", "gj", desc = "Move down (display line)" },
 	{ "v", "j", "gj", desc = "Move down (display line)" },
 	{ "n", "k", "gk", desc = "Move up (display line)" },

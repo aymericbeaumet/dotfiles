@@ -472,24 +472,11 @@ return {
 					automatic_enable = true,
 				},
 			},
-			-- Auto-install LSP servers, formatters, and linters
+			-- Auto-install linters and formatters (LSP servers are managed by mason-lspconfig)
 			{
 				"WhoIsSethDaniel/mason-tool-installer.nvim",
 				opts = {
 					ensure_installed = {
-						-- LSP servers (aligned with mason-lspconfig server names)
-						"gopls",
-						"rust-analyzer",
-						"vtsls",
-						"bash-language-server",
-						"lua-language-server",
-						"dockerfile-language-server",
-						"html-lsp",
-						"css-lsp",
-						"tailwindcss-language-server",
-						"terraform-ls",
-						"buf-language-server",
-						"svelte-language-server",
 						-- Linters
 						"eslint_d",
 						"shellcheck",
@@ -497,9 +484,10 @@ return {
 						"golangci-lint",
 						-- Formatters
 						"stylua",
-						"rustfmt",
 						"gofumpt",
 						"goimports",
+						"prettierd",
+						"shfmt",
 					},
 					auto_update = true,
 					run_on_start = true,
@@ -533,7 +521,6 @@ return {
 					},
 				},
 			})
-			lsp.config("vtsls", {})
 			lsp.config("lua_ls", {
 				settings = {
 					Lua = {
@@ -543,14 +530,15 @@ return {
 					},
 				},
 			})
-			lsp.config("bashls", {})
-			lsp.config("terraformls", {})
-			lsp.config("buf_ls", {})
-			lsp.config("dockerls", {})
-			lsp.config("html", {})
-			lsp.config("cssls", {})
-			lsp.config("tailwindcss", {})
-			lsp.config("svelte", {})
+			lsp.config("svelte", {
+				settings = {
+					svelte = {
+						plugin = {
+							svelte = { defaultScriptLanguage = "ts" },
+						},
+					},
+				},
+			})
 
 			-- LSP UX niceties
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -605,7 +593,6 @@ return {
 				dockerfile = { "hadolint" },
 				go = { "golangcilint" },
 				proto = { "buf_lint" },
-				rust = { "clippy" },
 				sh = { "shellcheck" },
 				-- web
 				javascript = { "eslint_d" },
@@ -725,8 +712,7 @@ return {
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("trouble").setup({
-				position = "top",
-				icons = true,
+				win = { position = "top" },
 			})
 		end,
 	},
@@ -934,9 +920,6 @@ return {
 						scope_incremental = "grc",
 					},
 				},
-
-				-- Provided by windwp/nvim-ts-autotag
-				autotag = { enable = true },
 
 				textobjects = {
 					select = {
