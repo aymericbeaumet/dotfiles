@@ -120,15 +120,7 @@ fi
 banner "HOMEBREW DEPENDENCIES"
 info "Installing packages from Brewfile..."
 if [[ -f ./Brewfile ]]; then
-  warning "brew bundle --cleanup will uninstall any formulae/casks not listed in the Brewfile."
-  printf "  Continue with cleanup? [y/N] "
-  read -r confirm
-  if [[ "$confirm" =~ ^[Yy]$ ]]; then
-    brew bundle --cleanup --file ./Brewfile
-  else
-    info "Installing/upgrading from Brewfile without cleanup..."
-    brew bundle --file ./Brewfile
-  fi
+  brew bundle --cleanup --file ./Brewfile
 else
   warning "Brewfile not found, skipping Homebrew dependencies"
 fi
