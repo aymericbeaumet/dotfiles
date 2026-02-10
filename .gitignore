@@ -83,3 +83,4 @@ lazy-lock.json
 # claude
 .claude/
 *.lock
+automatic_backups/
