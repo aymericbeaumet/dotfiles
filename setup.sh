@@ -92,29 +92,43 @@ else
 fi
 
 banner "NIX INSTALLATION"
-# Check for Nix installation via command, /nix directory, or backup files
+# Source Nix profile if needed (nix-daemon.sh is not compatible with strict mode)
+source_nix_profile() {
+  local nix_profile="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+  if [[ -e "$nix_profile" ]]; then
+    set +eu
+    . "$nix_profile"
+    set -eu
+    return 0
+  fi
+  return 1
+}
+
+# Check for Nix installation via command or /nix directory
 if command -v nix &>/dev/null; then
   info "Nix is already installed at $(which nix)"
   info "Nix version: $(nix --version)"
-elif [[ -d /nix ]] || [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc.backup-before-nix ]]; then
-  warning "Nix installation detected but not in PATH"
+elif [[ -d /nix ]]; then
+  warning "Nix directory found but nix not in PATH"
   info "Sourcing Nix profile..."
-  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    info "Nix version: $(nix --version 2>/dev/null || echo 'unknown')"
+  if source_nix_profile && command -v nix &>/dev/null; then
+    info "Nix version: $(nix --version)"
   else
-    warning "Could not source Nix profile, but Nix appears to be installed"
+    warning "Could not source Nix profile or nix still not available"
   fi
 else
+  # Clean up stale backup files from a previous uninstalled Nix
+  if [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc.backup-before-nix ]]; then
+    warning "Found stale Nix backup files from a previous installation, cleaning up..."
+    sudo rm -f /etc/bashrc.backup-before-nix /etc/zshrc.backup-before-nix
+  fi
   warning "Nix not found. Installing Nix..."
   warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
   warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
   read -r
   curl -L https://nixos.org/nix/install | sh -s -- --daemon
   # Source nix profile for current session
-  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-  fi
+  source_nix_profile || true
 fi
 
 banner "HOMEBREW DEPENDENCIES"
@@ -206,9 +220,9 @@ fi
 banner "ZSH PLUGINS"
 if command -v zsh &>/dev/null; then
   # zinit auto-installs from .zshrc; interactive mode sources plugin definitions,
-  # then burst the scheduler to force turbo-mode plugins to install immediately
+  # then burst the scheduler to force turbo-mode plugins to load at once
   info "Installing zsh plugins (zinit bootstraps from .zshrc)..."
-  zsh -ic '@zinit-scheduler burst || true'
+  zsh -ic '@zinit-scheduler burst || true' 2>/dev/null || true
 else
   warning "zsh not found, skipping plugin installation"
 fi
