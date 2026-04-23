@@ -69,7 +69,57 @@ zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline --graph
 alias -g ...='$(git rev-parse --show-toplevel 2>/dev/null || pwd)'
 
 # git wrapper: `g` runs `git st`, `g <args>` runs `git <args>`
-g() { (( $# )) && command git "$@" || command git st; }
+g() {
+    if (( $# )); then
+        command git "$@"
+    else
+        command git st
+    fi
+}
+
+# worktree: `w` lists worktrees via fzf, `w <name>` creates/switches to a worktree
+w() {
+    local REPO_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
+    if [ -z "$REPO_NAME" ]; then
+        echo "Not in a git repository."
+        return 1
+    fi
+    if [ -z "$1" ]; then
+        local dir
+        local selected
+        selected=$(git worktree list | tail -n +2 | while read -r wt_path wt_hash wt_branch _; do
+            wt_branch=${wt_branch#\[}; wt_branch=${wt_branch%\]}
+            local ts=$(git log -1 --format='%ct' "$wt_hash" 2>/dev/null || echo 0)
+            local dt=$(git log -1 --format='%cs' "$wt_hash" 2>/dev/null)
+            printf '%s\t%s  %s  %s\n' "$ts" "$dt" "$wt_branch" "$wt_path"
+        done | sort -rn | sed 's/^[0-9]*	//' | fzf --height=40% --reverse --with-nth=1,2 --delimiter='  ') || return
+        dir=$(echo "$selected" | awk -F'  ' '{print $NF}')
+        cd "$dir"
+    else
+        local SUFFIX=$(echo "$*" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-|-$//g')
+        local BRANCH_NAME="${USER}/${SUFFIX}"
+        local TARGET_PATH="../${SUFFIX}"
+        if [ -d "$TARGET_PATH" ]; then
+            cd "$TARGET_PATH"
+        else
+            git fetch origin main
+            local existing_branch
+            if git show-ref --verify --quiet "refs/heads/${BRANCH_NAME}" || \
+               git show-ref --verify --quiet "refs/remotes/origin/${BRANCH_NAME}"; then
+                existing_branch="$BRANCH_NAME"
+            elif git show-ref --verify --quiet "refs/heads/${SUFFIX}" || \
+                 git show-ref --verify --quiet "refs/remotes/origin/${SUFFIX}"; then
+                existing_branch="$SUFFIX"
+            fi
+            if [ -n "$existing_branch" ]; then
+                git worktree add "$TARGET_PATH" "$existing_branch"
+            else
+                git worktree add "$TARGET_PATH" -b "$BRANCH_NAME" origin/main
+            fi
+            cd "$TARGET_PATH"
+        fi
+    fi
+}
 
 # zoxide: `z` opens fzf for interactive selection, `z <query>` jumps to best match
 z() {
@@ -116,11 +166,12 @@ export BAT_PAGER="less -RFX"
 # aliases: tools
 alias ap=ansible-playbook
 alias b=bat
+alias c=cursor
 alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
 alias vim=$EDITOR
-alias w='watchexec --restart --clear --'
+alias watchexec='watchexec --restart --clear --'
 
 # aliases: eza (ls replacement)
 alias ls='eza --group --group-directories-first --sort=Name'

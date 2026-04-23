@@ -11,5 +11,19 @@
       "Bash(git commit *)",
       "Bash(git push *)"
     ]
+  },
+  "effortLevel": "high",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
+          }
+        ]
+      }
+    ]
   }
 }

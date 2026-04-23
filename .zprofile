@@ -23,11 +23,6 @@ elif [[ -x /usr/local/bin/brew ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# nix
-if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-fi
-
 # go
 export GOPATH="$HOME/go"
 [[ -d "$GOPATH/bin" ]] && export PATH="$GOPATH/bin:$PATH"

@@ -25,9 +25,58 @@ banner() {
 info() { echo -e "${CYAN}  ℹ${NC} $1"; }
 warning() { echo -e "${YELLOW}  ⚠${NC} $1"; }
 error() { echo -e "${RED}  ✗${NC} $1" >&2; }
+skip() { info "Skipping: $1 (disabled via flag)"; }
 
 # Error handler with enhanced output
 trap 'error "Script failed at line $LINENO in $BASH_SOURCE"; exit 1' ERR
+
+# Section flags (all enabled by default)
+DO_SSH=true
+DO_HOMEBREW=true
+DO_NIX=true
+DO_BREWFILE=true
+DO_SYMLINKS=true
+DO_NEOVIM=true
+DO_ZSH=true
+DO_TMUX=true
+DO_MACOS=true
+DO_MOLE=true
+
+usage() {
+  cat <<'USAGE'
+Usage: setup.sh [OPTIONS]
+
+Options:
+  --no-ssh        Skip SSH key generation and GitHub authorization
+  --no-homebrew   Skip Homebrew installation
+  --no-nix        Skip Nix installation
+  --no-brewfile   Skip Homebrew bundle (Brewfile)
+  --no-symlinks   Skip symlinking dotfiles
+  --no-neovim     Skip Neovim plugin sync
+  --no-zsh        Skip ZSH plugin installation
+  --no-tmux       Skip tmux plugin installation
+  --no-macos      Skip macOS defaults configuration
+  --no-mole       Skip Mole system cleanup
+  -h, --help      Show this help message
+USAGE
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-ssh)      DO_SSH=false ;;
+    --no-homebrew) DO_HOMEBREW=false ;;
+    --no-nix)      DO_NIX=false ;;
+    --no-brewfile) DO_BREWFILE=false ;;
+    --no-symlinks) DO_SYMLINKS=false ;;
+    --no-neovim)   DO_NEOVIM=false ;;
+    --no-zsh)      DO_ZSH=false ;;
+    --no-tmux)     DO_TMUX=false ;;
+    --no-macos)    DO_MACOS=false ;;
+    --no-mole)     DO_MOLE=false ;;
+    -h|--help)     usage; exit 0 ;;
+    *) error "Unknown option: $arg"; usage >&2; exit 1 ;;
+  esac
+done
 
 # Start script
 banner "DOTFILES SETUP SCRIPT"
@@ -35,296 +84,358 @@ info "Starting dotfiles installation and system configuration..."
 info "Working directory: $(pwd)"
 info "Date: $(date '+%Y-%m-%d %H:%M:%S')"
 
-banner "SSH KEY & GIT REMOTE"
+banner "SETUP SSH"
+if $DO_SSH; then
 
-# Ensure an SSH key exists for GitHub authentication
-SSH_KEY="$HOME/.ssh/id_ed25519"
-if [[ ! -f "$SSH_KEY" ]]; then
-  info "No SSH key found at $SSH_KEY"
-  info "Generating a new Ed25519 SSH key..."
-  mkdir -p "$HOME/.ssh"
-  chmod 700 "$HOME/.ssh"
-  ssh-keygen -t ed25519 -f "$SSH_KEY" -C "$(whoami)@$(hostname)"
-  info "SSH key generated successfully"
-else
-  info "SSH key found at $SSH_KEY"
-fi
-
-# Check if the SSH key is already authorized on GitHub
-# Note: ssh -T always exits 1 (no shell access), so avoid pipefail by capturing output first
-SSH_TEST=$(ssh -T git@github.com 2>&1 || true)
-if echo "$SSH_TEST" | grep -q "successfully authenticated"; then
-  info "SSH key is already authorized on GitHub"
-else
-  echo
-  info "Your public SSH key:"
-  echo
-  echo -e "  ${BOLD}$(cat "$SSH_KEY.pub")${NC}"
-  echo
-  info "Add it here: ${BOLD}https://github.com/settings/keys${NC}"
-  echo
-  warning "Press Enter once the key is added to GitHub..."
-  read -r
-fi
-
-# Switch the dotfiles remote from HTTPS (read-only clone) to SSH (read-write)
-CURRENT_REMOTE=$(git remote get-url origin 2>/dev/null || true)
-SSH_REMOTE="git@github.com:aymericbeaumet/dotfiles.git"
-if [[ "$CURRENT_REMOTE" != "$SSH_REMOTE" ]]; then
-  info "Switching git remote from HTTPS to SSH..."
-  git remote set-url origin "$SSH_REMOTE"
-  info "Remote origin updated to $SSH_REMOTE"
-else
-  info "Git remote already set to SSH: $SSH_REMOTE"
-fi
-
-banner "HOMEBREW INSTALLATION"
-if ! command -v brew &>/dev/null; then
-  warning "Homebrew not found. Installing Homebrew..."
-  warning "About to download and run the official Homebrew install script (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)."
-  warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
-  read -r
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-else
-  info "Homebrew is already installed at $(which brew)"
-  info "Homebrew version: $(brew --version | head -n1)"
-fi
-
-banner "NIX INSTALLATION"
-# Source Nix profile if needed (nix-daemon.sh is not compatible with strict mode)
-source_nix_profile() {
-  local nix_profile="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-  if [[ -e "$nix_profile" ]]; then
-    set +eu
-    . "$nix_profile"
-    set -eu
-    return 0
+  # Ensure an SSH key exists for GitHub authentication
+  SSH_KEY="$HOME/.ssh/id_ed25519"
+  if [[ ! -f "$SSH_KEY" ]]; then
+    info "No SSH key found at $SSH_KEY"
+    info "Generating a new Ed25519 SSH key..."
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    ssh-keygen -t ed25519 -f "$SSH_KEY" -C "$(whoami)@$(hostname)"
+    info "SSH key generated successfully"
+  else
+    info "SSH key found at $SSH_KEY"
   fi
-  return 1
-}
 
-# Check for Nix installation via command or /nix directory
-if command -v nix &>/dev/null; then
-  info "Nix is already installed at $(which nix)"
-  info "Nix version: $(nix --version)"
-elif [[ -d /nix ]]; then
-  warning "Nix directory found but nix not in PATH"
-  info "Sourcing Nix profile..."
-  if source_nix_profile && command -v nix &>/dev/null; then
+  # Check if the SSH key is already authorized on GitHub
+  # Note: ssh -T always exits 1 (no shell access), so avoid pipefail by capturing output first
+  SSH_TEST=$(ssh -T git@github.com 2>&1 || true)
+  if echo "$SSH_TEST" | grep -q "successfully authenticated"; then
+    info "SSH key is already authorized on GitHub"
+  else
+    echo
+    info "Your public SSH key:"
+    echo
+    echo -e "  ${BOLD}$(cat "$SSH_KEY.pub")${NC}"
+    echo
+    info "Add it here: ${BOLD}https://github.com/settings/keys${NC}"
+    echo
+    warning "Press Enter once the key is added to GitHub..."
+    read -r
+  fi
+
+  # Switch the dotfiles remote from HTTPS (read-only clone) to SSH (read-write)
+  CURRENT_REMOTE=$(git remote get-url origin 2>/dev/null || true)
+  SSH_REMOTE="git@github.com:aymericbeaumet/dotfiles.git"
+  if [[ "$CURRENT_REMOTE" != "$SSH_REMOTE" ]]; then
+    info "Switching git remote from HTTPS to SSH..."
+    git remote set-url origin "$SSH_REMOTE"
+    info "Remote origin updated to $SSH_REMOTE"
+  else
+    info "Git remote already set to SSH: $SSH_REMOTE"
+  fi
+
+else
+  skip "SSH Key & Git Remote"
+fi
+
+banner "SETUP HOMEBREW"
+if $DO_HOMEBREW; then
+
+  if ! command -v brew &>/dev/null; then
+    warning "Homebrew not found. Installing Homebrew..."
+    warning "About to download and run the official Homebrew install script (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)."
+    warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+    read -r
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  else
+    info "Homebrew is already installed at $(which brew)"
+    info "Homebrew version: $(brew --version | head -n1)"
+  fi
+
+else
+  skip "Homebrew Installation"
+fi
+
+banner "SETUP NIX"
+if $DO_NIX; then
+
+  # Source Nix profile if needed (nix-daemon.sh is not compatible with strict mode)
+  source_nix_profile() {
+    local nix_profile="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+    if [[ -e "$nix_profile" ]]; then
+      set +eu
+      . "$nix_profile"
+      set -eu
+      return 0
+    fi
+    return 1
+  }
+
+  # Check for Nix installation via command or /nix directory
+  if command -v nix &>/dev/null; then
+    info "Nix is already installed at $(which nix)"
     info "Nix version: $(nix --version)"
+  elif [[ -d /nix ]]; then
+    warning "Nix directory found but nix not in PATH"
+    info "Sourcing Nix profile..."
+    if source_nix_profile && command -v nix &>/dev/null; then
+      info "Nix version: $(nix --version)"
+    else
+      warning "Could not source Nix profile or nix still not available"
+    fi
   else
-    warning "Could not source Nix profile or nix still not available"
+    # Clean up stale backup files from a previous uninstalled Nix
+    if [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc.backup-before-nix ]]; then
+      warning "Found stale Nix backup files from a previous installation, cleaning up..."
+      sudo rm -f /etc/bashrc.backup-before-nix /etc/zshrc.backup-before-nix
+    fi
+    warning "Nix not found. Installing Nix..."
+    warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
+    warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+    read -r
+    curl -L https://nixos.org/nix/install | sh -s -- --daemon
+    # Source nix profile for current session
+    source_nix_profile || true
   fi
+
 else
-  # Clean up stale backup files from a previous uninstalled Nix
-  if [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc.backup-before-nix ]]; then
-    warning "Found stale Nix backup files from a previous installation, cleaning up..."
-    sudo rm -f /etc/bashrc.backup-before-nix /etc/zshrc.backup-before-nix
-  fi
-  warning "Nix not found. Installing Nix..."
-  warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
-  warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
-  read -r
-  curl -L https://nixos.org/nix/install | sh -s -- --daemon
-  # Source nix profile for current session
-  source_nix_profile || true
+  skip "Nix Installation"
 fi
 
-banner "HOMEBREW DEPENDENCIES"
-info "Installing packages from Brewfile..."
-if [[ -f ./Brewfile ]]; then
-  brew bundle --cleanup --file ./Brewfile
+banner "SETUP BREWFILE"
+if $DO_BREWFILE; then
+
+  info "Installing packages from Brewfile..."
+  if [[ -f ./Brewfile ]]; then
+    brew bundle --cleanup --file ./Brewfile
+  else
+    warning "Brewfile not found, skipping Homebrew dependencies"
+  fi
+
 else
-  warning "Brewfile not found, skipping Homebrew dependencies"
+  skip "Homebrew Dependencies"
 fi
 
-banner "SYMLINKING DOTFILES"
-info "Creating symbolic links for configuration files..."
+banner "SETUP SYMLINKS"
+if $DO_SYMLINKS; then
 
-symlink() {
-  local source="$1"
-  local target="$HOME/$1"
-  local want_link="$PWD/$source"
+  info "Creating symbolic links for configuration files..."
 
-  # Skip if symlink already points to the correct target
-  if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$want_link" ]]; then
-    info "Symlink already correct: $target"
-    return 0
-  fi
+  symlink() {
+    local source="$1"
+    local target="$HOME/$1"
+    local want_link="$PWD/$source"
 
-  # Backup existing non-symlink file or directory before overwriting
-  if [[ -e "$target" ]] && [[ ! -L "$target" ]]; then
-    local backup="${target}.bak.$(date +%s)"
-    warning "Backing up existing: $target -> $backup"
-    mv "$target" "$backup"
-  fi
+    # Skip if symlink already points to the correct target
+    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$want_link" ]]; then
+      info "Symlink already correct: $target"
+      return 0
+    fi
 
-  # Remove existing symlink if it points elsewhere
-  if [[ -L "$target" ]]; then
-    rm -f "$target"
-  fi
+    # Backup existing non-symlink file or directory before overwriting
+    if [[ -e "$target" ]] && [[ ! -L "$target" ]]; then
+      local backup="${target}.bak.$(date +%s)"
+      warning "Backing up existing: $target -> $backup"
+      mv "$target" "$backup"
+    fi
 
-  mkdir -p "$(dirname "$target")"
-  ln -sf "$want_link" "$target"
-}
+    # Remove existing symlink if it points elsewhere
+    if [[ -L "$target" ]]; then
+      rm -f "$target"
+    fi
 
-# Symlink dotfiles and Brewfile
-info "Linking dotfiles and Brewfile..."
-while IFS= read -r file; do
-  symlink "${file#./}"
-done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \))
+    mkdir -p "$(dirname "$target")"
+    ln -sf "$want_link" "$target"
+  }
 
-# Symlink hidden directories
-info "Linking hidden directories..."
-while IFS= read -r dir; do
-  symlink "${dir#./}"
-done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type dir -name '.*' \! -name '.config' \! -name '.git')
+  # Symlink dotfiles and Brewfile
+  info "Linking dotfiles and Brewfile..."
+  while IFS= read -r file; do
+    symlink "${file#./}"
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \))
 
-# Symlink .config directories
-if [[ -d .config ]]; then
-  info "Linking .config directories..."
+  # Symlink hidden directories
+  info "Linking hidden directories..."
   while IFS= read -r dir; do
-    symlink "$dir"
-  done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type dir)
-else
-  info "No .config directory found, skipping"
-fi
+    symlink "${dir#./}"
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type dir -name '.*' \! -name '.config' \! -name '.git')
 
-banner "NEOVIM SETUP"
-if command -v nvim &>/dev/null; then
-  # Clean plugins with local changes before sync (prevents merge conflicts)
-  LAZY_PLUGINS_DIR="$HOME/.local/share/nvim/lazy"
-  if [[ -d "$LAZY_PLUGINS_DIR" ]]; then
-    cleaned=0
-    for plugin_dir in "$LAZY_PLUGINS_DIR"/*/; do
-      [[ -d "$plugin_dir/.git" ]] || continue
-      if ! git -C "$plugin_dir" diff --quiet 2>/dev/null ||
-        ! git -C "$plugin_dir" diff --cached --quiet 2>/dev/null ||
-        [[ -n $(git -C "$plugin_dir" status --porcelain 2>/dev/null) ]]; then
-        warning "Found local changes in $(basename "$plugin_dir"), cleaning..."
-        rm -rf "$plugin_dir"
-        ((cleaned++)) || true
-      fi
-    done
-    [[ $cleaned -gt 0 ]] && info "Cleaned $cleaned plugin(s) with local changes"
-  fi
-
-  # lazy.nvim auto-installs from init.lua, then syncs all plugins
-  info "Syncing Neovim plugins (lazy.nvim bootstraps from init.lua)..."
-  bash -c 'nvim --headless "+Lazy! sync" +qa' || true
-else
-  warning "Neovim not found, skipping plugin installation"
-fi
-
-banner "ZSH PLUGINS"
-if command -v zsh &>/dev/null; then
-  # zinit auto-installs from .zshrc; interactive mode sources plugin definitions,
-  # then burst the scheduler to force turbo-mode plugins to load at once
-  info "Installing zsh plugins (zinit bootstraps from .zshrc)..."
-  zsh -ic '@zinit-scheduler burst || true' 2>/dev/null || true
-else
-  warning "zsh not found, skipping plugin installation"
-fi
-
-banner "TMUX SETUP"
-if command -v tmux &>/dev/null; then
-  # Start a detached session to ensure the tmux server is running and .tmux.conf
-  # has been sourced (which auto-installs TPM if missing). new-session -d is
-  # synchronous, so by the time it returns the config is fully loaded.
-  info "Installing tmux plugins (TPM bootstraps from .tmux.conf)..."
-  tmux new-session -d -s __setup__
-
-  TPM_DIR="$HOME/.tmux/plugins/tpm"
-  if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
-    "$TPM_DIR/bin/install_plugins"
-    "$TPM_DIR/bin/update_plugins" all
+  # Symlink .config directories
+  if [[ -d .config ]]; then
+    info "Linking .config directories..."
+    while IFS= read -r dir; do
+      symlink "$dir"
+    done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type dir)
   else
-    warning "TPM not available after sourcing .tmux.conf"
+    info "No .config directory found, skipping"
   fi
 
-  tmux kill-session -t __setup__ 2>/dev/null || true
 else
-  warning "tmux not found, skipping plugin installation"
+  skip "Symlinking Dotfiles"
 fi
 
-banner "SYSTEM CONFIGURATION"
-warning "Some steps require administrator privileges (sudo). You may be prompted for your password."
-sudo -v
+banner "SETUP NEOVIM"
+if $DO_NEOVIM; then
 
-info "Keyboard & Input Settings"
-defaults write -g InitialKeyRepeat -int 15
-defaults write -g KeyRepeat -int 2
-defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+  if command -v nvim &>/dev/null; then
+    # Clean plugins with local changes before sync (prevents merge conflicts)
+    LAZY_PLUGINS_DIR="$HOME/.local/share/nvim/lazy"
+    if [[ -d "$LAZY_PLUGINS_DIR" ]]; then
+      cleaned=0
+      for plugin_dir in "$LAZY_PLUGINS_DIR"/*/; do
+        [[ -d "$plugin_dir/.git" ]] || continue
+        if ! git -C "$plugin_dir" diff --quiet 2>/dev/null ||
+          ! git -C "$plugin_dir" diff --cached --quiet 2>/dev/null ||
+          [[ -n $(git -C "$plugin_dir" status --porcelain 2>/dev/null) ]]; then
+          warning "Found local changes in $(basename "$plugin_dir"), cleaning..."
+          rm -rf "$plugin_dir"
+          ((cleaned++)) || true
+        fi
+      done
+      [[ $cleaned -gt 0 ]] && info "Cleaned $cleaned plugin(s) with local changes"
+    fi
 
-info "Text & Typing Preferences"
-defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+    # lazy.nvim auto-installs from init.lua, then syncs all plugins
+    info "Syncing Neovim plugins (lazy.nvim bootstraps from init.lua)..."
+    bash -c 'nvim --headless "+Lazy! sync" +qa' || true
+  else
+    warning "Neovim not found, skipping plugin installation"
+  fi
 
-info "Windows & Animations"
-defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-defaults write -g QLPanelAnimationDuration -float 0
-
-info "Mission Control & Spaces"
-defaults write com.apple.dock "expose-group-apps" -bool "true"
-defaults write com.apple.dock expose-animation-duration -float 0.1
-defaults write com.apple.spaces "spans-displays" -bool "true"
-
-info "Dock Configuration"
-defaults write com.apple.dock autohide -bool true
-defaults write com.apple.dock autohide-delay -float 0
-defaults write com.apple.dock autohide-time-modifier -float 0.1
-defaults write com.apple.dock minimize-to-application -bool true
-defaults write com.apple.dock orientation -string "left"
-defaults write com.apple.dock springboard-show-duration -float 0.1
-defaults write com.apple.dock springboard-hide-duration -float 0.1
-defaults write com.apple.dock springboard-page-duration -float 0.1
-
-info "Finder Preferences"
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-defaults write com.apple.finder AppleShowAllFiles -bool true
-defaults write com.apple.finder ShowPathbar -bool true
-defaults write com.apple.finder ShowStatusBar -bool true
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
-
-info "Save & Print Dialogs"
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-
-info "Screenshot Settings"
-defaults write com.apple.screencapture type -string "png"
-
-info "TextEdit Configuration"
-defaults write com.apple.TextEdit RichText -int 0
-
-info "Security Settings"
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
-sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
-
-info "Hot Corners"
-for corner in tl tr bl br; do
-  defaults write com.apple.dock wvous-$corner-corner -int 0
-  defaults write com.apple.dock wvous-$corner-modifier -int 0
-done
-
-info "Restarting affected system processes..."
-bash -c 'killall Dock Finder SystemUIServer 2>/dev/null || true'
-
-banner "SYSTEM CLEANUP"
-if command -v mo &>/dev/null; then
-  info "Running Mole cleanup..."
-  mo clean --yes | cat
 else
-  warning "Mole (mo) not found, skipping system cleanup"
+  skip "Neovim Setup"
+fi
+
+banner "SETUP ZSH"
+if $DO_ZSH; then
+
+  if command -v zsh &>/dev/null; then
+    # zinit auto-installs from .zshrc; interactive mode sources plugin definitions,
+    # then burst the scheduler to force turbo-mode plugins to load at once
+    info "Installing zsh plugins (zinit bootstraps from .zshrc)..."
+    zsh -ic '@zinit-scheduler burst || true' 2>/dev/null || true
+  else
+    warning "zsh not found, skipping plugin installation"
+  fi
+
+else
+  skip "ZSH Plugins"
+fi
+
+banner "SETUP TMUX"
+if $DO_TMUX; then
+
+  if command -v tmux &>/dev/null; then
+    # Start a detached session to ensure the tmux server is running and .tmux.conf
+    # has been sourced (which auto-installs TPM if missing). new-session -d is
+    # synchronous, so by the time it returns the config is fully loaded.
+    info "Installing tmux plugins (TPM bootstraps from .tmux.conf)..."
+    tmux new-session -d -s __setup__
+
+    TPM_DIR="$HOME/.tmux/plugins/tpm"
+    if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
+      "$TPM_DIR/bin/install_plugins"
+      "$TPM_DIR/bin/update_plugins" all
+    else
+      warning "TPM not available after sourcing .tmux.conf"
+    fi
+
+    tmux kill-session -t __setup__ 2>/dev/null || true
+  else
+    warning "tmux not found, skipping plugin installation"
+  fi
+
+else
+  skip "Tmux Setup"
+fi
+
+banner "SETUP MACOS"
+if $DO_MACOS; then
+
+  warning "Some steps require administrator privileges (sudo). You may be prompted for your password."
+  sudo -v
+
+  info "Keyboard & Input Settings"
+  defaults write -g InitialKeyRepeat -int 15
+  defaults write -g KeyRepeat -int 2
+  defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+  defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+
+  info "Text & Typing Preferences"
+  defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+  defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+  defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+  defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+  defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
+  info "Windows & Animations"
+  defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
+  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+  defaults write -g QLPanelAnimationDuration -float 0
+
+  info "Mission Control & Spaces"
+  defaults write com.apple.dock "expose-group-apps" -bool "true"
+  defaults write com.apple.dock expose-animation-duration -float 0.1
+  defaults write com.apple.spaces "spans-displays" -bool "true"
+
+  info "Menu Bar"
+  defaults write NSGlobalDomain _HIHideMenuBar -bool true
+
+  info "Dock Configuration"
+  defaults write com.apple.dock autohide -bool true
+  defaults write com.apple.dock autohide-delay -float 0
+  defaults write com.apple.dock autohide-time-modifier -float 0.1
+  defaults write com.apple.dock minimize-to-application -bool true
+  defaults write com.apple.dock orientation -string "left"
+  defaults write com.apple.dock springboard-show-duration -float 0.1
+  defaults write com.apple.dock springboard-hide-duration -float 0.1
+  defaults write com.apple.dock springboard-page-duration -float 0.1
+
+  info "Finder Preferences"
+  defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+  defaults write com.apple.finder AppleShowAllFiles -bool true
+  defaults write com.apple.finder ShowPathbar -bool true
+  defaults write com.apple.finder ShowStatusBar -bool true
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+  defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+  info "Save & Print Dialogs"
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+
+  info "Screenshot Settings"
+  defaults write com.apple.screencapture type -string "png"
+
+  info "TextEdit Configuration"
+  defaults write com.apple.TextEdit RichText -int 0
+
+  info "Security Settings"
+  defaults write com.apple.screensaver askForPassword -int 1
+  defaults write com.apple.screensaver askForPasswordDelay -int 0
+  sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
+
+  info "Hot Corners"
+  for corner in tl tr bl br; do
+    defaults write com.apple.dock wvous-$corner-corner -int 0
+    defaults write com.apple.dock wvous-$corner-modifier -int 0
+  done
+
+  info "Restarting affected system processes..."
+  bash -c 'killall Dock Finder SystemUIServer 2>/dev/null || true'
+
+else
+  skip "System Configuration"
+fi
+
+banner "SETUP MOLE"
+if $DO_MOLE; then
+
+  if command -v mo &>/dev/null; then
+    info "Running Mole cleanup..."
+    mo clean --yes | cat
+  else
+    warning "Mole (mo) not found, skipping system cleanup"
+  fi
+
+else
+  skip "System Cleanup (Mole)"
 fi
 
 banner "SETUP COMPLETE"
