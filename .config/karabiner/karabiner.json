@@ -31,14 +31,14 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus Figma",
+                        "description": "Launch or focus Claude",
                         "manipulators": [
                             {
                                 "from": {
-                                    "key_code": "g",
+                                    "key_code": "d",
                                     "modifiers": { "mandatory": ["command", "control"] }
                                 },
-                                "to": [{ "shell_command": "open -Fa '/Applications/Figma.app'" }],
+                                "to": [{ "shell_command": "open -Fa '/Applications/Claude.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -161,6 +161,32 @@
                         ]
                     },
                     {
+                        "description": "Launch or focus Messages",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "i",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/System/Applications/Messages.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Launch or focus WhatsApp",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": { "mandatory": ["command", "control"] }
+                                },
+                                "to": [{ "shell_command": "open -Fa '/Applications/WhatsApp.app'" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Trigger left_control if caps_lock is hold, disabled otherwise",
                         "manipulators": [
                             {
@@ -204,6 +230,32 @@
                                     "key_code": "h",
                                     "modifiers": { "mandatory": ["command"] }
                                 },
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "[Gemini] Cmd-Shift-O → Cmd-M",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.google\\.GeminiMacOS$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "o",
+                                    "modifiers": { "mandatory": ["command", "shift"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "m",
+                                        "modifiers": ["command"]
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -840,16 +892,16 @@
                     },
                     "simple_modifications": [
                         {
+                            "from": { "key_code": "backslash" },
+                            "to": [{ "key_code": "delete_or_backspace" }]
+                        },
+                        {
                             "from": { "key_code": "delete_or_backspace" },
                             "to": [{ "key_code": "backslash" }]
                         },
                         {
                             "from": { "key_code": "escape" },
                             "to": [{ "key_code": "grave_accent_and_tilde" }]
-                        },
-                        {
-                            "from": { "key_code": "backslash" },
-                            "to": [{ "key_code": "delete_or_backspace" }]
                         },
                         {
                             "from": { "key_code": "grave_accent_and_tilde" },

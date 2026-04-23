@@ -10,7 +10,8 @@
 	bw = browse
 	ci = commit
 	cia = commit --amend
-	cl = clean -d
+	cl = clone
+	cln = clean
 	co = checkout
 	df = diff
 	dfc = diff --cached

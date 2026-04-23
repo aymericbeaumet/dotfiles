@@ -80,7 +80,14 @@ lazy-lock.json
 # zsh
 .zsh/bundle/
 
-# claude
-.claude/
+# Ignore local Claude state and personal settings
+.claude/*
+!.claude/settings.json
+!.claude/rules/
+!.claude/skills/
+!.claude/agents/
+!.claude/.mcp.json
+.claude/settings.local.json
+
 *.lock
 automatic_backups/

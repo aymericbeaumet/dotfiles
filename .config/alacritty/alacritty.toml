@@ -122,9 +122,9 @@ program = "/bin/zsh"
 args = ["-l", "-c", "exec tmux new-session -A -D -s default"]
 
 [window]
-decorations = "buttonless"
+decorations = "None"
 padding = { x = 0, y = 0 }
-dynamic_padding = false
+dynamic_padding = true
 startup_mode = "SimpleFullscreen"
 option_as_alt = "Both"
 opacity = 0.99
