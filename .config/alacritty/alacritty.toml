@@ -55,6 +55,27 @@ action = "Quit"
 key = "W"
 mods = "Command|Shift"
 
+# Tmux tab management (prefix C-q)
+[[keyboard.bindings]]
+chars = "\u0011t"
+key = "T"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011x"
+key = "W"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011p"
+key = "{"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011n"
+key = "}"
+mods = "Command|Shift"
+
 [[keyboard.bindings]]
 action = "ReceiveChar"
 key = "F"
