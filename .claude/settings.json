@@ -23,5 +23,9 @@
     ]
   },
   "effortLevel": "high",
-  "fastMode": true
+  "fastMode": true,
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/ab/.claude/statusline-command.sh"
+  }
 }

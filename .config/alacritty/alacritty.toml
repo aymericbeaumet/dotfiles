@@ -91,6 +91,17 @@ action = "ReceiveChar"
 key = "B"
 mods = "Command"
 
+# Tmux pane navigation (prefix C-q)
+[[keyboard.bindings]]
+chars = "\u0011h"
+key = "["
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011l"
+key = "]"
+mods = "Command"
+
 # Tmux split management (prefix C-q, mimics iTerm2)
 [[keyboard.bindings]]
 chars = "\u0011v"
