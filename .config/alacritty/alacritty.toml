@@ -67,6 +67,11 @@ key = "W"
 mods = "Command"
 
 [[keyboard.bindings]]
+chars = "\u0011T"
+key = "T"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
 chars = "\u0011p"
 key = "{"
 mods = "Command|Shift"
