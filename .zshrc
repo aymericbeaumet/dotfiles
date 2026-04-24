@@ -218,6 +218,7 @@ autoload -Uz add-zsh-hook
 _reset_cursor() { echo -ne '\e[5 q'; }
 add-zsh-hook precmd _reset_cursor
 
+
 # edit command line in $EDITOR with ^X^E
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey '^X^E' edit-command-line
