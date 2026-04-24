@@ -86,6 +86,17 @@ action = "ReceiveChar"
 key = "B"
 mods = "Command"
 
+# Tmux split management (prefix C-q, mimics iTerm2)
+[[keyboard.bindings]]
+chars = "\u0011v"
+key = "D"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011s"
+key = "D"
+mods = "Command|Shift"
+
 [[keyboard.bindings]]
 action = "Paste"
 key = "V"
