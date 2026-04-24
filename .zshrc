@@ -166,7 +166,7 @@ export BAT_PAGER="less -RFX"
 # aliases: tools
 alias ap=ansible-playbook
 alias b=bat
-alias c='claude --auto'
+alias c=claude
 alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
