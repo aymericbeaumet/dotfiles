@@ -1,0 +1,8 @@
+name: headquarter
+root: ~
+
+windows:
+  - btop: btop
+  - nvtop: nvtop
+  - rustnet: sudo rustnet
+  - docker: lazydocker

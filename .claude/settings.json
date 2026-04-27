@@ -1,12 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash",
-      "Read",
-      "Write",
-      "Edit",
-      "mcp__*"
-    ],
+    "allow": ["Bash", "Read", "Write", "Edit", "mcp__*"],
     "deny": []
   },
   "hooks": {
@@ -23,9 +17,5 @@
     ]
   },
   "effortLevel": "high",
-  "fastMode": true,
-  "statusLine": {
-    "type": "command",
-    "command": "bash /Users/ab/.claude/statusline-command.sh"
-  }
+  "fastMode": true
 }
