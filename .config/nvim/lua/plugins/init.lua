@@ -69,7 +69,7 @@ return {
 
 	{
 		"stevearc/oil.nvim",
-		cmd = "Oil",
+		lazy = false,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		keys = { { "-", "<cmd>Oil<cr>", desc = "Open parent directory in Oil" } },
 		config = function()
