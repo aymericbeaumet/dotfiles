@@ -166,7 +166,7 @@ export BAT_PAGER="less -RFX"
 # aliases: tools
 alias ap=ansible-playbook
 alias b=bat
-alias c=claude
+alias c=cursor
 alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
@@ -217,7 +217,6 @@ unsetopt FLOW_CONTROL
 autoload -Uz add-zsh-hook
 _reset_cursor() { echo -ne '\e[5 q'; }
 add-zsh-hook precmd _reset_cursor
-
 
 # edit command line in $EDITOR with ^X^E
 autoload -Uz edit-command-line && zle -N edit-command-line

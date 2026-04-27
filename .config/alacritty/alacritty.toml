@@ -55,6 +55,27 @@ action = "Quit"
 key = "W"
 mods = "Command|Shift"
 
+# Tmux session management (prefix C-q)
+[[keyboard.bindings]]
+chars = "\u0011S"
+key = "S"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u00111"
+key = "Key1"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u00112"
+key = "Key2"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u00113"
+key = "Key3"
+mods = "Command"
+
 # Tmux tab management (prefix C-q)
 [[keyboard.bindings]]
 chars = "\u0011t"
@@ -67,7 +88,7 @@ key = "W"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0011T"
+chars = "\u0011B"
 key = "T"
 mods = "Command|Shift"
 

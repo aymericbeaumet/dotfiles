@@ -1,0 +1,5 @@
+name: beside
+root: ~/workspace/beside
+
+windows:
+  - code: ""

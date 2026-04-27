@@ -57,19 +57,6 @@
                         ]
                     },
                     {
-                        "description": "Launch or focus Cursor",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "c",
-                                    "modifiers": { "mandatory": ["command", "control"] }
-                                },
-                                "to": [{ "shell_command": "open -Fa '/Applications/Cursor.app'" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Launch or focus Linear",
                         "manipulators": [
                             {
