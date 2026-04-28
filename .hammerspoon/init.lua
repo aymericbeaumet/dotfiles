@@ -19,6 +19,14 @@ hs.hotkey.bind({"alt", "shift"}, "M", h.moveWin(nil, {w=0.70, h=0.80}, 0))
 hs.hotkey.bind({"alt"}, "N", h.moveWin({x=0, y=0}, {w=1, h=1},  1))
 hs.hotkey.bind({"alt"}, "P", h.moveWin({x=0, y=0}, {w=1, h=1}, -1))
 
+-- Jump to longest-waiting Claude session, then bring Alacritty to front (⌘⌃C)
+hs.hotkey.bind({"cmd", "ctrl"}, "C", function()
+  hs.task.new("/opt/homebrew/bin/node", nil, {
+    "/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js", "focus"
+  }):start()
+  hs.application.launchOrFocus("/Applications/Alacritty.app")
+end)
+
 -- Auto-reload config when any file in ~/.hammerspoon changes
 configWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", hs.reload):start()
 
