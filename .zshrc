@@ -121,6 +121,16 @@ w() {
     fi
 }
 
+# wc: same as `w` but also opens a new tmux window running claude in the worktree
+wc() {
+    w "$@" || return
+    if [ -n "$TMUX" ]; then
+        tmux new-window -c "$PWD" "zsh -lc claude"
+    else
+        claude
+    fi
+}
+
 # zoxide: `z` opens fzf for interactive selection, `z <query>` jumps to best match
 z() {
   local dir

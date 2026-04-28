@@ -1,6 +1,12 @@
 {
   "permissions": {
-    "allow": ["Bash", "Read", "Write", "Edit", "mcp__*"],
+    "allow": [
+      "Bash",
+      "Read",
+      "Write",
+      "Edit",
+      "mcp__*"
+    ],
     "deny": []
   },
   "hooks": {
@@ -11,6 +17,81 @@
           {
             "type": "command",
             "command": "rtk hook claude"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/ab/workspace/aymericbeaumet/claudemux/claudemux.js\" hook"
           }
         ]
       }
