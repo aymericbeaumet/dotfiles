@@ -31,19 +31,19 @@ size = 13
 
 [font.normal]
 family = "FiraCode Nerd Font"
-style  = "Regular"
+style = "Regular"
 
 [font.bold]
 family = "FiraCode Nerd Font"
-style  = "Bold"
+style = "Bold"
 
 [font.italic]
 family = "FiraCode Nerd Font"
-style  = "Italic"
+style = "Italic"
 
 [font.bold_italic]
 family = "FiraCode Nerd Font"
-style  = "Bold Italic"
+style = "Bold Italic"
 
 [[keyboard.bindings]]
 action = "Quit"
@@ -51,9 +51,14 @@ key = "Q"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "Quit"
+action = "None"
 key = "W"
 mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011X"
+key = "W"
+mods = "Command"
 
 # Tmux session management (prefix C-q)
 [[keyboard.bindings]]
@@ -83,11 +88,6 @@ key = "T"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0011x"
-key = "W"
-mods = "Command"
-
-[[keyboard.bindings]]
 chars = "\u0011B"
 key = "T"
 mods = "Command|Shift"
@@ -114,12 +114,12 @@ mods = "Command"
 
 # Tmux pane navigation (prefix C-q)
 [[keyboard.bindings]]
-chars = "\u0011h"
+chars = "\u0011\u001b[Z"
 key = "["
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0011l"
+chars = "\u0011\u0009"
 key = "]"
 mods = "Command"
 
@@ -188,7 +188,7 @@ save_to_clipboard = true
 # Use login shell so PATH includes Homebrew (works on both Apple Silicon and Intel)
 [terminal.shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "exec tmux new-session -A -D -s default"]
+args = ["-l", "-c", "exec tmux new-session -A"]
 
 [window]
 decorations = "None"

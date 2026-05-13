@@ -41,6 +41,8 @@ DO_ZSH=true
 DO_TMUX=true
 DO_MACOS=true
 DO_MOLE=true
+FORCE_MOLE=false
+DO_PEON=true
 
 usage() {
   cat <<'USAGE'
@@ -57,6 +59,8 @@ Options:
   --no-tmux       Skip tmux plugin installation
   --no-macos      Skip macOS defaults configuration
   --no-mole       Skip Mole system cleanup
+  --force-mole    Force Mole cleanup (ignores 2-week cooldown)
+  --no-peon       Skip Peon sound pack installation
   -h, --help      Show this help message
 USAGE
 }
@@ -73,6 +77,8 @@ for arg in "$@"; do
     --no-tmux)     DO_TMUX=false ;;
     --no-macos)    DO_MACOS=false ;;
     --no-mole)     DO_MOLE=false ;;
+    --force-mole)  FORCE_MOLE=true ;;
+    --no-peon)     DO_PEON=false ;;
     -h|--help)     usage; exit 0 ;;
     *) error "Unknown option: $arg"; usage >&2; exit 1 ;;
   esac
@@ -428,14 +434,54 @@ banner "SETUP MOLE"
 if $DO_MOLE; then
 
   if command -v mo &>/dev/null; then
-    info "Running Mole cleanup..."
-    mo clean --yes | cat
+    MOLE_LAST_RUN_FILE="$HOME/.mole_last_run"
+    MOLE_COOLDOWN=$((14 * 24 * 60 * 60)) # 2 weeks in seconds
+    run_mole=false
+
+    if $FORCE_MOLE; then
+      run_mole=true
+    elif [[ ! -f "$MOLE_LAST_RUN_FILE" ]]; then
+      run_mole=true
+    else
+      last_run=$(cat "$MOLE_LAST_RUN_FILE")
+      now=$(date +%s)
+      if (( now - last_run >= MOLE_COOLDOWN )); then
+        run_mole=true
+      fi
+    fi
+
+    if $run_mole; then
+      info "Running Mole cleanup..."
+      mo clean | cat
+      date +%s > "$MOLE_LAST_RUN_FILE"
+    else
+      elapsed=$(( $(date +%s) - $(cat "$MOLE_LAST_RUN_FILE") ))
+      remaining=$(( (MOLE_COOLDOWN - elapsed) / 86400 ))
+      info "Mole cleanup skipped (next run in ~${remaining} days, use --force-mole to override)"
+    fi
   else
     warning "Mole (mo) not found, skipping system cleanup"
   fi
 
 else
   skip "System Cleanup (Mole)"
+fi
+
+banner "SETUP PEON"
+if $DO_PEON; then
+
+  if command -v peon &>/dev/null; then
+    PEON_PACKS="peasant_fr"
+    info "Installing Peon sound packs: $PEON_PACKS"
+    peon packs install "$PEON_PACKS" | cat
+    info "Setting active pack to peasant_fr..."
+    peon packs use peasant_fr | cat
+  else
+    warning "Peon not found, skipping sound pack installation"
+  fi
+
+else
+  skip "Peon Sound Packs"
 fi
 
 banner "SETUP COMPLETE"
