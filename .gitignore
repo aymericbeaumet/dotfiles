@@ -89,6 +89,12 @@ lazy-lock.json
 !.claude/.mcp.json
 .claude/settings.local.json
 
+# Codex
+.codex/*
+!.codex/config.toml
+!.codex/rules/
+!.codex/hooks.json
+
 # Cursor
 .cursor/
 !.cursor/hooks.json

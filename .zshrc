@@ -121,16 +121,6 @@ w() {
     fi
 }
 
-# wc: same as `w` but also opens a new tmux window running claude in the worktree
-wc() {
-    w "$@" || return
-    if [ -n "$TMUX" ]; then
-        tmux new-window -c "$PWD" "zsh -lc claude"
-    else
-        claude
-    fi
-}
-
 # zoxide: `z` opens fzf for interactive selection, `z <query>` jumps to best match
 z() {
   local dir
@@ -176,7 +166,6 @@ export BAT_PAGER="less -RFX"
 # aliases: tools
 alias ap=ansible-playbook
 alias b=bat
-alias c=claude
 alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
@@ -235,7 +224,6 @@ bindkey '^X^E' edit-command-line
 # fzf: shell integration (only if fzf is installed via Homebrew)
 _fzf_prefix="${HOMEBREW_PREFIX:-$(command -v brew &>/dev/null && brew --prefix 2>/dev/null)}"
 [[ -n "$_fzf_prefix" ]] && [[ -f "$_fzf_prefix/opt/fzf/shell/completion.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/completion.zsh" 2>/dev/null
-[[ -n "$_fzf_prefix" ]] && [[ -f "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
 unset _fzf_prefix
 export FZF_DEFAULT_OPTS="
   --ansi --border --height=40% --layout=reverse --inline-info
@@ -245,6 +233,11 @@ export FZF_DEFAULT_OPTS="
 export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
+
+# atuin: shell history (replaces ctrl-r)
+if (( $+commands[atuin] )); then
+  eval "$(atuin init zsh)"
+fi
 
 # zoxide: prompt hook updates DB on cd; custom `z` above overrides command (--no-cmd)
 eval "$(zoxide init zsh --hook=prompt --no-cmd)"

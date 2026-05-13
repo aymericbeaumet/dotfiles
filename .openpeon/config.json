@@ -1,0 +1,17 @@
+{
+  "volume": 0.5,
+  "categories": {
+    "session.start": true,
+    "task.acknowledge": false,
+    "task.complete": true,
+    "task.error": true,
+    "input.required": true,
+    "resource.limit": true,
+    "user.spam": true
+  },
+  "desktop_notifications": true,
+  "overlay_theme": "neon",
+  "notification_position": "top-center",
+  "notification_dismiss_seconds": 4,
+  "default_pack": "peasant_fr"
+}

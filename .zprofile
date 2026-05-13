@@ -23,6 +23,9 @@ elif [[ -x /usr/local/bin/brew ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
+# postgresql
+[[ -d /opt/homebrew/opt/postgresql@17/bin ]] && export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+
 # go
 export GOPATH="$HOME/go"
 [[ -d "$GOPATH/bin" ]] && export PATH="$GOPATH/bin:$PATH"
