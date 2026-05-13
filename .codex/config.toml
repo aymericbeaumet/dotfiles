@@ -1,0 +1,12 @@
+model = "o3"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[features]
+memories = true
+web_search = true
+codex_hooks = true
+
+[history]
+persistence = "save-all"

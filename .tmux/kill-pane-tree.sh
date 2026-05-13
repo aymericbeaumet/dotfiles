@@ -29,11 +29,24 @@ kill -STOP $pids 2>/dev/null || true
 
 # Unique PGIDs across the whole tree — kills siblings spawned within each job.
 pgids=$(ps -o pgid= -p $pids 2>/dev/null | tr -d ' ' | sort -u)
+
+# SIGTERM first to allow graceful shutdown.
+for pgid in $pgids; do
+  [ -n "$pgid" ] && [ "$pgid" != 0 ] && kill -TERM -- "-$pgid" 2>/dev/null || true
+done
+# shellcheck disable=SC2086
+kill -TERM $pids 2>/dev/null || true
+
+# Resume so processes can actually handle SIGTERM.
+# shellcheck disable=SC2086
+kill -CONT $pids 2>/dev/null || true
+
+sleep 0.5
+
+# SIGKILL any survivors.
 for pgid in $pgids; do
   [ -n "$pgid" ] && [ "$pgid" != 0 ] && kill -KILL -- "-$pgid" 2>/dev/null || true
 done
-
-# Belt-and-suspenders: SIGKILL each PID directly in case any escaped its PG.
 # shellcheck disable=SC2086
 kill -KILL $pids 2>/dev/null || true
 
