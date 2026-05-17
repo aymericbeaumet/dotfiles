@@ -172,6 +172,14 @@ chars = "\u0011"
 key = "Q"
 mods = "Control"
 
+# Shift-click: URLs → browser, images → Preview, text → nvim tmux popup
+[[hints.enabled]]
+regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|~?(?:/?[\\w.@\\-]+/)*[\\w.@\\-]+\\.\\w+(?::\\d+(?::\\d+)?)?"
+hyperlinks = true
+mouse = { enabled = true, mods = "Shift" }
+command = { program = "/Users/ab/.tmux/scripts/open-hint.sh" }
+post_processing = true
+
 [mouse]
 hide_when_typing = false
 

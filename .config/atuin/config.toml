@@ -1,4 +1,5 @@
 style = "full"
+invert = true
 inline_height = 40
 show_preview = true
 show_help = false
