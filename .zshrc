@@ -30,8 +30,7 @@ if [[ -d "$ZINIT_HOME" ]]; then
     atload"!_zsh_autosuggest_start" \
       zsh-users/zsh-autosuggestions \
     atload"compdef g=git" \
-      OMZL::git.zsh \
-    Aloxaf/fzf-tab
+      OMZL::git.zsh
 
   # fzf-git: git keybindings (ctrl-g ctrl-f for files, ctrl-g ctrl-b for branches, etc.)
   zinit wait lucid for junegunn/fzf-git.sh
@@ -51,19 +50,17 @@ zstyle ':completion:*' ignore-parents parent pwd
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' complete-options true
 zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 zstyle ':completion:*:default' menu 'select=0'
-zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:functions' ignored-patterns '_*'
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-checkout:*' tag-order 'heads' 'remote-branch-names' '*'
 zstyle ':completion:*:manuals' separate-sections true
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':fzf-tab:*' fzf-bindings 'tab:accept' 'ctrl-n:down' 'ctrl-p:up'
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-zstyle ':fzf-tab:*' popup-min-size 80 20
-zstyle ':fzf-tab:complete:g:argument-rest' fzf-preview 'git log --oneline --graph --color=always -n 20 $word 2>/dev/null || git diff --color=always $word 2>/dev/null'
-zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline --graph --color=always -n 20 $word'
+zstyle ':completion:*:warnings' format '%F{red}No matches for: %d%f'
 
 # git root: global alias expands anywhere (e.g., `ls ...`, `cat .../file.txt`, `...` to cd)
 alias -g ...='$(git rev-parse --show-toplevel 2>/dev/null || pwd)'
