@@ -1,4 +1,5 @@
 return {
+	{ "aymericbeaumet/vim-symlink" },
 	{ "tpope/vim-abolish", event = "VeryLazy" },
 	{ "tpope/vim-repeat", event = "VeryLazy" },
 	{
@@ -268,11 +269,11 @@ return {
 				defaults = {
 					sorting_strategy = "ascending",
 					layout_strategy = "horizontal_merged",
-				layout_config = {
-					prompt_position = "top",
-					width = 0.8,
-					height = 0.8,
-				},
+					layout_config = {
+						prompt_position = "top",
+						width = 0.8,
+						height = 0.8,
+					},
 					mappings = {
 						i = {
 							["<esc>"] = actions.close,
@@ -372,47 +373,188 @@ return {
 		end,
 	},
 
-
 	-- Claude Code integration
 	{
 		"greggh/claude-code.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		keys = {
-			{ "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude Code" },
+			-- 1. Enable OR Focus Claude instance (<leader>cc)
+			{
+				"<leader>cc",
+				function()
+					-- Check if a Claude terminal buffer already exists
+					local found_win = nil
+					for _, win in ipairs(vim.api.nvim_list_wins()) do
+						local buf = vim.api.nvim_win_get_buf(win)
+						if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "terminal" then
+							if vim.api.nvim_buf_get_name(buf):match("claude") then
+								found_win = win
+								break
+							end
+						end
+					end
+
+					if found_win then
+						-- If it's already open in a window, focus it
+						vim.api.nvim_set_current_win(found_win)
+						vim.cmd("startinsert")
+					else
+						-- Otherwise, call the plugin command to launch a new one
+						vim.cmd("ClaudeCode")
+					end
+				end,
+				desc = "Enable or Focus Claude Code",
+			},
+
+			-- Additional panel state controls
 			{ "<leader>cP", "<cmd>ClaudeCode<cr>", desc = "Pause Claude conversation" },
 			{ "<leader>cC", "<cmd>ClaudeCodeContinue<cr>", desc = "Continue Claude conversation" },
 			{ "<leader>cR", "<cmd>ClaudeCodeResume<cr>", desc = "Resume Claude conversation" },
+
+			-- 2. Append Selection to Existing or NEW instance (<leader>ca)
 			{
-				"<leader>cs",
+				"<leader>ca",
 				function()
-					-- Yank visual selection
-					vim.cmd('noautocmd normal! "vy')
-					local text = vim.fn.getreg("v")
-					-- Find the Claude Code terminal buffer and send text
+					-- Get visual bounds safely
+					local start_pos = vim.fn.getpos("v")
+					local end_pos = vim.fn.getpos(".")
+					local start_line, start_col = start_pos[2] - 1, start_pos[3] - 1
+					local end_line, end_col = end_pos[2] - 1, end_pos[3]
+
+					if start_line > end_line or (start_line == end_line and start_col > end_col) then
+						start_line, end_line = end_line, start_line
+						start_col, end_col = end_col, start_col
+					end
+
+					local lines = vim.api.nvim_buf_get_text(0, start_line, start_col, end_line, end_col, {})
+					local selected_text = table.concat(lines, "\n")
+					if selected_text == "" then
+						return
+					end
+
+					-- Format text cleanly inside a bracketed paste payload
+					local formatted_text = string.format("\n```\n%s\n```\n", selected_text)
+
+					-- Look for an existing terminal channel
+					local target_chan = nil
+					local target_win = nil
+
 					for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 						if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "terminal" then
-							local name = vim.api.nvim_buf_get_name(buf)
-							if name:match("claude") then
-								local chan = vim.b[buf].terminal_job_id
-								if chan then
-									-- Bracketed paste so multiline text doesn't trigger submit
-									vim.fn.chansend(chan, "\x1b[200~" .. text .. "\x1b[201~")
-									-- Focus the terminal window
-									for _, win in ipairs(vim.api.nvim_list_wins()) do
-										if vim.api.nvim_win_get_buf(win) == buf then
-											vim.api.nvim_set_current_win(win)
-											vim.cmd("startinsert")
-											return
+							if vim.api.nvim_buf_get_name(buf):match("claude") then
+								target_chan = vim.b[buf].terminal_job_id
+								-- Try to find its associated window
+								for _, win in ipairs(vim.api.nvim_list_wins()) do
+									if vim.api.nvim_win_get_buf(win) == buf then
+										target_win = win
+										break
+									end
+								end
+								break
+							end
+						end
+					end
+
+					if target_chan and target_win then
+						-- Existing instance found: paste code snippet without hitting enter
+						vim.fn.chansend(target_chan, "\x1b[200~" .. formatted_text .. "\x1b[201~")
+						vim.api.nvim_set_current_win(target_win)
+						vim.cmd("startinsert")
+					else
+						-- No instance found: open a panel first, then drop the text in asynchronously
+						vim.cmd("ClaudeCode")
+						vim.defer_fn(function()
+							-- Re-scan buffers now that the split has spawned
+							for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+								if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == "terminal" then
+									if vim.api.nvim_buf_get_name(buf):match("claude") then
+										local chan = vim.b[buf].terminal_job_id
+										if chan then
+											vim.fn.chansend(chan, "\x1b[200~" .. formatted_text .. "\x1b[201~")
+											-- Find new window to drop cursor into insert mode
+											for _, win in ipairs(vim.api.nvim_list_wins()) do
+												if vim.api.nvim_win_get_buf(win) == buf then
+													vim.api.nvim_set_current_win(win)
+													vim.cmd("startinsert")
+													return
+												end
+											end
 										end
 									end
 								end
 							end
-						end
+						end, 400) -- Small delay to allow the terminal app execution to spin up
 					end
-					vim.notify("Claude Code is not running. Open it with <leader>cc first", vim.log.levels.WARN)
 				end,
 				mode = "v",
-				desc = "Send selection to Claude Code",
+				desc = "Append selection to Claude instance",
+			},
+
+			-- 3. Replace Selection with Claude Output - Oneshot background execution (<leader>cr)
+			{
+				"<leader>cr",
+				function()
+					local start_pos = vim.fn.getpos("v")
+					local end_pos = vim.fn.getpos(".")
+					local start_line, start_col = start_pos[2] - 1, start_pos[3] - 1
+					local end_line, end_col = end_pos[2] - 1, end_pos[3]
+
+					if start_line > end_line or (start_line == end_line and start_col > end_col) then
+						start_line, end_line = end_line, start_line
+						start_col, end_col = end_col, start_col
+					end
+
+					local lines = vim.api.nvim_buf_get_text(0, start_line, start_col, end_line, end_col, {})
+					local selected_text = table.concat(lines, "\n")
+
+					if selected_text == "" then
+						vim.notify("No text selected!", vim.log.levels.WARN)
+						return
+					end
+
+					vim.ui.input({ prompt = "Instruction for Inline Rewrite: " }, function(input)
+						if not input or input == "" then
+							return
+						end
+
+						vim.notify("Claude is refactoring in background...", vim.log.levels.INFO)
+						local full_prompt = string.format("%s:\n```\n%s\n```", input, selected_text)
+						local stdout_chunks = {}
+
+						vim.fn.jobstart({ "claude", "-p", full_prompt }, {
+							stdout_buffered = true,
+							on_stdout = function(_, data)
+								if data then
+									for _, line in ipairs(data) do
+										table.insert(stdout_chunks, line)
+									end
+								end
+							end,
+							on_exit = function(_, exit_code)
+								if exit_code == 0 then
+									while #stdout_chunks > 0 and stdout_chunks[#stdout_chunks] == "" do
+										table.remove(stdout_chunks)
+									end
+									vim.schedule(function()
+										vim.api.nvim_buf_set_text(
+											0,
+											start_line,
+											start_col,
+											end_line,
+											end_col,
+											stdout_chunks
+										)
+										vim.notify("Text rewritten by Claude!", vim.log.levels.INFO)
+									end)
+								else
+									vim.notify("Claude oneshot execution failed.", vim.log.levels.ERROR)
+								end
+							end,
+						})
+					end)
+				end,
+				mode = "v",
+				desc = "Oneshot replace selection with Claude output",
 			},
 		},
 		opts = {
