@@ -1,12 +1,82 @@
-model = "o3"
-model_reasoning_effort = "high"
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
 approval_policy = "on-request"
-sandbox_mode = "workspace-write"
+sandbox_mode = "danger-full-access"
 
 [features]
 memories = true
-web_search = true
-codex_hooks = true
+hooks = true
+multi_agent = true
+shell_tool = true
+
+[workspace]
+ignore_files = [".git/", "node_modules/", "dist/", "build/", "venv/", ".next/"]
+watch_mode = true
 
 [history]
 persistence = "save-all"
+
+[mcp_servers.semble]
+command = "uvx"
+args = ["--from", "semble[mcp]", "semble"]
+
+[[hooks.SessionStart]]
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = "/Users/ab/.tmux/scripts/agent-pane-idle.sh clear"
+timeout = 5
+
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+timeout = 10
+
+[[hooks.UserPromptSubmit]]
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "/Users/ab/.tmux/scripts/agent-pane-idle.sh busy"
+timeout = 5
+
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+timeout = 10
+async = true
+
+[[hooks.Stop]]
+[[hooks.Stop.hooks]]
+type = "command"
+command = "/Users/ab/.tmux/scripts/agent-pane-idle.sh idle"
+timeout = 5
+
+[[hooks.Stop.hooks]]
+type = "command"
+command = "/Users/ab/.tmux/scripts/agent-pane-title.sh"
+timeout = 5
+
+[[hooks.Stop.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+timeout = 10
+async = true
+
+[[hooks.PermissionRequest]]
+[[hooks.PermissionRequest.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+timeout = 10
+async = true
+
+[[hooks.PostToolUse]]
+matcher = "Bash"
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+timeout = 10
+async = true
+
+[projects."/Users/ab/workspace/aymericbeaumet/gors"]
+trust_level = "trusted"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
