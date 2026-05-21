@@ -31,6 +31,10 @@ export GOPATH="$HOME/go"
 [[ -d "$GOPATH/bin" ]] && export PATH="$GOPATH/bin:$PATH"
 [[ -d /usr/local/go/bin ]] && export PATH="/usr/local/go/bin:$PATH"
 
+# gors
+export GORSPATH="$HOME/gors"
+[[ -d "$GORSPATH/bin" ]] && export PATH="$GORSPATH/bin:$PATH"
+
 # rust/cargo
 export CARGO_HOME="$HOME/.cargo"
 [[ -d "$CARGO_HOME/bin" ]] && export PATH="$CARGO_HOME/bin:$PATH"

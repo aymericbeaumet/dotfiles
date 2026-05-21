@@ -32,7 +32,7 @@ if [ "$age" -ge "$ttl" ]; then
     json=$(/opt/homebrew/bin/npx --yes ccusage daily --json -O --timezone "$tz" 2>/dev/null) || exit 0
     daily=$(printf '%s' "$json" | /opt/homebrew/bin/jq -r \
       --arg today "$today" \
-      '[.daily[] | select(.date == $today) | .totalCost] | add // 0 | round') || exit 0
+      '[.daily[] | select(.period == $today) | .totalCost] | add // 0 | round') || exit 0
     [ -z "$daily" ] && exit 0
     if [ "$daily" -gt 100 ]; then
       printf '#[fg=red]$%s' "$daily" > "$cache"

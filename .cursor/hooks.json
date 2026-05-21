@@ -6,6 +6,21 @@
         "command": "rtk hook cursor",
         "matcher": "Shell"
       }
+    ],
+    "stop": [
+      {
+        "command": "bash ~/.claude/hooks/peon-ping/adapters/cursor.sh stop"
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "bash ~/.claude/hooks/peon-ping/adapters/cursor.sh beforeShellExecution"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "bash ~/.claude/hooks/peon-ping/adapters/cursor.sh afterFileEdit"
+      }
     ]
   }
 }
