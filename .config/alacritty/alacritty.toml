@@ -50,16 +50,6 @@ action = "Quit"
 key = "Q"
 mods = "Command"
 
-[[keyboard.bindings]]
-action = "None"
-key = "W"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011X"
-key = "W"
-mods = "Command"
-
 # Tmux session management (prefix C-q)
 [[keyboard.bindings]]
 chars = "\u0011S"
@@ -133,6 +123,11 @@ mods = "Command"
 chars = "\u0011s"
 key = "D"
 mods = "Command|Shift"
+
+[[keyboard.bindings]]
+action = "ReceiveChar"
+key = "W"
+mods = "Command"
 
 [[keyboard.bindings]]
 action = "Paste"

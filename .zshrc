@@ -128,6 +128,10 @@ z() {
   fi
 }
 
+killport() {
+  kill -9 $(lsof -t -i:$1)
+}
+
 # man: `man` opens fzf to search all man pages, `man <page>` opens that page
 # cache man -k output async on shell startup (refreshes if older than 1 day)
 _MAN_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/man-k-cache"

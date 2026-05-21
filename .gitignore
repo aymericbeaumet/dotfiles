@@ -94,10 +94,22 @@ lazy-lock.json
 !.codex/config.toml
 !.codex/rules/
 !.codex/hooks.json
+!.codex/skills
 
 # Cursor
 .cursor/
 !.cursor/hooks.json
+
+# OpenPeon (runtime state)
+.openpeon/.last_update_check
+.openpeon/.sound.pid
+.openpeon/.state.json
+
+# Antigravity/Gemini (managed externally)
+.antigravitycli/
+
+# Codex system skills (auto-managed)
+.skills/.system/
 
 *.lock
 automatic_backups/
