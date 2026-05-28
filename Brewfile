@@ -49,7 +49,7 @@ brew 'buf'
 brew 'uv'
 brew 'cmake'
 brew 'docker' # cli only
-brew 'go'
+brew 'mise'
 brew 'postgresql@17'
 brew 'gradle'
 brew 'node'
