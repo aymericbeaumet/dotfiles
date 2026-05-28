@@ -1,7 +1,8 @@
-model = "gpt-5.5"
+model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "xhigh"
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
+plan_mode_reasoning_effort = "xhigh"
 
 [features]
 memories = true
@@ -28,7 +29,7 @@ timeout = 5
 
 [[hooks.SessionStart.hooks]]
 type = "command"
-command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh SessionStart"
 timeout = 10
 
 [[hooks.UserPromptSubmit]]
@@ -39,9 +40,8 @@ timeout = 5
 
 [[hooks.UserPromptSubmit.hooks]]
 type = "command"
-command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh UserPromptSubmit"
 timeout = 10
-async = true
 
 [[hooks.Stop]]
 [[hooks.Stop.hooks]]
@@ -56,26 +56,61 @@ timeout = 5
 
 [[hooks.Stop.hooks]]
 type = "command"
-command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh Stop"
 timeout = 10
-async = true
 
 [[hooks.PermissionRequest]]
 [[hooks.PermissionRequest.hooks]]
 type = "command"
-command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh PermissionRequest"
 timeout = 10
-async = true
 
 [[hooks.PostToolUse]]
 matcher = "Bash"
 [[hooks.PostToolUse.hooks]]
 type = "command"
-command = "/Users/ab/.claude/hooks/peon-ping/peon.sh"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh PostToolUse"
 timeout = 10
-async = true
+
+[hooks.state]
+
+[hooks.state."/Users/ab/.codex/config.toml:session_start:0:0"]
+trusted_hash = "sha256:e2fbd682ac9864a602cecff8bae7033d5ba8868d07a0fd506d5b7ab5cff186ee"
+
+[hooks.state."/Users/ab/.codex/config.toml:session_start:0:1"]
+trusted_hash = "sha256:1d53cc821d45b1d416118a46223b67c7dc816d46a3c9b3706ea6639d2f515a91"
+
+[hooks.state."/Users/ab/.codex/config.toml:user_prompt_submit:0:0"]
+trusted_hash = "sha256:ecba756efdc0dde61bf82fa5bdaf5c35eb395c3ac3c415f7f49e261c371094cc"
+
+[hooks.state."/Users/ab/.codex/config.toml:stop:0:0"]
+trusted_hash = "sha256:bf3f838b0bd26710b4e229dc0047986c48515ce9145bf35db5a3b7af46fedaba"
+
+[hooks.state."/Users/ab/.codex/config.toml:stop:0:1"]
+trusted_hash = "sha256:1362f5d6f038c3c1af3902a8230ca3a2bccb1b971e59a652e1cba7ad5c074228"
+
+[hooks.state."/Users/ab/.codex/config.toml:permission_request:0:0"]
+trusted_hash = "sha256:05fa84457cba9431d0c2c9ab9038e3d0856edc03d57d9e5a3cd39097af71faac"
+
+[hooks.state."/Users/ab/.codex/config.toml:post_tool_use:0:0"]
+trusted_hash = "sha256:b7d1279753b7d934a4cfbafe47a15a70d36770a1dcab22f09b848f06e4ae0610"
+
+[hooks.state."/Users/ab/.codex/config.toml:user_prompt_submit:0:1"]
+trusted_hash = "sha256:71ab62a69996aef0c80e38c71b3459b1282722e6c889e1b9a4108d163570db73"
+
+[hooks.state."/Users/ab/.codex/config.toml:stop:0:2"]
+trusted_hash = "sha256:4939f8d9f336c0a7798afbbd3a281fb4c15694bc79f805eff466f679c6b31606"
 
 [projects."/Users/ab/workspace/aymericbeaumet/gors"]
+trust_level = "trusted"
+
+[projects."/Users/ab/.dotfiles"]
+trust_level = "trusted"
+
+[projects."/Users/ab/workspace/beside/beside-brand"]
+trust_level = "trusted"
+
+[projects."/Users/ab/workspace/beside/tma-monorepo/main"]
 trust_level = "trusted"
 
 [tui.model_availability_nux]

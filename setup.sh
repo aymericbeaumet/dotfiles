@@ -33,7 +33,6 @@ trap 'error "Script failed at line $LINENO in $BASH_SOURCE"; exit 1' ERR
 # Section flags (all enabled by default)
 DO_SSH=true
 DO_HOMEBREW=true
-DO_NIX=true
 DO_BREWFILE=true
 DO_SYMLINKS=true
 DO_NEOVIM=true
@@ -43,6 +42,7 @@ DO_MACOS=true
 DO_MOLE=true
 FORCE_MOLE=false
 DO_PEON=true
+DO_MISE=true
 
 usage() {
   cat <<'USAGE'
@@ -51,7 +51,6 @@ Usage: setup.sh [OPTIONS]
 Options:
   --no-ssh        Skip SSH key generation and GitHub authorization
   --no-homebrew   Skip Homebrew installation
-  --no-nix        Skip Nix installation
   --no-brewfile   Skip Homebrew bundle (Brewfile)
   --no-symlinks   Skip symlinking dotfiles
   --no-neovim     Skip Neovim plugin sync
@@ -61,6 +60,7 @@ Options:
   --no-mole       Skip Mole system cleanup
   --force-mole    Force Mole cleanup (ignores 2-week cooldown)
   --no-peon       Skip Peon sound pack installation
+  --no-mise       Skip mise tool installation
   -h, --help      Show this help message
 USAGE
 }
@@ -69,7 +69,6 @@ for arg in "$@"; do
   case "$arg" in
     --no-ssh)      DO_SSH=false ;;
     --no-homebrew) DO_HOMEBREW=false ;;
-    --no-nix)      DO_NIX=false ;;
     --no-brewfile) DO_BREWFILE=false ;;
     --no-symlinks) DO_SYMLINKS=false ;;
     --no-neovim)   DO_NEOVIM=false ;;
@@ -79,6 +78,7 @@ for arg in "$@"; do
     --no-mole)     DO_MOLE=false ;;
     --force-mole)  FORCE_MOLE=true ;;
     --no-peon)     DO_PEON=false ;;
+    --no-mise)     DO_MISE=false ;;
     -h|--help)     usage; exit 0 ;;
     *) error "Unknown option: $arg"; usage >&2; exit 1 ;;
   esac
@@ -157,52 +157,6 @@ else
   skip "Homebrew Installation"
 fi
 
-banner "SETUP NIX"
-if $DO_NIX; then
-
-  # Source Nix profile if needed (nix-daemon.sh is not compatible with strict mode)
-  source_nix_profile() {
-    local nix_profile="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-    if [[ -e "$nix_profile" ]]; then
-      set +eu
-      . "$nix_profile"
-      set -eu
-      return 0
-    fi
-    return 1
-  }
-
-  # Check for Nix installation via command or /nix directory
-  if command -v nix &>/dev/null; then
-    info "Nix is already installed at $(which nix)"
-    info "Nix version: $(nix --version)"
-  elif [[ -d /nix ]]; then
-    warning "Nix directory found but nix not in PATH"
-    info "Sourcing Nix profile..."
-    if source_nix_profile && command -v nix &>/dev/null; then
-      info "Nix version: $(nix --version)"
-    else
-      warning "Could not source Nix profile or nix still not available"
-    fi
-  else
-    # Clean up stale backup files from a previous uninstalled Nix
-    if [[ -e /etc/bashrc.backup-before-nix ]] || [[ -e /etc/zshrc.backup-before-nix ]]; then
-      warning "Found stale Nix backup files from a previous installation, cleaning up..."
-      sudo rm -f /etc/bashrc.backup-before-nix /etc/zshrc.backup-before-nix
-    fi
-    warning "Nix not found. Installing Nix..."
-    warning "About to download and run the official Nix install script (https://nixos.org/nix/install)."
-    warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
-    read -r
-    curl -L https://nixos.org/nix/install | sh -s -- --daemon
-    # Source nix profile for current session
-    source_nix_profile || true
-  fi
-
-else
-  skip "Nix Installation"
-fi
-
 banner "SETUP BREWFILE"
 if $DO_BREWFILE; then
 
@@ -215,6 +169,20 @@ if $DO_BREWFILE; then
 
 else
   skip "Homebrew Dependencies"
+fi
+
+banner "SETUP MISE"
+if $DO_MISE; then
+
+  if command -v mise &>/dev/null; then
+    info "Installing mise tools from global config..."
+    mise install
+  else
+    warning "mise not found, skipping tool installation"
+  fi
+
+else
+  skip "Mise Tool Installation"
 fi
 
 banner "SETUP SYMLINKS"
