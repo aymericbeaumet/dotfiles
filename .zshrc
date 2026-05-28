@@ -162,7 +162,7 @@ export KEYTIMEOUT=1                # reduce key sequence delay
 export ZLE_RPROMPT_INDENT=0        # fix right-prompt spacing
 # LANG/LC_ALL set in .zprofile
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export BAT_PAGER="less -RFX"
+export BAT_PAGER="less -R --mouse --wheel-lines=10"
 
 # aliases: tools
 alias ap=ansible-playbook
@@ -238,6 +238,11 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 # atuin: shell history (replaces ctrl-r)
 if (( $+commands[atuin] )); then
   eval "$(atuin init zsh)"
+fi
+
+# mise: polyglot version manager (go, terraform, etc.)
+if (( $+commands[mise] )); then
+  eval "$(mise activate zsh)"
 fi
 
 # zoxide: prompt hook updates DB on cd; custom `z` above overrides command (--no-cmd)

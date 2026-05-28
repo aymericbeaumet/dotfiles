@@ -81,11 +81,17 @@ lazy-lock.json
 .zsh/bundle/
 
 # Claude
-.claude/
+.claude/*
 !.claude/settings.json
 !.claude/rules/
 !.claude/skills/
 !.claude/agents/
+!.claude/statusline-command.sh
+!.claude/hooks/
+.claude/hooks/*
+!.claude/hooks/peon-ping/
+.claude/hooks/peon-ping/*
+!.claude/hooks/peon-ping/codex-hook.sh
 !.claude/.mcp.json
 .claude/settings.local.json
 
@@ -110,6 +116,10 @@ lazy-lock.json
 
 # Codex system skills (auto-managed)
 .skills/.system/
+.agents/skills/.system/
+
+# Shared agent memory (managed separately)
+.agents/memories/
 
 *.lock
 automatic_backups/

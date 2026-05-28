@@ -14,7 +14,6 @@
     "deny": [],
     "defaultMode": "auto"
   },
-  "model": "claude-opus-4-6[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -163,7 +162,7 @@
     "type": "command",
     "command": "sh /Users/ab/.dotfiles/.claude/statusline-command.sh"
   },
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }

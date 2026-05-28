@@ -144,6 +144,11 @@ key = "C"
 mods = "Command"
 
 [[keyboard.bindings]]
+action = "None"
+key = "C"
+mods = "Command|Control"
+
+[[keyboard.bindings]]
 action = "Copy"
 key = "Copy"
 
@@ -169,7 +174,7 @@ mods = "Control"
 
 # Shift-click: URLs → browser, images → Preview, text → nvim tmux popup
 [[hints.enabled]]
-regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|~?(?:/?[\\w.@\\-]+/)*[\\w.@\\-]+\\.\\w+(?::\\d+(?::\\d+)?)?"
+regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|\\$\\{?\\w+\\}?(?:/[\\w./\\-]+)+|(?:~|/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?:\\.{1,2}/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+(?:/[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*)+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+\\.[\\w-]+(?::\\d+(?::\\d+)?)?"
 hyperlinks = true
 mouse = { enabled = true, mods = "Shift" }
 command = { program = "/Users/ab/.tmux/scripts/open-hint.sh" }
