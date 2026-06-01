@@ -39,7 +39,7 @@
   "notification_dismiss_seconds": 4,
   "notification_all_screens": true,
   "notification_title_override": "",
-  "notification_title_marker": "●",
+  "notification_title_marker": "\u25cf",
   "notification_title_ide": false,
   "notification_title_script": "",
   "project_name_map": {},

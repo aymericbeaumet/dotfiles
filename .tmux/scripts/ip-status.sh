@@ -14,9 +14,9 @@ if [ "$age" -ge "$ttl" ]; then
   (
     ip=$(curl -fsS -4 --max-time 2 https://api.ipify.org 2>/dev/null)
     if [ -n "$ip" ]; then
-      printf '#[fg=colour178]%s' "$ip" > "$cache"
+      printf '#[range=user|net-prefs fg=colour178]%s#[norange]' "$ip" > "$cache"
     else
-      printf '#[fg=red]no internet' > "$cache"
+      printf '#[range=user|net-prefs fg=red]no internet#[norange]' > "$cache"
     fi
   ) >/dev/null 2>&1 &
 fi

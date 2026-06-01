@@ -1,0 +1,6 @@
+--theme="Nord"
+--style="numbers,changes,header"
+--paging=auto
+--map-syntax "*.jenkinsfile:Groovy"
+--map-syntax "*.props:Java Properties"
+--map-syntax ".env*:DotENV"

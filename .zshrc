@@ -22,6 +22,9 @@ if [[ -d "$ZINIT_HOME" ]]; then
   [[ -d "$HOME/.docker/completions" ]] && fpath=("$HOME/.docker/completions" $fpath)
 
   # plugins (turbo mode: deferred loading for faster startup)
+  # All entries below load after the first prompt is rendered, in order.
+  # Tool inits (mise/zoxide/carapace) sit after zicompinit so their
+  # compdefs find a ready completion system.
   zinit wait lucid for \
     atinit"zicompinit; zicdreplay" \
       zdharma-continuum/fast-syntax-highlighting \
@@ -30,10 +33,14 @@ if [[ -d "$ZINIT_HOME" ]]; then
     atload"!_zsh_autosuggest_start" \
       zsh-users/zsh-autosuggestions \
     atload"compdef g=git" \
-      OMZL::git.zsh
-
-  # fzf-git: git keybindings (ctrl-g ctrl-f for files, ctrl-g ctrl-b for branches, etc.)
-  zinit wait lucid for junegunn/fzf-git.sh
+      OMZL::git.zsh \
+    has'mise' id-as'mise' atinit'eval "$(mise activate zsh)"' \
+      zdharma-continuum/null \
+    has'zoxide' id-as'zoxide' atinit'eval "$(zoxide init zsh --hook=prompt --no-cmd)"' \
+      zdharma-continuum/null \
+    has'carapace' id-as'carapace' atinit'export CARAPACE_BRIDGES="zsh,fish,bash"; source <(carapace _carapace zsh)' \
+      zdharma-continuum/null \
+    junegunn/fzf-git.sh
 fi
 
 # theme: powerlevel10k config (outside zinit block; prefer dotfiles path, else symlinked)
@@ -205,9 +212,10 @@ export HISTSIZE=50000
 export SAVEHIST=50000
 setopt EXTENDED_HISTORY HIST_EXPIRE_DUPS_FIRST HIST_FCNTL_LOCK
 setopt HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_NO_FUNCTIONS HIST_NO_STORE
-setopt HIST_REDUCE_BLANKS HIST_SAVE_BY_COPY HIST_SAVE_NO_DUPS SHARE_HISTORY
-# SHARE_HISTORY implies INC_APPEND_HISTORY_TIME; unsetting APPEND/INC_APPEND is redundant but explicit
-unsetopt APPEND_HISTORY INC_APPEND_HISTORY
+setopt HIST_REDUCE_BLANKS HIST_SAVE_BY_COPY HIST_SAVE_NO_DUPS
+# INC_APPEND_HISTORY commits each command to the file; fzf CTRL-R reads from it
+setopt INC_APPEND_HISTORY
+unsetopt APPEND_HISTORY
 
 # options: input/output
 setopt INTERACTIVE_COMMENTS RC_QUOTES
@@ -222,9 +230,12 @@ add-zsh-hook precmd _reset_cursor
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
-# fzf: shell integration (only if fzf is installed via Homebrew)
+# fzf: shell integration — completion + key-bindings (CTRL-R history, CTRL-T files, ALT-C cd)
 _fzf_prefix="${HOMEBREW_PREFIX:-$(command -v brew &>/dev/null && brew --prefix 2>/dev/null)}"
-[[ -n "$_fzf_prefix" ]] && [[ -f "$_fzf_prefix/opt/fzf/shell/completion.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/completion.zsh" 2>/dev/null
+if [[ -n "$_fzf_prefix" ]]; then
+  [[ -f "$_fzf_prefix/opt/fzf/shell/completion.zsh"   ]] && source "$_fzf_prefix/opt/fzf/shell/completion.zsh"   2>/dev/null
+  [[ -f "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
+fi
 unset _fzf_prefix
 export FZF_DEFAULT_OPTS="
   --ansi --border --height=40% --layout=reverse --inline-info
@@ -235,15 +246,4 @@ export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 
-# atuin: shell history (replaces ctrl-r)
-if (( $+commands[atuin] )); then
-  eval "$(atuin init zsh)"
-fi
-
-# mise: polyglot version manager (go, terraform, etc.)
-if (( $+commands[mise] )); then
-  eval "$(mise activate zsh)"
-fi
-
-# zoxide: prompt hook updates DB on cd; custom `z` above overrides command (--no-cmd)
-eval "$(zoxide init zsh --hook=prompt --no-cmd)"
+# mise, zoxide, carapace are loaded via zinit turbo at the top of this file

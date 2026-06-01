@@ -23,8 +23,8 @@ elif [[ -x /usr/local/bin/brew ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# postgresql
-[[ -d /opt/homebrew/opt/postgresql@17/bin ]] && export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+# postgresql client (libpq is keg-only)
+[[ -d /opt/homebrew/opt/libpq/bin ]] && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # go
 export GOPATH="$HOME/go"
@@ -42,7 +42,7 @@ export CARGO_HOME="$HOME/.cargo"
 [[ -d /usr/local/opt/rustup/bin ]] && export PATH="/usr/local/opt/rustup/bin:$PATH"
 
 # bat
-export BAT_THEME="Nord"
+export BAT_CONFIG_PATH="${DOTFILES:-$HOME/.dotfiles}/.config/bat/config"
 
 # ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
