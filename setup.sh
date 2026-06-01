@@ -177,6 +177,8 @@ if $DO_MISE; then
   if command -v mise &>/dev/null; then
     info "Installing mise tools from global config..."
     mise install
+    info "Pruning mise tools not listed in config..."
+    mise prune --yes
   else
     warning "mise not found, skipping tool installation"
   fi

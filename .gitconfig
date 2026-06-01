@@ -117,3 +117,18 @@
 [diff]
 	algorithm = histogram
 	colorMoved = default
+
+[branch]
+	sort = -committerdate
+
+[tag]
+	sort = version:refname
+
+[help]
+	autocorrect = prompt
+
+[blame]
+	markUnblamableLines = true
+
+[maintenance]
+	strategy = incremental
