@@ -1,8 +1,0 @@
-style = "full"
-invert = true
-inline_height = 40
-show_preview = true
-show_help = false
-exit_mode = "return-query"
-filter_mode_shell_up_key_binding = "session"
-search_mode = "fuzzy"

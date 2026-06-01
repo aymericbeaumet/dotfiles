@@ -162,7 +162,7 @@
     "type": "command",
     "command": "sh /Users/ab/.dotfiles/.claude/statusline-command.sh"
   },
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }

@@ -204,5 +204,5 @@ padding = { x = 0, y = 0 }
 dynamic_padding = true
 startup_mode = "SimpleFullscreen"
 option_as_alt = "Both"
-opacity = 0.99
+opacity = 1
 blur = true
