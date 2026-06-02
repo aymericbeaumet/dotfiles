@@ -1,0 +1,2 @@
+"query:All:title =~ \".\""    "~All"
+https://lobste.rs/rss         "~Lobsters"

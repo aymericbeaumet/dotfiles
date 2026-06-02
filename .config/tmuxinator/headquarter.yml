@@ -3,7 +3,12 @@ root: ~
 on_project_start: tmux set -t headquarter remain-on-exit on \; set -t headquarter allow-rename off
 
 windows:
+  - news:
+      layout: even-horizontal
+      panes:
+        - tmux select-pane -T hackernews && clx
+        - tmux select-pane -T RSS && ~/.config/newsboat/run.sh
   - btop: tmux select-pane -T btop && btop
   - nvtop: tmux select-pane -T nvtop && nvtop
   - rustnet: tmux select-pane -T rustnet && sudo rustnet
-  - docker: tmux select-pane -T docker && lazydocker
+  - lazydocker: tmux select-pane -T lazydocker && lazydocker

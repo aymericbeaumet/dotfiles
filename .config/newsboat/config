@@ -1,0 +1,16 @@
+auto-reload yes
+reload-time 10
+refresh-on-startup yes
+browser "open %u"
+
+article-sort-order date-desc
+
+bind-key j down
+bind-key k up
+bind-key l open
+bind-key h quit
+bind-key J next-feed
+bind-key K prev-feed
+bind-key d pagedown
+bind-key u pageup
+bind-key b open-in-browser
