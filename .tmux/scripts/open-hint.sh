@@ -24,6 +24,11 @@ if [[ "$input" =~ ^https?:// ]]; then
   exec open "$input"
 fi
 
+# Rust compiler error codes (E0001..E9999) → docs
+if [[ "$input" =~ ^E[0-9]{4}$ ]]; then
+  exec open "https://doc.rust-lang.org/error_codes/${input}.html"
+fi
+
 # Strip file:// URI prefix
 input="${input#file://}"
 
