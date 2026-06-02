@@ -123,17 +123,23 @@ done
 tmux select-layout -t "$win" "$(printf '%04x' $csum),${layout}"
 
 if [ -n "$agent_cmd" ]; then
-  skip=$((total - 1))
+  # Skip the user's active pane and any pane already running the agent so the
+  # binding is idempotent — re-running in an existing window won't type
+  # "claude" into a running claude session.
   for ((i=0; i<total && i<${#ids[@]}; i++)); do
-    [ "$i" -eq "$skip" ] && continue
-    tmux send-keys -t "%${ids[$i]}" "$agent_cmd" Enter
+    pane_id="%${ids[$i]}"
+    [ "$pane_id" = "$active" ] && continue
+    cmd=$(tmux display-message -p -t "$pane_id" '#{pane_current_command}')
+    case "$cmd" in
+      "$agent_cmd"*) continue ;;
+    esac
+    tmux send-keys -t "$pane_id" "$agent_cmd" Enter
   done
-  tmux select-pane -t "%${ids[$skip]}"
+fi
+
+# Re-select active pane if it survived, otherwise pick first
+if tmux list-panes -t "$win" -F '#{pane_id}' | grep -q "^${active}$"; then
+  tmux select-pane -t "$active"
 else
-  # Re-select active pane if it survived, otherwise pick first
-  if tmux list-panes -t "$win" -F '#{pane_id}' | grep -q "^${active}$"; then
-    tmux select-pane -t "$active"
-  else
-    tmux select-pane -t "%${ids[0]}"
-  fi
+  tmux select-pane -t "%${ids[0]}"
 fi
