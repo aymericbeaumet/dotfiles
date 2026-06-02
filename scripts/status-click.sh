@@ -16,8 +16,8 @@ case "$r" in
       | fzf-tmux -p --reverse --header="Switch session" \
       | xargs -r -I{} tmux switch-client -t {}
     ;;
-  budget)     tmux display-popup -E -w 90% -h 90% "$HOME/.tmux/scripts/budget-popup.sh" ;;
-  cal)        tmux display-popup -E -w 60 -h 12 "$HOME/.tmux/scripts/cal-popup.sh" ;;
+  budget)     tmux display-popup -E -w 90% -h 90% "$HOME/.dotfiles/scripts/budget-popup.sh" ;;
+  cal)        tmux display-popup -E -w 60 -h 12 "$HOME/.dotfiles/scripts/cal-popup.sh" ;;
   app-aws)    open -a "AWS VPN Client" ;;
   app-proton) open -a "ProtonVPN" ;;
   net-prefs)  open "x-apple.systempreferences:com.apple.Network-Settings.extension" ;;

@@ -225,7 +225,7 @@ mods = "Control"
 regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|\\$\\{?\\w+\\}?(?:/[\\w./\\-]+)+|(?:~|/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?:\\.{1,2}/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+(?:/[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*)+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?-u:\\b)E\\d{4}(?-u:\\b)"
 hyperlinks = true
 mouse = { enabled = true, mods = "Shift" }
-command = { program = "/Users/ab/.tmux/scripts/open-hint.sh" }
+command = { program = "/Users/ab/.dotfiles/scripts/open-hint.sh" }
 post_processing = true
 
 [mouse]
