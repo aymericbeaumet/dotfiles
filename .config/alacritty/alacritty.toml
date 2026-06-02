@@ -56,19 +56,66 @@ chars = "\u0011S"
 key = "S"
 mods = "Command|Shift"
 
+# Cmd+Shift+digit -> ESC + shifted-digit -> tmux M-!/M-@/M-# (session switch).
 [[keyboard.bindings]]
-chars = "\u00111"
+chars = "\u001b!"
+key = "!"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001b@"
+key = "@"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001b#"
+key = "#"
+mods = "Command|Shift"
+
+# Cmd+digit -> ESC + digit -> tmux M-1..M-9 (window switch).
+[[keyboard.bindings]]
+chars = "\u001b1"
 key = "Key1"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00112"
+chars = "\u001b2"
 key = "Key2"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00113"
+chars = "\u001b3"
 key = "Key3"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001b4"
+key = "Key4"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001b5"
+key = "Key5"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001b6"
+key = "Key6"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001b7"
+key = "Key7"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001b8"
+key = "Key8"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001b9"
+key = "Key9"
 mods = "Command"
 
 # Tmux tab management (prefix C-q)
