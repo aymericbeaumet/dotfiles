@@ -82,24 +82,22 @@ lazy-lock.json
 
 # Claude
 .claude/*
+!.claude/CLAUDE.md
 !.claude/settings.json
-!.claude/rules/
-!.claude/skills/
-!.claude/agents/
+!.claude/skills
 !.claude/statusline-command.sh
 !.claude/hooks/
 .claude/hooks/*
 !.claude/hooks/peon-ping/
 .claude/hooks/peon-ping/*
 !.claude/hooks/peon-ping/codex-hook.sh
-!.claude/.mcp.json
 .claude/settings.local.json
 
 # Codex
 .codex/*
+!.codex/AGENTS.md
 !.codex/config.toml
 !.codex/rules/
-!.codex/hooks.json
 !.codex/skills
 
 # Cursor
@@ -111,11 +109,7 @@ lazy-lock.json
 .openpeon/.sound.pid
 .openpeon/.state.json
 
-# Antigravity/Gemini (managed externally)
-.antigravitycli/
-
 # Codex system skills (auto-managed)
-.skills/.system/
 .agents/skills/.system/
 
 # Shared agent memory (managed separately)
