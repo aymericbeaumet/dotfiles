@@ -143,6 +143,12 @@ action = "None"
 key = "C"
 mods = "Command|Control"
 
+# Open Apple Reminders
+[[keyboard.bindings]]
+command = { program = "open", args = ["-a", "Reminders"] }
+key = "R"
+mods = "Command|Control"
+
 [[keyboard.bindings]]
 action = "Copy"
 key = "Copy"
