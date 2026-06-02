@@ -73,14 +73,9 @@ mods = "Command"
 
 # Tmux tab management (prefix C-q)
 [[keyboard.bindings]]
-chars = "\u0011t"
+chars = "\u0011c"
 key = "T"
 mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011B"
-key = "T"
-mods = "Command|Shift"
 
 [[keyboard.bindings]]
 chars = "\u0011p"
@@ -104,12 +99,12 @@ mods = "Command"
 
 # Tmux pane navigation (prefix C-q)
 [[keyboard.bindings]]
-chars = "\u0011\u001b[Z"
+chars = "\u0011O"
 key = "["
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0011\u0009"
+chars = "\u0011o"
 key = "]"
 mods = "Command"
 
@@ -174,7 +169,7 @@ mods = "Control"
 
 # Shift-click: URLs → browser, images → Preview, text → nvim tmux popup
 [[hints.enabled]]
-regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|\\$\\{?\\w+\\}?(?:/[\\w./\\-]+)+|(?:~|/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?:\\.{1,2}/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+(?:/[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*)+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+\\.[\\w-]+(?::\\d+(?::\\d+)?)?"
+regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|\\$\\{?\\w+\\}?(?:/[\\w./\\-]+)+|(?:~|/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?:\\.{1,2}/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+(?:/[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*)+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?-u:\\b)E\\d{4}(?-u:\\b)"
 hyperlinks = true
 mouse = { enabled = true, mods = "Shift" }
 command = { program = "/Users/ab/.tmux/scripts/open-hint.sh" }
