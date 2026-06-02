@@ -1,19 +1,6 @@
 [hints]
 keys = "<colemak>"
-min_length = 1
-
-[overlay]
-font_size = 14
-hint_bg = "#FFD400"
-hint_fg = "#1B1B1B"
-exit_key = "escape"
-
-[providers]
-disabled = []
-deadline_ms_hot = 80
-deadline_ms_cold = 300
+scope = "everywhere"
 
 [debug]
 show_bounds = true
-bounds_bg = "#FF3B9A20"   # pink fill at ~13% opacity
-bounds_fg = "#FF3B9A"     # solid pink stroke

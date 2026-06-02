@@ -37,7 +37,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/ab/.tmux/scripts/agent-pane-idle.sh clear",
+            "command": "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh clear",
             "timeout": 5
           }
         ]
@@ -81,7 +81,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/ab/.tmux/scripts/agent-pane-idle.sh busy",
+            "command": "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh busy",
             "timeout": 5
           }
         ]
@@ -99,7 +99,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/ab/.tmux/scripts/agent-pane-idle.sh idle",
+            "command": "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh idle",
             "timeout": 5
           }
         ]

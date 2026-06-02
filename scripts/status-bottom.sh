@@ -1,6 +1,6 @@
 #!/bin/sh
 # Render the bottom status line: ╚════...════╝ spanning the full client width.
-# Called from tmux as: #(~/.tmux/scripts/status-bottom.sh #{client_width})
+# Called from tmux as: #(~/.dotfiles/scripts/status-bottom.sh #{client_width})
 # tmux expands #{client_width} before invoking, and re-runs when it changes.
 
 width=${1:-80}
