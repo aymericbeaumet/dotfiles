@@ -14,6 +14,6 @@ deadline_ms_hot = 80
 deadline_ms_cold = 300
 
 [debug]
-show_target_bounds = true
+show_bounds = true
 bounds_bg = "#FF3B9A20"   # pink fill at ~13% opacity
 bounds_fg = "#FF3B9A"     # solid pink stroke
