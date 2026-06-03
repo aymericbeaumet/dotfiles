@@ -1,6 +1,7 @@
 [hints]
 keys = "<colemak>"
-scope = "everywhere"
 
 [debug]
 show_bounds = true
+dump_ax = true
+dump_logs = true
