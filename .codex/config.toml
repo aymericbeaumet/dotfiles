@@ -21,6 +21,10 @@ persistence = "save-all"
 command = "uvx"
 args = ["--from", "semble[mcp]", "semble"]
 
+[mcp_servers.tmux]
+command = "npx"
+args = ["-y", "tmux-mcp", "--shell-type=zsh"]
+
 [[hooks.SessionStart]]
 [[hooks.SessionStart.hooks]]
 type = "command"
@@ -79,6 +83,30 @@ type = "command"
 command = "/Users/ab/.dotfiles/scripts/format-on-save.sh"
 timeout = 10
 
+[[hooks.SubagentStart]]
+[[hooks.SubagentStart.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh SubagentStart"
+timeout = 10
+
+[[hooks.SubagentStop]]
+[[hooks.SubagentStop.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh SubagentStop"
+timeout = 10
+
+[[hooks.PreCompact]]
+[[hooks.PreCompact.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh PreCompact"
+timeout = 10
+
+[[hooks.PostCompact]]
+[[hooks.PostCompact.hooks]]
+type = "command"
+command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh PostCompact"
+timeout = 10
+
 [hooks.state]
 
 [hooks.state."/Users/ab/.codex/config.toml:session_start:0:0"]
@@ -108,6 +136,21 @@ trusted_hash = "sha256:71ab62a69996aef0c80e38c71b3459b1282722e6c889e1b9a4108d163
 [hooks.state."/Users/ab/.codex/config.toml:stop:0:2"]
 trusted_hash = "sha256:4939f8d9f336c0a7798afbbd3a281fb4c15694bc79f805eff466f679c6b31606"
 
+[hooks.state."/Users/ab/.codex/config.toml:post_tool_use:1:0"]
+trusted_hash = "sha256:d9d3b1c821a2261db3c66c37213e1f52155e87e683ebcebd35e2a9661d73cba5"
+
+[hooks.state."/Users/ab/.codex/config.toml:pre_compact:0:0"]
+trusted_hash = "sha256:d534957bef38a7a41cd14f8984bc87b5959e20eb244dd54a1ddaded107e159fd"
+
+[hooks.state."/Users/ab/.codex/config.toml:post_compact:0:0"]
+trusted_hash = "sha256:2b30fbd6827c86addf3e90f91542558c6fef6cf28dc79aa07a7a40e49f61d21c"
+
+[hooks.state."/Users/ab/.codex/config.toml:subagent_start:0:0"]
+trusted_hash = "sha256:c551d970bd200007a77a458d73c514d742adfbaacf3da7108f4591fff8a45a21"
+
+[hooks.state."/Users/ab/.codex/config.toml:subagent_stop:0:0"]
+trusted_hash = "sha256:f007298b0a246c068987a0a448803438b79a5a9a90cb91545146b22ebbf5e833"
+
 [projects."/Users/ab/workspace/aymericbeaumet/gors"]
 trust_level = "trusted"
 
@@ -123,10 +166,14 @@ trust_level = "trusted"
 [projects."/Users/ab/workspace/aymericbeaumet/flash"]
 trust_level = "trusted"
 
+[projects."/Users/ab/workspace/aymericbeaumet/blog"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
 [marketplaces.claude-code-workflows]
-last_updated = "2026-06-03T14:54:59Z"
+last_updated = "2026-06-03T19:40:28Z"
+last_revision = "767d969a73ce6608d10ac713e52be9ac7f061ab9"
 source_type = "git"
 source = "https://github.com/wshobson/agents.git"
