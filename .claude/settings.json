@@ -26,6 +26,18 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ab/.dotfiles/scripts/format-on-save.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "",
@@ -161,6 +173,20 @@
   "statusLine": {
     "type": "command",
     "command": "sh /Users/ab/.dotfiles/.claude/statusline-command.sh"
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "claude-code-workflows": {
+      "source": {
+        "source": "github",
+        "repo": "wshobson/agents"
+      }
+    }
   },
   "effortLevel": "high",
   "agentPushNotifEnabled": true,

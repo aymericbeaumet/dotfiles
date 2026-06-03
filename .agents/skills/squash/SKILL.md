@@ -1,6 +1,10 @@
 ---
 name: squash
 description: Squash all local commits (ahead of remote) into a single commit with an auto-generated message.
+disallowed-tools:
+  - Edit
+  - Write
+  - MultiEdit
 ---
 
 ## Task

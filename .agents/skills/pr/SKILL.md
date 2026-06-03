@@ -1,6 +1,10 @@
 ---
 name: pr
 description: Create a new pull request or update an existing one's title and description. Use when the user asks to open a PR, submit a PR, update a PR, or push changes for review.
+disallowed-tools:
+  - Edit
+  - Write
+  - MultiEdit
 ---
 
 ## Task
