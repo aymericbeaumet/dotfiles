@@ -75,19 +75,19 @@ timeout = 10
 [hooks.state]
 
 [hooks.state."/Users/ab/.codex/config.toml:session_start:0:0"]
-trusted_hash = "sha256:e2fbd682ac9864a602cecff8bae7033d5ba8868d07a0fd506d5b7ab5cff186ee"
+trusted_hash = "sha256:ba12d8e7186c71397a2fce8790ae400670f25add2bde0a90022bf5ebfd5f551d"
 
 [hooks.state."/Users/ab/.codex/config.toml:session_start:0:1"]
 trusted_hash = "sha256:1d53cc821d45b1d416118a46223b67c7dc816d46a3c9b3706ea6639d2f515a91"
 
 [hooks.state."/Users/ab/.codex/config.toml:user_prompt_submit:0:0"]
-trusted_hash = "sha256:ecba756efdc0dde61bf82fa5bdaf5c35eb395c3ac3c415f7f49e261c371094cc"
+trusted_hash = "sha256:ea56f1033623cb8c91f692e56382966d560d67542e812f7d2c0d4b31145247b9"
 
 [hooks.state."/Users/ab/.codex/config.toml:stop:0:0"]
-trusted_hash = "sha256:bf3f838b0bd26710b4e229dc0047986c48515ce9145bf35db5a3b7af46fedaba"
+trusted_hash = "sha256:2c99b89ffaa802f10e684421a5e06d7df12269f8eeff62f085a128f8c6d0b7de"
 
 [hooks.state."/Users/ab/.codex/config.toml:stop:0:1"]
-trusted_hash = "sha256:1362f5d6f038c3c1af3902a8230ca3a2bccb1b971e59a652e1cba7ad5c074228"
+trusted_hash = "sha256:6038fbb0f8578c1c2592b6d71f0563afadeb541fdac7cb937a79802793390646"
 
 [hooks.state."/Users/ab/.codex/config.toml:permission_request:0:0"]
 trusted_hash = "sha256:05fa84457cba9431d0c2c9ab9038e3d0856edc03d57d9e5a3cd39097af71faac"
@@ -111,6 +111,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/ab/workspace/beside/tma-monorepo/main"]
+trust_level = "trusted"
+
+[projects."/Users/ab/workspace/aymericbeaumet/flash"]
 trust_level = "trusted"
 
 [tui.model_availability_nux]
