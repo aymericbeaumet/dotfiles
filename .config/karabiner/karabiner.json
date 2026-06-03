@@ -7,7 +7,7 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Flash: control+space -> flash://activate",
+                        "description": "Flash: control+space -> flash://show_hints",
                         "manipulators": [
                             {
                                 "type": "basic",
@@ -21,7 +21,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -g flash://activate"
+                                        "shell_command": "open -g flash://show_hints"
                                     }
                                 ]
                             }
@@ -219,6 +219,28 @@
                                 "to": [
                                     {
                                         "shell_command": "open -Fa '/Applications/Postico 2.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Launch or focus Reminders",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "r",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "command",
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open -Fa '/System/Applications/Reminders.app'"
                                     }
                                 ],
                                 "type": "basic"
