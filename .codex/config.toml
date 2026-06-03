@@ -72,6 +72,13 @@ type = "command"
 command = "/Users/ab/.claude/hooks/peon-ping/codex-hook.sh PostToolUse"
 timeout = 10
 
+[[hooks.PostToolUse]]
+matcher = "Edit|Write|apply_patch"
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "/Users/ab/.dotfiles/scripts/format-on-save.sh"
+timeout = 10
+
 [hooks.state]
 
 [hooks.state."/Users/ab/.codex/config.toml:session_start:0:0"]
@@ -118,3 +125,8 @@ trust_level = "trusted"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
+
+[marketplaces.claude-code-workflows]
+last_updated = "2026-06-03T14:54:59Z"
+source_type = "git"
+source = "https://github.com/wshobson/agents.git"

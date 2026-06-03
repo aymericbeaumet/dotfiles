@@ -1,7 +1,2 @@
 [hints]
 keys = "<colemak>"
-
-[debug]
-show_bounds = true
-dump_ax = true
-dump_logs = true
