@@ -85,6 +85,7 @@ lazy-lock.json
 !.claude/CLAUDE.md
 !.claude/settings.json
 !.claude/skills
+!.claude/agents
 !.claude/statusline-command.sh
 !.claude/hooks/
 .claude/hooks/*
@@ -92,6 +93,7 @@ lazy-lock.json
 .claude/hooks/peon-ping/*
 !.claude/hooks/peon-ping/codex-hook.sh
 .claude/settings.local.json
+.claude/worktrees/
 
 # Codex
 .codex/*
@@ -99,6 +101,7 @@ lazy-lock.json
 !.codex/config.toml
 !.codex/rules/
 !.codex/skills
+!.codex/agents
 
 # Cursor
 .cursor/

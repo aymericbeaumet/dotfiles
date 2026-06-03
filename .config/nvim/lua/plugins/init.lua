@@ -95,23 +95,6 @@ return {
 			{ "<leader>t", "<cmd>Neotree toggle<cr>", desc = "Toggle tree explorer" },
 		},
 		opts = {
-			event_handlers = {
-				{
-					event = "neo_tree_buffer_enter",
-					handler = function()
-						vim.schedule(function()
-							-- quit nvim if neo-tree is the last open window
-							local wins = vim.api.nvim_list_wins()
-							local non_floating = vim.tbl_filter(function(w)
-								return vim.api.nvim_win_get_config(w).relative == ""
-							end, wins)
-							if #non_floating == 1 then
-								vim.cmd("quit")
-							end
-						end)
-					end,
-				},
-			},
 			filesystem = {
 				follow_current_file = { enabled = true },
 				use_libuv_file_watcher = true,

@@ -1,6 +1,10 @@
 ---
 name: commit
 description: Stage all changes and commit with an auto-generated message. Does NOT push.
+disallowed-tools:
+  - Edit
+  - Write
+  - MultiEdit
 ---
 
 ## Task
