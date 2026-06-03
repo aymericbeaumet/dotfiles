@@ -200,6 +200,9 @@
     "type": "command",
     "command": "sh /Users/ab/.dotfiles/.claude/statusline-command.sh"
   },
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
       "source": {
@@ -216,8 +219,5 @@
   },
   "effortLevel": "high",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true
-  }
+  "skipAutoPermissionPrompt": true
 }
