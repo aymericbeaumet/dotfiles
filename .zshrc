@@ -139,6 +139,10 @@ killport() {
   kill -9 $(lsof -t -i:$1)
 }
 
+# wcat <file> / wbat <file>: watchexec the file and cat/bat, re-rendering on change.
+wcat() { command watchexec --clear --restart --no-vcs-ignore -w "$1" -- cat -- "$1"; }
+wbat() { command watchexec --clear --restart --no-vcs-ignore -w "$1" -- bat --paging=never -- "$1"; }
+
 # man: `man` opens fzf to search all man pages, `man <page>` opens that page
 # cache man -k output async on shell startup (refreshes if older than 1 day)
 _MAN_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/man-k-cache"
@@ -173,7 +177,6 @@ export BAT_PAGER="less -R --mouse --wheel-lines=10"
 
 # aliases: tools
 alias ap=ansible-playbook
-alias b=bat
 alias tf=terraform
 alias v=$EDITOR
 alias vi=$EDITOR
