@@ -1,5 +1,5 @@
 [hints]
-keys = "<colemak>"
+keys = "<colemak_toprow|colemak_homerow>"
 
 [shortcuts]
 # Navigation
@@ -30,7 +30,7 @@ keys = "<colemak>"
 
 # System control
 "alt+shift+c" = ["../../scripts/toggle_caffeinate.sh"]
-"alt+shift+d" = ["../../scripts/toggle_darkmode.sh"]
+"alt+shift+d" = ["../../scripts/cycle_appearance.sh"]
 "alt+shift+m" = ["../../scripts/toggle_mute.sh"]
 "alt+shift+w" = ["../../scripts/toggle_wifi.sh"]
 

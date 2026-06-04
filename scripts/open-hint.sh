@@ -46,15 +46,26 @@ if [[ "$file" != /* ]]; then
   fi
 fi
 
-[[ -e "$file" ]] || exit 0
+if [[ ! -e "$file" ]]; then
+  # Bare-domain fallback: aisstream.io, github.com/user/repo, etc.
+  if [[ "$input" =~ ^([A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+)(/.*)?$ ]]; then
+    host="${BASH_REMATCH[1]}"
+    tld="${host##*.}"
+    case "$tld" in
+      sh | bash | zsh | fish | js | ts | jsx | tsx | py | rb | go | rs | md | txt | log | conf | toml | yaml | yml | json | html | htm | css | lua | c | h | cpp | hpp | swift | kt | java | php | sql | csv | xml | jpg | jpeg | png | gif | bmp | tiff | webp | svg | ico | heic | pdf | mp3 | mp4 | mkv | avi | mov | flac | wav | aac | ogg | m4a | m4v | webm | wmv | zip | tar | gz | bz2 | xz | 7z | dmg | iso | exe | bin | app | env | lock | sum | mod) ;;
+      *) exec open "https://$input" ;;
+    esac
+  fi
+  exit 0
+fi
 
 # Images → Preview (only for regular files)
 if [[ -f "$file" ]]; then
   case "${file,,}" in
-    *.png|*.jpg|*.jpeg|*.gif|*.bmp|*.tiff|*.webp|*.svg|*.ico|*.heic|*.pdf)
+    *.png | *.jpg | *.jpeg | *.gif | *.bmp | *.tiff | *.webp | *.svg | *.ico | *.heic | *.pdf)
       exec open -a Preview "$file"
       ;;
-    *.mp3|*.mp4|*.mkv|*.avi|*.mov|*.flac|*.wav|*.aac|*.ogg|*.m4a|*.m4v|*.webm|*.wmv)
+    *.mp3 | *.mp4 | *.mkv | *.avi | *.mov | *.flac | *.wav | *.aac | *.ogg | *.m4a | *.m4v | *.webm | *.wmv)
       exec open -a VLC "$file"
       ;;
   esac
