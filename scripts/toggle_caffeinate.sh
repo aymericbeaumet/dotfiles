@@ -6,7 +6,7 @@ PIDFILE="${TMPDIR:-/tmp}/caffeinate-toggle.pid"
 
 notify() {
   encoded=$(printf '%s' "Caffeinate $1" | od -An -tx1 -v | tr -d ' \n' | sed 's/../%&/g')
-  open -g "flash://show_alert?message=$encoded" >/dev/null 2>&1 || true
+  open -g "flash://show_alert?message=$encoded" >/dev/null 2>&1 &
 }
 
 if [ -f "$PIDFILE" ] && pid=$(cat "$PIDFILE" 2>/dev/null) && [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then

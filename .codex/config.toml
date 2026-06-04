@@ -169,6 +169,12 @@ trust_level = "trusted"
 [projects."/Users/ab/workspace/aymericbeaumet/blog"]
 trust_level = "trusted"
 
+[projects."/Users/ab/workspace/aymericbeaumet/maps"]
+trust_level = "trusted"
+
+[projects."/Users/ab/workspace/aymericbeaumet/squeeze"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
