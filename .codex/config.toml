@@ -17,6 +17,9 @@ watch_mode = true
 [history]
 persistence = "save-all"
 
+[tui.keymap.chat]
+interrupt_turn = "f12"
+
 [mcp_servers.semble]
 command = "uvx"
 args = ["--from", "semble[mcp]", "semble"]
@@ -184,11 +187,14 @@ trust_level = "trusted"
 [projects."/Users/ab/workspace/aymericbeaumet/homebrew-tap"]
 trust_level = "trusted"
 
+[projects."/Users/ab/workspace/beside/beside-agentic"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
 [marketplaces.claude-code-workflows]
-last_updated = "2026-06-03T19:40:28Z"
-last_revision = "767d969a73ce6608d10ac713e52be9ac7f061ab9"
+last_updated = "2026-06-05T08:29:26Z"
+last_revision = "cf6059d030bf4fe96623ae2e596d2f31e35fedc0"
 source_type = "git"
 source = "https://github.com/wshobson/agents.git"
