@@ -1,40 +1,52 @@
 [hints]
 keys = "<colemak_toprow+colemak_homerow>"
 
-[shortcuts]
-# Navigation
-"ctrl+space" = "flash://show_hints"
-"cmd+ctrl+[" = "flash://normal_mode"
-
-# App switcher
-"cmd+ctrl+a" = "flash://open_app?name=Alacritty"
-"cmd+ctrl+c" = "flash://open_app?name=Cursor"
-"cmd+ctrl+f" = "flash://open_app?name=Firefox"
-"cmd+ctrl+i" = "flash://open_app?name=Messages"
-"cmd+ctrl+l" = "flash://open_app?name=Linear"
-"cmd+ctrl+n" = "flash://open_app?name=Notes"
-"cmd+ctrl+o" = "flash://open_app?name=Notion"
-"cmd+ctrl+p" = "flash://open_app?name=Postico 2"
-"cmd+ctrl+r" = "flash://open_app?name=Reminders"
-"cmd+ctrl+s" = "flash://open_app?name=Slack"
-"cmd+ctrl+w" = "flash://open_app?name=WhatsApp"
-"cmd+ctrl+y" = "flash://open_app?name=Spotify"
-
-# Window management
-"alt+h" = "flash://move_window?position=lefthalf"
-"alt+j" = "flash://move_window?position=bottomhalf"
-"alt+k" = "flash://move_window?position=tophalf"
-"alt+l" = "flash://move_window?position=righthalf"
-"alt+m" = "flash://move_window?position=maximized"
-"alt+n" = "flash://move_window?screen=+1"
-"alt+p" = "flash://move_window?screen=-1"
-
-# System control
-"alt+shift+c" = ["../../scripts/toggle_caffeinate.sh"]
-"alt+shift+d" = ["../../scripts/cycle_appearance.sh"]
-"alt+shift+m" = ["../../scripts/toggle_mute.sh"]
-"alt+shift+w" = ["../../scripts/toggle_wifi.sh"]
+[open]
+ignored_apps = ["com.flash.app"]
 
 [debug]
-log_level = "debug"
-dump_logs = true
+log_level = "trace"
+
+[mode.all]
+"cmd+ctrl+[" = "flash://mode_normal"
+"cmd+space" = "flash://app_open_finder?all=1"
+"alt+h" = "flash://window_move?position=lefthalf"
+"alt+j" = "flash://window_move?position=bottomhalf"
+"alt+k" = "flash://window_move?position=tophalf"
+"alt+l" = "flash://window_move?position=righthalf"
+"alt+m" = "flash://window_move?position=maximized"
+"alt+n" = "flash://window_move?screen=+1"
+"alt+p" = "flash://window_move?screen=-1"
+
+[mode.normal]
+"'a" = "flash://app_open?name=Alacritty"
+"'c" = "flash://app_open?name=Cursor"
+"'f" = "flash://app_open?name=Firefox"
+"'i" = "flash://app_open?name=Messages"
+"'l" = "flash://app_open?name=Linear"
+"'n" = "flash://app_open?name=Notes"
+"'o" = "flash://app_open?name=Notion"
+"'p" = "flash://app_open?name=Postico 2"
+"'r" = "flash://app_open?name=Reminders"
+"'s" = "flash://app_open?name=Slack"
+"'w" = "flash://app_open?name=WhatsApp"
+"'y" = "flash://app_open?name=Spotify"
+# handling karabiner remaps (ctrl+d -> delete_forward, ctrl+i -> tab, ctrl+u -> cmd+delete_or_backspace)
+"delete_forward" = "flash://scroll_half_page_down"
+"tab" = "flash://app_forward"
+"cmd+delete" = "flash://scroll_half_page_up"
+
+[mode.insert]
+# muscle memory (legacy)
+"cmd+ctrl+a" = "flash://app_open?name=Alacritty"
+"cmd+ctrl+c" = "flash://app_open?name=Cursor"
+"cmd+ctrl+f" = "flash://app_open?name=Firefox"
+"cmd+ctrl+i" = "flash://app_open?name=Messages"
+"cmd+ctrl+l" = "flash://app_open?name=Linear"
+"cmd+ctrl+n" = "flash://app_open?name=Notes"
+"cmd+ctrl+o" = "flash://app_open?name=Notion"
+"cmd+ctrl+p" = "flash://app_open?name=Postico 2"
+"cmd+ctrl+r" = "flash://app_open?name=Reminders"
+"cmd+ctrl+s" = "flash://app_open?name=Slack"
+"cmd+ctrl+w" = "flash://app_open?name=WhatsApp"
+"cmd+ctrl+y" = "flash://app_open?name=Spotify"
