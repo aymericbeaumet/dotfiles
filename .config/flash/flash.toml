@@ -1,9 +1,10 @@
 [hints]
-keys = "<colemak_toprow|colemak_homerow>"
+keys = "<colemak_toprow+colemak_homerow>"
 
 [shortcuts]
 # Navigation
 "ctrl+space" = "flash://show_hints"
+"cmd+ctrl+[" = "flash://normal_mode"
 
 # App switcher
 "cmd+ctrl+a" = "flash://open_app?name=Alacritty"
@@ -21,9 +22,9 @@ keys = "<colemak_toprow|colemak_homerow>"
 
 # Window management
 "alt+h" = "flash://move_window?position=lefthalf"
-"alt+l" = "flash://move_window?position=righthalf"
-"alt+k" = "flash://move_window?position=tophalf"
 "alt+j" = "flash://move_window?position=bottomhalf"
+"alt+k" = "flash://move_window?position=tophalf"
+"alt+l" = "flash://move_window?position=righthalf"
 "alt+m" = "flash://move_window?position=maximized"
 "alt+n" = "flash://move_window?screen=+1"
 "alt+p" = "flash://move_window?screen=-1"
