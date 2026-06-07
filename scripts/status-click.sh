@@ -1,7 +1,6 @@
 #!/bin/sh
 # Dispatch tmux status-bar clicks. Range names are set in:
 #   - status-format[0]      : session-picker, <window-index>
-#   - claude-cost.sh        : budget
 #   - vpn-status.sh         : app-aws, app-proton
 #   - ip-status.sh          : net-prefs
 #   - battery-status.sh     : bat-prefs
@@ -16,7 +15,6 @@ case "$r" in
       | fzf-tmux -p --reverse --header="Switch session" \
       | xargs -r -I{} tmux switch-client -t {}
     ;;
-  budget)     tmux display-popup -E -w 90% -h 90% "$HOME/.dotfiles/scripts/budget-popup.sh" ;;
   cal)        tmux display-popup -E -w 60 -h 12 "$HOME/.dotfiles/scripts/cal-popup.sh" ;;
   app-aws)    open -a "AWS VPN Client" ;;
   app-proton) open -a "ProtonVPN" ;;
