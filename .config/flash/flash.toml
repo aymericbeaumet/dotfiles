@@ -11,11 +11,12 @@ ignored_apps = [
 
 [debug]
 log_level = "trace"
-http_host = "localhost:4242"
+http_inspector_enabled = true
 
 [mode.all.mappings]
 "cmd+ctrl+[" = "flash://mode_normal"
-"cmd+space" = "flash://flashlight"
+"cmd+shift+:" = "flash://mode_command"
+"cmd+<space>" = "flash://flashlight"
 "alt+h" = "flash://window_move?position=lefthalf"
 "alt+j" = "flash://window_move?position=bottomhalf"
 "alt+k" = "flash://window_move?position=tophalf"
@@ -25,7 +26,7 @@ http_host = "localhost:4242"
 "alt+p" = "flash://window_move?screen=-1"
 
 [mode.normal]
-leader = "space"
+leader = "<space>"
 
 [mode.normal.mappings]
 # app switch
@@ -42,10 +43,9 @@ leader = "space"
 "'sp" = "flash://app_open?name=Spotify"
 "'w" = "flash://app_open?name=WhatsApp"
 # convenient utilities
-"<leader>c" = ["sh", "../../scripts/toggle_caffeinate.sh"]
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
+"<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
 "<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
 # karabiner remaps
-"delete_forward" = "flash://scroll_half_page_down"
-"tab" = "flash://app_forward"
-"cmd+delete" = "flash://scroll_half_page_up"
+"<delete_forward>" = "flash://scroll_half_page_down"
+"<tab>" = "flash://movement_forward"

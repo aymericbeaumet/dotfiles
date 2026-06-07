@@ -19,10 +19,6 @@ fi
 thinking=$(echo "$input" | jq -r '.thinking.enabled')
 [ "$thinking" = "false" ] && add "$(printf '\033[1;97mfast:on\033[0m')" || add "fast:off"
 
-# Session cost
-cost=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
-add "cost:\$$(printf '%.2f' "$cost")"
-
 # Context window usage
 ctx=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 add "ctx:${ctx}%"
@@ -34,8 +30,7 @@ if [ -n "$TMUX_PANE" ]; then
   dir="${cwd##*/}"
   name=$(echo "$input" | jq -r '.session_name // empty')
   title="${name:-${dir:-claude}}"
-  cost_fmt=$(printf '$%.2f' "$cost")
-  tmux set-option -p -t "$TMUX_PANE" pane-title "${title} | ${cost_fmt} | ctx:${ctx}%" 2>/dev/null
+  tmux set-option -p -t "$TMUX_PANE" pane-title "${title} | ctx:${ctx}%" 2>/dev/null
 fi
 
 echo "$parts"
