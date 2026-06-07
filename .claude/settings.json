@@ -219,6 +219,7 @@
     }
   },
   "effortLevel": "high",
+  "theme": "auto",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
