@@ -2,14 +2,20 @@
 keys = "<colemak_toprow+colemak_homerow>"
 
 [open]
-ignored_apps = ["com.flash.app"]
+ignored_apps = [
+  "com.flash.app",
+  "com.flash.native-fixture",
+  "com.flash.native-oracle",
+  "com.flash.vimium-oracle",
+]
 
 [debug]
 log_level = "trace"
+http_host = "localhost:4242"
 
-[mode.all]
+[mode.all.mappings]
 "cmd+ctrl+[" = "flash://mode_normal"
-"cmd+space" = "flash://app_open_finder?all=1"
+"cmd+space" = "flash://flashlight"
 "alt+h" = "flash://window_move?position=lefthalf"
 "alt+j" = "flash://window_move?position=bottomhalf"
 "alt+k" = "flash://window_move?position=tophalf"
@@ -19,6 +25,10 @@ log_level = "trace"
 "alt+p" = "flash://window_move?screen=-1"
 
 [mode.normal]
+leader = "space"
+
+[mode.normal.mappings]
+# app switch
 "'a" = "flash://app_open?name=Alacritty"
 "'c" = "flash://app_open?name=Cursor"
 "'f" = "flash://app_open?name=Firefox"
@@ -28,25 +38,14 @@ log_level = "trace"
 "'o" = "flash://app_open?name=Notion"
 "'p" = "flash://app_open?name=Postico 2"
 "'r" = "flash://app_open?name=Reminders"
-"'s" = "flash://app_open?name=Slack"
+"'sl" = "flash://app_open?name=Slack"
+"'sp" = "flash://app_open?name=Spotify"
 "'w" = "flash://app_open?name=WhatsApp"
-"'y" = "flash://app_open?name=Spotify"
-# handling karabiner remaps (ctrl+d -> delete_forward, ctrl+i -> tab, ctrl+u -> cmd+delete_or_backspace)
+# convenient utilities
+"<leader>c" = ["sh", "../../scripts/toggle_caffeinate.sh"]
+"<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
+"<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
+# karabiner remaps
 "delete_forward" = "flash://scroll_half_page_down"
 "tab" = "flash://app_forward"
 "cmd+delete" = "flash://scroll_half_page_up"
-
-[mode.insert]
-# muscle memory (legacy)
-"cmd+ctrl+a" = "flash://app_open?name=Alacritty"
-"cmd+ctrl+c" = "flash://app_open?name=Cursor"
-"cmd+ctrl+f" = "flash://app_open?name=Firefox"
-"cmd+ctrl+i" = "flash://app_open?name=Messages"
-"cmd+ctrl+l" = "flash://app_open?name=Linear"
-"cmd+ctrl+n" = "flash://app_open?name=Notes"
-"cmd+ctrl+o" = "flash://app_open?name=Notion"
-"cmd+ctrl+p" = "flash://app_open?name=Postico 2"
-"cmd+ctrl+r" = "flash://app_open?name=Reminders"
-"cmd+ctrl+s" = "flash://app_open?name=Slack"
-"cmd+ctrl+w" = "flash://app_open?name=WhatsApp"
-"cmd+ctrl+y" = "flash://app_open?name=Spotify"

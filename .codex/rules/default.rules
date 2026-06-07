@@ -40,3 +40,4 @@ prefix_rule(pattern=["mv"], decision="allow")
 
 prefix_rule(pattern=["rm", "-rf", "/"], decision="forbidden", justification="never nuke root")
 prefix_rule(pattern=["rm", "-rf", "Sources/FlashBrowserTestSupport/Snapshots", "Resources/oracle-extension"], decision="allow")
+prefix_rule(pattern=["rm", "-f", "/tmp/flash-caffeinate-test/caffeinate-toggle.pid"], decision="allow")

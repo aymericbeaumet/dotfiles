@@ -24,5 +24,5 @@ else
 fi
 
 encoded=$(printf '%s' "Wi-Fi $label" | od -An -tx1 -v | tr -d ' \n' | sed 's/../%&/g')
-open -g "flash://show_alert?message=$encoded" >/dev/null 2>&1 &
+open -g "flash://alert_show?message=$encoded" >/dev/null 2>&1 &
 wait
