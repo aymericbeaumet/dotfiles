@@ -69,6 +69,171 @@ chars = "\u0011"
 key = "Q"
 mods = "Control"
 
+# Disable Alacritty's built-in macOS Command shortcuts; Flash owns these chords.
+[[keyboard.bindings]]
+action = "None"
+key = "K"
+mods = "Command"
+mode = "~Vi|~Search"
+
+[[keyboard.bindings]]
+action = "None"
+key = "0"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "="
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "+"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "NumpadAdd"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "-"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "NumpadSubtract"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "C"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "C"
+mods = "Command"
+mode = "Vi|~Search"
+
+[[keyboard.bindings]]
+action = "None"
+key = "H"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "H"
+mods = "Command|Alt"
+
+[[keyboard.bindings]]
+action = "None"
+key = "M"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "Q"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "W"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "N"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "T"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "F"
+mods = "Command|Control"
+
+[[keyboard.bindings]]
+action = "None"
+key = "F"
+mods = "Command"
+mode = "~Search"
+
+[[keyboard.bindings]]
+action = "None"
+key = "B"
+mods = "Command"
+mode = "~Search"
+
+[[keyboard.bindings]]
+action = "None"
+key = "]"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+action = "None"
+key = "["
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+action = "None"
+key = "Tab"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "Tab"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+action = "None"
+key = "1"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "2"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "3"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "4"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "5"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "6"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "7"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "8"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "9"
+mods = "Command"
+
 # Shift-click: URLs → browser, images → Preview, text → nvim tmux popup
 [[hints.enabled]]
 regex = "https?://[\\w./\\-?&=@%+:~#!$,;*()]+[\\w/]|\\$\\{?\\w+\\}?(?:/[\\w./\\-]+)+|(?:~|/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?:/[^\\s\\]\\r\\n]+)*(?::\\d+(?::\\d+)?)?|(?:\\.{1,2}/)[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*\\.[\\w-]+(?:/[^\\s\\]\\r\\n]+)*(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+(?:/[^\\s\\]\\r\\n][^\\s\\]\\r\\n]*)+\\.[\\w-]+(?:/[^\\s\\]\\r\\n]+)*(?::\\d+(?::\\d+)?)?|[\\w.@\\-]+\\.[\\w-]+(?::\\d+(?::\\d+)?)?|(?-u:\\b)E\\d{4}(?-u:\\b)"
