@@ -1,23 +1,24 @@
 #!/bin/sh
 # Claude/Codex quota usage for tmux status-right.
-#
-# Claude quotas are token denominators because ccusage can measure usage but
-# does not know subscription limits. Override from tmux's environment if needed.
-: "${CLAUDE_SESSION_TOKEN_LIMIT:=7123835350}"
-: "${CLAUDE_WEEK_TOKEN_LIMIT:=8878727688}"
 
-today=$(date +%Y-%m-%d)
-dow=$(date +%w)
-week_start=$(date -v-"${dow}"d +%Y-%m-%d 2>/dev/null || date +%Y-%m-%d)
 now=$(date +%s)
-last_good="${TMPDIR:-/tmp}/tmux-agent-quota-status.last"
+cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
+last_good="$cache_root/rendered-v3.last"
 last_good_dir=${last_good%/*}
+claude_usage_cache="$cache_root/claude-usage.tsv"
+claude_usage_backoff="$cache_root/claude-usage.next"
+refresh_lock="$cache_root/refresh.lock"
+: "${AGENT_QUOTA_RENDER_TTL_SECONDS:=30}"
+: "${AGENT_QUOTA_REFRESH_LOCK_SECONDS:=30}"
+: "${CLAUDE_USAGE_TTL_SECONDS:=120}"
+: "${CLAUDE_USAGE_RETRY_SECONDS:=60}"
 
-epoch_from_iso_z() {
+epoch_from_iso() {
   iso=${1:-}
   [ -z "$iso" ] || [ "$iso" = "null" ] && return
-  iso=$(printf '%s' "$iso" | sed 's/\.[0-9][0-9]*Z$/Z/')
-  date -j -u -f "%Y-%m-%dT%H:%M:%SZ" "$iso" +%s 2>/dev/null
+  iso=$(printf '%s' "$iso" |
+    sed -E 's/\.[0-9]+([Z+-])/\1/; s/Z$/+0000/; s/([+-][0-9][0-9]):([0-9][0-9])$/\1\2/')
+  date -j -f "%Y-%m-%dT%H:%M:%S%z" "$iso" +%s 2>/dev/null
 }
 
 fmt_hours_until() {
@@ -46,32 +47,234 @@ fmt_days_until() {
     }'
 }
 
-fmt_native_percent() {
-  awk -v pct="${1:-}" '
+fmt_remaining_percent() {
+  awk -v used="${1:-}" '
     BEGIN {
-      if (pct == "" || pct == "null") {
+      if (used == "" || used == "null") {
         printf "?%%"
       } else {
-        pct = int((pct + 0) + 0.5)
-        if (pct > 100) pct = 100
-        if (pct < 0) pct = 0
+        left = 100 - (used + 0)
+        if (left > 100) left = 100
+        if (left < 0) left = 0
+        pct = int(left)
         printf "%d%%", pct
       }
     }'
 }
 
-fmt_percent() {
-  awk -v used="${1:-}" -v limit="${2:-}" '
-    BEGIN {
-      if (used == "" || used == "null" || limit == "" || limit == "null" || limit <= 0) {
-        printf "?%%"
-      } else {
-        pct = int((used / limit * 100) + 0.5)
-        if (pct > 100) pct = 100
-        if (pct < 0) pct = 0
-        printf "%d%%", pct
-      }
-    }'
+file_mtime() {
+  stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null
+}
+
+cache_is_fresh() {
+  file=${1:-}
+  ttl=${2:-0}
+  [ -f "$file" ] || return 1
+  mtime=$(file_mtime "$file") || return 1
+  [ $((now - mtime)) -lt "$ttl" ]
+}
+
+cache_path_is_fresh() {
+  path=${1:-}
+  ttl=${2:-0}
+  [ -e "$path" ] || return 1
+  mtime=$(file_mtime "$path") || return 1
+  [ $((now - mtime)) -lt "$ttl" ]
+}
+
+script_path() {
+  case "$0" in
+    /*) printf '%s' "$0" ;;
+    *)
+      dir=$(dirname "$0")
+      base=$(basename "$0")
+      dir=$(cd "$dir" 2>/dev/null && pwd) || return
+      printf '%s/%s' "$dir" "$base"
+      ;;
+  esac
+}
+
+write_status_cache() {
+  cached_status=${1:-}
+  [ -n "$cached_status" ] || return 1
+
+  tmp="${last_good}.$$"
+  mkdir -p "$last_good_dir" 2>/dev/null
+  if printf '%s' "$cached_status" >"$tmp"; then
+    mv "$tmp" "$last_good"
+  else
+    rm -f "$tmp"
+    return 1
+  fi
+}
+
+start_refresh() {
+  [ "${AGENT_QUOTA_REFRESH:-}" = 1 ] && return
+  mkdir -p "$cache_root" 2>/dev/null
+
+  if [ -d "$refresh_lock" ] && ! cache_path_is_fresh "$refresh_lock" "$AGENT_QUOTA_REFRESH_LOCK_SECONDS"; then
+    rmdir "$refresh_lock" 2>/dev/null || true
+  fi
+
+  if mkdir "$refresh_lock" 2>/dev/null; then
+    path=$(script_path) || {
+      rmdir "$refresh_lock" 2>/dev/null || true
+      return
+    }
+
+    (
+      trap 'rmdir "$refresh_lock" 2>/dev/null || true' EXIT INT TERM
+      AGENT_QUOTA_REFRESH=1 sh "$path" >/dev/null 2>&1
+    ) &
+  fi
+}
+
+sha256_8() {
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 | awk '{print substr($1, 1, 8)}'
+  elif command -v openssl >/dev/null 2>&1; then
+    openssl dgst -sha256 -r | awk '{print substr($1, 1, 8)}'
+  fi
+}
+
+claude_config_dir() {
+  if [ "${CLAUDE_SECURESTORAGE_CONFIG_DIR+x}" ]; then
+    if [ -n "$CLAUDE_SECURESTORAGE_CONFIG_DIR" ]; then
+      printf '%s' "$CLAUDE_SECURESTORAGE_CONFIG_DIR"
+    else
+      printf '%s/.claude' "$HOME"
+    fi
+  else
+    printf '%s' "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+  fi
+}
+
+claude_settings_path() {
+  config_dir=${CLAUDE_CONFIG_DIR:-$HOME/.claude}
+  if [ -f "$config_dir/.config.json" ]; then
+    printf '%s/.config.json' "$config_dir"
+  elif [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
+    printf '%s/.claude.json' "$CLAUDE_CONFIG_DIR"
+  else
+    printf '%s/.claude.json' "$HOME"
+  fi
+}
+
+claude_keychain_account() {
+  user=${USER:-}
+  if [ -z "$user" ] && command -v id >/dev/null 2>&1; then
+    user=$(id -un 2>/dev/null)
+  fi
+  case "$user" in
+    *[!A-Za-z0-9._-]*|'') printf '%s' "claude-code-user" ;;
+    *) printf '%s' "$user" ;;
+  esac
+}
+
+claude_keychain_service() {
+  suffix=
+  [ -n "${CLAUDE_CODE_CUSTOM_OAUTH_URL:-}" ] && suffix="-custom-oauth"
+  service="Claude Code${suffix}-credentials"
+  hash=
+
+  if [ "${CLAUDE_SECURESTORAGE_CONFIG_DIR+x}" ]; then
+    [ -n "$CLAUDE_SECURESTORAGE_CONFIG_DIR" ] && hash=$(printf '%s' "$(claude_config_dir)" | sha256_8)
+  elif [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
+    hash=$(printf '%s' "$(claude_config_dir)" | sha256_8)
+  fi
+
+  if [ -n "$hash" ]; then
+    printf '%s-%s' "$service" "$hash"
+  else
+    printf '%s' "$service"
+  fi
+}
+
+claude_credentials_json() {
+  if command -v security >/dev/null 2>&1; then
+    account=$(claude_keychain_account)
+    service=$(claude_keychain_service)
+    security find-generic-password -a "$account" -s "$service" -w 2>/dev/null && return
+  fi
+
+  config_dir=$(claude_config_dir)
+  for path in "$config_dir/.credentials.json" "$HOME/.claude/.credentials.json"; do
+    [ -f "$path" ] && cat "$path" && return
+  done
+}
+
+claude_oauth_token() {
+  if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+    printf '%s' "$CLAUDE_CODE_OAUTH_TOKEN"
+    return
+  fi
+
+  credentials=$(claude_credentials_json)
+  [ -n "$credentials" ] || return
+  printf '%s' "$credentials" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null
+}
+
+claude_org_uuid() {
+  settings=$(claude_settings_path)
+  [ -f "$settings" ] || return
+  jq -r '.oauthAccount.organizationUuid // empty' "$settings" 2>/dev/null
+}
+
+live_claude_usage() {
+  command -v curl >/dev/null 2>&1 || return
+  command -v jq >/dev/null 2>&1 || return
+
+  if cache_is_fresh "$claude_usage_cache" "$CLAUDE_USAGE_TTL_SECONDS"; then
+    cat "$claude_usage_cache"
+    return
+  fi
+
+  if [ -f "$claude_usage_backoff" ]; then
+    next_retry=$(cat "$claude_usage_backoff" 2>/dev/null || printf 0)
+    if [ "${next_retry:-0}" -gt "$now" ]; then
+      [ -f "$claude_usage_cache" ] && cat "$claude_usage_cache"
+      return
+    fi
+  fi
+
+  token=$(claude_oauth_token)
+  [ -n "$token" ] || return
+  org=$(claude_org_uuid)
+
+  usage=$({
+    printf 'header = "Authorization: Bearer %s"\n' "$token"
+    printf 'header = "Content-Type: application/json"\n'
+    printf 'header = "anthropic-version: 2023-06-01"\n'
+    printf 'header = "anthropic-beta: oauth-2025-04-20"\n'
+    printf 'header = "anthropic-client-platform: macos"\n'
+    [ -n "$org" ] && printf 'header = "x-organization-uuid: %s"\n' "$org"
+  } |
+    curl -fsS --max-time 5 -K - 'https://api.anthropic.com/api/oauth/usage' 2>/dev/null |
+    jq -r '
+      [
+        (.five_hour.utilization // "null"),
+        (.five_hour.resets_at // "null"),
+        (.seven_day.utilization // "null"),
+        (.seven_day.resets_at // "null")
+      ]
+      | @tsv
+    ' 2>/dev/null)
+
+  if [ -n "$usage" ]; then
+    mkdir -p "$cache_root" 2>/dev/null
+    tmp="${claude_usage_cache}.$$"
+    if printf '%s' "$usage" >"$tmp"; then
+      mv "$tmp" "$claude_usage_cache"
+      rm -f "$claude_usage_backoff"
+    else
+      rm -f "$tmp"
+    fi
+    printf '%s' "$usage"
+  else
+    mkdir -p "$cache_root" 2>/dev/null
+    printf '%s' "$((now + CLAUDE_USAGE_RETRY_SECONDS))" >"$claude_usage_backoff" 2>/dev/null || true
+    [ -f "$claude_usage_cache" ] && cat "$claude_usage_cache"
+  fi
 }
 
 live_codex_rate_limits() {
@@ -92,10 +295,58 @@ live_codex_rate_limits() {
     tail -n 1
 }
 
+format_period() {
+  used_pct=${1:-}
+  reset_at=${2:-}
+  reset_kind=${3:-}
+
+  [ -n "$used_pct" ] || return
+  [ -n "$reset_at" ] || return
+  [ "$reset_at" != "null" ] || return
+
+  case "$reset_kind" in
+    hours) reset=$(fmt_hours_until "$reset_at") ;;
+    days) reset=$(fmt_days_until "$reset_at") ;;
+    *) return ;;
+  esac
+
+  case "$reset" in
+    *'?'*) return ;;
+  esac
+
+  pct=$(fmt_remaining_percent "$used_pct")
+  case "$pct" in
+    *'?'*) return ;;
+  esac
+
+  left=${pct%\%}
+  segment="${pct}↻$reset"
+  if [ "$left" -lt 20 ]; then
+    printf '#[fg=colour196]%s#[fg=colour245]' "$segment"
+  else
+    printf '%s' "$segment"
+  fi
+}
+
+format_provider() {
+  label=${1:-}
+  session_pct=${2:-}
+  session_reset=${3:-}
+  week_pct=${4:-}
+  week_reset=${5:-}
+
+  session=$(format_period "$session_pct" "$session_reset" hours)
+  week=$(format_period "$week_pct" "$week_reset" days)
+  [ -n "$session" ] && [ -n "$week" ] || return
+
+  printf '#[fg=colour178]%s#[fg=colour245]' "$label"
+  printf ' %s %s' "$session" "$week"
+}
+
 render_status() {
-  claude_session=
+  claude_session_pct=
   claude_session_reset=
-  claude_week=
+  claude_week_pct=
   claude_week_reset=
   codex_session_pct=
   codex_session_reset=
@@ -103,6 +354,14 @@ render_status() {
   codex_week_reset=
 
   if command -v jq >/dev/null 2>&1; then
+    claude_limits=$(live_claude_usage)
+    if [ -n "$claude_limits" ]; then
+      claude_session_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $1}')
+      claude_session_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $2}')")
+      claude_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $3}')
+      claude_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $4}')")
+    fi
+
     codex_limits=$(live_codex_rate_limits)
     if [ -n "$codex_limits" ]; then
       codex_session_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $1}')
@@ -112,46 +371,26 @@ render_status() {
     fi
   fi
 
-  if command -v ccusage >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-    claude_block=$(ccusage claude blocks --active --json --offline 2>/dev/null |
-      jq -r '(.blocks // [] | map(select(.isActive == true)) | last // .[-1] // {} | [.totalTokens, .endTime] | @tsv) // empty' 2>/dev/null)
-    if [ -n "$claude_block" ]; then
-      claude_session=$(printf '%s\n' "$claude_block" | awk -F '\t' '{print $1}')
-      claude_session_reset=$(epoch_from_iso_z "$(printf '%s\n' "$claude_block" | awk -F '\t' '{print $2}')")
-    fi
-    claude_week=$(ccusage claude weekly --json --since "$week_start" --until "$today" --offline 2>/dev/null |
-      jq -r '(.weekly[-1].totalTokens // .totals.totalTokens) // empty' 2>/dev/null)
-    claude_week_reset=$(date -v+tue -v5H -v0M -v0S +%s 2>/dev/null)
-  fi
+  claude_status=$(format_provider Cld "$claude_session_pct" "$claude_session_reset" "$claude_week_pct" "$claude_week_reset")
+  codex_status=$(format_provider Cdx "$codex_session_pct" "$codex_session_reset" "$codex_week_pct" "$codex_week_reset")
+  [ -n "$claude_status" ] && [ -n "$codex_status" ] || return
 
-  printf '#[fg=colour178]Cld#[fg=colour245] %s↻%s %s↻%s' \
-    "$(fmt_percent "$claude_session" "$CLAUDE_SESSION_TOKEN_LIMIT")" \
-    "$(fmt_hours_until "$claude_session_reset")" \
-    "$(fmt_percent "$claude_week" "$CLAUDE_WEEK_TOKEN_LIMIT")" \
-    "$(fmt_days_until "$claude_week_reset")"
-  printf '#[fg=colour245] · #[fg=colour178]Cdx#[fg=colour245] %s↻%s %s↻%s' \
-    "$(fmt_native_percent "$codex_session_pct")" \
-    "$(fmt_hours_until "$codex_session_reset")" \
-    "$(fmt_native_percent "$codex_week_pct")" \
-    "$(fmt_days_until "$codex_week_reset")"
+  printf '%s#[fg=colour245] · %s' "$claude_status" "$codex_status"
 }
 
+if [ "${AGENT_QUOTA_REFRESH:-}" != 1 ] && [ -f "$last_good" ]; then
+  if ! cache_is_fresh "$last_good" "$AGENT_QUOTA_RENDER_TTL_SECONDS"; then
+    start_refresh
+  fi
+  cat "$last_good"
+  exit 0
+fi
+
 status=$(render_status)
-case "$status" in
-  *'?'*)
-    if [ -f "$last_good" ]; then
-      cat "$last_good"
-    fi
-    ;;
-  *)
-    printf '%s' "$status"
-    tmp="${last_good}.$$"
-    mkdir -p "$last_good_dir" 2>/dev/null
-    if printf '%s' "$status" >"$tmp"; then
-      mv "$tmp" "$last_good"
-    else
-      rm -f "$tmp"
-    fi
-    ;;
-esac
+if [ -n "$status" ]; then
+  write_status_cache "$status" || true
+  printf '%s' "$status"
+elif [ -f "$last_good" ]; then
+  cat "$last_good"
+fi
 exit 0
