@@ -41,30 +41,6 @@
                         ]
                     },
                     {
-                        "description": "[Disable] Cmd-H",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "h",
-                                    "modifiers": { "mandatory": ["command"] }
-                                },
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Disable] Cmd-M",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "m",
-                                    "modifiers": { "mandatory": ["command"] }
-                                },
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "[Unix] Ctrl-A",
                         "manipulators": [
                             {
@@ -198,7 +174,7 @@
                         ]
                     },
                     {
-                        "description": "Ctrl-H",
+                        "description": "[Unix] Ctrl-H",
                         "manipulators": [
                             {
                                 "from": {
@@ -430,32 +406,6 @@
                                     {
                                         "key_code": "right_arrow",
                                         "modifiers": ["option"]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "[Finder] Close all windows",
-                        "manipulators": [
-                            {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.apple\\.finder$"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "q",
-                                    "modifiers": { "mandatory": ["command"] }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "w",
-                                        "modifiers": ["command", "option"]
                                     }
                                 ],
                                 "type": "basic"

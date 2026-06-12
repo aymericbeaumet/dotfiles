@@ -1,5 +1,5 @@
 [hints]
-keys = "<colemak_toprow+colemak_homerow>"
+keys = "<colemak>"
 
 [open]
 ignored_apps = [
@@ -13,10 +13,16 @@ ignored_apps = [
 log_level = "trace"
 http_inspector_enabled = true
 
+[mode]
+# Mirror my Neovim `timeoutlen` (Neovim's 1000ms default) for multi-key
+# sequence mappings.
+sequence_timeout_ms = 1000
+
 [mode.all.mappings]
 "cmd+ctrl+[" = "flash://mode_normal"
 "cmd+shift+:" = "flash://mode_command"
 "cmd+<space>" = "flash://flashlight"
+"cmd+ctrl+<space>" = "flash://emojis"
 "alt+h" = "flash://window_move?position=lefthalf"
 "alt+j" = "flash://window_move?position=bottomhalf"
 "alt+k" = "flash://window_move?position=tophalf"
@@ -31,7 +37,6 @@ leader = "<space>"
 [mode.normal.mappings]
 # app switch
 "'a" = "flash://app_open?name=Alacritty"
-"'c" = "flash://app_open?name=Cursor"
 "'f" = "flash://app_open?name=Firefox"
 "'i" = "flash://app_open?name=Messages"
 "'l" = "flash://app_open?name=Linear"
@@ -39,13 +44,14 @@ leader = "<space>"
 "'o" = "flash://app_open?name=Notion"
 "'p" = "flash://app_open?name=Postico 2"
 "'r" = "flash://app_open?name=Reminders"
-"'sl" = "flash://app_open?name=Slack"
-"'sp" = "flash://app_open?name=Spotify"
+"'s" = "flash://app_open?name=Slack"
+"'y" = "flash://app_open?name=Spotify"
 "'w" = "flash://app_open?name=WhatsApp"
 # convenient utilities
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
 "<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
 # karabiner remaps
-"<delete_forward>" = "flash://scroll_half_page_down"
-"<tab>" = "flash://movement_forward"
+"<delete_forward>" = "flash://scroll_half_page_down" # ctrl+d
+"<tab>" = "flash://movement_forward" # ctrl+i
+"cmd+<right>" = "flash://scroll_down" # ctrl+e
