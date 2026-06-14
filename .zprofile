@@ -47,7 +47,7 @@ export CARGO_HOME="$HOME/.cargo"
 [[ -d /usr/local/opt/rustup/bin ]] && export PATH="/usr/local/opt/rustup/bin:$PATH"
 
 # bat
-export BAT_CONFIG_PATH="${DOTFILES:-$HOME/.dotfiles}/.config/bat/config"
+export BAT_CONFIG_PATH="$HOME/.config/bat/config"
 
 # ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"

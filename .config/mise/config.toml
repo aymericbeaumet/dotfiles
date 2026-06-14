@@ -4,6 +4,7 @@ buf = "1.69.0"
 go = "1.25"
 node = "26.0.0"
 protoc = "34.1"
+rust = "latest"
 shfmt = "3.13.1"
 terraform = "1.14.3"
 tflint = "0.61.0"
@@ -11,7 +12,6 @@ uv = "0.11.15"
 
 # CLI tools migrated from Brewfile — cross-platform via mise registry/backends.
 # "latest" tracks upstream releases; pin if you need reproducibility.
-ansible = "latest"
 awscli = "latest"
 bat = "latest"
 bun = "latest"
@@ -44,7 +44,6 @@ rtk = "latest"
 sd = "latest"
 stripe = "latest"
 tmux = "latest"
-tokei = "latest"
 watchexec = "latest"
 websocat = "latest"
 yazi = "latest"
@@ -53,9 +52,11 @@ zoxide = "latest"
 # Omitted: btop currently resolves to Linux-only upstream release assets via mise.
 
 # Explicit backends for tools without stable mise registry shortnames.
+"cargo:tokei" = "latest"
 "aqua:YS-L/csvlens" = "latest"
 "aqua:mike-engel/jwt-cli" = "latest"
 "aqua:dalance/procs" = "latest"
+"pipx:ansible" = "latest"
 
 # npm-published CLIs
 "npm:@railway/cli" = "latest"

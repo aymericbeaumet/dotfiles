@@ -1,12 +1,16 @@
 #!/bin/sh
 # Claude/Codex quota usage for tmux status-right.
 
-. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+. "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 now=$(date +%s)
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
-last_good="$cache_root/rendered-v3.last"
+last_good="$cache_root/rendered-v4.last"
+legacy_last_good="$cache_root/rendered-v3.last"
 last_good_dir=${last_good%/*}
+claude_status_cache="$cache_root/rendered-claude-v1.last"
+codex_status_cache="$cache_root/rendered-codex-v1.last"
 claude_usage_cache="$cache_root/claude-usage.tsv"
 claude_usage_backoff="$cache_root/claude-usage.next"
 refresh_lock="$cache_root/refresh.lock"
@@ -84,18 +88,54 @@ script_path() {
   esac
 }
 
-write_status_cache() {
-  cached_status=${1:-}
+write_cache_file() {
+  file=${1:-}
+  cached_status=${2:-}
+  [ -n "$file" ] || return 1
   [ -n "$cached_status" ] || return 1
 
-  tmp="${last_good}.$$"
-  mkdir -p "$last_good_dir" 2>/dev/null
+  tmp="${file}.$$"
+  mkdir -p "${file%/*}" 2>/dev/null
   if printf '%s' "$cached_status" >"$tmp"; then
-    mv "$tmp" "$last_good"
+    mv "$tmp" "$file"
   else
     rm -f "$tmp"
     return 1
   fi
+}
+
+write_status_cache() {
+  write_cache_file "$last_good" "${1:-}"
+}
+
+extract_provider_status() {
+  label=${1:-}
+  file=${2:-}
+  [ -n "$label" ] || return
+  [ -f "$file" ] || return
+
+  awk -v label="$label" '
+    BEGIN {
+      RS = "#\\[fg=colour245\\] · "
+      ORS = ""
+      prefix = "#[fg=colour178]" label "#[fg=colour245]"
+    }
+    index($0, prefix) == 1 {
+      print
+      exit
+    }
+  ' "$file"
+}
+
+previous_provider_status() {
+  label=${1:-}
+  cache=${2:-}
+  [ -s "$cache" ] && cat "$cache" && return
+
+  for file in "$last_good" "$legacy_last_good"; do
+    status=$(extract_provider_status "$label" "$file")
+    [ -n "$status" ] && printf '%s' "$status" && return
+  done
 }
 
 start_refresh() {
@@ -279,9 +319,10 @@ live_codex_rate_limits() {
   command -v codex >/dev/null 2>&1 || return
 
   (
-    printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"tmux-status","version":"1"},"capabilities":{"experimentalApi":true}}}'
-    printf '%s\n' '{"jsonrpc":"2.0","id":2,"method":"account/rateLimits/read","params":null}'
-    sleep 0.75
+    printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"tmux-status","version":"1"},"capabilities":{"experimentalApi":true,"requestAttestation":false}}}'
+    printf '%s\n' '{"jsonrpc":"2.0","method":"initialized"}'
+    printf '%s\n' '{"jsonrpc":"2.0","id":2,"method":"account/rateLimits/read"}'
+    sleep 2
   ) |
     codex app-server --stdio 2>/dev/null |
     jq -r '
@@ -371,9 +412,30 @@ render_status() {
 
   claude_status=$(format_provider Cld "$claude_session_pct" "$claude_session_reset" "$claude_week_pct" "$claude_week_reset")
   codex_status=$(format_provider Cdx "$codex_session_pct" "$codex_session_reset" "$codex_week_pct" "$codex_week_reset")
-  [ -n "$claude_status" ] && [ -n "$codex_status" ] || return
 
-  printf '%s#[fg=colour245] · %s' "$claude_status" "$codex_status"
+  if [ -n "$claude_status" ]; then
+    write_cache_file "$claude_status_cache" "$claude_status" || true
+  else
+    claude_status=$(previous_provider_status Cld "$claude_status_cache")
+  fi
+
+  if [ -n "$codex_status" ]; then
+    write_cache_file "$codex_status_cache" "$codex_status" || true
+  else
+    codex_status=$(previous_provider_status Cdx "$codex_status_cache")
+  fi
+
+  status=
+  if [ -n "$claude_status" ]; then
+    status=$claude_status
+  fi
+  if [ -n "$codex_status" ]; then
+    [ -n "$status" ] && status="$status#[fg=colour245] · "
+    status="$status$codex_status"
+  fi
+  [ -n "$status" ] || return
+
+  printf '%s' "$status"
 }
 
 if [ "${AGENT_QUOTA_REFRESH:-}" != 1 ] && [ -f "$last_good" ]; then

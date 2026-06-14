@@ -2,7 +2,8 @@
 # Read text from stdin, extract the first likely URL, and open it.
 set -eu
 
-. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+. "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 input=$(cat 2>/dev/null || true)
 [ -n "$input" ] || exit 0

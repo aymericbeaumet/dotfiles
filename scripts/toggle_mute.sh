@@ -7,7 +7,8 @@ if [ "$(uname -s 2>/dev/null)" != "Darwin" ]; then
   exit 0
 fi
 
-. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+. "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 label=$(osascript -e 'if output muted of (get volume settings) then
   set volume without output muted

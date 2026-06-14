@@ -37,11 +37,16 @@ repeat_char() {
 }
 
 dotfiles_dir() {
-  if [ -n "${DOTFILES:-}" ]; then
-    printf '%s' "$DOTFILES"
-  else
-    printf '%s/.dotfiles' "$HOME"
+  if [ -n "${DOTFILES_SCRIPT_DIR:-}" ]; then
+    dirname "$DOTFILES_SCRIPT_DIR"
+    return
   fi
+
+  script_dir=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || return
+  case "$script_dir" in
+    */scripts) dirname "$script_dir" ;;
+    *) printf '%s' "$script_dir" ;;
+  esac
 }
 
 flash_alert() {

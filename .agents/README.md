@@ -5,7 +5,7 @@ Single source of truth for Claude Code and Codex configuration. Both harnesses l
 ## Layout
 
 ```
-~/.dotfiles/.agents/
+.agents/
   AGENTS.md          # auto-loaded every session by both harnesses; keep small
   RTK.md             # auto-loaded via AGENTS.md @import; rtk prefix rule
   PLATFORM.md        # auto-loaded via AGENTS.md @import; macOS/Linux portability rules
@@ -43,9 +43,9 @@ Single source of truth for Claude Code and Codex configuration. Both harnesses l
 
 | Script | Purpose |
 |---|---|
-| `~/.dotfiles/scripts/format-on-save.sh` | PostToolUse formatter (rustfmt/gofmt/prettier/ruff/shfmt/taplo/stylua/nixpkgs-fmt/sqlfluff) |
-| `~/.dotfiles/scripts/agent-pane-idle.sh` | tmux pane border state — `clear`/`busy`/`idle` |
-| `~/.dotfiles/scripts/agent-pane-title.sh` | tmux pane title from session JSON (Codex; Claude uses statusline) |
+| `scripts/format-on-save.sh` | PostToolUse formatter (rustfmt/gofmt/prettier/ruff/shfmt/taplo/stylua/nixpkgs-fmt/sqlfluff) |
+| `scripts/agent-pane-idle.sh` | tmux pane border state — `clear`/`busy`/`idle` |
+| `scripts/agent-pane-title.sh` | tmux pane title from session JSON (Codex; Claude uses statusline) |
 | `~/.claude/hooks/peon-ping/peon.sh` | peon-ping sound (Claude direct) |
 | `~/.claude/hooks/peon-ping/codex-hook.sh <event>` | peon-ping with Codex event-name wrapping |
 
@@ -107,7 +107,7 @@ Add with `claude plugin marketplace add <owner>/<repo>` or `codex plugin marketp
 
 ## Adding new things
 
-- **New skill**: create `~/.dotfiles/.agents/skills/<name>/SKILL.md`; both harnesses pick it up immediately (Claude via `/reload-skills`, Codex on restart).
-- **New subagent**: create `~/.dotfiles/.agents/agents/<name>.md`; Claude loads on next session.
-- **New hook event**: add to both `~/.claude/settings.json` (JSON) and `~/.dotfiles/.codex/config.toml` (TOML). Codex will prompt to trust on first run.
+- **New skill**: create `.agents/skills/<name>/SKILL.md`; both harnesses pick it up immediately (Claude via `/reload-skills`, Codex on restart).
+- **New subagent**: create `.agents/agents/<name>.md`; Claude loads on next session.
+- **New hook event**: add to both `.claude/settings.json` (JSON) and `.codex/config.toml` (TOML). Codex will prompt to trust on first run.
 - **New MCP server**: `claude mcp add` for Claude; add `[mcp_servers.<n>]` block to `config.toml` for Codex.

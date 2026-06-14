@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/ab/.dotfiles/scripts/format-on-save.sh",
+            "command": "sh -c '$HOME/.dotfiles/scripts/format-on-save.sh'",
             "timeout": 10
           }
         ]
@@ -49,7 +49,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh clear",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear'",
             "timeout": 5
           }
         ]
@@ -106,7 +106,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh busy",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh busy'",
             "timeout": 5
           }
         ]
@@ -124,7 +124,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh idle",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh idle'",
             "timeout": 5
           }
         ]
@@ -198,7 +198,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "sh /Users/ab/.dotfiles/.claude/statusline-command.sh"
+    "command": "sh -c '$HOME/.dotfiles/.claude/statusline-command.sh'"
   },
   "enabledPlugins": {
     "rust-analyzer-lsp@claude-plugins-official": true,

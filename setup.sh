@@ -174,11 +174,17 @@ if $DO_APT; then
       curl
       git
       libpq-dev
+      libreadline-dev
       libssl-dev
       pkg-config
+      python3
+      python3-pip
+      python3-venv
       w3m
       wireguard-tools
       xdg-utils
+      uuid-dev
+      zlib1g-dev
       zsh
     )
 
@@ -283,13 +289,22 @@ if $DO_MISE; then
       fi
     fi
 
-    if grep -Eq '^[[:space:]]*pipx[[:space:]]*=' "$mise_config" 2>/dev/null; then
-      info "Installing mise bootstrap tool: pipx..."
-      mise install pipx
+    install_mise_bootstrap_tool() {
+      local tool="$1"
+      if ! grep -Eq "^[[:space:]]*$tool[[:space:]]*=" "$mise_config" 2>/dev/null; then
+        return 0
+      fi
+
+      info "Installing mise bootstrap tool: $tool..."
+      mise install "$tool"
       export PATH="$HOME/.local/share/mise/shims:$PATH"
-      mise reshim pipx >/dev/null 2>&1 || true
+      mise reshim "$tool" >/dev/null 2>&1 || true
       hash -r 2>/dev/null || true
-    fi
+    }
+
+    export PIPX_DEFAULT_BACKEND="${PIPX_DEFAULT_BACKEND:-pip}"
+    install_mise_bootstrap_tool pipx
+    install_mise_bootstrap_tool rust
 
     info "Installing mise tools from global config..."
     mise install
