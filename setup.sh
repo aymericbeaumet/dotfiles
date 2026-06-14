@@ -176,6 +176,7 @@ if $DO_APT; then
       libpq-dev
       libreadline-dev
       libssl-dev
+      lm-sensors
       pkg-config
       python3
       python3-pip
