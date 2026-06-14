@@ -44,9 +44,7 @@ if [[ -d "$ZINIT_HOME" ]]; then
 fi
 
 # theme: powerlevel10k config (outside zinit block; prefer dotfiles path, else symlinked)
-if [[ -f "${DOTFILES:-$HOME/.dotfiles}/.p10k.zsh" ]]; then
-  source "${DOTFILES:-$HOME/.dotfiles}/.p10k.zsh"
-elif [[ -f "$HOME/.p10k.zsh" ]]; then
+if [[ -f "$HOME/.p10k.zsh" ]]; then
   source "$HOME/.p10k.zsh"
 fi
 

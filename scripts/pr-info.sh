@@ -5,7 +5,8 @@
 
 set -uo pipefail
 
-. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+. "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "gh CLI not installed. Install mise tools with: mise install"

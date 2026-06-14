@@ -3,7 +3,8 @@
 # Routes: http(s) → opener, media files → opener, text/dirs → $EDITOR tmux popup.
 
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
-opener="${DOTFILES:-$HOME/.dotfiles}/scripts/open-url.sh"
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd) || exit 1
+opener="$script_dir/open-url.sh"
 editor="${EDITOR:-nvim}"
 
 input="$1"
