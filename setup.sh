@@ -30,8 +30,15 @@ skip() { info "Skipping: $1 (disabled via flag)"; }
 # Error handler with enhanced output
 trap 'error "Script failed at line $LINENO in $BASH_SOURCE"; exit 1' ERR
 
+OS_NAME=$(uname -s 2>/dev/null || printf unknown)
+IS_DARWIN=false
+IS_DEBIAN=false
+[[ "$OS_NAME" == "Darwin" ]] && IS_DARWIN=true
+command -v apt-get &>/dev/null && IS_DEBIAN=true
+
 # Section flags (all enabled by default)
 DO_SSH=true
+DO_APT=true
 DO_HOMEBREW=true
 DO_BREWFILE=true
 DO_SYMLINKS=true
@@ -39,8 +46,6 @@ DO_NEOVIM=true
 DO_ZSH=true
 DO_TMUX=true
 DO_MACOS=true
-DO_MOLE=true
-FORCE_MOLE=false
 DO_PEON=true
 DO_MISE=true
 
@@ -50,15 +55,14 @@ Usage: setup.sh [OPTIONS]
 
 Options:
   --no-ssh        Skip SSH key generation and GitHub authorization
+  --no-apt        Skip Debian/Ubuntu system package installation
   --no-homebrew   Skip Homebrew installation
-  --no-brewfile   Skip Homebrew bundle (Brewfile)
+  --no-brewfile   Skip macOS software installation (Brewfile)
   --no-symlinks   Skip symlinking dotfiles
   --no-neovim     Skip Neovim plugin sync
   --no-zsh        Skip ZSH plugin installation
   --no-tmux       Skip tmux plugin installation
   --no-macos      Skip macOS defaults configuration
-  --no-mole       Skip Mole system cleanup
-  --force-mole    Force Mole cleanup (ignores 2-week cooldown)
   --no-peon       Skip Peon sound pack installation
   --no-mise       Skip mise tool installation
   -h, --help      Show this help message
@@ -67,22 +71,40 @@ USAGE
 
 for arg in "$@"; do
   case "$arg" in
-    --no-ssh)      DO_SSH=false ;;
+    --no-ssh) DO_SSH=false ;;
+    --no-apt) DO_APT=false ;;
     --no-homebrew) DO_HOMEBREW=false ;;
     --no-brewfile) DO_BREWFILE=false ;;
     --no-symlinks) DO_SYMLINKS=false ;;
-    --no-neovim)   DO_NEOVIM=false ;;
-    --no-zsh)      DO_ZSH=false ;;
-    --no-tmux)     DO_TMUX=false ;;
-    --no-macos)    DO_MACOS=false ;;
-    --no-mole)     DO_MOLE=false ;;
-    --force-mole)  FORCE_MOLE=true ;;
-    --no-peon)     DO_PEON=false ;;
-    --no-mise)     DO_MISE=false ;;
-    -h|--help)     usage; exit 0 ;;
-    *) error "Unknown option: $arg"; usage >&2; exit 1 ;;
+    --no-neovim) DO_NEOVIM=false ;;
+    --no-zsh) DO_ZSH=false ;;
+    --no-tmux) DO_TMUX=false ;;
+    --no-macos) DO_MACOS=false ;;
+    --no-peon) DO_PEON=false ;;
+    --no-mise) DO_MISE=false ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      error "Unknown option: $arg"
+      usage >&2
+      exit 1
+      ;;
   esac
 done
+
+# Sections that only make sense on macOS auto-disable elsewhere. The Brewfile is
+# intentionally macOS-only and must never run on Linux.
+if ! $IS_DARWIN; then
+  DO_HOMEBREW=false
+  DO_BREWFILE=false
+  DO_MACOS=false
+fi
+
+if $IS_DARWIN || ! $IS_DEBIAN; then
+  DO_APT=false
+fi
 
 # Start script
 banner "DOTFILES SETUP SCRIPT"
@@ -138,10 +160,45 @@ else
   skip "SSH Key & Git Remote"
 fi
 
+banner "SETUP APT"
+if $DO_APT; then
+
+  if command -v apt-get &>/dev/null; then
+    warning "Some steps require administrator privileges (sudo). You may be prompted for your password."
+    sudo -v
+
+    APT_PACKAGES=(
+      bash
+      build-essential
+      ca-certificates
+      curl
+      git
+      libpq-dev
+      libssl-dev
+      pkg-config
+      w3m
+      wireguard-tools
+      xdg-utils
+      zsh
+    )
+
+    info "Installing Debian/Ubuntu bootstrap and system packages..."
+    sudo apt-get update
+    sudo apt-get install -y "${APT_PACKAGES[@]}"
+  else
+    warning "apt-get not found, skipping Debian/Ubuntu packages"
+  fi
+
+else
+  skip "Debian/Ubuntu System Packages"
+fi
+
 banner "SETUP HOMEBREW"
 if $DO_HOMEBREW; then
 
-  if ! command -v brew &>/dev/null; then
+  if ! $IS_DARWIN; then
+    warning "Homebrew bootstrap is macOS-only in this dotfiles setup"
+  elif ! command -v brew &>/dev/null; then
     warning "Homebrew not found. Installing Homebrew..."
     warning "About to download and run the official Homebrew install script (https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)."
     warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
@@ -153,30 +210,68 @@ if $DO_HOMEBREW; then
     info "Homebrew version: $(brew --version | head -n1)"
   fi
 
+  if $IS_DARWIN && command -v brew &>/dev/null; then
+    for package in mise zsh; do
+      if brew list --formula "$package" &>/dev/null; then
+        info "Homebrew bootstrap package already installed: $package"
+      else
+        info "Installing Homebrew bootstrap package: $package"
+        brew install "$package"
+      fi
+    done
+  fi
+
 else
   skip "Homebrew Installation"
 fi
 
-banner "SETUP BREWFILE"
+banner "SETUP MACOS SOFTWARE"
 if $DO_BREWFILE; then
 
-  info "Installing packages from Brewfile..."
-  if [[ -f ./Brewfile ]]; then
-    brew bundle --cleanup --force-cleanup --file ./Brewfile
+  if ! $IS_DARWIN; then
+    warning "Brewfile is macOS-only; refusing to run it on $OS_NAME"
+  elif ! command -v brew &>/dev/null; then
+    warning "Homebrew not found, skipping Brewfile"
+  elif [[ -f ./Brewfile ]]; then
+    info "Installing macOS software from Brewfile..."
+    if brew trust --help &>/dev/null; then
+      while IFS= read -r tap_name; do
+        [[ -n "$tap_name" ]] || continue
+        info "Trusting Homebrew tap declared in Brewfile: $tap_name"
+        brew trust --tap "$tap_name"
+      done < <(awk -F"'" '/^tap / {print $2}' ./Brewfile)
+    fi
+    brew bundle install --no-upgrade --file ./Brewfile
   else
     warning "Brewfile not found, skipping Homebrew dependencies"
   fi
 
 else
-  skip "Homebrew Dependencies"
+  skip "macOS Software"
 fi
 
 banner "SETUP MISE"
 if $DO_MISE; then
 
+  if ! command -v mise &>/dev/null; then
+    if $IS_DARWIN && command -v brew &>/dev/null; then
+      info "Installing mise with Homebrew bootstrap..."
+      brew install mise
+    elif command -v curl &>/dev/null; then
+      warning "mise not found. About to download and run the official mise installer (https://mise.run)."
+      warning "No checksum verification is performed; ensure you trust the source. Press Enter to continue or Ctrl+C to abort."
+      read -r
+      curl -fsSL https://mise.run | sh
+      export PATH="$HOME/.local/bin:$PATH"
+    else
+      warning "mise and curl not found, skipping tool installation"
+    fi
+  fi
+
   if command -v mise &>/dev/null; then
     info "Installing mise tools from global config..."
     mise install
+    export PATH="$HOME/.local/share/mise/shims:$PATH"
     info "Pruning mise tools not listed in config..."
     mise prune --yes
   else
@@ -223,20 +318,20 @@ if $DO_SYMLINKS; then
   info "Linking dotfiles and Brewfile..."
   while IFS= read -r file; do
     symlink "${file#./}"
-  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type file -o -type link \) \( -name '.*' -o -name 'Brewfile' \))
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type f -o -type l \) \( -name '.*' -o -name 'Brewfile' \))
 
   # Symlink hidden directories
   info "Linking hidden directories..."
   while IFS= read -r dir; do
     symlink "${dir#./}"
-  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type dir -name '.*' \! -name '.config' \! -name '.git')
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type d -name '.*' \! -name '.config' \! -name '.git')
 
   # Symlink .config directories
   if [[ -d .config ]]; then
     info "Linking .config directories..."
     while IFS= read -r dir; do
       symlink "$dir"
-    done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type dir)
+    done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type d)
   else
     info "No .config directory found, skipping"
   fi
@@ -405,43 +500,6 @@ if $DO_MACOS; then
 
 else
   skip "System Configuration"
-fi
-
-banner "SETUP MOLE"
-if $DO_MOLE; then
-
-  if command -v mo &>/dev/null; then
-    MOLE_LAST_RUN_FILE="$HOME/.mole_last_run"
-    MOLE_COOLDOWN=$((14 * 24 * 60 * 60)) # 2 weeks in seconds
-    run_mole=false
-
-    if $FORCE_MOLE; then
-      run_mole=true
-    elif [[ ! -f "$MOLE_LAST_RUN_FILE" ]]; then
-      run_mole=true
-    else
-      last_run=$(cat "$MOLE_LAST_RUN_FILE")
-      now=$(date +%s)
-      if (( now - last_run >= MOLE_COOLDOWN )); then
-        run_mole=true
-      fi
-    fi
-
-    if $run_mole; then
-      info "Running Mole cleanup..."
-      mo clean | cat
-      date +%s > "$MOLE_LAST_RUN_FILE"
-    else
-      elapsed=$(( $(date +%s) - $(cat "$MOLE_LAST_RUN_FILE") ))
-      remaining=$(( (MOLE_COOLDOWN - elapsed) / 86400 ))
-      info "Mole cleanup skipped (next run in ~${remaining} days, use --force-mole to override)"
-    fi
-  else
-    warning "Mole (mo) not found, skipping system cleanup"
-  fi
-
-else
-  skip "System Cleanup (Mole)"
 fi
 
 banner "SETUP PEON"

@@ -1,7 +1,7 @@
 auto-reload yes
 reload-time 10
 refresh-on-startup yes
-browser "open %u"
+browser "~/.dotfiles/scripts/open-url.sh %u"
 
 article-sort-order date-desc
 

@@ -1,8 +1,9 @@
 #!/bin/bash
 # Universal Shift+Click handler for Alacritty hints.
-# Routes: http(s) → browser, image files → Preview, text/dirs → $EDITOR tmux popup.
+# Routes: http(s) → opener, media files → opener, text/dirs → $EDITOR tmux popup.
 
-export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
+opener="${DOTFILES:-$HOME/.dotfiles}/scripts/open-url.sh"
 editor="${EDITOR:-nvim}"
 
 input="$1"
@@ -21,12 +22,12 @@ fi
 
 # URLs → browser
 if [[ "$input" =~ ^https?:// ]]; then
-  exec open "$input"
+  exec "$opener" "$input"
 fi
 
 # Rust compiler error codes (E0001..E9999) → docs
 if [[ "$input" =~ ^E[0-9]{4}$ ]]; then
-  exec open "https://doc.rust-lang.org/error_codes/${input}.html"
+  exec "$opener" "https://doc.rust-lang.org/error_codes/${input}.html"
 fi
 
 # Strip file:// URI prefix
@@ -53,7 +54,7 @@ if [[ ! -e "$file" ]]; then
     tld="${host##*.}"
     case "$tld" in
       sh | bash | zsh | fish | js | ts | jsx | tsx | py | rb | go | rs | md | txt | log | conf | toml | yaml | yml | json | html | htm | css | lua | c | h | cpp | hpp | swift | kt | java | php | sql | csv | xml | jpg | jpeg | png | gif | bmp | tiff | webp | svg | ico | heic | pdf | mp3 | mp4 | mkv | avi | mov | flac | wav | aac | ogg | m4a | m4v | webm | wmv | zip | tar | gz | bz2 | xz | 7z | dmg | iso | exe | bin | app | env | lock | sum | mod) ;;
-      *) exec open "https://$input" ;;
+      *) exec "$opener" "https://$input" ;;
     esac
   fi
   exit 0
@@ -61,12 +62,13 @@ fi
 
 # Images → Preview (only for regular files)
 if [[ -f "$file" ]]; then
-  case "${file,,}" in
+  lower_file=$(printf '%s' "$file" | tr '[:upper:]' '[:lower:]')
+  case "$lower_file" in
     *.png | *.jpg | *.jpeg | *.gif | *.bmp | *.tiff | *.webp | *.svg | *.ico | *.heic | *.pdf)
-      exec open -a Preview "$file"
+      exec "$opener" "$file"
       ;;
     *.mp3 | *.mp4 | *.mkv | *.avi | *.mov | *.flac | *.wav | *.aac | *.ogg | *.m4a | *.m4v | *.webm | *.wmv)
-      exec open -a VLC "$file"
+      exec "$opener" "$file"
       ;;
   esac
 fi
@@ -77,4 +79,8 @@ if [[ -f "$file" && -n "$line" ]]; then
   cmd+=" +$line"
 fi
 cmd+=" $(printf '%q' "$file")"
-exec tmux display-popup -E -w 90% -h 90% "$cmd"
+if [[ -n "${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
+  exec tmux display-popup -E -w 90% -h 90% "$cmd"
+else
+  exec bash -lc "$cmd"
+fi

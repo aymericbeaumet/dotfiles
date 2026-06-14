@@ -35,7 +35,7 @@ for _, mapping in ipairs({
 	{ "i", "<c-d>", "<Del>", desc = "Delete char" },
 	{ "i", "<c-e>", "<End>", desc = "Go to line end" },
 	{ "i", "<c-f>", "<Right>", desc = "Move right" },
-	{ "v", "<cr>", ":<C-U>'<,'>w !squeeze -1 --url --open<cr><cr>", desc = "Open URLs with squeeze" },
+	{ "v", "<cr>", ":<C-U>'<,'>w !~/.dotfiles/scripts/open-selection-url.sh<cr><cr>", desc = "Open URL" },
 	{ "n", "<c-o>", "<c-o>zz", desc = "Jump back (centered)" },
 	{ "n", "n", "nzz", desc = "Next search result (centered)" },
 	{ "n", "N", "Nzz", desc = "Prev search result (centered)" },

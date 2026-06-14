@@ -8,6 +8,7 @@ Single source of truth for Claude Code and Codex configuration. Both harnesses l
 ~/.dotfiles/.agents/
   AGENTS.md          # auto-loaded every session by both harnesses; keep small
   RTK.md             # auto-loaded via AGENTS.md @import; rtk prefix rule
+  PLATFORM.md        # auto-loaded via AGENTS.md @import; macOS/Linux portability rules
   agents/            # subagents (Anthropic frontmatter spec)
     code-reviewer.md
     test-runner.md

@@ -190,6 +190,9 @@ trust_level = "trusted"
 [projects."/Users/ab/workspace/beside/beside-agentic"]
 trust_level = "trusted"
 
+[projects."/Users/ab/workspace/aymericbeaumet/moria"]
+trust_level = "trusted"
+
 [marketplaces.claude-code-workflows]
 last_updated = "2026-06-12T02:26:48Z"
 last_revision = "cc37bfdd292ce520ba1c44df7a3a70d5f8137236"
