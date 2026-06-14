@@ -113,19 +113,19 @@ timeout = 10
 [hooks.state]
 
 [hooks.state."/Users/ab/.codex/config.toml:session_start:0:0"]
-trusted_hash = "sha256:ba12d8e7186c71397a2fce8790ae400670f25add2bde0a90022bf5ebfd5f551d"
+trusted_hash = "sha256:b2fcc60906b80819abf1e7d103997cc987b35d018ed0a593852d57d3e0c2dfc9"
 
 [hooks.state."/Users/ab/.codex/config.toml:session_start:0:1"]
 trusted_hash = "sha256:1d53cc821d45b1d416118a46223b67c7dc816d46a3c9b3706ea6639d2f515a91"
 
 [hooks.state."/Users/ab/.codex/config.toml:user_prompt_submit:0:0"]
-trusted_hash = "sha256:ea56f1033623cb8c91f692e56382966d560d67542e812f7d2c0d4b31145247b9"
+trusted_hash = "sha256:c719e7b50799e6b4ce5e0962805689ba26f51475bd4eaa64fce72568170d6d00"
 
 [hooks.state."/Users/ab/.codex/config.toml:stop:0:0"]
-trusted_hash = "sha256:2c99b89ffaa802f10e684421a5e06d7df12269f8eeff62f085a128f8c6d0b7de"
+trusted_hash = "sha256:7ec6feac899c1066464d0e7f0a4ce2ca52058ac08873fc3dfbf870f67fe4924d"
 
 [hooks.state."/Users/ab/.codex/config.toml:stop:0:1"]
-trusted_hash = "sha256:6038fbb0f8578c1c2592b6d71f0563afadeb541fdac7cb937a79802793390646"
+trusted_hash = "sha256:9ea74a893443a8e043b2a254d250823dd01b2d49bd10dde317d6b7b792fe3028"
 
 [hooks.state."/Users/ab/.codex/config.toml:permission_request:0:0"]
 trusted_hash = "sha256:05fa84457cba9431d0c2c9ab9038e3d0856edc03d57d9e5a3cd39097af71faac"
@@ -140,7 +140,7 @@ trusted_hash = "sha256:71ab62a69996aef0c80e38c71b3459b1282722e6c889e1b9a4108d163
 trusted_hash = "sha256:4939f8d9f336c0a7798afbbd3a281fb4c15694bc79f805eff466f679c6b31606"
 
 [hooks.state."/Users/ab/.codex/config.toml:post_tool_use:1:0"]
-trusted_hash = "sha256:d9d3b1c821a2261db3c66c37213e1f52155e87e683ebcebd35e2a9661d73cba5"
+trusted_hash = "sha256:c565ef53d8fe2744746c8fb8e0683ed9a6c02356e220b85bb126d84633b2fc25"
 
 [hooks.state."/Users/ab/.codex/config.toml:pre_compact:0:0"]
 trusted_hash = "sha256:d534957bef38a7a41cd14f8984bc87b5959e20eb244dd54a1ddaded107e159fd"
@@ -191,6 +191,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/ab/workspace/aymericbeaumet/moria"]
+trust_level = "trusted"
+
+[projects."/Users/ab/.dotfiles"]
 trust_level = "trusted"
 
 [marketplaces.claude-code-workflows]

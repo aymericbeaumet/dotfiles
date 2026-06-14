@@ -5,6 +5,7 @@
 tap 'tw93/tap'
 
 # macOS-only tools
+brew 'macmon'
 brew 'tw93/tap/mole'
 
 # macOS GUI applications
