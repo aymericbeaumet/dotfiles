@@ -13,6 +13,9 @@ ignored_apps = [
 left = "#{mode}"
 right = "#{script:~/.dotfiles/scripts/agent-quota-status.sh}#[fg=colour245] · #{script:~/.dotfiles/scripts/battery-status.sh}#[fg=colour245] · #{date}"
 
+[flashlight]
+suggestion_count = 10
+
 [debug]
 log_level = "trace"
 http_inspector_enabled = true

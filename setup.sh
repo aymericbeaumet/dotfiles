@@ -269,6 +269,28 @@ if $DO_MISE; then
   fi
 
   if command -v mise &>/dev/null; then
+    mise_config="$PWD/.config/mise/config.toml"
+    if [[ -f "$mise_config" ]]; then
+      export MISE_GLOBAL_CONFIG_FILE="$mise_config"
+    else
+      warning "mise config not found at $mise_config"
+    fi
+
+    if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh &>/dev/null; then
+      if token=$(gh auth token 2>/dev/null) && [[ -n "$token" ]]; then
+        export GITHUB_TOKEN="$token"
+        info "Using GitHub token from gh for mise release downloads"
+      fi
+    fi
+
+    if grep -Eq '^[[:space:]]*pipx[[:space:]]*=' "$mise_config" 2>/dev/null; then
+      info "Installing mise bootstrap tool: pipx..."
+      mise install pipx
+      export PATH="$HOME/.local/share/mise/shims:$PATH"
+      mise reshim pipx >/dev/null 2>&1 || true
+      hash -r 2>/dev/null || true
+    fi
+
     info "Installing mise tools from global config..."
     mise install
     export PATH="$HOME/.local/share/mise/shims:$PATH"
