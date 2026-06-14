@@ -2,12 +2,14 @@
 # Public IPv4 in yellow; "no internet" in red on failure.
 # Cache for 60s, refresh in background to avoid blocking the status bar.
 
+. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+
 cache="${TMPDIR:-/tmp}/tmux-ip-status.cache"
 ttl=60
 now=$(date +%s)
 
 mtime=0
-[ -f "$cache" ] && mtime=$(stat -f %m "$cache" 2>/dev/null || echo 0)
+[ -f "$cache" ] && mtime=$(file_mtime "$cache" 2>/dev/null || echo 0)
 age=$(( now - mtime ))
 
 if [ "$age" -ge "$ttl" ]; then

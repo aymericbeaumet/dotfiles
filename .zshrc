@@ -234,12 +234,23 @@ autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
 # fzf: shell integration — completion + key-bindings (CTRL-R history, CTRL-T files, ALT-C cd)
-_fzf_prefix="${HOMEBREW_PREFIX:-$(command -v brew &>/dev/null && brew --prefix 2>/dev/null)}"
-if [[ -n "$_fzf_prefix" ]]; then
-  [[ -f "$_fzf_prefix/opt/fzf/shell/completion.zsh"   ]] && source "$_fzf_prefix/opt/fzf/shell/completion.zsh"   2>/dev/null
-  [[ -f "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" ]] && source "$_fzf_prefix/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
-fi
-unset _fzf_prefix
+# Searches Homebrew, mise installs, and Debian/Ubuntu apt paths in order.
+() {
+  local d
+  for d in \
+    "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell" \
+    "/usr/local/opt/fzf/shell" \
+    "/home/linuxbrew/.linuxbrew/opt/fzf/shell" \
+    "$HOME"/.local/share/mise/installs/fzf/*/shell(N) \
+    "$HOME"/.local/share/mise/installs/fzf/*(N) \
+    "/usr/share/doc/fzf/examples" \
+    "/usr/share/fzf"; do
+    [[ -f "$d/key-bindings.zsh" ]] || continue
+    source "$d/key-bindings.zsh" 2>/dev/null
+    [[ -f "$d/completion.zsh" ]] && source "$d/completion.zsh" 2>/dev/null
+    return
+  done
+}
 export FZF_DEFAULT_OPTS="
   --ansi --border --height=40% --layout=reverse --inline-info
   --bind tab:accept,ctrl-n:down,ctrl-p:up

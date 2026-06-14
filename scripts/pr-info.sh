@@ -5,8 +5,10 @@
 
 set -uo pipefail
 
+. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+
 if ! command -v gh >/dev/null 2>&1; then
-  echo "gh CLI not installed. Install with: brew install gh"
+  echo "gh CLI not installed. Install mise tools with: mise install"
   read -n 1 -r -s -p "Press any key to close..."
   exit 0
 fi
@@ -44,7 +46,7 @@ render_md() {
 
 hr() {
   printf '%s' "$c_grey"
-  printf '─%.0s' $(seq 1 "${COLUMNS:-100}")
+  repeat_char '─' "${COLUMNS:-100}"
   printf '%s\n' "$c_reset"
 }
 

@@ -18,7 +18,7 @@ Policy:
 Process per ecosystem detected in the repo:
 
 **Rust** (`Cargo.toml`):
-1. `cargo install cargo-edit` if `cargo upgrade` is missing.
+1. Use `cargo upgrade` only if it is already available through the repo/toolchain. Do not run raw `cargo install`; ask the main agent to add an ISO/mise-managed tool path if it is missing.
 2. `cargo upgrade --workspace --incompatible=ignore` for minor/patch.
 3. `cargo update` to refresh `Cargo.lock`.
 4. `cargo test --workspace` (or repo-defined test target).

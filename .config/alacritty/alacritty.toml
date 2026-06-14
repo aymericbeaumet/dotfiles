@@ -264,7 +264,7 @@ args = ["-l", "-c", "exec tmux new-session -A"]
 decorations = "None"
 padding = { x = 0, y = 0 }
 dynamic_padding = true
-startup_mode = "SimpleFullscreen"
+startup_mode = "Maximized"
 option_as_alt = "Both"
 opacity = 1
 blur = true

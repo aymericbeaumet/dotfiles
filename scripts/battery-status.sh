@@ -1,4 +1,10 @@
 #!/bin/sh
+. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+
+if ! is_darwin; then
+  exit 0
+fi
+
 out=$(pmset -g batt 2>/dev/null)
 pct=$(printf '%s\n' "$out" | grep -oE '[0-9]+%' | head -1 | tr -d '%')
 [ -n "$pct" ] || { printf '#[range=user|bat-prefs fg=red]??#[norange]'; exit 0; }

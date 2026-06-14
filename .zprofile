@@ -12,6 +12,7 @@ export LC_CTYPE=en_US.UTF-8
 
 # Deduplicate PATH early (before any PATH modifications)
 typeset -U path
+path=(${path:#*\#\{HOME\}*})
 
 # homebrew (support both Apple Silicon and Intel)
 export HOMEBREW_NO_ENV_HINTS=true
@@ -25,6 +26,7 @@ fi
 
 # local user bin
 [[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+[[ -d "$HOME/.local/share/mise/shims" ]] && export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 # postgresql client (libpq is keg-only)
 [[ -d /opt/homebrew/opt/libpq/bin ]] && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"

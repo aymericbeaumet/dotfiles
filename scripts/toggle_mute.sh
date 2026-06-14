@@ -2,6 +2,13 @@
 # Toggle macOS output mute.
 set -eu
 
+if [ "$(uname -s 2>/dev/null)" != "Darwin" ]; then
+  echo "toggle_mute.sh: macOS only" >&2
+  exit 0
+fi
+
+. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+
 label=$(osascript -e 'if output muted of (get volume settings) then
   set volume without output muted
   return "OFF"
@@ -10,6 +17,4 @@ else
   return "ON"
 end if')
 
-encoded=$(printf '%s' "Mute $label" | od -An -tx1 -v | tr -d ' \n' | sed 's/../%&/g')
-open -g "flash://alert_show?message=$encoded" >/dev/null 2>&1 &
-wait
+flash_alert "Mute $label"

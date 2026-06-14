@@ -2,6 +2,13 @@
 # Toggle Wi-Fi power on the primary Wi-Fi interface.
 set -eu
 
+if [ "$(uname -s 2>/dev/null)" != "Darwin" ]; then
+  echo "toggle_wifi.sh: macOS only" >&2
+  exit 0
+fi
+
+. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+
 CACHE="${TMPDIR:-/tmp}/wifi_device"
 device=""
 [ -r "$CACHE" ] && device=$(cat "$CACHE")
@@ -23,6 +30,5 @@ else
   label="ON"
 fi
 
-encoded=$(printf '%s' "Wi-Fi $label" | od -An -tx1 -v | tr -d ' \n' | sed 's/../%&/g')
-open -g "flash://alert_show?message=$encoded" >/dev/null 2>&1 &
+flash_alert "Wi-Fi $label" &
 wait
