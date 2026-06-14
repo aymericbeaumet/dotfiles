@@ -9,6 +9,10 @@ ignored_apps = [
   "com.flash.vimium-oracle",
 ]
 
+[statusbar]
+left = "#{mode}"
+right = "#{script:~/.dotfiles/scripts/agent-quota-status.sh}#[fg=colour245] · #{script:~/.dotfiles/scripts/battery-status.sh}#[fg=colour245] · #{date}"
+
 [debug]
 log_level = "trace"
 http_inspector_enabled = true

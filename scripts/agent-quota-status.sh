@@ -1,6 +1,8 @@
 #!/bin/sh
 # Claude/Codex quota usage for tmux status-right.
 
+. "${DOTFILES:-$HOME/.dotfiles}/scripts/lib.sh"
+
 now=$(date +%s)
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
 last_good="$cache_root/rendered-v3.last"
@@ -12,14 +14,6 @@ refresh_lock="$cache_root/refresh.lock"
 : "${AGENT_QUOTA_REFRESH_LOCK_SECONDS:=30}"
 : "${CLAUDE_USAGE_TTL_SECONDS:=120}"
 : "${CLAUDE_USAGE_RETRY_SECONDS:=60}"
-
-epoch_from_iso() {
-  iso=${1:-}
-  [ -z "$iso" ] || [ "$iso" = "null" ] && return
-  iso=$(printf '%s' "$iso" |
-    sed -E 's/\.[0-9]+([Z+-])/\1/; s/Z$/+0000/; s/([+-][0-9][0-9]):([0-9][0-9])$/\1\2/')
-  date -j -f "%Y-%m-%dT%H:%M:%S%z" "$iso" +%s 2>/dev/null
-}
 
 fmt_hours_until() {
   awk -v target="${1:-}" -v now="$now" '
@@ -60,10 +54,6 @@ fmt_remaining_percent() {
         printf "%d%%", pct
       }
     }'
-}
-
-file_mtime() {
-  stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null
 }
 
 cache_is_fresh() {
@@ -132,6 +122,8 @@ start_refresh() {
 sha256_8() {
   if command -v shasum >/dev/null 2>&1; then
     shasum -a 256 | awk '{print substr($1, 1, 8)}'
+  elif command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | awk '{print substr($1, 1, 8)}'
   elif command -v openssl >/dev/null 2>&1; then
     openssl dgst -sha256 -r | awk '{print substr($1, 1, 8)}'
   fi
@@ -241,12 +233,18 @@ live_claude_usage() {
   [ -n "$token" ] || return
   org=$(claude_org_uuid)
 
+  case "$(dotfiles_uname)" in
+    Darwin) client_platform=macos ;;
+    Linux) client_platform=linux ;;
+    *) client_platform=unknown ;;
+  esac
+
   usage=$({
     printf 'header = "Authorization: Bearer %s"\n' "$token"
     printf 'header = "Content-Type: application/json"\n'
     printf 'header = "anthropic-version: 2023-06-01"\n'
     printf 'header = "anthropic-beta: oauth-2025-04-20"\n'
-    printf 'header = "anthropic-client-platform: macos"\n'
+    printf 'header = "anthropic-client-platform: %s"\n' "$client_platform"
     [ -n "$org" ] && printf 'header = "x-organization-uuid: %s"\n' "$org"
   } |
     curl -fsS --max-time 5 -K - 'https://api.anthropic.com/api/oauth/usage' 2>/dev/null |
