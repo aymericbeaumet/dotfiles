@@ -21,8 +21,8 @@ This repo targets **macOS (primary)** and **Debian/Ubuntu Linux (supported)**. D
 
 | Helper | Purpose | Detection order |
 |---|---|---|
-| `~/.dotfiles/scripts/clip.sh` | Write stdin to system clipboard | `pbcopy` → `wl-copy` (Wayland) → `xclip` → `xsel` |
-| `~/.dotfiles/scripts/open-url.sh` | Open URL/file in default app | `open` (macOS) → `xdg-open` (graphical Linux) → `$BROWSER`/`w3m`/`elinks`/`links`/`lynx` (headless Linux) |
+| `scripts/clip.sh` | Write stdin to system clipboard | `pbcopy` → `wl-copy` (Wayland) → `xclip` → `xsel` |
+| `scripts/open-url.sh` | Open URL/file in default app | `open` (macOS) → `xdg-open` (graphical Linux) → `$BROWSER`/`w3m`/`elinks`/`links`/`lynx` (headless Linux) |
 
 When adding tmux bindings or scripts that touch the clipboard or open URLs, route through these rather than calling `pbcopy`/`open` directly.
 

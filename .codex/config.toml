@@ -31,7 +31,7 @@ args = ["-y", "tmux-mcp", "--shell-type=zsh"]
 [[hooks.SessionStart]]
 [[hooks.SessionStart.hooks]]
 type = "command"
-command = "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh clear"
+command = "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear'"
 timeout = 5
 
 [[hooks.SessionStart.hooks]]
@@ -42,7 +42,7 @@ timeout = 10
 [[hooks.UserPromptSubmit]]
 [[hooks.UserPromptSubmit.hooks]]
 type = "command"
-command = "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh busy"
+command = "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh busy'"
 timeout = 5
 
 [[hooks.UserPromptSubmit.hooks]]
@@ -53,12 +53,12 @@ timeout = 10
 [[hooks.Stop]]
 [[hooks.Stop.hooks]]
 type = "command"
-command = "/Users/ab/.dotfiles/scripts/agent-pane-idle.sh idle"
+command = "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh idle'"
 timeout = 5
 
 [[hooks.Stop.hooks]]
 type = "command"
-command = "/Users/ab/.dotfiles/scripts/agent-pane-title.sh"
+command = "sh -c '$HOME/.dotfiles/scripts/agent-pane-title.sh'"
 timeout = 5
 
 [[hooks.Stop.hooks]]
@@ -83,7 +83,7 @@ timeout = 10
 matcher = "Edit|Write|apply_patch"
 [[hooks.PostToolUse.hooks]]
 type = "command"
-command = "/Users/ab/.dotfiles/scripts/format-on-save.sh"
+command = "sh -c '$HOME/.dotfiles/scripts/format-on-save.sh'"
 timeout = 10
 
 [[hooks.SubagentStart]]
@@ -157,7 +157,7 @@ trusted_hash = "sha256:f007298b0a246c068987a0a448803438b79a5a9a90cb91545146b22eb
 [projects."/Users/ab/workspace/aymericbeaumet/gors"]
 trust_level = "trusted"
 
-[projects."/Users/ab/.dotfiles"]
+[projects."$HOME/.dotfiles"]
 trust_level = "trusted"
 
 [projects."/Users/ab/workspace/beside/beside-brand"]

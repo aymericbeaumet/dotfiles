@@ -12,7 +12,7 @@ dotfiles._
 
 ```bash
 # Clone dotfiles
-git clone https://github.com/aymericbeaumet/dotfiles.git "$HOME/.dotfiles"
+git clone https://github.com/aymericbeaumet/dotfiles.git ~/.dotfiles
 # Setup system
-"$HOME/.dotfiles/setup.sh"
+~/.dotfiles/setup.sh
 ```
