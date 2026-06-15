@@ -10,8 +10,11 @@ ignored_apps = [
 ]
 
 [statusbar]
-left = "#{mode}"
-right = "#{script:../../scripts/agent-quota-status.sh}#[fg=colour245] · #{script:../../scripts/battery-status.sh}#[fg=colour245] · #{date}"
+template = """
+#[align=left]#{mode}\
+#[align=center]Flash\
+#[align=right]#{script:../../scripts/agent-quota-status.sh} [fg=colour245] · #{script:../../scripts/battery-status.sh} [fg=colour245] · #{date}\
+"""
 
 [flashlight]
 suggestion_count = 10
@@ -26,39 +29,44 @@ http_inspector_enabled = true
 sequence_timeout_ms = 1000
 
 [mode.all.mappings]
-"cmd+ctrl+[" = "flash://mode_normal"
-"cmd+shift+:" = "flash://mode_command"
-"cmd+<space>" = "flash://flashlight"
-"cmd+ctrl+<space>" = "flash://emojis"
-"alt+h" = "flash://window_move?position=lefthalf"
-"alt+j" = "flash://window_move?position=bottomhalf"
-"alt+k" = "flash://window_move?position=tophalf"
-"alt+l" = "flash://window_move?position=righthalf"
-"alt+m" = "flash://window_move?position=maximized"
-"alt+n" = "flash://window_move?screen=+1"
-"alt+p" = "flash://window_move?screen=-1"
+"cmd+ctrl+[" = ["flash", "enter_normal_mode"]
+"cmd+shift+:" = ["flash", "enter_command_mode"]
+"cmd+<space>" = ["flash", "enter_command", "--input=:flashlight"]
+"cmd+ctrl+<space>" = [
+  "flash",
+  "enter_command",
+  "--input=:flashlight @source:emojis.glyphs",
+  "--restore-mode",
+]
+"alt+h" = ["flash", "window_move", "--position=lefthalf"]
+"alt+j" = ["flash", "window_move", "--position=bottomhalf"]
+"alt+k" = ["flash", "window_move", "--position=tophalf"]
+"alt+l" = ["flash", "window_move", "--position=righthalf"]
+"alt+m" = ["flash", "window_move", "--position=maximized"]
+"alt+n" = ["flash", "window_move", "--screen=+1"]
+"alt+p" = ["flash", "window_move", "--screen=-1"]
 
 [mode.normal]
 leader = "<space>"
 
 [mode.normal.mappings]
 # app switch
-"'a" = "flash://app_open?name=Alacritty"
-"'f" = "flash://app_open?name=Firefox"
-"'i" = "flash://app_open?name=Messages"
-"'l" = "flash://app_open?name=Linear"
-"'n" = "flash://app_open?name=Notes"
-"'o" = "flash://app_open?name=Notion"
-"'p" = "flash://app_open?name=Postico 2"
-"'r" = "flash://app_open?name=Reminders"
-"'s" = "flash://app_open?name=Slack"
-"'y" = "flash://app_open?name=Spotify"
-"'w" = "flash://app_open?name=WhatsApp"
+"'a" = ["flash", "app_open", "--name=Alacritty"]
+"'f" = ["flash", "app_open", "--name=Firefox"]
+"'i" = ["flash", "app_open", "--name=Messages"]
+"'l" = ["flash", "app_open", "--name=Linear"]
+"'n" = ["flash", "app_open", "--name=Notes"]
+"'o" = ["flash", "app_open", "--name=Notion"]
+"'p" = ["flash", "app_open", "--name=Postico 2"]
+"'r" = ["flash", "app_open", "--name=Reminders"]
+"'s" = ["flash", "app_open", "--name=Slack"]
+"'y" = ["flash", "app_open", "--name=Spotify"]
+"'w" = ["flash", "app_open", "--name=WhatsApp"]
 # convenient utilities
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
 "<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
 # karabiner remaps
-"<delete_forward>" = "flash://scroll_half_page_down" # ctrl+d
-"<tab>" = "flash://movement_forward" # ctrl+i
-"cmd+<right>" = "flash://scroll_down" # ctrl+e
+"<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d
+"<tab>" = ["flash", "movement_forward"]                 # ctrl+i
+"cmd+<right>" = ["flash", "scroll_down"]                # ctrl+e
