@@ -198,7 +198,7 @@ claude_keychain_account() {
     user=$(id -un 2>/dev/null)
   fi
   case "$user" in
-    *[!A-Za-z0-9._-]*|'') printf '%s' "claude-code-user" ;;
+    *[!A-Za-z0-9._-]* | '') printf '%s' "claude-code-user" ;;
     *) printf '%s' "$user" ;;
   esac
 }
@@ -339,32 +339,55 @@ format_period() {
   reset_at=${2:-}
   reset_kind=${3:-}
 
-  [ -n "$used_pct" ] || return
-  [ -n "$reset_at" ] || return
-  [ "$reset_at" != "null" ] || return
+  have_used=1
+  [ -n "$used_pct" ] && [ "$used_pct" != "null" ] || have_used=0
+  have_reset=1
+  [ -n "$reset_at" ] && [ "$reset_at" != "null" ] || have_reset=0
+  [ "$have_used" -eq 1 ] || [ "$have_reset" -eq 1 ] || return
 
   case "$reset_kind" in
-    hours) reset=$(fmt_hours_until "$reset_at") ;;
-    days) reset=$(fmt_days_until "$reset_at") ;;
+    hours)
+      if [ "$have_reset" -eq 1 ]; then
+        reset=$(fmt_hours_until "$reset_at")
+      else
+        reset='?h'
+      fi
+      ;;
+    days)
+      if [ "$have_reset" -eq 1 ]; then
+        reset=$(fmt_days_until "$reset_at")
+      else
+        reset='?d'
+      fi
+      ;;
     *) return ;;
   esac
 
-  case "$reset" in
-    *'?'*) return ;;
-  esac
-
-  pct=$(fmt_remaining_percent "$used_pct")
-  case "$pct" in
-    *'?'*) return ;;
-  esac
-
-  left=${pct%\%}
-  segment="${pct}↻$reset"
-  if [ "$left" -lt 20 ]; then
-    printf '#[fg=colour196]%s#[fg=colour245]' "$segment"
+  if [ "$have_used" -eq 1 ]; then
+    pct=$(fmt_remaining_percent "$used_pct")
   else
-    printf '%s' "$segment"
+    pct='?%'
   fi
+
+  segment="${pct}↻$reset"
+  case "$pct" in
+    [0-9]*%)
+      left=${pct%\%}
+      if [ "$left" -lt 20 ]; then
+        printf '#[fg=colour196]%s#[fg=colour245]' "$segment"
+      else
+        printf '%s' "$segment"
+      fi
+      ;;
+    *) printf '%s' "$segment" ;;
+  esac
+}
+
+unknown_period() {
+  case "${1:-}" in
+    hours) printf '%s' '?%↻?h' ;;
+    days) printf '%s' '?%↻?d' ;;
+  esac
 }
 
 format_provider() {
@@ -376,10 +399,99 @@ format_provider() {
 
   session=$(format_period "$session_pct" "$session_reset" hours)
   week=$(format_period "$week_pct" "$week_reset" days)
-  [ -n "$session" ] && [ -n "$week" ] || return
+  [ -n "$session" ] || [ -n "$week" ] || return
+  [ -n "$session" ] || session=$(unknown_period hours)
+  [ -n "$week" ] || week=$(unknown_period days)
 
   printf '#[fg=colour178]%s#[fg=colour245]' "$label"
   printf ' %s %s' "$session" "$week"
+}
+
+# Same content as `format_provider` minus the leading label + colour
+# bracket. Used by the `--claude` / `--codex` flag path so callers
+# (Flash's `[statusbar].template`) can supply the label and separators
+# themselves and keep one ownership boundary per format concern.
+format_provider_unlabelled() {
+  session_pct=${1:-}
+  session_reset=${2:-}
+  week_pct=${3:-}
+  week_reset=${4:-}
+
+  session=$(format_period "$session_pct" "$session_reset" hours)
+  week=$(format_period "$week_pct" "$week_reset" days)
+  [ -n "$session" ] || [ -n "$week" ] || return
+  [ -n "$session" ] || session=$(unknown_period hours)
+  [ -n "$week" ] || week=$(unknown_period days)
+
+  printf '%s %s' "$session" "$week"
+}
+
+unknown_provider_unlabelled() {
+  printf '%s' '?%↻?h ?%↻?d'
+}
+
+unknown_provider() {
+  label=${1:-}
+  [ -n "$label" ] || return
+  printf '#[fg=colour178]%s#[fg=colour245] %s' "$label" "$(unknown_provider_unlabelled)"
+}
+
+# Fetch + render Claude usage on its own. Falls back to the last
+# rendered cached value when the live fetch produces nothing.
+render_claude_unlabelled() {
+  session_pct=
+  session_reset=
+  week_pct=
+  week_reset=
+
+  if command -v jq >/dev/null 2>&1; then
+    limits=$(live_claude_usage)
+    if [ -n "$limits" ]; then
+      session_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      session_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')")
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')")
+    fi
+  fi
+
+  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset")
+  cache="$cache_root/rendered-claude-unlabelled-v1.last"
+  if [ -n "$status" ]; then
+    write_cache_file "$cache" "$status" || true
+    printf '%s' "$status"
+  elif [ -s "$cache" ]; then
+    cat "$cache"
+  else
+    unknown_provider_unlabelled
+  fi
+}
+
+render_codex_unlabelled() {
+  session_pct=
+  session_reset=
+  week_pct=
+  week_reset=
+
+  if command -v jq >/dev/null 2>&1; then
+    limits=$(live_codex_rate_limits)
+    if [ -n "$limits" ]; then
+      session_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      session_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      week_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')
+    fi
+  fi
+
+  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset")
+  cache="$cache_root/rendered-codex-unlabelled-v1.last"
+  if [ -n "$status" ]; then
+    write_cache_file "$cache" "$status" || true
+    printf '%s' "$status"
+  elif [ -s "$cache" ]; then
+    cat "$cache"
+  else
+    unknown_provider_unlabelled
+  fi
 }
 
 render_status() {
@@ -418,12 +530,14 @@ render_status() {
   else
     claude_status=$(previous_provider_status Cld "$claude_status_cache")
   fi
+  [ -n "$claude_status" ] || claude_status=$(unknown_provider Cld)
 
   if [ -n "$codex_status" ]; then
     write_cache_file "$codex_status_cache" "$codex_status" || true
   else
     codex_status=$(previous_provider_status Cdx "$codex_status_cache")
   fi
+  [ -n "$codex_status" ] || codex_status=$(unknown_provider Cdx)
 
   status=
   if [ -n "$claude_status" ]; then
@@ -437,6 +551,17 @@ render_status() {
 
   printf '%s' "$status"
 }
+
+case "${1:-}" in
+  --claude)
+    render_claude_unlabelled
+    exit 0
+    ;;
+  --codex)
+    render_codex_unlabelled
+    exit 0
+    ;;
+esac
 
 if [ "${AGENT_QUOTA_REFRESH:-}" != 1 ] && [ -f "$last_good" ]; then
   if ! cache_is_fresh "$last_good" "$AGENT_QUOTA_RENDER_TTL_SECONDS"; then

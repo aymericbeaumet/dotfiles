@@ -2,18 +2,19 @@
 keys = "<colemak>"
 
 [open]
-ignored_apps = [
-  "com.flash.app",
-  "com.flash.native-fixture",
-  "com.flash.native-oracle",
-  "com.flash.vimium-oracle",
-]
+ignored_apps = ["com.flash.app", "com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
 
 [statusbar]
 template = """
-#[align=left]#{mode}\
-#[align=center]Flash\
-#[align=right]#{script:../../scripts/agent-quota-status.sh} [fg=colour245] · #{script:../../scripts/battery-status.sh} [fg=colour245] · #{date}\
+#[align=left]#{mode}
+
+#[align=center]#{active_app_name}
+
+#[align=right]
+#[fg=colour178]Cld#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --claude}
+#[fg=colour245] · #[fg=colour178]Cdx#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --codex}
+#[fg=colour245] · #{plugin:system.battery}
+#[fg=colour245] · #{date}
 """
 
 [flashlight]
@@ -29,15 +30,12 @@ http_inspector_enabled = true
 sequence_timeout_ms = 1000
 
 [mode.all.mappings]
+# enter modes
 "cmd+ctrl+[" = ["flash", "enter_normal_mode"]
 "cmd+shift+:" = ["flash", "enter_command_mode"]
-"cmd+<space>" = ["flash", "enter_command", "--input=:flashlight"]
-"cmd+ctrl+<space>" = [
-  "flash",
-  "enter_command",
-  "--input=:flashlight @source:emojis.glyphs",
-  "--restore-mode",
-]
+"cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight"]
+"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @source:emojis.glyphs", "--restore-mode"]
+# window management
 "alt+h" = ["flash", "window_move", "--position=lefthalf"]
 "alt+j" = ["flash", "window_move", "--position=bottomhalf"]
 "alt+k" = ["flash", "window_move", "--position=tophalf"]
