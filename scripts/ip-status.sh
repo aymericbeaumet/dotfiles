@@ -1,12 +1,12 @@
 #!/bin/sh
-# Public IPv4, load, uptime, temperature, and platform for tmux status.
+# Public IPv4, load, temperature, and platform for tmux status.
 # "no internet" is shown in red when the public IP cannot be fetched.
 # Cache for 60s, refresh in background to avoid blocking the status bar.
 
 DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
-cache="${TMPDIR:-/tmp}/tmux-ip-status-v11.cache"
+cache="${TMPDIR:-/tmp}/tmux-ip-status-v12.cache"
 ttl=60
 now=$(date +%s)
 yellow='#[fg=colour178]'
@@ -122,38 +122,6 @@ load_average() {
     awk -F'load averages?: ' 'NF > 1 { split($2, a, /[, ]+/); printf "%.2f", a[1]; exit }'
 }
 
-uptime_status() {
-  seconds=
-
-  if [ -r /proc/uptime ]; then
-    seconds=$(awk '{ printf "%d", $1 }' /proc/uptime)
-  elif command -v sysctl >/dev/null 2>&1; then
-    boot=$(sysctl -n kern.boottime 2>/dev/null |
-      awk '{ for (i = 1; i <= NF; i++) if ($i == "sec") { value = $(i + 2); gsub(/[^0-9]/, "", value); print value; exit } }')
-    case "$boot" in
-      ''|*[!0-9]*) ;;
-      *) seconds=$(( now - boot )) ;;
-    esac
-  fi
-
-  case "$seconds" in
-    ''|*[!0-9]*) return ;;
-  esac
-  [ "$seconds" -ge 0 ] || return
-
-  days=$(( seconds / 86400 ))
-  hours=$(( seconds % 86400 / 3600 ))
-  minutes=$(( seconds % 3600 / 60 ))
-
-  if [ "$days" -gt 0 ]; then
-    printf '%dd%02dh' "$days" "$hours"
-  elif [ "$hours" -gt 0 ]; then
-    printf '%02dh%02dm' "$hours" "$minutes"
-  else
-    printf '%02dm' "$minutes"
-  fi
-}
-
 join_status() {
   status=$1
   shift
@@ -170,7 +138,6 @@ refresh_cache() {
   platform=$(platform_id)
   temp=$(hottest_temperature)
   load=$(load_average)
-  uptime=$(uptime_status)
   ip=
   if command -v curl >/dev/null 2>&1; then
     ip=$(curl -fsS -4 --max-time 2 https://api.ipify.org 2>/dev/null || true)
@@ -182,7 +149,7 @@ refresh_cache() {
   else
     status='#[range=user|net-prefs fg=red]no internet#[norange]'
   fi
-  join_status "$status" "$load" "$uptime" "$temp" "$platform" > "$tmp"
+  join_status "$status" "$load" "$temp" "$platform" > "$tmp"
   mv "$tmp" "$cache"
 }
 
