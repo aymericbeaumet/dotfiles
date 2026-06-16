@@ -45,16 +45,30 @@ fmt_days_until() {
     }'
 }
 
+fmt_window_duration() {
+  awk -v minutes="${1:-}" -v kind="${2:-}" '
+    BEGIN {
+      if (minutes == "" || minutes == "null" || minutes <= 0) {
+        exit 1
+      } else if (kind == "hours") {
+        printf "%dh", int((minutes + 59) / 60)
+      } else if (kind == "days") {
+        printf "%dd", int((minutes + 1439) / 1440)
+      } else {
+        exit 1
+      }
+    }'
+}
+
 fmt_remaining_percent() {
   awk -v used="${1:-}" '
     BEGIN {
       if (used == "" || used == "null") {
         printf "?%%"
       } else {
-        left = 100 - (used + 0)
-        if (left > 100) left = 100
-        if (left < 0) left = 0
-        pct = int(left)
+        pct = 100 - int(used + 0)
+        if (pct > 100) pct = 100
+        if (pct < 0) pct = 0
         printf "%d%%", pct
       }
     }'
@@ -328,7 +342,14 @@ live_codex_rate_limits() {
     jq -r '
       select(.id == 2 and .result)
       | (.result.rateLimitsByLimitId.codex // .result.rateLimits)
-      | [.primary.usedPercent, .primary.resetsAt, .secondary.usedPercent, .secondary.resetsAt]
+      | [
+          .primary.usedPercent,
+          .primary.resetsAt,
+          (.primary.windowDurationMins // 300),
+          .secondary.usedPercent,
+          .secondary.resetsAt,
+          (.secondary.windowDurationMins // 10080)
+        ]
       | @tsv
     ' 2>/dev/null |
     tail -n 1
@@ -338,6 +359,7 @@ format_period() {
   used_pct=${1:-}
   reset_at=${2:-}
   reset_kind=${3:-}
+  fallback_window_mins=${4:-}
 
   have_used=1
   [ -n "$used_pct" ] && [ "$used_pct" != "null" ] || have_used=0
@@ -350,14 +372,14 @@ format_period() {
       if [ "$have_reset" -eq 1 ]; then
         reset=$(fmt_hours_until "$reset_at")
       else
-        reset='?h'
+        reset=$(fmt_window_duration "$fallback_window_mins" hours 2>/dev/null || true)
       fi
       ;;
     days)
       if [ "$have_reset" -eq 1 ]; then
         reset=$(fmt_days_until "$reset_at")
       else
-        reset='?d'
+        reset=$(fmt_window_duration "$fallback_window_mins" days 2>/dev/null || true)
       fi
       ;;
     *) return ;;
@@ -369,7 +391,11 @@ format_period() {
     pct='?%'
   fi
 
-  segment="${pct}↻$reset"
+  if [ -n "${reset:-}" ]; then
+    segment="${pct}↻$reset"
+  else
+    segment=$pct
+  fi
   case "$pct" in
     [0-9]*%)
       left=${pct%\%}
@@ -396,9 +422,11 @@ format_provider() {
   session_reset=${3:-}
   week_pct=${4:-}
   week_reset=${5:-}
+  session_window_mins=${6:-}
+  week_window_mins=${7:-}
 
-  session=$(format_period "$session_pct" "$session_reset" hours)
-  week=$(format_period "$week_pct" "$week_reset" days)
+  session=$(format_period "$session_pct" "$session_reset" hours "$session_window_mins")
+  week=$(format_period "$week_pct" "$week_reset" days "$week_window_mins")
   [ -n "$session" ] || [ -n "$week" ] || return
   [ -n "$session" ] || session=$(unknown_period hours)
   [ -n "$week" ] || week=$(unknown_period days)
@@ -416,9 +444,11 @@ format_provider_unlabelled() {
   session_reset=${2:-}
   week_pct=${3:-}
   week_reset=${4:-}
+  session_window_mins=${5:-}
+  week_window_mins=${6:-}
 
-  session=$(format_period "$session_pct" "$session_reset" hours)
-  week=$(format_period "$week_pct" "$week_reset" days)
+  session=$(format_period "$session_pct" "$session_reset" hours "$session_window_mins")
+  week=$(format_period "$week_pct" "$week_reset" days "$week_window_mins")
   [ -n "$session" ] || [ -n "$week" ] || return
   [ -n "$session" ] || session=$(unknown_period hours)
   [ -n "$week" ] || week=$(unknown_period days)
@@ -441,8 +471,10 @@ unknown_provider() {
 render_claude_unlabelled() {
   session_pct=
   session_reset=
+  session_window_mins=300
   week_pct=
   week_reset=
+  week_window_mins=10080
 
   if command -v jq >/dev/null 2>&1; then
     limits=$(live_claude_usage)
@@ -454,7 +486,7 @@ render_claude_unlabelled() {
     fi
   fi
 
-  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset")
+  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset" "$session_window_mins" "$week_window_mins")
   cache="$cache_root/rendered-claude-unlabelled-v1.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
@@ -469,20 +501,24 @@ render_claude_unlabelled() {
 render_codex_unlabelled() {
   session_pct=
   session_reset=
+  session_window_mins=
   week_pct=
   week_reset=
+  week_window_mins=
 
   if command -v jq >/dev/null 2>&1; then
     limits=$(live_codex_rate_limits)
     if [ -n "$limits" ]; then
       session_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
       session_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')
-      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
-      week_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')
+      session_window_mins=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')
+      week_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $5}')
+      week_window_mins=$(printf '%s\n' "$limits" | awk -F '\t' '{print $6}')
     fi
   fi
 
-  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset")
+  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset" "$session_window_mins" "$week_window_mins")
   cache="$cache_root/rendered-codex-unlabelled-v1.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
@@ -497,12 +533,16 @@ render_codex_unlabelled() {
 render_status() {
   claude_session_pct=
   claude_session_reset=
+  claude_session_window_mins=300
   claude_week_pct=
   claude_week_reset=
+  claude_week_window_mins=10080
   codex_session_pct=
   codex_session_reset=
+  codex_session_window_mins=
   codex_week_pct=
   codex_week_reset=
+  codex_week_window_mins=
 
   if command -v jq >/dev/null 2>&1; then
     claude_limits=$(live_claude_usage)
@@ -517,13 +557,15 @@ render_status() {
     if [ -n "$codex_limits" ]; then
       codex_session_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $1}')
       codex_session_reset=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $2}')
-      codex_week_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $3}')
-      codex_week_reset=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $4}')
+      codex_session_window_mins=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $3}')
+      codex_week_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $4}')
+      codex_week_reset=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $5}')
+      codex_week_window_mins=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $6}')
     fi
   fi
 
-  claude_status=$(format_provider Cld "$claude_session_pct" "$claude_session_reset" "$claude_week_pct" "$claude_week_reset")
-  codex_status=$(format_provider Cdx "$codex_session_pct" "$codex_session_reset" "$codex_week_pct" "$codex_week_reset")
+  claude_status=$(format_provider Cld "$claude_session_pct" "$claude_session_reset" "$claude_week_pct" "$claude_week_reset" "$claude_session_window_mins" "$claude_week_window_mins")
+  codex_status=$(format_provider Cdx "$codex_session_pct" "$codex_session_reset" "$codex_week_pct" "$codex_week_reset" "$codex_session_window_mins" "$codex_week_window_mins")
 
   if [ -n "$claude_status" ]; then
     write_cache_file "$claude_status_cache" "$claude_status" || true

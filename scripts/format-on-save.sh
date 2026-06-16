@@ -33,7 +33,7 @@ case "$file" in
     command -v shfmt >/dev/null 2>&1 && shfmt -w -i 2 -ci "$file" 2>/dev/null
     ;;
   *.toml)
-    command -v taplo >/dev/null 2>&1 && taplo format "$file" 2>/dev/null
+    command -v taplo >/dev/null 2>&1 && taplo format --option column_width=120 "$file" 2>/dev/null
     ;;
   *.lua)
     command -v stylua >/dev/null 2>&1 && stylua "$file" 2>/dev/null
