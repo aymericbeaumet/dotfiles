@@ -33,8 +33,8 @@ sequence_timeout_ms = 1000
 # enter modes
 "cmd+ctrl+[" = ["flash", "enter_normal_mode"]
 "cmd+shift+:" = ["flash", "enter_command_mode"]
-"cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight"]
-"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @source:emojis.glyphs", "--restore-mode"]
+"cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
+"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
 # window management
 "alt+h" = ["flash", "window_move", "--position=lefthalf"]
 "alt+j" = ["flash", "window_move", "--position=bottomhalf"]
@@ -67,4 +67,5 @@ leader = "<space>"
 # karabiner remaps
 "<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d
 "<tab>" = ["flash", "movement_forward"]                 # ctrl+i
+"cmd+<delete>" = ["flash", "scroll_half_page_up"]       # ctrl+u
 "cmd+<right>" = ["flash", "scroll_down"]                # ctrl+e

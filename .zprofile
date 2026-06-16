@@ -51,3 +51,11 @@ export BAT_CONFIG_PATH="$HOME/.config/bat/config"
 
 # ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/rc"
+
+# GitHub token: mise resolves `= "latest"` for github-backed tools via the
+# GitHub API (60 req/hr unauthenticated). Borrow gh's token to raise the cap
+# to 5000 req/hr and silence "GitHub rate limit exceeded" warnings on prompt.
+if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh &>/dev/null; then
+  _gh_token=$(gh auth token 2>/dev/null) && [[ -n "$_gh_token" ]] && export GITHUB_TOKEN="$_gh_token"
+  unset _gh_token
+fi

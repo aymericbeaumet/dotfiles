@@ -260,6 +260,7 @@ if $DO_APT; then
       libssl-dev
       lm-sensors
       pkg-config
+      postgresql-client
       python3
       python3-pip
       python3-venv
@@ -359,21 +360,7 @@ if $DO_MISE; then
 
   if command -v mise &>/dev/null; then
     mise_source_config="$PWD/.config/mise/config.toml"
-    mise_config="$mise_source_config"
-    mise_config_tmp=
-    if [[ -f "$mise_source_config" ]]; then
-      if ! $IS_DARWIN; then
-        mise_config_tmp=$(mktemp "${TMPDIR:-/tmp}/dotfiles-mise.XXXXXX")
-        awk '
-          /^[[:space:]]*"cargo:/ { next }
-          /^[[:space:]]*postgres[[:space:]]*=/ { next }
-          { print }
-        ' "$mise_source_config" > "$mise_config_tmp"
-        mise_config="$mise_config_tmp"
-        info "Using Linux-filtered mise config; skipping cargo-backed tools and vfox postgres"
-      fi
-      export MISE_GLOBAL_CONFIG_FILE="$mise_config"
-    else
+    if [[ ! -f "$mise_source_config" ]]; then
       warning "mise config not found at $mise_source_config"
     fi
 
@@ -386,7 +373,7 @@ if $DO_MISE; then
 
     install_mise_bootstrap_tool() {
       local tool="$1"
-      if ! grep -Eq "^[[:space:]]*$tool[[:space:]]*=" "$mise_config" 2>/dev/null; then
+      if ! grep -Eq "^[[:space:]]*$tool[[:space:]]*=" "$mise_source_config" 2>/dev/null; then
         return 0
       fi
 
@@ -397,24 +384,19 @@ if $DO_MISE; then
       hash -r 2>/dev/null || true
     }
 
+    # pipx must exist before mise install runs so pipx:* backends resolve.
     export PIPX_DEFAULT_BACKEND="${PIPX_DEFAULT_BACKEND:-pip}"
     install_mise_bootstrap_tool pipx
-    install_mise_bootstrap_tool rust
 
     info "Installing mise tools from global config..."
-    if $IS_DARWIN; then
-      mise install
-    elif ! mise install; then
-      warning "Some mise tools failed to install on Linux; continuing with available tools"
+    if ! mise install; then
+      warning "Some mise tools failed to install; continuing with available tools"
     fi
     export PATH="$HOME/.local/share/mise/shims:$PATH"
     info "Pruning mise tools not listed in config..."
-    if $IS_DARWIN; then
-      mise prune --yes
-    elif ! mise prune --yes; then
-      warning "mise prune failed on Linux; continuing"
+    if ! mise prune --yes; then
+      warning "mise prune failed; continuing"
     fi
-    [[ -z "${mise_config_tmp:-}" ]] || rm -f "$mise_config_tmp"
   else
     warning "mise not found, skipping tool installation"
   fi
@@ -502,9 +484,14 @@ if $DO_NEOVIM; then
       [[ $cleaned -gt 0 ]] && info "Cleaned $cleaned plugin(s) with local changes"
     fi
 
-    # lazy.nvim auto-installs from init.lua, then syncs all plugins
-    info "Syncing Neovim plugins (lazy.nvim bootstraps from init.lua)..."
-    bash -c 'nvim --headless "+Lazy! sync" +qa' || true
+    # lazy.nvim auto-installs from init.lua, then syncs all plugins.
+    # After Lazy sync, block until mason-tool-installer's background installs
+    # finish — otherwise +qa aborts mid-install (delve, codelldb, etc).
+    info "Syncing Neovim plugins (lazy.nvim + Mason)..."
+    bash -c 'nvim --headless \
+        "+Lazy! sync" \
+        +"lua vim.wait(300000, function() local ok, r = pcall(require, \"mason-registry\"); if not ok then return true end; for _, p in ipairs(r.get_installed_packages()) do if p:is_installing() then return false end end; return true end, 250)" \
+        +qa' || true
   else
     warning "Neovim not found, skipping plugin installation"
   fi
@@ -535,18 +522,24 @@ banner "SETUP TMUX"
 if $DO_TMUX; then
 
   if command -v tmux &>/dev/null; then
-    # Start a detached session to ensure the tmux server is running and .tmux.conf
-    # has been sourced (which auto-installs TPM if missing). new-session -d is
-    # synchronous, so by the time it returns the config is fully loaded.
+    # Clone TPM directly rather than relying on the async if-shell hook in
+    # .tmux.conf. The hook still acts as a fallback for users who never run
+    # setup.sh, but doing it here removes the race that left TPM half-installed
+    # when tmux new-session returned.
+    TPM_DIR="$HOME/.tmux/plugins/tpm"
+    if [[ ! -d "$TPM_DIR" ]]; then
+      info "Cloning TPM into $TPM_DIR..."
+      git clone --depth=1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+    fi
+
     info "Installing tmux plugins (TPM bootstraps from .tmux.conf)..."
     tmux new-session -d -s __setup__
 
-    TPM_DIR="$HOME/.tmux/plugins/tpm"
     if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
       "$TPM_DIR/bin/install_plugins"
       "$TPM_DIR/bin/update_plugins" all
     else
-      warning "TPM not available after sourcing .tmux.conf"
+      warning "TPM not available at $TPM_DIR after clone attempt"
     fi
 
     tmux kill-session -t __setup__ 2>/dev/null || true
