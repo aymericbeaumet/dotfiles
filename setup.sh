@@ -106,6 +106,88 @@ if $IS_DARWIN || ! $IS_DEBIAN; then
   DO_APT=false
 fi
 
+current_login_shell() {
+  local user="$1"
+  if $IS_DARWIN && command -v dscl &>/dev/null; then
+    dscl . -read "/Users/$user" UserShell 2>/dev/null | awk '{print $2}' || true
+  elif command -v getent &>/dev/null; then
+    getent passwd "$user" 2>/dev/null | awk -F: '{print $7}' || true
+  elif [[ -r /etc/passwd ]]; then
+    awk -F: -v user="$user" '$1 == user {print $7; exit}' /etc/passwd || true
+  else
+    printf '%s\n' "${SHELL:-}"
+  fi
+}
+
+preferred_zsh_path() {
+  if $IS_DARWIN && [[ -x /bin/zsh ]]; then
+    printf '%s\n' /bin/zsh
+    return 0
+  fi
+
+  command -v zsh 2>/dev/null
+}
+
+ensure_shell_allowed() {
+  local shell_path="$1"
+  [[ -r /etc/shells ]] || return 0
+  grep -Fxq "$shell_path" /etc/shells && return 0
+
+  info "Adding zsh to /etc/shells: $shell_path"
+  if [[ -w /etc/shells ]]; then
+    if ! printf '%s\n' "$shell_path" >>/etc/shells; then
+      warning "Failed to update /etc/shells; skipping default shell change"
+      return 1
+    fi
+  elif command -v sudo &>/dev/null; then
+    if ! printf '%s\n' "$shell_path" | sudo tee -a /etc/shells >/dev/null; then
+      warning "Failed to update /etc/shells with sudo; skipping default shell change"
+      return 1
+    fi
+  else
+    warning "Cannot update /etc/shells without sudo; skipping default shell change"
+    return 1
+  fi
+}
+
+set_default_zsh_shell() {
+  local user="${USER:-}"
+  if [[ -z "$user" ]]; then
+    warning "USER is not set; skipping default shell change"
+    return 0
+  fi
+
+  local zsh_path
+  zsh_path=$(preferred_zsh_path)
+  if [[ -z "$zsh_path" ]]; then
+    warning "zsh not found, skipping default shell change"
+    return 0
+  fi
+
+  local current_shell
+  current_shell=$(current_login_shell "$user")
+  if [[ "${current_shell##*/}" == "zsh" ]]; then
+    info "Default shell already set to zsh for $user: $current_shell"
+    return 0
+  fi
+
+  if [[ "$current_shell" == "$zsh_path" ]]; then
+    info "Default shell already set to zsh for $user: $zsh_path"
+    return 0
+  fi
+
+  ensure_shell_allowed "$zsh_path" || return 0
+
+  info "Setting default shell for $user to $zsh_path"
+  if chsh -s "$zsh_path" "$user"; then
+    info "Default shell updated; it will apply to the next login session"
+  elif command -v sudo &>/dev/null && sudo chsh -s "$zsh_path" "$user"; then
+    info "Default shell updated; it will apply to the next login session"
+  else
+    warning "Failed to change default shell to $zsh_path"
+  fi
+}
+
 # Start script
 banner "DOTFILES SETUP SCRIPT"
 info "Starting dotfiles installation and system configuration..."
@@ -435,6 +517,8 @@ banner "SETUP ZSH"
 if $DO_ZSH; then
 
   if command -v zsh &>/dev/null; then
+    set_default_zsh_shell
+
     # zinit auto-installs from .zshrc; interactive mode sources plugin definitions,
     # then burst the scheduler to force turbo-mode plugins to load at once
     info "Installing zsh plugins (zinit bootstraps from .zshrc)..."
