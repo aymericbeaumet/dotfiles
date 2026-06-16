@@ -276,11 +276,23 @@ if $DO_MISE; then
   fi
 
   if command -v mise &>/dev/null; then
-    mise_config="$PWD/.config/mise/config.toml"
-    if [[ -f "$mise_config" ]]; then
+    mise_source_config="$PWD/.config/mise/config.toml"
+    mise_config="$mise_source_config"
+    mise_config_tmp=
+    if [[ -f "$mise_source_config" ]]; then
+      if ! $IS_DARWIN; then
+        mise_config_tmp=$(mktemp "${TMPDIR:-/tmp}/dotfiles-mise.XXXXXX")
+        awk '
+          /^[[:space:]]*"cargo:/ { next }
+          /^[[:space:]]*postgres[[:space:]]*=/ { next }
+          { print }
+        ' "$mise_source_config" > "$mise_config_tmp"
+        mise_config="$mise_config_tmp"
+        info "Using Linux-filtered mise config; skipping cargo-backed tools and vfox postgres"
+      fi
       export MISE_GLOBAL_CONFIG_FILE="$mise_config"
     else
-      warning "mise config not found at $mise_config"
+      warning "mise config not found at $mise_source_config"
     fi
 
     if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh &>/dev/null; then
@@ -308,10 +320,19 @@ if $DO_MISE; then
     install_mise_bootstrap_tool rust
 
     info "Installing mise tools from global config..."
-    mise install
+    if $IS_DARWIN; then
+      mise install
+    elif ! mise install; then
+      warning "Some mise tools failed to install on Linux; continuing with available tools"
+    fi
     export PATH="$HOME/.local/share/mise/shims:$PATH"
     info "Pruning mise tools not listed in config..."
-    mise prune --yes
+    if $IS_DARWIN; then
+      mise prune --yes
+    elif ! mise prune --yes; then
+      warning "mise prune failed on Linux; continuing"
+    fi
+    [[ -z "${mise_config_tmp:-}" ]] || rm -f "$mise_config_tmp"
   else
     warning "mise not found, skipping tool installation"
   fi
