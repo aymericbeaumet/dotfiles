@@ -38,7 +38,6 @@ lazygit = "latest"
 lnav = "latest"
 neovim = "latest"
 pipx = "latest"
-postgres = "latest"
 ripgrep = "latest"
 rtk = "latest"
 sd = "latest"
@@ -51,16 +50,22 @@ yazi = "latest"
 zoxide = "latest"
 
 # Omitted: btop currently resolves to Linux-only upstream release assets via mise.
+# postgres CLI omitted: vfox-postgres builds from source (bison/flex/ICU on
+# Linux, multi-minute build on both). Install postgresql-client via apt on
+# Linux; `brew install libpq` on Mac if psql is needed.
 
 # Explicit backends for tools without stable mise registry shortnames.
-"cargo:tokei" = "latest"
+"aqua:XAMPPRocky/tokei" = "latest"
 "aqua:YS-L/csvlens" = "latest"
 "aqua:mike-engel/jwt-cli" = "latest"
 "aqua:dalance/procs" = "latest"
 "pipx:ansible" = "latest"
 
 # npm-published CLIs
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@openai/codex" = "latest"
 "npm:@railway/cli" = "latest"
 "npm:ccusage" = "latest"
 "npm:vercel" = "latest"
 "npm:wrangler" = "latest"
+"npm:@hubspot/cli" = "latest"
