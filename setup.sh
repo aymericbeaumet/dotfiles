@@ -46,7 +46,6 @@ DO_NEOVIM=true
 DO_ZSH=true
 DO_TMUX=true
 DO_MACOS=true
-DO_PEON=true
 DO_MISE=true
 
 usage() {
@@ -63,7 +62,6 @@ Options:
   --no-zsh        Skip ZSH plugin installation
   --no-tmux       Skip tmux plugin installation
   --no-macos      Skip macOS defaults configuration
-  --no-peon       Skip Peon sound pack installation
   --no-mise       Skip mise tool installation
   -h, --help      Show this help message
 USAGE
@@ -80,7 +78,6 @@ for arg in "$@"; do
     --no-zsh) DO_ZSH=false ;;
     --no-tmux) DO_TMUX=false ;;
     --no-macos) DO_MACOS=false ;;
-    --no-peon) DO_PEON=false ;;
     --no-mise) DO_MISE=false ;;
     -h | --help)
       usage
@@ -369,6 +366,14 @@ if $DO_MISE; then
     # path and must be allowed to resolve `latest` and download tool releases.
     export MISE_OFFLINE=0
 
+    # Auto-answer "yes" to mise prompts (e.g. the config-trust prompt that fires
+    # the first time mise sees this repo on a new host) so setup.sh stays
+    # non-interactive.
+    export MISE_YES=1
+    if [[ -f "$mise_source_config" ]]; then
+      mise trust "$mise_source_config" >/dev/null 2>&1 || true
+    fi
+
     if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh &>/dev/null; then
       if token=$(gh auth token 2>/dev/null) && [[ -n "$token" ]]; then
         export GITHUB_TOKEN="$token"
@@ -490,13 +495,16 @@ if $DO_NEOVIM; then
     fi
 
     # lazy.nvim auto-installs from init.lua, then syncs all plugins.
-    # After Lazy sync, block until mason-tool-installer's background installs
-    # finish — otherwise +qa aborts mid-install (delve, codelldb, etc).
+    # After Lazy sync, block until mason-tool-installer and mason-nvim-dap
+    # finish their background installs — otherwise +qa aborts mid-install
+    # (delve, codelldb, etc). The 5s sleep is a grace period so the installers
+    # can queue their work; the previous version polled get_installed_packages()
+    # which never includes first-time installs, so the wait short-circuited.
     info "Syncing Neovim plugins (lazy.nvim + Mason)..."
-    bash -c 'nvim --headless \
-        "+Lazy! sync" \
-        +"lua vim.wait(300000, function() local ok, r = pcall(require, \"mason-registry\"); if not ok then return true end; for _, p in ipairs(r.get_installed_packages()) do if p:is_installing() then return false end end; return true end, 250)" \
-        +qa' || true
+    nvim --headless \
+      "+Lazy! sync" \
+      "+lua vim.wait(5000); vim.wait(600000, function() local ok,r=pcall(require,'mason-registry'); if not ok then return true end; for _,p in ipairs(r.get_all_packages()) do if p:is_installing() then return false end end; return true end, 500)" \
+      +qa || true
   else
     warning "Neovim not found, skipping plugin installation"
   fi
@@ -641,23 +649,6 @@ if $DO_MACOS; then
 
 else
   skip "System Configuration"
-fi
-
-banner "SETUP PEON"
-if $DO_PEON; then
-
-  if command -v peon &>/dev/null; then
-    PEON_PACKS="peasant_fr"
-    info "Installing Peon sound packs: $PEON_PACKS"
-    peon packs install "$PEON_PACKS" | cat
-    info "Setting active pack to peasant_fr..."
-    peon packs use peasant_fr | cat
-  else
-    warning "Peon not found, skipping sound pack installation"
-  fi
-
-else
-  skip "Peon Sound Packs"
 fi
 
 banner "SETUP COMPLETE"
