@@ -44,12 +44,10 @@
   local blue='4'
   local magenta='5'
   local cyan='6'
-  local white='7'
 
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
-    context                   # user@host
     dir                       # current directory
     vcs                       # git status
     command_execution_time    # previous command duration
@@ -64,7 +62,7 @@
     # =========================[ Line #1 ]=========================
     # command_execution_time  # previous command duration
     # virtualenv              # python virtual environment
-    # context                 # user@host
+    context                   # [user@host]
     # time                    # current time
     # =========================[ Line #2 ]=========================
     newline                   # \n
@@ -103,10 +101,9 @@
   # Blue current directory.
   typeset -g POWERLEVEL9K_DIR_FOREGROUND=$blue
 
-  # Context format when root: user@host. The first part white, the rest grey.
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$grey}@%m%f"
-  # Context format when not root: user@host. The whole thing grey.
-  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$grey}%n@%m%f"
+  # Context format: [user@host].
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$yellow}[%n@%m]%f"
+  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$yellow}[%n@%m]%f"
   # Don't show context unless root or in SSH.
   typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION=
 
