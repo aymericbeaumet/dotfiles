@@ -1,5 +1,5 @@
 #!/bin/sh
-# Print an "[ssh] <destination>" label for a tmux pane running ssh.
+# Print an "[ssh:<destination>]" label for a tmux pane running ssh.
 # Usage: tmux-ssh-info.sh <pane_pid>
 #
 # Called from pane-border-format via #() only for panes whose
@@ -76,6 +76,6 @@ ps -A -ww -o pid=,ppid=,command= 2>/dev/null | awk -v root="$root" '
     }
 
     gsub(/#/, "##", dest);                # # is the tmux format escape
-    if (dest == "") printf "[ssh]"; else printf "[ssh] %s", dest;
+    if (dest == "") printf "[ssh]"; else printf "[ssh:%s]", dest;
   }
 '
