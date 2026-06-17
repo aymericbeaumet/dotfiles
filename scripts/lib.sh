@@ -52,6 +52,14 @@ dotfiles_dir() {
 flash_alert() {
   message=${1:-}
   [ -n "$message" ] || return 0
-  encoded=$(url_encode "$message")
-  "$(dotfiles_dir)/scripts/open-url.sh" "flash://alert_show?message=$encoded" >/dev/null 2>&1 || true
+
+  if command -v flash >/dev/null 2>&1; then
+    flash_bin=$(command -v flash)
+  elif [ -n "${HOME:-}" ] && [ -x "$HOME/.local/bin/flash" ]; then
+    flash_bin=$HOME/.local/bin/flash
+  else
+    return 0
+  fi
+
+  "$flash_bin" alert_show "--message=$message" >/dev/null 2>&1 || true
 }
