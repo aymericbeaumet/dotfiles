@@ -9,7 +9,8 @@
       "Read",
       "Write",
       "Edit",
-      "mcp__*"
+      "mcp__semble__*",
+      "mcp__tmux__*"
     ],
     "deny": [],
     "defaultMode": "auto"
@@ -218,7 +219,7 @@
       }
     }
   },
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "theme": "auto",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true

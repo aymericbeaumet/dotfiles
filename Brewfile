@@ -11,7 +11,6 @@ brew 'tw93/tap/mole'
 # macOS GUI applications
 cask 'alacritty'
 cask 'aws-vpn-client'
-cask 'claude'
 cask 'cursor'
 cask 'db-browser-for-sqlite'
 cask 'figma'

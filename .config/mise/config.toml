@@ -1,3 +1,11 @@
+[settings]
+# Keep the shell prompt fully offline. Without this, mise's precmd `hook-env`
+# resolves `= "latest"` for aqua-backed tools (tokei/csvlens/jwt-cli/procs) by
+# hitting api.github.com on every prompt — particularly when a tool is missing
+# locally and auto_install wants to know what version to fetch.
+# To install or upgrade tools, run with `MISE_OFFLINE=0 mise install ...`.
+offline = true
+
 [tools]
 # Existing pinned tooling
 buf = "1.69.0"
@@ -55,7 +63,6 @@ zoxide = "latest"
 # Linux; `brew install libpq` on Mac if psql is needed.
 
 # Explicit backends for tools without stable mise registry shortnames.
-"aqua:XAMPPRocky/tokei" = "latest"
 "aqua:YS-L/csvlens" = "latest"
 "aqua:mike-engel/jwt-cli" = "latest"
 "aqua:dalance/procs" = "latest"
