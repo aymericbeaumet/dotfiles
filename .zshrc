@@ -227,6 +227,18 @@ autoload -Uz add-zsh-hook
 _reset_cursor() { echo -ne '\e[5 q'; }
 add-zsh-hook precmd _reset_cursor
 
+# Report context to the terminal title via OSC 2. Over ssh the far-side tmux
+# captures this as pane_title and shows it as "[ssh:<host>] ..." (see
+# .tmux.conf pane-border-format). Skipped inside a local tmux ($TMUX set), which
+# reads the pane border directly; ssh does not forward $TMUX, so a remote shell
+# still reports. precmd shows the cwd, preexec the running command.
+if [[ -z "$TMUX" ]]; then
+  _title_precmd() { print -Pn '\e]2;%~\a'; }
+  _title_preexec() { print -rn -- $'\e]2;'"${1}"$'\a'; }
+  add-zsh-hook precmd _title_precmd
+  add-zsh-hook preexec _title_preexec
+fi
+
 # edit command line in $EDITOR with ^X^E
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey '^X^E' edit-command-line

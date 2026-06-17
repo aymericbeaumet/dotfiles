@@ -23,14 +23,19 @@ thinking=$(echo "$input" | jq -r '.thinking.enabled')
 ctx=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 add "ctx:${ctx}%"
 
-# Set tmux pane title for border display
+# Report this agent to the pane border. Inside a local tmux, set @agent-kind +
+# pane-title directly. Over ssh (no local $TMUX_PANE) emit an OSC 2 title to the
+# tty so the far-side tmux shows "[ssh:<host>] [claude] ..." (see .tmux.conf).
+# stdout is reserved for the statusline text, so the escape must go to /dev/tty.
+cwd=$(echo "$input" | jq -r '.cwd // empty')
+dir="${cwd##*/}"
+name=$(echo "$input" | jq -r '.session_name // empty')
+title="${name:-${dir:-claude}}"
 if [ -n "$TMUX_PANE" ]; then
   tmux set-option -p -t "$TMUX_PANE" @agent-kind claude 2>/dev/null
-  cwd=$(echo "$input" | jq -r '.cwd // empty')
-  dir="${cwd##*/}"
-  name=$(echo "$input" | jq -r '.session_name // empty')
-  title="${name:-${dir:-claude}}"
   tmux set-option -p -t "$TMUX_PANE" pane-title "${title} | ctx:${ctx}%" 2>/dev/null
+elif [ -w /dev/tty ]; then
+  { printf '\033]2;[claude] %s | ctx:%s%%\a' "$title" "$ctx" >/dev/tty; } 2>/dev/null
 fi
 
 echo "$parts"
