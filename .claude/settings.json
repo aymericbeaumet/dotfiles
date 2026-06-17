@@ -45,52 +45,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10
-          },
-          {
-            "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear'",
             "timeout": 5
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SubagentStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
           }
         ]
       }
@@ -99,12 +55,6 @@
       {
         "matcher": "",
         "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          },
           {
             "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh busy'",
@@ -119,79 +69,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          },
-          {
-            "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh idle'",
             "timeout": 5
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PostCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/ab/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
           }
         ]
       }
