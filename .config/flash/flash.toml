@@ -63,6 +63,7 @@ leader = "<space>"
 # convenient utilities
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
+"<leader>S" = ["sh", "../../scripts/toggle_sleep.sh"]
 "<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
 # karabiner remaps
 "<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d

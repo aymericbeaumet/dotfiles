@@ -28,6 +28,14 @@ if [ -f "$PIDFILE" ] && pid=$(cat "$PIDFILE" 2>/dev/null) && [ -n "$pid" ] && ki
 else
   rm -f "$PIDFILE"
   nohup caffeinate -ims >/dev/null 2>&1 &
-  echo $! >"$PIDFILE"
-  notify "OFF"
+  pid=$!
+  echo "$pid" >"$PIDFILE"
+  sleep 0.1
+  if kill -0 "$pid" 2>/dev/null; then
+    notify "OFF"
+  else
+    rm -f "$PIDFILE"
+    notify "OFF failed"
+    exit 1
+  fi
 fi
