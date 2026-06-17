@@ -364,6 +364,11 @@ if $DO_MISE; then
       warning "mise config not found at $mise_source_config"
     fi
 
+    # Override the config's `offline = true` (which keeps the shell prompt from
+    # hitting GitHub on every precmd). setup.sh is the explicit install/upgrade
+    # path and must be allowed to resolve `latest` and download tool releases.
+    export MISE_OFFLINE=0
+
     if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh &>/dev/null; then
       if token=$(gh auth token 2>/dev/null) && [[ -n "$token" ]]; then
         export GITHUB_TOKEN="$token"
