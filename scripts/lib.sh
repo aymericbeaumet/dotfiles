@@ -51,6 +51,7 @@ dotfiles_dir() {
 
 flash_alert() {
   message=${1:-}
+  shift || true
   [ -n "$message" ] || return 0
 
   if command -v flash >/dev/null 2>&1; then
@@ -61,5 +62,5 @@ flash_alert() {
     return 0
   fi
 
-  "$flash_bin" alert_show "--message=$message" >/dev/null 2>&1 || true
+  "$flash_bin" alert_show "--message=$message" "$@" >/dev/null 2>&1 || true
 }

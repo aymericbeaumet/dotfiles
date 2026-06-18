@@ -10,6 +10,8 @@ fi
 DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
+flash_alert "Wi-Fi..." --duration=3
+
 CACHE="${TMPDIR:-/tmp}/wifi_device"
 device=""
 [ -r "$CACHE" ] && device=$(cat "$CACHE")
@@ -19,17 +21,23 @@ if [ -z "$device" ]; then
 fi
 [ -n "$device" ] || {
   echo "Wi-Fi interface not found" >&2
+  flash_alert "Wi-Fi failed" --duration=4 --style=error
   exit 1
 }
 
 state=$(networksetup -getairportpower "$device" | awk '{print $NF}')
 if [ "$state" = "On" ]; then
-  networksetup -setairportpower "$device" off &
   label="OFF"
+  if ! networksetup -setairportpower "$device" off; then
+    flash_alert "Wi-Fi OFF failed" --duration=4 --style=error
+    exit 1
+  fi
 else
-  networksetup -setairportpower "$device" on &
   label="ON"
+  if ! networksetup -setairportpower "$device" on; then
+    flash_alert "Wi-Fi ON failed" --duration=4 --style=error
+    exit 1
+  fi
 fi
 
-flash_alert "Wi-Fi $label" &
-wait
+flash_alert "Wi-Fi $label"
