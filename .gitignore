@@ -98,7 +98,6 @@ lazy-lock.json
 # Codex
 .codex/*
 !.codex/AGENTS.md
-!.codex/config.toml
 !.codex/rules/
 !.codex/skills
 !.codex/agents
