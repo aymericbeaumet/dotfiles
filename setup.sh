@@ -272,6 +272,13 @@ if $DO_APT; then
     info "Installing Debian/Ubuntu bootstrap and system packages..."
     sudo apt-get update
     sudo apt-get install -y "${APT_PACKAGES[@]}"
+    info "Upgrading installed apt packages..."
+    sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+    # apt has no full manifest to prune against (APT_PACKAGES is a bootstrap
+    # subset, not everything the system needs), so only drop orphaned
+    # auto-installed dependencies rather than anything not in the list.
+    info "Pruning orphaned apt packages..."
+    sudo apt-get autoremove --purge -y
   else
     warning "apt-get not found, skipping Debian/Ubuntu packages"
   fi
@@ -329,6 +336,8 @@ if $DO_BREWFILE; then
       done < <(awk -F"'" '/^tap / {print $2}' ./Brewfile)
     fi
     brew bundle install --no-upgrade --file ./Brewfile
+    info "Pruning Homebrew packages not listed in Brewfile..."
+    brew bundle cleanup --force --file ./Brewfile
   else
     warning "Brewfile not found, skipping Homebrew dependencies"
   fi

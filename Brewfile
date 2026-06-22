@@ -4,8 +4,15 @@
 
 tap 'tw93/tap'
 
+# Bootstrap formulae (also ensured early in setup.sh). Listed here so
+# `brew bundle cleanup` keeps them instead of uninstalling them. These are
+# bootstrappers, not the user CLIs that belong in .config/mise/config.toml.
+brew 'mise'
+brew 'zsh'
+
 # macOS-only tools
 brew 'macmon'
+brew 'nowplaying-cli'
 brew 'tw93/tap/mole'
 
 # macOS GUI applications

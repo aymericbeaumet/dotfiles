@@ -1,78 +1,53 @@
 [settings]
 # Keep the shell prompt fully offline. Without this, mise's precmd `hook-env`
-# resolves `= "latest"` for aqua-backed tools (tokei/csvlens/jwt-cli/procs) by
-# hitting api.github.com on every prompt — particularly when a tool is missing
+# resolves `= "latest"` for aqua-backed tools (e.g. jwt-cli) by hitting
+# api.github.com on every prompt — particularly when a tool is missing
 # locally and auto_install wants to know what version to fetch.
 # To install or upgrade tools, run with `MISE_OFFLINE=0 mise install ...`.
 offline = true
 
 [tools]
-# Existing pinned tooling
-buf = "1.69.0"
-go = "1.25"
-node = "26.0.0"
-protoc = "34.1"
-rust = "latest"
-shfmt = "3.13.1"
-terraform = "1.14.3"
-tflint = "0.61.0"
-uv = "0.11.15"
-
-# CLI tools migrated from Brewfile — cross-platform via mise registry/backends.
-# "latest" tracks upstream releases; pin if you need reproducibility.
 awscli = "latest"
 bat = "latest"
+buf = "1.69.0"
 bun = "latest"
 carapace = "latest"
 cmake = "latest"
 coreutils = "latest"
 delta = "latest"
-"docker-cli" = "latest"
-duf = "latest"
+docker-cli = "latest"
 dust = "latest"
 eza = "latest"
 fd = "latest"
 ffmpeg = "latest"
-fx = "latest"
 fzf = "latest"
 gh = "latest"
 git-lfs = "latest"
 glow = "latest"
+go = "1.25"
 gradle = "latest"
-hyperfine = "latest"
 jq = "latest"
 lazydocker = "latest"
 lazygit = "latest"
 lnav = "latest"
 neovim = "latest"
+node = "26.0.0"
+opentofu = "1.12.2"
 pipx = "latest"
+protoc = "34.1"
 ripgrep = "latest"
 rtk = "latest"
+rust = "latest"
 sd = "latest"
-stripe = "latest"
-taplo = "latest"
+shfmt = "3.13.1"
+terraform = "1.14.3"
 tmux = "latest"
+uv = "0.11.15"
 watchexec = "latest"
 websocat = "latest"
-yazi = "latest"
 zoxide = "latest"
-
-# Omitted: btop currently resolves to Linux-only upstream release assets via mise.
-# postgres CLI omitted: vfox-postgres builds from source (bison/flex/ICU on
-# Linux, multi-minute build on both). Install postgresql-client via apt on
-# Linux; `brew install libpq` on Mac if psql is needed.
-
-# Explicit backends for tools without stable mise registry shortnames.
-"aqua:YS-L/csvlens" = "latest"
-"aqua:mike-engel/jwt-cli" = "latest"
-"aqua:dalance/procs" = "latest"
-"pipx:ansible" = "latest"
-
-# npm-published CLIs
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@openai/codex" = "latest"
-"npm:@railway/cli" = "latest"
 "npm:ccusage" = "latest"
 "npm:vercel" = "latest"
 "npm:wrangler" = "latest"
-"npm:@hubspot/cli" = "latest"
