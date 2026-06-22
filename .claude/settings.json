@@ -13,7 +13,7 @@
       "mcp__tmux__*"
     ],
     "deny": [],
-    "defaultMode": "auto"
+    "defaultMode": "bypassPermissions"
   },
   "hooks": {
     "PreToolUse": [
