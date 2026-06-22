@@ -5,6 +5,7 @@ keys = "<colemak>"
 ignored_apps = ["com.flash.app", "com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
 
 [statusbar]
+enabled = true
 template = """
 #[align=left]#{mode}
 
@@ -43,11 +44,35 @@ sequence_timeout_ms = 1000
 "alt+m" = ["flash", "window_move", "--position=maximized"]
 "alt+n" = ["flash", "window_move", "--screen=+1"]
 "alt+p" = ["flash", "window_move", "--screen=-1"]
+# app switch
+"cmd+ctrl+a" = ["flash", "app_open", "--name=Alacritty"]
+"cmd+ctrl+f" = ["flash", "app_open", "--name=Firefox"]
+"cmd+ctrl+i" = ["flash", "app_open", "--name=Messages"]
+"cmd+ctrl+l" = ["flash", "app_open", "--name=Linear"]
+"cmd+ctrl+n" = ["flash", "app_open", "--name=Notes"]
+"cmd+ctrl+o" = ["flash", "app_open", "--name=Notion"]
+"cmd+ctrl+p" = ["flash", "app_open", "--name=Postico 2"]
+"cmd+ctrl+r" = ["flash", "app_open", "--name=Reminders"]
+"cmd+ctrl+s" = ["flash", "app_open", "--name=Slack"]
+"cmd+ctrl+y" = ["flash", "app_open", "--name=Spotify"]
+"cmd+ctrl+w" = ["flash", "app_open", "--name=WhatsApp"]
 
 [mode.normal]
 leader = "<space>"
 
 [mode.normal.mappings]
+# convenient utilities
+"<leader>j" = ["sh", "../../scripts/volume.sh", "down"]
+"<leader>k" = ["sh", "../../scripts/volume.sh", "up"]
+"<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
+"<leader>p" = ["sh", "../../scripts/toggle_play.sh"]
+"<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
+"<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
+# karabiner remaps
+"<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d
+"<tab>" = ["flash", "movement_forward"]                 # ctrl+i
+"cmd+<delete>" = ["flash", "scroll_half_page_up"]       # ctrl+u
+"cmd+<right>" = ["flash", "scroll_down"]                # ctrl+e
 # app switch
 "'a" = ["flash", "app_open", "--name=Alacritty"]
 "'f" = ["flash", "app_open", "--name=Firefox"]
@@ -60,12 +85,3 @@ leader = "<space>"
 "'s" = ["flash", "app_open", "--name=Slack"]
 "'y" = ["flash", "app_open", "--name=Spotify"]
 "'w" = ["flash", "app_open", "--name=WhatsApp"]
-# convenient utilities
-"<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
-"<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
-"<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
-# karabiner remaps
-"<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d
-"<tab>" = ["flash", "movement_forward"]                 # ctrl+i
-"cmd+<delete>" = ["flash", "scroll_half_page_up"]       # ctrl+u
-"cmd+<right>" = ["flash", "scroll_down"]                # ctrl+e
