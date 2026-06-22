@@ -8,20 +8,32 @@ target=${1:-}
   exit 2
 }
 
+# Refuse option-like targets. A crafted value (an OSC-8 hyperlink or a
+# tmux-thumbs match beginning with "-") must not be parsed as a flag by
+# open/xdg-open/the browser below (e.g. `open -a <app>`, `open -e`). A genuine
+# URL or file path never starts with "-"; callers wanting such a file can pass
+# "./-name".
+case "$target" in
+  -*)
+    echo "open-url.sh: refusing to open option-like target: $target" >&2
+    exit 2
+    ;;
+esac
+
 case "$(uname -s 2>/dev/null || printf unknown)" in
   Darwin)
     if command -v open >/dev/null 2>&1; then
-      exec open "$@"
+      exec open -- "$@"
     fi
     ;;
 esac
 
 if { [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; } && command -v xdg-open >/dev/null 2>&1; then
-  exec xdg-open "$@"
+  exec xdg-open -- "$@"
 fi
 
 case "$target" in
-  http://*|https://*|file://*)
+  http://* | https://* | file://*)
     for browser in "${BROWSER:-}" w3m elinks links lynx; do
       [ -n "$browser" ] || continue
       if command -v "$browser" >/dev/null 2>&1; then
@@ -37,7 +49,7 @@ if [ -d "$file" ]; then
 elif [ -f "$file" ]; then
   lower_file=$(printf '%s' "$file" | tr '[:upper:]' '[:lower:]')
   case "$lower_file" in
-    *.png|*.jpg|*.jpeg|*.gif|*.bmp|*.tiff|*.webp|*.svg|*.ico|*.heic)
+    *.png | *.jpg | *.jpeg | *.gif | *.bmp | *.tiff | *.webp | *.svg | *.ico | *.heic)
       if command -v chafa >/dev/null 2>&1; then
         chafa "$file"
         exit 0
@@ -55,9 +67,9 @@ elif [ -f "$file" ]; then
 fi
 
 if command -v open >/dev/null 2>&1; then
-  exec open "$@"
+  exec open -- "$@"
 elif command -v xdg-open >/dev/null 2>&1; then
-  exec xdg-open "$@"
+  exec xdg-open -- "$@"
 else
   echo "open-url.sh: no opener found (install xdg-utils, w3m, elinks, links, or lynx)" >&2
   exit 1

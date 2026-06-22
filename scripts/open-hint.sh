@@ -40,6 +40,12 @@ rest="${input#"$file"}"
 rest="${rest#:}"
 line="${rest%%:*}"
 
+# Only accept a numeric line number. $line is interpolated unquoted into the
+# $EDITOR command run via `tmux display-popup -E` / `bash -lc` below, so reject
+# anything non-numeric to prevent command injection if the calling hint source
+# (currently the digit-only Alacritty regex) ever allows more in the line field.
+[[ "$line" =~ ^[0-9]+$ ]] || line=""
+
 # Resolve relative paths against the active tmux pane's cwd
 if [[ "$file" != /* ]]; then
   pane_path=$(tmux display-message -p '#{pane_current_path}' 2>/dev/null)

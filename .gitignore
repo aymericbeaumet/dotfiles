@@ -36,6 +36,8 @@ xcuserdata
 .env
 .env.local
 .env*.local
+.zshsecret
+.zshsecret.*
 
 # Python
 __pycache__/
