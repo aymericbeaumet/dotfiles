@@ -6,4 +6,20 @@
 --type-add=rs:*.rs
 --type-add=svelte:*.svelte
 
---ignore-file=/Users/ab/.config/ripgrep/ignore
+# Global search excludes — inlined as portable --glob rules. Previously an
+# --ignore-file pointing at a hardcoded /Users/ab absolute path, which errored
+# on Linux (rg expands neither $HOME nor ~ inside config files).
+--glob=!.git/
+--glob=!node_modules/
+--glob=!vendor/
+--glob=!_fixtures/
+--glob=!android/modules/
+--glob=!models/
+--glob=!*.connect.go
+--glob=!*.pb.go
+--glob=!mock_*.go
+--glob=!*.svg
+--glob=!Cargo.lock
+--glob=!go.sum
+--glob=!package-lock.json
+--glob=!yarn.lock
