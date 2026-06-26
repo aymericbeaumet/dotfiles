@@ -7,13 +7,13 @@ ignored_apps = ["com.flash.app", "com.flash.native-fixture", "com.flash.native-o
 [statusbar]
 enabled = true
 template = """
-#[align=left]#{mode}
+#[align=left]#{mode}#[fg=colour245] · #{script:../../scripts/hn-top-story.sh}
 
 #[align=center]#{active_app_name}
 
 #[align=right]
-#[fg=colour178]Cld#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --claude}
-#[fg=colour245] · #[fg=colour178]Cdx#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --codex}
+#[link=https://claude.ai/new#settings/usage]#[fg=colour178]Cld#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --claude}#[nolink]
+#[fg=colour245] · #[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]#[fg=colour178]Cdx#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --codex}#[nolink]
 #[fg=colour245] · #{plugin:system.battery}
 #[fg=colour245] · #{date}
 """
@@ -23,17 +23,14 @@ suggestion_count = 10
 
 [debug]
 log_level = "trace"
-http_inspector_enabled = true
 
 [mode]
-# Mirror my Neovim `timeoutlen` (Neovim's 1000ms default) for multi-key
-# sequence mappings.
 sequence_timeout_ms = 1000
 
 [mode.all.mappings]
 # enter modes
 "cmd+ctrl+[" = ["flash", "enter_normal_mode"]
-"cmd+shift+:" = ["flash", "enter_command_mode"]
+"cmd+ctrl+;" = ["flash", "enter_command_mode"]
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
 "cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
 # window management
@@ -44,18 +41,6 @@ sequence_timeout_ms = 1000
 "alt+m" = ["flash", "window_move", "--position=maximized"]
 "alt+n" = ["flash", "window_move", "--screen=+1"]
 "alt+p" = ["flash", "window_move", "--screen=-1"]
-# app switch
-"cmd+ctrl+a" = ["flash", "app_open", "--name=Alacritty"]
-"cmd+ctrl+f" = ["flash", "app_open", "--name=Firefox"]
-"cmd+ctrl+i" = ["flash", "app_open", "--name=Messages"]
-"cmd+ctrl+l" = ["flash", "app_open", "--name=Linear"]
-"cmd+ctrl+n" = ["flash", "app_open", "--name=Notes"]
-"cmd+ctrl+o" = ["flash", "app_open", "--name=Notion"]
-"cmd+ctrl+p" = ["flash", "app_open", "--name=Postico 2"]
-"cmd+ctrl+r" = ["flash", "app_open", "--name=Reminders"]
-"cmd+ctrl+s" = ["flash", "app_open", "--name=Slack"]
-"cmd+ctrl+y" = ["flash", "app_open", "--name=Spotify"]
-"cmd+ctrl+w" = ["flash", "app_open", "--name=WhatsApp"]
 
 [mode.normal]
 leader = "<space>"
