@@ -7,7 +7,7 @@ ignored_apps = ["com.flash.app", "com.flash.native-fixture", "com.flash.native-o
 [statusbar]
 enabled = true
 template = """
-#[align=left]#{mode}#[fg=colour245] · #{script:../../scripts/hn-top-story.sh}
+#[align=left]#{mode}#[fg=colour245] · #{=80…:script:../../scripts/hn-top-story.sh}
 
 #[align=center]#{active_app_name}
 
