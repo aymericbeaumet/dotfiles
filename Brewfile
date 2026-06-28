@@ -3,6 +3,7 @@
 # belong in .config/mise/config.toml, and OS/system packages belong in setup.sh.
 
 tap 'tw93/tap'
+tap 'netbirdio/tap'
 
 # Bootstrap formulae (also ensured early in setup.sh). Listed here so
 # `brew bundle cleanup` keeps them instead of uninstalling them. These are
@@ -12,6 +13,7 @@ brew 'zsh'
 
 # macOS-only tools
 brew 'macmon'
+brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
 brew 'tw93/tap/mole'
 
@@ -28,6 +30,7 @@ cask 'google-chrome'
 cask 'google-drive'
 cask 'karabiner-elements'
 cask 'linear'
+cask 'netbirdio/tap/netbird-ui'
 cask 'notion'
 cask 'postico'
 cask 'postman'
