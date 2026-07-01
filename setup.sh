@@ -329,11 +329,19 @@ if $DO_BREWFILE; then
   elif [[ -f ./Brewfile ]]; then
     info "Installing macOS software from Brewfile..."
     if brew trust --help &>/dev/null; then
+      # Homebrew refuses to load formulae/casks from untrusted third-party taps,
+      # which breaks `brew bundle`. Trust every tap the Brewfile references: both
+      # explicit `tap 'owner/name'` lines and inline `brew 'owner/tap/name'` /
+      # `cask 'owner/tap/name'` references (owner/tap = first two path segments).
+      # Trust is persistent, so later manual `brew bundle` runs also just work.
       while IFS= read -r tap_name; do
         [[ -n "$tap_name" ]] || continue
-        info "Trusting Homebrew tap declared in Brewfile: $tap_name"
+        info "Trusting Homebrew tap: $tap_name"
         brew trust --tap "$tap_name"
-      done < <(awk -F"'" '/^tap / {print $2}' ./Brewfile)
+      done < <(awk -F"'" '
+        /^tap / { print $2; next }
+        /^(brew|cask) / { if (split($2, p, "/") >= 3) print p[1] "/" p[2] }
+      ' ./Brewfile | sort -u)
     fi
     brew bundle install --no-upgrade --file ./Brewfile
     info "Pruning Homebrew packages not listed in Brewfile..."

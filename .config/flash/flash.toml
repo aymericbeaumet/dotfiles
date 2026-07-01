@@ -44,11 +44,12 @@ sequence_timeout_ms = 1000
 
 [mode.normal]
 leader = "<space>"
+# Unmapped chords carrying these modifiers pass through to the focused app
+# (e.g. cmd+T -> new tab) while staying in NORMAL. Explicit mappings still win.
+passthrough_modifiers = ["cmd"]
 
 [mode.normal.mappings]
 # convenient utilities
-"<leader>j" = ["sh", "../../scripts/volume.sh", "down"]
-"<leader>k" = ["sh", "../../scripts/volume.sh", "up"]
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
 "<leader>p" = ["sh", "../../scripts/toggle_play.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
