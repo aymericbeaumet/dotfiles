@@ -214,7 +214,8 @@ export SAVEHIST=50000
 setopt EXTENDED_HISTORY HIST_EXPIRE_DUPS_FIRST HIST_FCNTL_LOCK
 setopt HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_NO_FUNCTIONS HIST_NO_STORE
 setopt HIST_REDUCE_BLANKS HIST_SAVE_BY_COPY HIST_SAVE_NO_DUPS
-# INC_APPEND_HISTORY commits each command to the file; fzf CTRL-R reads from it
+# INC_APPEND_HISTORY writes each command to $HISTFILE as it runs (not just at exit),
+# so history survives crashes and is available to new shells immediately.
 setopt INC_APPEND_HISTORY
 unsetopt APPEND_HISTORY
 
@@ -243,26 +244,12 @@ fi
 autoload -Uz edit-command-line && zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
-# fzf: shell integration — completion + key-bindings (CTRL-R history, CTRL-T files, ALT-C cd)
-# Searches Homebrew, mise installs, and Debian/Ubuntu apt paths in order.
-() {
-  local d
-  for d in \
-    "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/fzf/shell" \
-    "/usr/local/opt/fzf/shell" \
-    "/home/linuxbrew/.linuxbrew/opt/fzf/shell" \
-    "$HOME"/.local/share/mise/installs/fzf/*/shell(N) \
-    "$HOME"/.local/share/mise/installs/fzf/*(N) \
-    "/usr/share/doc/fzf/examples" \
-    "/usr/share/fzf"; do
-    [[ -f "$d/key-bindings.zsh" ]] || continue
-    source "$d/key-bindings.zsh" 2>/dev/null
-    [[ -f "$d/completion.zsh" ]] && source "$d/completion.zsh" 2>/dev/null
-    return
-  done
-}
+# fzf: shell integration — completion + key-bindings (CTRL-R history, CTRL-T files, ALT-C cd).
+# `fzf --zsh` (fzf >= 0.48) emits the integration regardless of install source. This
+# matters because mise's fzf ships only the binary — no shell/ scripts to source.
+command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 export FZF_DEFAULT_OPTS="
-  --ansi --border --height=40% --layout=reverse --inline-info
+  --ansi --border --height=40% --layout=reverse --info=inline
   --bind tab:accept,ctrl-n:down,ctrl-p:up
   --bind ctrl-y:preview-up,ctrl-e:preview-down,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down
 "
