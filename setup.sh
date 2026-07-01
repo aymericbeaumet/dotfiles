@@ -328,21 +328,19 @@ if $DO_BREWFILE; then
     warning "Homebrew not found, skipping Brewfile"
   elif [[ -f ./Brewfile ]]; then
     info "Installing macOS software from Brewfile..."
-    if brew trust --help &>/dev/null; then
-      # Homebrew refuses to load formulae/casks from untrusted third-party taps,
-      # which breaks `brew bundle`. Trust every tap the Brewfile references: both
-      # explicit `tap 'owner/name'` lines and inline `brew 'owner/tap/name'` /
-      # `cask 'owner/tap/name'` references (owner/tap = first two path segments).
-      # Trust is persistent, so later manual `brew bundle` runs also just work.
-      while IFS= read -r tap_name; do
-        [[ -n "$tap_name" ]] || continue
-        info "Trusting Homebrew tap: $tap_name"
-        brew trust --tap "$tap_name"
-      done < <(awk -F"'" '
-        /^tap / { print $2; next }
-        /^(brew|cask) / { if (split($2, p, "/") >= 3) print p[1] "/" p[2] }
-      ' ./Brewfile | sort -u)
-    fi
+    # Homebrew refuses to load formulae/casks from untrusted third-party taps,
+    # which breaks `brew bundle`. Trust every tap the Brewfile references: both
+    # explicit `tap 'owner/name'` lines and inline `brew 'owner/tap/name'` /
+    # `cask 'owner/tap/name'` references (owner/tap = first two path segments).
+    # Trust is persistent, so later manual `brew bundle` runs also just work.
+    while IFS= read -r tap_name; do
+      [[ -n "$tap_name" ]] || continue
+      info "Trusting Homebrew tap: $tap_name"
+      brew trust --tap "$tap_name"
+    done < <(awk -F"'" '
+      /^tap / { print $2; next }
+      /^(brew|cask) / { if (split($2, p, "/") >= 3) print p[1] "/" p[2] }
+    ' ./Brewfile | sort -u)
     brew bundle install --no-upgrade --file ./Brewfile
     info "Pruning Homebrew packages not listed in Brewfile..."
     brew bundle cleanup --force --file ./Brewfile
@@ -377,11 +375,6 @@ if $DO_MISE; then
     if [[ ! -f "$mise_source_config" ]]; then
       warning "mise config not found at $mise_source_config"
     fi
-
-    # Override the config's `offline = true` (which keeps the shell prompt from
-    # hitting GitHub on every precmd). setup.sh is the explicit install/upgrade
-    # path and must be allowed to resolve `latest` and download tool releases.
-    export MISE_OFFLINE=0
 
     # Auto-answer "yes" to mise prompts (e.g. the config-trust prompt that fires
     # the first time mise sees this repo on a new host) so setup.sh stays
