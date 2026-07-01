@@ -6,8 +6,9 @@ ignored_apps = ["com.flash.app", "com.flash.native-fixture", "com.flash.native-o
 
 [statusbar]
 enabled = true
+monitor = "primary"
 template = """
-#[align=left]#{mode}#[fg=colour245] · #{=80…:script:../../scripts/hn-top-story.sh}
+#[align=left]#{mode}#[fg=colour245] · #[link=https://news.ycombinator.com]#[fg=colour178]HN#[fg=colour245]#[nolink] #{=80…:cycle:../../scripts/hn-top-stories.sh}
 
 #[align=center]#{active_app_name}
 
