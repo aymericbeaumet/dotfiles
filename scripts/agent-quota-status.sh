@@ -340,15 +340,22 @@ live_codex_rate_limits() {
   ) |
     codex app-server --stdio 2>/dev/null |
     jq -r '
+      # Codex reports rate-limit windows under .primary/.secondary, but which
+      # slot holds the short (session) vs long (weekly) window is not stable —
+      # newer builds put the weekly limit in .primary and leave .secondary null.
+      # Classify by windowDurationMins instead: < 1 day = session, else weekly.
       select(.id == 2 and .result)
-      | (.result.rateLimitsByLimitId.codex // .result.rateLimits)
+      | (.result.rateLimitsByLimitId.codex // .result.rateLimits) as $r
+      | ([$r.primary, $r.secondary] | map(select(. != null))) as $wins
+      | ($wins | map(select((.windowDurationMins // 0) < 1440)) | first) as $sess
+      | ($wins | map(select((.windowDurationMins // 0) >= 1440)) | first) as $week
       | [
-          .primary.usedPercent,
-          .primary.resetsAt,
-          (.primary.windowDurationMins // 300),
-          .secondary.usedPercent,
-          .secondary.resetsAt,
-          (.secondary.windowDurationMins // 10080)
+          ($sess.usedPercent // "null"),
+          ($sess.resetsAt // "null"),
+          ($sess.windowDurationMins // "null"),
+          ($week.usedPercent // "null"),
+          ($week.resetsAt // "null"),
+          ($week.windowDurationMins // "null")
         ]
       | @tsv
     ' 2>/dev/null |
@@ -409,13 +416,6 @@ format_period() {
   esac
 }
 
-unknown_period() {
-  case "${1:-}" in
-    hours) printf '%s' '?%↻?h' ;;
-    days) printf '%s' '?%↻?d' ;;
-  esac
-}
-
 format_provider() {
   label=${1:-}
   session_pct=${2:-}
@@ -428,11 +428,13 @@ format_provider() {
   session=$(format_period "$session_pct" "$session_reset" hours "$session_window_mins")
   week=$(format_period "$week_pct" "$week_reset" days "$week_window_mins")
   [ -n "$session" ] || [ -n "$week" ] || return
-  [ -n "$session" ] || session=$(unknown_period hours)
-  [ -n "$week" ] || week=$(unknown_period days)
 
+  # Join only the windows the provider actually reports; a provider that exposes
+  # a single window (e.g. Codex's weekly-only limit) shows one segment rather
+  # than a phantom "?%↻?h" placeholder.
   printf '#[fg=colour178]%s#[fg=colour245]' "$label"
-  printf ' %s %s' "$session" "$week"
+  [ -n "$session" ] && printf ' %s' "$session"
+  [ -n "$week" ] && printf ' %s' "$week"
 }
 
 # Same content as `format_provider` minus the leading label + colour
@@ -450,10 +452,13 @@ format_provider_unlabelled() {
   session=$(format_period "$session_pct" "$session_reset" hours "$session_window_mins")
   week=$(format_period "$week_pct" "$week_reset" days "$week_window_mins")
   [ -n "$session" ] || [ -n "$week" ] || return
-  [ -n "$session" ] || session=$(unknown_period hours)
-  [ -n "$week" ] || week=$(unknown_period days)
 
-  printf '%s %s' "$session" "$week"
+  # Join only the windows the provider actually reports (see format_provider).
+  status=$session
+  if [ -n "$week" ]; then
+    [ -n "$status" ] && status="$status $week" || status=$week
+  fi
+  printf '%s' "$status"
 }
 
 unknown_provider_unlabelled() {

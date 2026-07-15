@@ -31,7 +31,7 @@ sequence_timeout_ms = 1000
 [mode.all.mappings]
 # enter modes
 "cmd+ctrl+[" = ["flash", "enter_normal_mode"]
-"cmd+ctrl+;" = ["flash", "enter_command_mode"]
+"cmd+shift+:" = ["flash", "enter_command_mode"]
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
 "cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
 # window management
