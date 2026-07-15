@@ -15,7 +15,7 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5",
   "hooks": {
     "PreToolUse": [
       {

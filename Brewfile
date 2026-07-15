@@ -16,6 +16,7 @@ brew 'macmon'
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
 brew 'tw93/tap/mole'
+cask 'ngrok'                   # ngrok tunnels CLI (Homebrew ships it as a cask)
 
 # macOS GUI applications
 cask 'alacritty'

@@ -1,9 +1,11 @@
 #!/bin/sh
 # Hacker News top stories for the Flash status bar's #{cycle:…} token.
-# Emits ONE story per line — each a clickable `#[link=…]title#[nolink]` run —
-# so the bar reels through them. The static "HN" label lives in the template,
-# not here. Network work is cached with a TTL and refreshed in the background
-# so the status bar never blocks on curl.
+# Emits ONE story per line: a clickable `#[link=…]title#[nolink]` run linking to
+# the HN discussion, followed by a `↗` linking straight to the article (omitted
+# for self/Ask/Show posts that carry no external URL). The bar reels through
+# them. The static "HN" label lives in the template, not here. Network work is
+# cached with a TTL and refreshed in the background so the bar never blocks on
+# curl.
 
 DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
@@ -16,7 +18,8 @@ refresh_lock="$cache_root/refresh.lock"
 : "${HN_STORIES_COUNT:=8}"
 : "${HN_RENDER_TTL_SECONDS:=300}"
 : "${HN_REFRESH_LOCK_SECONDS:=60}"
-: "${HN_TITLE_MAX_CHARS:=90}"
+# Capped below the bar's 80-col width so the trailing " ↗" always fits.
+: "${HN_TITLE_MAX_CHARS:=78}"
 
 cache_is_fresh() {
   file=${1:-}
@@ -72,8 +75,11 @@ render_stories() {
 
   out=
   for id in $ids; do
-    title=$(curl -fsS --max-time 5 \
-      "https://hacker-news.firebaseio.com/v0/item/${id}.json" 2>/dev/null |
+    item=$(curl -fsS --max-time 5 \
+      "https://hacker-news.firebaseio.com/v0/item/${id}.json" 2>/dev/null)
+    [ -n "$item" ] || continue
+
+    title=$(printf '%s' "$item" |
       jq -r '
         select(.title != null)
         | (.title
@@ -88,8 +94,14 @@ render_stories() {
       ' 2>/dev/null)
     [ -n "$title" ] || continue
     title=$(printf '%s' "$title" | awk -v max="$HN_TITLE_MAX_CHARS" \
-      '{ if (length($0) > max) printf "%s", substr($0, 1, max); else printf "%s", $0 }')
-    out="${out}#[link=https://news.ycombinator.com/item?id=${id}]${title}#[nolink]
+      '{ if (length($0) > max) printf "%s…", substr($0, 1, max - 1); else printf "%s", $0 }')
+
+    # Article URL powers the trailing ↗; self/Ask/Show posts have none → no arrow.
+    url=$(printf '%s' "$item" | jq -r '.url // empty' 2>/dev/null)
+
+    line="#[link=https://news.ycombinator.com/item?id=${id}]${title}#[nolink]"
+    [ -n "$url" ] && line="${line} #[link=${url}]#[fg=colour178]↗#[fg=colour245]#[nolink]"
+    out="${out}${line}
 "
   done
 
