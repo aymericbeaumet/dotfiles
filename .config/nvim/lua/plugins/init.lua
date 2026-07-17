@@ -949,86 +949,115 @@ return {
 	-- treesitter
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
 		build = ":TSUpdate",
-		event = { "BufReadPost", "BufNewFile" },
+		lazy = false,
 		dependencies = {
 			-- Structural selections/motions
-			"nvim-treesitter/nvim-treesitter-textobjects",
-			-- Auto-close & rename tags (HTML/TSX/Svelte)
-			"windwp/nvim-ts-autotag",
-			-- Better comment contexts for JSX/Svelte/etc.
-			{ "JoosepAlviste/nvim-ts-context-commentstring", opts = { enable_autocmd = false } },
-			-- Sticky context header (shows current function/class)
-			{ "nvim-treesitter/nvim-treesitter-context", opts = { max_lines = 3, trim_scope = "outer" } },
-		},
-		opts = function()
-			return {
-				ensure_installed = require("config.languages").treesitter_parsers(),
-				sync_install = false,
-
-				highlight = {
-					enable = true,
-					additional_vim_regex_highlighting = false, -- avoid double-highlighting
-					-- disable Treesitter on very large files
-					disable = function(_, buf)
-						local max = 200 * 1024 -- 200 KB
-						local ok2, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-						return ok2 and stats and stats.size > max
-					end,
-				},
-
-				indent = { enable = true },
-
-				incremental_selection = {
-					enable = true,
-					-- mnemonic: gnn (init), grn (grow), grm (shrink), grc (scope)
-					keymaps = {
-						init_selection = "gnn",
-						node_incremental = "grn",
-						node_decremental = "grm",
-						scope_incremental = "grc",
-					},
-				},
-
-				textobjects = {
+			{
+				"nvim-treesitter/nvim-treesitter-textobjects",
+				branch = "main",
+				opts = {
 					select = {
-						enable = true,
 						lookahead = true,
-						keymaps = {
-							["af"] = "@function.outer",
-							["if"] = "@function.inner",
-							["ac"] = "@class.outer",
-							["ic"] = "@class.inner",
-							["ap"] = "@parameter.outer",
-							["ip"] = "@parameter.inner",
-						},
 						selection_modes = {
 							["@function.outer"] = "V",
 							["@class.outer"] = "V",
 						},
 					},
-					move = {
-						enable = true,
-						set_jumps = true,
-						goto_next_start = {
-							["]f"] = "@function.outer",
-							["]c"] = "@class.outer",
-						},
-						goto_previous_start = {
-							["[f"] = "@function.outer",
-							["[c"] = "@class.outer",
-						},
-					},
-					swap = {
-						enable = true,
-						swap_next = { ["<leader>a"] = "@parameter.inner" },
-						swap_previous = { ["<leader>A"] = "@parameter.inner" },
-					},
+					move = { set_jumps = true },
 				},
-			}
-		end,
-		config = function(_, opts)
-			require("nvim-treesitter.configs").setup(opts)
+				config = function(_, opts)
+					require("nvim-treesitter-textobjects").setup(opts)
+
+					local select = require("nvim-treesitter-textobjects.select")
+					local move = require("nvim-treesitter-textobjects.move")
+					local swap = require("nvim-treesitter-textobjects.swap")
+					local function map(modes, lhs, rhs, desc)
+						vim.keymap.set(modes, lhs, rhs, { desc = desc, silent = true })
+					end
+
+					for lhs, capture in pairs({
+						af = "@function.outer",
+						["if"] = "@function.inner",
+						ac = "@class.outer",
+						ic = "@class.inner",
+						ap = "@parameter.outer",
+						ip = "@parameter.inner",
+					}) do
+						local query = capture
+						map({ "x", "o" }, lhs, function()
+							select.select_textobject(query, "textobjects")
+						end, "Select " .. query)
+					end
+
+					for lhs, target in pairs({
+						["]f"] = "@function.outer",
+						["]c"] = "@class.outer",
+					}) do
+						local query = target
+						map({ "n", "x", "o" }, lhs, function()
+							move.goto_next_start(query, "textobjects")
+						end, "Next " .. query)
+					end
+
+					for lhs, target in pairs({
+						["[f"] = "@function.outer",
+						["[c"] = "@class.outer",
+					}) do
+						local query = target
+						map({ "n", "x", "o" }, lhs, function()
+							move.goto_previous_start(query, "textobjects")
+						end, "Previous " .. query)
+					end
+
+					map("n", "<leader>a", function()
+						swap.swap_next("@parameter.inner")
+					end, "Swap with next parameter")
+					map("n", "<leader>A", function()
+						swap.swap_previous("@parameter.inner")
+					end, "Swap with previous parameter")
+
+					-- Keep the existing incremental-selection keys on Neovim's native API.
+					map("n", "gnn", function()
+						vim.treesitter.select("parent")
+					end, "Start node selection")
+					map("x", "grn", function()
+						vim.treesitter.select("parent")
+					end, "Grow node selection")
+					map("x", "grm", function()
+						vim.treesitter.select("child")
+					end, "Shrink node selection")
+					map("x", "grc", function()
+						select.select_textobject("@local.scope", "locals")
+					end, "Grow selection to scope")
+				end,
+			},
+			-- Auto-close & rename tags (HTML/TSX/Svelte)
+			{ "windwp/nvim-ts-autotag", opts = {} },
+			-- Better comment contexts for JSX/Svelte/etc.
+			{ "JoosepAlviste/nvim-ts-context-commentstring", opts = { enable_autocmd = false } },
+			-- Sticky context header (shows current function/class)
+			{ "nvim-treesitter/nvim-treesitter-context", opts = { max_lines = 3, trim_scope = "outer" } },
+		},
+		config = function()
+			local treesitter = require("nvim-treesitter")
+			treesitter.install(require("config.languages").treesitter_parsers())
+
+			local group = vim.api.nvim_create_augroup("aym.treesitter", { clear = true })
+			vim.api.nvim_create_autocmd("FileType", {
+				group = group,
+				callback = function(args)
+					local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(args.buf))
+					if ok and stats and stats.size > 200 * 1024 then
+						return
+					end
+
+					if pcall(vim.treesitter.start, args.buf) then
+						vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					end
+				end,
+			})
 
 			-- Modern Treesitter-based folds (open by default)
 			vim.o.foldmethod = "expr"

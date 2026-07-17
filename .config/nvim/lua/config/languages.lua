@@ -180,7 +180,7 @@ local languages = {
 	},
 
 	json = {
-		treesitter = { "json", "jsonc" },
+		treesitter = { "json" }, -- the json parser also handles the jsonc filetype
 		lsp = {
 			jsonls = {},
 		},
