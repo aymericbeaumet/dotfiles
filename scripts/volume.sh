@@ -8,7 +8,7 @@ if [ "$(uname -s 2>/dev/null)" != "Darwin" ]; then
   exit 0
 fi
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 # One notch ~= the hardware volume key step (1/16 of the range).

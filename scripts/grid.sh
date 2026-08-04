@@ -56,7 +56,7 @@ aw=$((W - (cols - 1)))
 col_w=()
 col_x=(0)
 rem_w=$aw
-for ((c=0; c<cols; c++)); do
+for ((c = 0; c < cols; c++)); do
   cw=$((rem_w / (cols - c)))
   col_w+=("$cw")
   rem_w=$((rem_w - cw))
@@ -70,7 +70,7 @@ ah=$((H - (rows - 1)))
 row_h=()
 row_y=(0)
 rem_h=$ah
-for ((r=0; r<rows; r++)); do
+for ((r = 0; r < rows; r++)); do
   rh=$((rem_h / (rows - r)))
   row_h+=("$rh")
   rem_h=$((rem_h - rh))
@@ -84,26 +84,26 @@ if [ "$rows" -eq 1 ] && [ "$cols" -eq 1 ]; then
   layout="${W}x${H},0,0,${ids[0]}"
 elif [ "$rows" -eq 1 ]; then
   layout="${W}x${H},0,0{"
-  for ((c=0; c<cols; c++)); do
+  for ((c = 0; c < cols; c++)); do
     [ "$c" -gt 0 ] && layout+=","
     layout+="${col_w[$c]}x${H},${col_x[$c]},0,${ids[$c]}"
   done
   layout+="}"
 elif [ "$cols" -eq 1 ]; then
   layout="${W}x${H},0,0["
-  for ((r=0; r<rows; r++)); do
+  for ((r = 0; r < rows; r++)); do
     [ "$r" -gt 0 ] && layout+=","
     layout+="${W}x${row_h[$r]},0,${row_y[$r]},${ids[$r]}"
   done
   layout+="]"
 else
   layout="${W}x${H},0,0["
-  for ((r=0; r<rows; r++)); do
+  for ((r = 0; r < rows; r++)); do
     [ "$r" -gt 0 ] && layout+=","
     h="${row_h[$r]}"
     y="${row_y[$r]}"
     layout+="${W}x${h},0,${y}{"
-    for ((c=0; c<cols; c++)); do
+    for ((c = 0; c < cols; c++)); do
       [ "$c" -gt 0 ] && layout+=","
       layout+="${col_w[$c]}x${h},${col_x[$c]},${y},${ids[$((r * cols + c))]}"
     done
@@ -114,9 +114,9 @@ fi
 
 # Compute tmux layout checksum
 csum=0
-for ((i=0; i<${#layout}; i++)); do
+for ((i = 0; i < ${#layout}; i++)); do
   c=$(printf '%d' "'${layout:$i:1}")
-  csum=$(( ((csum >> 1) | ((csum & 1) << 15)) + c ))
+  csum=$((((csum >> 1) | ((csum & 1) << 15)) + c))
   csum=$((csum & 0xFFFF))
 done
 
@@ -126,7 +126,7 @@ if [ -n "$agent_cmd" ]; then
   # Skip the user's active pane and any pane already running the agent so the
   # binding is idempotent — re-running in an existing window won't type
   # "claude" into a running claude session.
-  for ((i=0; i<total && i<${#ids[@]}; i++)); do
+  for ((i = 0; i < total && i < ${#ids[@]}; i++)); do
     pane_id="%${ids[$i]}"
     [ "$pane_id" = "$active" ] && continue
     cmd=$(tmux display-message -p -t "$pane_id" '#{pane_current_command}')

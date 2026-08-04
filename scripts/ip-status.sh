@@ -3,7 +3,7 @@
 # "no internet" is shown in red when the public IP cannot be fetched.
 # Cache for 60s, refresh in background to avoid blocking the status bar.
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 cache="${TMPDIR:-/tmp}/tmux-ip-status-v12.cache"
@@ -23,10 +23,10 @@ platform_id() {
   esac
 
   case "$(uname -m 2>/dev/null || printf unknown)" in
-    arm64|aarch64) arch=aarch64 ;;
-    x86_64|amd64) arch=x86_64 ;;
-    i386|i686) arch=i686 ;;
-    armv7l|armv7*) arch=armv7 ;;
+    arm64 | aarch64) arch=aarch64 ;;
+    x86_64 | amd64) arch=x86_64 ;;
+    i386 | i686) arch=i686 ;;
+    armv7l | armv7*) arch=armv7 ;;
     *) arch=$(uname -m 2>/dev/null | tr '[:upper:]' '[:lower:]') ;;
   esac
 
@@ -126,7 +126,7 @@ join_status() {
   status=$1
   shift
 
-  for component do
+  for component; do
     [ -n "$component" ] || continue
     status="$status$gray · $yellow$component"
   done
@@ -149,13 +149,13 @@ refresh_cache() {
   else
     status='#[range=user|net-prefs fg=red]no internet#[norange]'
   fi
-  join_status "$status" "$load" "$temp" "$platform" > "$tmp"
+  join_status "$status" "$load" "$temp" "$platform" >"$tmp"
   mv "$tmp" "$cache"
 }
 
 mtime=0
 [ -f "$cache" ] && mtime=$(file_mtime "$cache" 2>/dev/null || echo 0)
-age=$(( now - mtime ))
+age=$((now - mtime))
 
 if [ ! -f "$cache" ]; then
   refresh_cache >/dev/null 2>&1

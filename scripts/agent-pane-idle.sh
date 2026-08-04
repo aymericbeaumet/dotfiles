@@ -22,7 +22,10 @@ show_pane_value() {
 
 agent_kind() {
   case "${1:-}" in
-    claude|codex|agy) echo "$1"; return ;;
+    claude | codex | agy)
+      echo "$1"
+      return
+      ;;
   esac
 
   existing=$(show_pane_value '#{@agent-kind}')
@@ -50,12 +53,18 @@ ensure_title() {
 }
 
 case "${1:-idle}" in
-  idle) set_pane_option @agent-idle 1
-        ensure_title ;;
-  busy) set_pane_option -u @agent-idle
-        ensure_title ;;
-  clear) set_pane_option @agent-idle 1
-         set_pane_option pane-title "$(fallback_title)" ;;
+  idle)
+    set_pane_option @agent-idle 1
+    ensure_title
+    ;;
+  busy)
+    set_pane_option -u @agent-idle
+    ensure_title
+    ;;
+  clear)
+    set_pane_option @agent-idle 1
+    set_pane_option pane-title "$(fallback_title)"
+    ;;
 esac
 
 exit 0

@@ -1,4 +1,4 @@
-# dotfiles
+# dotfiles [![CI](https://github.com/aymericbeaumet/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aymericbeaumet/dotfiles/actions/workflows/ci.yml)
 
 Hello there! Here you can find my dotfiles for neovim, zsh, tmux, and many other
 CLIs. I'm using those on a daily basis, and I'm putting a lot of effort trying

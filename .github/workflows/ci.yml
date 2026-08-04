@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Checks (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install system validators
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get update
+            sudo apt-get install --no-install-recommends --yes ruby zsh
+          else
+            command -v ruby >/dev/null || {
+              brew install ruby
+              echo "$(brew --prefix ruby)/bin" >> "$GITHUB_PATH"
+            }
+          fi
+
+      - name: Install portable validators
+        uses: jdx/mise-action@v4
+        with:
+          version: 2026.5.18
+          mise_toml: |
+            [tools]
+            actionlint = "1.7.12"
+            jq = "1.8.1"
+            ripgrep = "14.1.1"
+            shellcheck = "0.11.0"
+            shfmt = "3.13.1"
+            stylua = "2.5.2"
+            taplo = "0.10.0"
+            tmux = "3.6b"
+
+      - name: Run checks
+        run: scripts/check.sh

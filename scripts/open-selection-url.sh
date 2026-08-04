@@ -2,7 +2,7 @@
 # Read text from stdin, extract the first likely URL, and open it.
 set -eu
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 input=$(cat 2>/dev/null || true)
@@ -25,7 +25,7 @@ url=$(printf '%s\n' "$input" |
 [ -n "$url" ] || exit 0
 
 case "$url" in
-  http://*|https://*|file://*) ;;
+  http://* | https://* | file://*) ;;
   *) url="https://$url" ;;
 esac
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Claude/Codex quota usage for tmux status-right.
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 # GUI apps launched by macOS inherit launchd's minimal PATH, so Flash cannot
@@ -12,7 +12,6 @@ now=$(date +%s)
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
 last_good="$cache_root/rendered-v4.last"
 legacy_last_good="$cache_root/rendered-v3.last"
-last_good_dir=${last_good%/*}
 claude_status_cache="$cache_root/rendered-claude-v1.last"
 codex_status_cache="$cache_root/rendered-codex-v1.last"
 claude_usage_cache="$cache_root/claude-usage.tsv"

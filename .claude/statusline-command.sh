@@ -17,7 +17,11 @@ fi
 
 # Fast mode
 thinking=$(echo "$input" | jq -r '.thinking.enabled')
-[ "$thinking" = "false" ] && add "$(printf '\033[1;97mfast:on\033[0m')" || add "fast:off"
+if [ "$thinking" = "false" ]; then
+  add "$(printf '\033[1;97mfast:on\033[0m')"
+else
+  add "fast:off"
+fi
 
 # Context window usage
 ctx=$(echo "$input" | jq -r '.context_window.used_percentage // 0')

@@ -7,7 +7,7 @@
 # cached with a TTL and refreshed in the background so the bar never blocks on
 # curl.
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 now=$(date +%s)
