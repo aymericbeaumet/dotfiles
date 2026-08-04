@@ -19,7 +19,7 @@ case "$file" in
   *.go)
     command -v gofmt >/dev/null 2>&1 && gofmt -w "$file" 2>/dev/null
     ;;
-  *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json|*.jsonc|*.md|*.mdx|*.css|*.scss|*.html|*.yaml|*.yml|*.svelte|*.vue)
+  *.ts | *.tsx | *.js | *.jsx | *.mjs | *.cjs | *.json | *.jsonc | *.md | *.mdx | *.css | *.scss | *.html | *.yaml | *.yml | *.svelte | *.vue)
     command -v prettier >/dev/null 2>&1 && prettier --write --log-level error "$file" 2>/dev/null
     ;;
   *.py)
@@ -29,7 +29,7 @@ case "$file" in
       black --quiet "$file" 2>/dev/null
     fi
     ;;
-  *.sh|*.bash|*.zsh)
+  *.sh | *.bash | *.zsh)
     command -v shfmt >/dev/null 2>&1 && shfmt -w -i 2 -ci "$file" 2>/dev/null
     ;;
   *.toml)

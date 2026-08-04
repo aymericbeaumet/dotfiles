@@ -9,6 +9,7 @@
 auto_install = false
 
 [tools]
+actionlint = "1.7.12"
 awscli = "latest"
 bat = "latest"
 buf = "1.69.0"
@@ -41,7 +42,10 @@ ripgrep = "latest"
 rtk = "latest"
 rust = "latest"
 sd = "latest"
+shellcheck = "0.11.0"
 shfmt = "3.13.1"
+stylua = "2.5.2"
+taplo = "0.10.0"
 terraform = "1.14.3"
 tmux = "latest"
 tree-sitter = "latest"

@@ -42,10 +42,10 @@ sanitize_pane_contents_archive() {
   tar xzf "$archive" -C "$sanitizer_temp_dir"
 
   while IFS= read -r -d '' file; do
-    printf '\033[0m' >> "$file"
+    printf '\033[0m' >>"$file"
   done < <(find "$sanitizer_temp_dir/pane_contents" -type f -print0)
 
-  tar cf - -C "$sanitizer_temp_dir" ./pane_contents | gzip > "$sanitizer_temp_archive"
+  tar cf - -C "$sanitizer_temp_dir" ./pane_contents | gzip >"$sanitizer_temp_archive"
   mv "$sanitizer_temp_archive" "$archive"
   sanitizer_temp_archive=""
   rm -rf "$sanitizer_temp_dir"

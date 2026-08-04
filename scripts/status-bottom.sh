@@ -3,7 +3,7 @@
 # Called from tmux as: #(.dotfiles/scripts/status-bottom.sh #{client_width})
 # tmux expands #{client_width} before invoking, and re-runs when it changes.
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 width=${1:-80}

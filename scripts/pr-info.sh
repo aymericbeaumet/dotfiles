@@ -5,7 +5,7 @@
 
 set -uo pipefail
 
-DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
+DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 if ! command -v gh >/dev/null 2>&1; then
@@ -30,7 +30,6 @@ c_grey=$'\033[38;5;245m'
 c_cyan=$'\033[38;5;38m'
 c_blue=$'\033[38;5;75m'
 c_yellow=$'\033[38;5;178m'
-c_orange=$'\033[38;5;208m'
 c_green=$'\033[38;5;42m'
 c_red=$'\033[38;5;203m'
 c_violet=$'\033[38;5;141m'
@@ -60,42 +59,42 @@ section() {
 # Status colorizers
 color_state() {
   case "$1" in
-    OPEN)   printf '%s %sopen%s'   "$c_green"  "$c_green"  "$c_reset" ;;
-    CLOSED) printf '%s %sclosed%s' "$c_red"    "$c_red"    "$c_reset" ;;
+    OPEN) printf '%s %sopen%s' "$c_green" "$c_green" "$c_reset" ;;
+    CLOSED) printf '%s %sclosed%s' "$c_red" "$c_red" "$c_reset" ;;
     MERGED) printf '%s %smerged%s' "$c_violet" "$c_violet" "$c_reset" ;;
-    *)      printf '%s%s%s'           "$c_grey"   "$1"        "$c_reset" ;;
+    *) printf '%s%s%s' "$c_grey" "$1" "$c_reset" ;;
   esac
 }
 
 color_mergeable() {
   case "$1" in
-    MERGEABLE)  printf '%s %smergeable%s'  "$c_green" "$c_green" "$c_reset" ;;
-    CONFLICTING)printf '%s %sconflicts%s'  "$c_red"   "$c_red"   "$c_reset" ;;
-    UNKNOWN)    printf '%s %sunknown%s'    "$c_grey"  "$c_grey"  "$c_reset" ;;
-    *)          printf '%s%s%s'              "$c_grey"  "$1"       "$c_reset" ;;
+    MERGEABLE) printf '%s %smergeable%s' "$c_green" "$c_green" "$c_reset" ;;
+    CONFLICTING) printf '%s %sconflicts%s' "$c_red" "$c_red" "$c_reset" ;;
+    UNKNOWN) printf '%s %sunknown%s' "$c_grey" "$c_grey" "$c_reset" ;;
+    *) printf '%s%s%s' "$c_grey" "$1" "$c_reset" ;;
   esac
 }
 
 color_merge_state() {
   case "$1" in
-    CLEAN)               printf '%sclean%s'                "$c_green"  "$c_reset" ;;
-    HAS_HOOKS)           printf '%shas hooks%s'            "$c_green"  "$c_reset" ;;
-    UNSTABLE)            printf '%sunstable%s'             "$c_yellow" "$c_reset" ;;
-    BEHIND)              printf '%sbehind%s'               "$c_yellow" "$c_reset" ;;
-    BLOCKED)             printf '%sblocked%s'              "$c_red"    "$c_reset" ;;
-    DIRTY)               printf '%sdirty%s'                "$c_red"    "$c_reset" ;;
-    DRAFT)               printf '%sdraft%s'                "$c_grey"   "$c_reset" ;;
-    *)                   printf '%s%s%s'                     "$c_grey"   "$1"        "$c_reset" ;;
+    CLEAN) printf '%sclean%s' "$c_green" "$c_reset" ;;
+    HAS_HOOKS) printf '%shas hooks%s' "$c_green" "$c_reset" ;;
+    UNSTABLE) printf '%sunstable%s' "$c_yellow" "$c_reset" ;;
+    BEHIND) printf '%sbehind%s' "$c_yellow" "$c_reset" ;;
+    BLOCKED) printf '%sblocked%s' "$c_red" "$c_reset" ;;
+    DIRTY) printf '%sdirty%s' "$c_red" "$c_reset" ;;
+    DRAFT) printf '%sdraft%s' "$c_grey" "$c_reset" ;;
+    *) printf '%s%s%s' "$c_grey" "$1" "$c_reset" ;;
   esac
 }
 
 color_review() {
   case "$1" in
-    APPROVED)         printf '%s %sapproved%s'          "$c_green"  "$c_green"  "$c_reset" ;;
-    CHANGES_REQUESTED)printf '%s %schanges requested%s' "$c_red"    "$c_red"    "$c_reset" ;;
-    REVIEW_REQUIRED)  printf '%s %sreview required%s'   "$c_yellow" "$c_yellow" "$c_reset" ;;
-    "")               printf '%s—%s'                       "$c_grey"   "$c_reset" ;;
-    *)                printf '%s%s%s'                       "$c_grey"   "$1"        "$c_reset" ;;
+    APPROVED) printf '%s %sapproved%s' "$c_green" "$c_green" "$c_reset" ;;
+    CHANGES_REQUESTED) printf '%s %schanges requested%s' "$c_red" "$c_red" "$c_reset" ;;
+    REVIEW_REQUIRED) printf '%s %sreview required%s' "$c_yellow" "$c_yellow" "$c_reset" ;;
+    "") printf '%s—%s' "$c_grey" "$c_reset" ;;
+    *) printf '%s%s%s' "$c_grey" "$1" "$c_reset" ;;
   esac
 }
 
@@ -155,13 +154,13 @@ draft_tag=""
 
   printf '   %s+%s%s %s-%s%s %s· %s files · created %s · updated %s%s\n' \
     "$c_green" "$additions" "$c_reset" \
-    "$c_red"   "$deletions" "$c_reset" \
+    "$c_red" "$deletions" "$c_reset" \
     "$c_grey" "$changed_files" \
     "${created%%T*}" "${updated%%T*}" "$c_reset"
 
-  [[ -n "$labels"    ]] && printf '   %s %s%s%s\n' "$c_grey" "$c_violet" "$labels"    "$c_reset"
-  [[ -n "$reviewers" ]] && printf '   %s %s%s%s\n' "$c_grey" "$c_grey"   "$reviewers" "$c_reset"
-  [[ -n "$assignees" ]] && printf '   %s %s%s%s\n' "$c_grey" "$c_grey"   "$assignees" "$c_reset"
+  [[ -n "$labels" ]] && printf '   %s %s%s%s\n' "$c_grey" "$c_violet" "$labels" "$c_reset"
+  [[ -n "$reviewers" ]] && printf '   %s %s%s%s\n' "$c_grey" "$c_grey" "$reviewers" "$c_reset"
+  [[ -n "$assignees" ]] && printf '   %s %s%s%s\n' "$c_grey" "$c_grey" "$assignees" "$c_reset"
 
   # ─── Checks ───
   section "" "checks"

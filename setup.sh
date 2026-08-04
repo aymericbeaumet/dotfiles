@@ -396,7 +396,7 @@ if $DO_MISE; then
 
     install_mise_bootstrap_tool() {
       local tool="$1"
-      if ! grep -Eq "^[[:space:]]*$tool[[:space:]]*=" "$mise_source_config" 2>/dev/null; then
+      if ! grep -Eq "^[[:space:]]*${tool}[[:space:]]*=" "$mise_source_config" 2>/dev/null; then
         return 0
       fi
 
@@ -446,7 +446,8 @@ if $DO_SYMLINKS; then
 
     # Backup existing non-symlink file or directory before overwriting
     if [[ -e "$target" ]] && [[ ! -L "$target" ]]; then
-      local backup="${target}.bak.$(date +%s)"
+      local backup
+      backup="${target}.bak.$(date +%s)"
       warning "Backing up existing: $target -> $backup"
       mv "$target" "$backup"
     fi

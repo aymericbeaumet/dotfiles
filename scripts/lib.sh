@@ -42,7 +42,7 @@ dotfiles_dir() {
     return
   fi
 
-  script_dir=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || return
+  script_dir=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || return
   case "$script_dir" in
     */scripts) dirname "$script_dir" ;;
     *) printf '%s' "$script_dir" ;;
