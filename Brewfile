@@ -21,6 +21,7 @@ cask 'ngrok'                   # ngrok tunnels CLI (Homebrew ships it as a cask)
 # macOS GUI applications
 cask 'alacritty'
 cask 'aws-vpn-client'
+cask 'claude'
 cask 'cursor'
 cask 'db-browser-for-sqlite'
 cask 'figma'
