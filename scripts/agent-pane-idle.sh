@@ -1,5 +1,13 @@
 #!/bin/bash
 # Toggle @agent-idle pane option for tmux border status
+
+# Codex and Claude command hooks send one JSON payload on stdin. Consume it
+# before this lightweight script can exit so the host never writes to a closed
+# pipe (notably when no tmux pane is attached).
+if [ ! -t 0 ]; then
+  cat >/dev/null 2>&1 || true
+fi
+
 [ -z "${TMUX_PANE:-}" ] && exit 0
 
 tmux display-message -p -t "$TMUX_PANE" '#{pane_id}' >/dev/null 2>&1 || exit 0

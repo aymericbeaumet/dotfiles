@@ -59,7 +59,6 @@ passthrough_modifiers = ["cmd"]
 "<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d
 "<tab>" = ["flash", "movement_forward"]                 # ctrl+i
 "cmd+<delete>" = ["flash", "scroll_half_page_up"]       # ctrl+u
-"cmd+<right>" = ["flash", "scroll_down"]                # ctrl+e
 # app switch
 "'a" = ["flash", "app_open", "--name=Alacritty"]
 "'f" = ["flash", "app_open", "--name=Firefox"]

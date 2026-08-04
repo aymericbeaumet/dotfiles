@@ -4,6 +4,10 @@
 DOTFILES_SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
+# GUI apps launched by macOS inherit launchd's minimal PATH, so Flash cannot
+# otherwise find the mise-managed codex/jq binaries used by this helper.
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
+
 now=$(date +%s)
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
 last_good="$cache_root/rendered-v4.last"
