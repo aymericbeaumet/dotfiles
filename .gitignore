@@ -91,9 +91,6 @@ lazy-lock.json
 !.claude/statusline-command.sh
 !.claude/hooks/
 .claude/hooks/*
-!.claude/hooks/peon-ping/
-.claude/hooks/peon-ping/*
-!.claude/hooks/peon-ping/codex-hook.sh
 .claude/settings.local.json
 .claude/worktrees/
 
@@ -107,11 +104,6 @@ lazy-lock.json
 # Cursor
 .cursor/
 !.cursor/hooks.json
-
-# OpenPeon (runtime state)
-.openpeon/.last_update_check
-.openpeon/.sound.pid
-.openpeon/.state.json
 
 # Codex system skills (auto-managed)
 .agents/skills/.system/

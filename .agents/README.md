@@ -22,7 +22,6 @@ Single source of truth for Claude Code and Codex configuration. Both harnesses l
     pr/              # disallows Edit/Write/MultiEdit
     push/            # needs Edit for rebase conflict resolution
     squash/          # disallows Edit/Write/MultiEdit
-    peon-ping-*/     # peon trainer integrations
     .system/         # Codex-installed system skills (auto-managed)
   memories/          # Codex's rich rollout→MEMORY pipeline; Claude uses
                      # ~/.claude/projects/<cwd-slug>/memory/ instead
@@ -46,8 +45,6 @@ Single source of truth for Claude Code and Codex configuration. Both harnesses l
 | `scripts/format-on-save.sh` | PostToolUse formatter (rustfmt/gofmt/prettier/ruff/shfmt/taplo/stylua/nixpkgs-fmt/sqlfluff) |
 | `scripts/agent-pane-idle.sh` | tmux pane border state — `clear`/`busy`/`idle` |
 | `scripts/agent-pane-title.sh` | tmux pane title from session JSON (Codex; Claude uses statusline) |
-| `~/.claude/hooks/peon-ping/peon.sh` | peon-ping sound (Claude direct) |
-| `~/.claude/hooks/peon-ping/codex-hook.sh <event>` | peon-ping with Codex event-name wrapping |
 
 ## Hook lifecycle parity
 
@@ -55,18 +52,9 @@ Single source of truth for Claude Code and Codex configuration. Both harnesses l
 |---|---|---|---|
 | PreToolUse(Bash) | ✓ rtk | — | `rtk hook` supports claude/cursor/gemini/copilot only — use rtk prefix manually on Codex |
 | PostToolUse Edit\|Write\|MultiEdit\|apply_patch | ✓ format-on-save | ✓ format-on-save | Shared script |
-| PostToolUse(Bash) | — | ✓ peon-ping | Codex variant; Claude uses PostToolUseFailure |
-| SessionStart | ✓ peon + idle clear | ✓ peon + idle clear | |
-| SessionEnd | ✓ peon | — | Not supported by Codex; use Stop |
-| UserPromptSubmit | ✓ peon + idle busy | ✓ peon + idle busy | |
-| Stop | ✓ peon + idle idle | ✓ peon + idle idle + pane-title | Codex sets pane title (Claude uses statusline) |
-| SubagentStart | ✓ peon | ✓ peon | |
-| SubagentStop | ✓ peon | ✓ peon | |
-| PermissionRequest | ✓ peon | ✓ peon | |
-| Notification | ✓ peon | — | Codex has no Notification hook |
-| PostToolUseFailure(Bash) | ✓ peon | — | Codex's PostToolUse fires on non-zero exit |
-| PreCompact | ✓ peon | ✓ peon | |
-| PostCompact | ✓ peon | ✓ peon | |
+| SessionStart | ✓ idle clear | ✓ idle clear | |
+| UserPromptSubmit | ✓ idle busy | ✓ idle busy | |
+| Stop | ✓ idle idle | ✓ idle idle + pane-title | Codex sets pane title (Claude uses statusline) |
 
 ## MCP parity
 
