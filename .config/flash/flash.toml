@@ -61,6 +61,7 @@ passthrough_modifiers = ["cmd"]
 "cmd+<delete>" = ["flash", "scroll_half_page_up"]       # ctrl+u
 # app switch
 "'a" = ["flash", "app_open", "--name=Alacritty"]
+"'c" = ["flash", "app_open", "--name=Claude"]
 "'f" = ["flash", "app_open", "--name=Firefox"]
 "'i" = ["flash", "app_open", "--name=Messages"]
 "'l" = ["flash", "app_open", "--name=Linear"]
