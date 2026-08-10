@@ -6,7 +6,8 @@
 DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
-cache="${TMPDIR:-/tmp}/tmux-ip-status-v12.cache"
+cache="${TMPDIR:-/tmp}/tmux-ip-status-v13.cache"
+refresh_lock="${cache}.lock"
 ttl=60
 now=$(date +%s)
 yellow='#[fg=colour178]'
@@ -37,7 +38,24 @@ macmon_temperature() {
   is_darwin || return
   command -v macmon >/dev/null 2>&1 || return
 
-  macmon pipe --samples 1 --interval 1 2>/dev/null |
+  # macmon samples through private IOReport APIs and can hang when a macOS
+  # update changes those metrics. Bound it independently of the cache refresh
+  # so a broken sampler cannot leave one resident process per tmux redraw.
+  output="${cache}.macmon.$$"
+  macmon pipe --samples 1 --interval 1000 >"$output" 2>/dev/null &
+  macmon_pid=$!
+  (
+    sleep 3
+    kill -KILL "$macmon_pid" 2>/dev/null || true
+  ) &
+  watchdog_pid=$!
+
+  wait "$macmon_pid" 2>/dev/null
+  macmon_status=$?
+  kill "$watchdog_pid" 2>/dev/null || true
+  wait "$watchdog_pid" 2>/dev/null || true
+
+  if [ "$macmon_status" -eq 0 ]; then
     awk '
       {
         line = $0
@@ -53,7 +71,9 @@ macmon_temperature() {
         }
       }
       END { if (found) printf "%.0f°", max }
-    '
+    ' "$output"
+  fi
+  rm -f "$output"
 }
 
 sensors_temperature() {
@@ -153,14 +173,41 @@ refresh_cache() {
   mv "$tmp" "$cache"
 }
 
+acquire_refresh_lock() {
+  if mkdir "$refresh_lock" 2>/dev/null; then
+    printf '%s\n' "$$" >"$refresh_lock/pid"
+    return 0
+  fi
+
+  refresh_pid=
+  [ -f "$refresh_lock/pid" ] && IFS= read -r refresh_pid <"$refresh_lock/pid"
+  case "$refresh_pid" in
+    '' | *[!0-9]*) ;;
+    *) kill -0 "$refresh_pid" 2>/dev/null && return 1 ;;
+  esac
+
+  rm -f "$refresh_lock/pid"
+  rmdir "$refresh_lock" 2>/dev/null || return 1
+  mkdir "$refresh_lock" 2>/dev/null || return 1
+  printf '%s\n' "$$" >"$refresh_lock/pid"
+}
+
+refresh_cache_async() {
+  acquire_refresh_lock || return
+  (
+    trap 'rm -f "$refresh_lock/pid"; rmdir "$refresh_lock" 2>/dev/null || true' EXIT HUP INT TERM
+    refresh_cache
+  ) >/dev/null 2>&1 &
+  refresh_pid=$!
+  [ -d "$refresh_lock" ] && printf '%s\n' "$refresh_pid" >"$refresh_lock/pid"
+}
+
 mtime=0
 [ -f "$cache" ] && mtime=$(file_mtime "$cache" 2>/dev/null || echo 0)
 age=$((now - mtime))
 
-if [ ! -f "$cache" ]; then
-  refresh_cache >/dev/null 2>&1
-elif [ "$age" -ge "$ttl" ]; then
-  refresh_cache >/dev/null 2>&1 &
+if [ ! -f "$cache" ] || [ "$age" -ge "$ttl" ]; then
+  refresh_cache_async
 fi
 
 [ -f "$cache" ] && cat "$cache"

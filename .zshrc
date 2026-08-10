@@ -38,7 +38,7 @@ if [[ -d "$ZINIT_HOME" ]]; then
       zdharma-continuum/null \
     has'zoxide' id-as'zoxide' atinit'eval "$(zoxide init zsh --hook=prompt --no-cmd)"' \
       zdharma-continuum/null \
-    has'carapace' id-as'carapace' atinit'export CARAPACE_BRIDGES="zsh,fish,bash"; source <(carapace _carapace zsh); compdef _files lnav' \
+    has'carapace' id-as'carapace' atinit'export CARAPACE_BRIDGES="zsh,fish,bash" CARAPACE_MATCH=1; source <(carapace _carapace zsh); compdef _files lnav' \
       zdharma-continuum/null \
     junegunn/fzf-git.sh
 fi

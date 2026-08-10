@@ -84,13 +84,8 @@ lazy-lock.json
 
 # Claude
 .claude/*
-!.claude/CLAUDE.md
 !.claude/settings.json
 !.claude/skills
-!.claude/agents
-!.claude/statusline-command.sh
-!.claude/hooks/
-.claude/hooks/*
 .claude/settings.local.json
 .claude/worktrees/
 
@@ -98,12 +93,6 @@ lazy-lock.json
 .codex/*
 !.codex/AGENTS.md
 !.codex/rules/
-!.codex/skills
-!.codex/agents
-
-# Cursor
-.cursor/
-!.cursor/hooks.json
 
 # Codex system skills (auto-managed)
 .agents/skills/.system/
