@@ -36,6 +36,13 @@ IS_DEBIAN=false
 [[ "$OS_NAME" == "Darwin" ]] && IS_DARWIN=true
 command -v apt-get &>/dev/null && IS_DEBIAN=true
 
+SEMBLE_VERSION="0.5.4"
+SEMBLE_UVX_PACKAGE="semble[mcp]==${SEMBLE_VERSION}"
+OPENCODE_AUTH_METHOD="ChatGPT Pro/Plus (browser)"
+if ! $IS_DARWIN; then
+  OPENCODE_AUTH_METHOD="ChatGPT Pro/Plus (headless)"
+fi
+
 # Section flags (all enabled by default)
 DO_SSH=true
 DO_APT=true
@@ -47,6 +54,7 @@ DO_ZSH=true
 DO_TMUX=true
 DO_MACOS=true
 DO_MISE=true
+DO_OPENCODE=true
 
 usage() {
   cat <<'USAGE'
@@ -63,6 +71,7 @@ Options:
   --no-tmux       Skip tmux plugin installation
   --no-macos      Skip macOS defaults configuration
   --no-mise       Skip mise tool installation
+  --no-opencode   Skip OpenCode ChatGPT/Codex authentication
   -h, --help      Show this help message
 USAGE
 }
@@ -79,6 +88,7 @@ for arg in "$@"; do
     --no-tmux) DO_TMUX=false ;;
     --no-macos) DO_MACOS=false ;;
     --no-mise) DO_MISE=false ;;
+    --no-opencode) DO_OPENCODE=false ;;
     -h | --help)
       usage
       exit 0
@@ -416,6 +426,30 @@ if $DO_MISE; then
       warning "Some mise tools failed to install; continuing with available tools"
     fi
     export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+    info "Refreshing agent clients and RTK to their configured latest versions..."
+    if ! mise upgrade \
+      rtk \
+      aqua:anomalyco/opencode \
+      npm:@anthropic-ai/claude-code \
+      npm:@openai/codex; then
+      warning "Some agent tools failed to upgrade; continuing with installed versions"
+    fi
+
+    # Claude's npm package ships the native executable as an optional package.
+    # Some npm/mise upgrades finish before its postinstall links that executable;
+    # rerunning the documented postinstall is harmless and repairs that state.
+    CLAUDE_MISE_ROOT=$(mise where npm:@anthropic-ai/claude-code 2>/dev/null || true)
+    CLAUDE_POSTINSTALL="$CLAUDE_MISE_ROOT/lib/node_modules/@anthropic-ai/claude-code/install.cjs"
+    if [[ -f "$CLAUDE_POSTINSTALL" ]]; then
+      mise exec npm:@anthropic-ai/claude-code -- node "$CLAUDE_POSTINSTALL"
+    fi
+    mise reshim >/dev/null 2>&1 || true
+    hash -r 2>/dev/null || true
+    if command -v claude &>/dev/null && ! claude --version &>/dev/null; then
+      warning "Claude installed but its platform-native executable is unavailable"
+    fi
+
     info "Pruning mise tools not listed in config..."
     if ! mise prune --yes; then
       warning "mise prune failed; continuing"
@@ -485,6 +519,76 @@ if $DO_SYMLINKS; then
 
 else
   skip "Symlinking Dotfiles"
+fi
+
+banner "SETUP AGENT MCP SERVERS"
+if command -v jq &>/dev/null; then
+  if command -v codex &>/dev/null; then
+    while IFS= read -r mcp_name; do
+      codex mcp remove "$mcp_name"
+    done < <(codex mcp list --json | jq -r '.[].name')
+
+    codex mcp add semble -- uvx --from "$SEMBLE_UVX_PACKAGE" semble
+    info "Configured Codex MCP servers: semble ${SEMBLE_VERSION}"
+  else
+    warning "Codex not found; skipping Codex MCP configuration"
+  fi
+
+  CLAUDE_USER_CONFIG="$HOME/.claude.json"
+  CLAUDE_USER_CONFIG_TMP="${CLAUDE_USER_CONFIG}.tmp.$$"
+  mkdir -p "$(dirname "$CLAUDE_USER_CONFIG")"
+
+  if [[ -f "$CLAUDE_USER_CONFIG" ]]; then
+    jq --arg semble_package "$SEMBLE_UVX_PACKAGE" '
+      .mcpServers = {
+        "semble": {
+          "type": "stdio",
+          "command": "uvx",
+          "args": ["--from", $semble_package, "semble"]
+        }
+      }
+      | if (.projects | type) == "object" then
+          .projects |= with_entries(
+            if (.value | type) == "object" then .value.mcpServers = {} else . end
+          )
+        else . end
+    ' "$CLAUDE_USER_CONFIG" >"$CLAUDE_USER_CONFIG_TMP"
+  else
+    jq -n --arg semble_package "$SEMBLE_UVX_PACKAGE" '{
+      "mcpServers": {
+        "semble": {
+          "type": "stdio",
+          "command": "uvx",
+          "args": ["--from", $semble_package, "semble"]
+        }
+      }
+    }' >"$CLAUDE_USER_CONFIG_TMP"
+  fi
+
+  chmod 600 "$CLAUDE_USER_CONFIG_TMP"
+  mv "$CLAUDE_USER_CONFIG_TMP" "$CLAUDE_USER_CONFIG"
+  info "Configured Claude user MCP servers: semble ${SEMBLE_VERSION}"
+else
+  warning "jq not found; skipping Claude user MCP configuration"
+fi
+
+banner "SETUP OPENCODE"
+if $DO_OPENCODE; then
+  if ! command -v opencode &>/dev/null; then
+    warning "OpenCode not found; run setup with mise enabled to install it"
+  elif ! command -v jq &>/dev/null; then
+    warning "jq not found; cannot verify OpenCode authentication"
+  elif [[ -f "$HOME/.local/share/opencode/auth.json" ]] &&
+    jq -e '.openai.type == "oauth"' "$HOME/.local/share/opencode/auth.json" &>/dev/null; then
+    info "OpenCode is already authenticated with ChatGPT/Codex"
+  else
+    info "Authenticating OpenCode with ChatGPT/Codex via ${OPENCODE_AUTH_METHOD}..."
+    if ! opencode auth login --provider openai --method "$OPENCODE_AUTH_METHOD"; then
+      warning "OpenCode ChatGPT/Codex authentication did not complete"
+    fi
+  fi
+else
+  skip "OpenCode ChatGPT/Codex Authentication"
 fi
 
 banner "SETUP NEOVIM"

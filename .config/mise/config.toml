@@ -9,6 +9,7 @@
 auto_install = false
 
 [tools]
+"aqua:anomalyco/opencode" = "latest"
 actionlint = "1.7.12"
 awscli = "latest"
 bat = "latest"
@@ -37,6 +38,7 @@ neovim = "latest"
 node = "26.0.0"
 opentofu = "1.12.2"
 pipx = "latest"
+"pipx:semble" = "0.5.4"
 protoc = "34.1"
 ripgrep = "latest"
 rtk = "latest"

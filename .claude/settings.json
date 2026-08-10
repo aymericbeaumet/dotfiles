@@ -2,7 +2,9 @@
   "env": {
     "DISABLE_TELEMETRY": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "DISABLE_AUTOUPDATER": "1"
+    "DISABLE_AUTOUPDATER": "1",
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "0",
+    "ENABLE_TOOL_SEARCH": "true"
   },
   "permissions": {
     "allow": [
@@ -10,8 +12,7 @@
       "Read",
       "Write",
       "Edit",
-      "mcp__semble__*",
-      "mcp__tmux__*"
+      "mcp__semble__*"
     ],
     "deny": [],
     "defaultMode": "bypassPermissions"
@@ -47,6 +48,16 @@
         "hooks": [
           {
             "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-instructions.sh'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear'",
             "timeout": 5
           }
@@ -77,28 +88,6 @@
         ]
       }
     ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "sh -c '$HOME/.dotfiles/.claude/statusline-command.sh'"
-  },
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    },
-    "claude-code-workflows": {
-      "source": {
-        "source": "github",
-        "repo": "wshobson/agents"
-      }
-    }
   },
   "effortLevel": "xhigh",
   "skipDangerousModePermissionPrompt": true,

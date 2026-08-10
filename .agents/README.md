@@ -1,101 +1,63 @@
-# Shared agent rig
+# Shared agent configuration
 
-Single source of truth for Claude Code and Codex configuration. Both harnesses load skills, subagents, hook scripts, and memory conventions from here.
+This directory is the portable global source of truth for Claude Code, Codex, and OpenCode.
+Repository-specific guidance belongs in each repository's root `AGENTS.md`; dotfiles development
+guidance lives in the root `AGENTS.md` here.
 
-## Layout
+## Canonical surfaces
 
+| Surface | Location | Contract |
+|---|---|---|
+| Global guidance | `~/.agents/AGENTS.md` | Small, client-neutral defaults |
+| Personal skills | `~/.agents/skills/*/SKILL.md` | Agent Skills open standard; loaded on demand |
+| Repo guidance | `<repo>/AGENTS.md` | Standard project instructions |
+
+Do not add duplicated client-specific instruction bodies. Claude, Codex, and OpenCode use thin
+native adapters around these canonical files because their global discovery paths differ.
+
+## Client adapters
+
+| Client | Global instructions | Skills | Native config |
+|---|---|---|---|
+| Codex | `~/.codex/AGENTS.md` symlink | Reads `~/.agents/skills` natively | `~/.codex/config.toml` |
+| OpenCode | `~/.config/opencode/AGENTS.md` symlink | Reads `~/.agents/skills` natively | `~/.config/opencode/opencode.json` |
+| Claude Code | `SessionStart` loads the applicable `AGENTS.md` chain | `~/.claude/skills` symlink | `~/.claude/settings.json` |
+
+Claude Code does not currently discover `AGENTS.md` directly. The SessionStart adapter keeps the
+repo free of `CLAUDE.md` files while presenting Claude with the same global and project guidance.
+Custom subagents are intentionally not shared: the three clients use incompatible agent formats.
+Use Agent Skills for portable reusable workflows.
+
+`OPENCODE_DISABLE_CLAUDE_CODE=1` disables OpenCode's Claude-compatibility fallback. OpenCode still
+loads the canonical `AGENTS.md` and `.agents/skills` paths natively, without discovering the Claude
+adapter or the same skill IDs twice.
+
+## Token efficiency
+
+- RTK filters shell output. Claude uses its native pre-tool hook, OpenCode uses
+  `plugins/rtk.ts`, and Codex follows the global `AGENTS.md` rule.
+- Semble is the only configured MCP server. Use it for semantic code discovery, then open the
+  returned file and lines directly; use `rg` for exact or exhaustive matches.
+- OpenCode enables automatic compaction and old-tool-output pruning.
+- Skill bodies and supporting files remain unloaded until a matching skill is selected.
+
+## MCP policy
+
+All three clients are reconciled by `setup.sh` to exactly one global MCP server:
+
+```text
+uvx --from semble[mcp]==0.5.4 semble
 ```
-.agents/
-  AGENTS.md          # auto-loaded every session by both harnesses; keep small
-  RTK.md             # auto-loaded via AGENTS.md @import; rtk prefix rule
-  PLATFORM.md        # auto-loaded via AGENTS.md @import; macOS/Linux portability rules
-  agents/            # subagents (Anthropic frontmatter spec)
-    code-reviewer.md
-    test-runner.md
-    security-auditor.md
-    rust-clippy-fixer.md      # isolation: worktree
-    dep-upgrader.md           # isolation: worktree
-    doc-writer.md
-  skills/            # SKILL.md instruction packs
-    commit/          # disallows Edit/Write/MultiEdit
-    distill/         # Codex-style task-group memory
-    pr/              # disallows Edit/Write/MultiEdit
-    push/            # needs Edit for rebase conflict resolution
-    squash/          # disallows Edit/Write/MultiEdit
-    .system/         # Codex-installed system skills (auto-managed)
-  memories/          # Codex's rich rollout→MEMORY pipeline; Claude uses
-                     # ~/.claude/projects/<cwd-slug>/memory/ instead
-```
 
-## Symlinks
+Keep the Semble version pinned across clients so search behavior does not drift between machines.
+When updating it, change the mise tool entry, all native MCP configs, and the checks together.
+OpenCode authentication uses the ChatGPT browser flow on macOS and its headless flow on Linux.
 
-| From | To |
-|---|---|
-| `~/.claude/CLAUDE.md` | `../.agents/AGENTS.md` |
-| `~/.claude/skills` | `../.agents/skills` |
-| `~/.claude/agents` | `../.agents/agents` |
-| `~/.codex/AGENTS.md` | `../.agents/AGENTS.md` |
-| `~/.codex/skills` | `../.agents/skills` |
-| `~/.codex/agents` | `../.agents/agents` |
-
-## Shared scripts (used by both harnesses)
+## Shared hooks
 
 | Script | Purpose |
 |---|---|
-| `scripts/format-on-save.sh` | PostToolUse formatter (rustfmt/gofmt/prettier/ruff/shfmt/taplo/stylua/nixpkgs-fmt/sqlfluff) |
-| `scripts/agent-pane-idle.sh` | tmux pane border state — `clear`/`busy`/`idle` |
-| `scripts/agent-pane-title.sh` | tmux pane title from session JSON (Codex; Claude uses statusline) |
-
-## Hook lifecycle parity
-
-| Event | Claude | Codex | Notes |
-|---|---|---|---|
-| PreToolUse(Bash) | ✓ rtk | — | `rtk hook` supports claude/cursor/gemini/copilot only — use rtk prefix manually on Codex |
-| PostToolUse Edit\|Write\|MultiEdit\|apply_patch | ✓ format-on-save | ✓ format-on-save | Shared script |
-| SessionStart | ✓ idle clear | ✓ idle clear | |
-| UserPromptSubmit | ✓ idle busy | ✓ idle busy | |
-| Stop | ✓ idle idle | ✓ idle idle + pane-title | Codex sets pane title (Claude uses statusline) |
-
-## MCP parity
-
-| Server | Claude | Codex |
-|---|---|---|
-| `tmux` (`npx -y tmux-mcp --shell-type=zsh`) | ✓ | ✓ |
-| `semble` (`uvx --from semble[mcp] semble`) | ✓ | ✓ |
-| 14 cloud connectors (Linear, Notion, Gmail, …) | ✓ configured (OAuth needed) | — |
-
-Claude MCP servers are managed by `claude mcp add/remove`. Codex MCP servers live in `[mcp_servers.X]` blocks of `~/.codex/config.toml`.
-
-## Plugin marketplaces
-
-| Marketplace | Claude | Codex |
-|---|---|---|
-| `anthropics/claude-plugins-official` | ✓ | — (Claude-only format) |
-| `wshobson/agents` (aka `claude-code-workflows`) | ✓ | ✓ (multi-harness) |
-| `openai-curated` | — | ✓ (built-in) |
-
-Add with `claude plugin marketplace add <owner>/<repo>` or `codex plugin marketplace add <owner>/<repo>`.
-
-## Skill / subagent / memory format notes
-
-- Skill frontmatter uses **kebab-case** keys (`disallowed-tools`, `allowed-tools`).
-- Subagent frontmatter uses **camelCase** keys (`disallowedTools`, `permissionMode`).
-- Codex memory: `~/.codex/memories/MEMORY.md` (rich task-group format the `distill` skill produces).
-- Claude memory: per-project `~/.claude/projects/<cwd-slug>/memory/<name>.md` files indexed by `MEMORY.md`.
-
-## Effort / sandbox / approval posture
-
-| Setting | Claude | Codex |
-|---|---|---|
-| Default effort | `high` (`effortLevel` in settings.json) | `xhigh` (`model_reasoning_effort`) |
-| Plan-mode effort | inherits | `xhigh` (`plan_mode_reasoning_effort`) |
-| Permission mode | `auto` (`defaultMode`) | `on-request` (`approval_policy`) |
-| Sandbox | implicit (per-tool permissions) | `danger-full-access` (`sandbox_mode`) |
-| Skip auto perm prompt | ✓ (`skipAutoPermissionPrompt`) | implicit |
-
-## Adding new things
-
-- **New skill**: create `.agents/skills/<name>/SKILL.md`; both harnesses pick it up immediately (Claude via `/reload-skills`, Codex on restart).
-- **New subagent**: create `.agents/agents/<name>.md`; Claude loads on next session.
-- **New hook event**: add to both `.claude/settings.json` (JSON) and `.codex/config.toml` (TOML). Codex will prompt to trust on first run.
-- **New MCP server**: `claude mcp add` for Claude; add `[mcp_servers.<n>]` block to `config.toml` for Codex.
+| `scripts/agent-instructions.sh` | Loads standard global/project `AGENTS.md` files for Claude |
+| `scripts/format-on-save.sh` | Formats files after edits |
+| `scripts/agent-pane-idle.sh` | Tracks tmux pane state |
+| `scripts/agent-pane-title.sh` | Updates compatible terminal pane titles |

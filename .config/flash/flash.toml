@@ -51,6 +51,7 @@ passthrough_modifiers = ["cmd"]
 
 [mode.normal.mappings]
 # convenient utilities
+"<leader>l" = ["sh", "-c", "shortcuts run log && flash window_move --position=center"]
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
 "<leader>p" = ["sh", "../../scripts/toggle_play.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
