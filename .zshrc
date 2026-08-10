@@ -214,10 +214,10 @@ export SAVEHIST=50000
 setopt EXTENDED_HISTORY HIST_EXPIRE_DUPS_FIRST HIST_FCNTL_LOCK
 setopt HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_NO_FUNCTIONS HIST_NO_STORE
 setopt HIST_REDUCE_BLANKS HIST_SAVE_BY_COPY HIST_SAVE_NO_DUPS
-# INC_APPEND_HISTORY writes each command to $HISTFILE as it runs (not just at exit),
-# so history survives crashes and is available to new shells immediately.
-setopt INC_APPEND_HISTORY
-unsetopt APPEND_HISTORY
+# SHARE_HISTORY writes each command immediately and imports commands written by
+# other live shells, so every tab sees the machine's current history.
+setopt SHARE_HISTORY
+unsetopt APPEND_HISTORY INC_APPEND_HISTORY
 
 # options: input/output
 setopt INTERACTIVE_COMMENTS RC_QUOTES
