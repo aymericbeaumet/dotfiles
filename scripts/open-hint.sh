@@ -88,6 +88,20 @@ fi
 cmd+=" $(printf '%q' "$file")"
 if [[ -n "${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
   exec tmux display-popup -E -w 90% -h 90% "$cmd"
-else
-  exec bash -lc "$cmd"
 fi
+
+# Alacritty launches hint commands as detached children of the terminal process,
+# so they do not inherit TMUX from the active pane. The default tmux socket is
+# still discoverable; target its most recently active attached client explicitly.
+if command -v tmux >/dev/null 2>&1; then
+  tmux_client=$(
+    tmux list-clients -F '#{client_activity} #{client_name}' 2>/dev/null |
+      sort -rn |
+      awk 'NR == 1 { print $2; exit }'
+  )
+  if [[ -n "$tmux_client" ]]; then
+    exec tmux display-popup -E -c "$tmux_client" -w 90% -h 90% "$cmd"
+  fi
+fi
+
+exec bash -lc "$cmd"
