@@ -191,6 +191,10 @@ require_relative_link .config/opencode/AGENTS.md ../../.agents/AGENTS.md
 require_relative_link .claude/skills ../.agents/skills
 rg -Fx 'export OPENCODE_DISABLE_CLAUDE_CODE=1' .zshenv >/dev/null ||
   fail "OpenCode must ignore Claude compatibility paths"
+rg -Fx 'setopt SHARE_HISTORY' .zshrc >/dev/null ||
+  fail "Zsh tabs must share history live"
+rg -Fx 'unsetopt APPEND_HISTORY INC_APPEND_HISTORY' .zshrc >/dev/null ||
+  fail "Zsh shared history must own incremental writes"
 
 tmux_socket="dotfiles-check-$$"
 cleanup_tmux() {
