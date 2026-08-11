@@ -64,6 +64,9 @@ while IFS= read -r link; do
 done < <(git ls-files -s | awk '$1 == "120000" { print $4 }')
 
 while IFS= read -r executable; do
+  if [ ! -e "$executable" ]; then
+    git diff --quiet -- "$executable" || continue
+  fi
   [ "$(head -c 2 "$executable")" = '#!' ] || fail "tracked executable lacks a shebang: $executable"
 done < <(git ls-files -s | awk '$1 == "100755" { print $4 }')
 
@@ -117,6 +120,10 @@ rg -Fx '"aqua:anomalyco/opencode" = "latest"' .config/mise/config.toml >/dev/nul
   fail "OpenCode must be installed through mise"
 rg -Fx '"pipx:semble" = "0.5.4"' .config/mise/config.toml >/dev/null ||
   fail "Semble CLI version must match the MCP configuration"
+rg -Fx 'bottom = "latest"' .config/mise/config.toml >/dev/null ||
+  fail "Bottom must be installed through mise"
+rg -Fx 'alias htop=btm' .zshrc >/dev/null ||
+  fail "htop must invoke the mise-managed Bottom CLI"
 rg -F 'ChatGPT Pro/Plus (headless)' setup.sh >/dev/null ||
   fail "Linux OpenCode authentication must support headless machines"
 
@@ -199,10 +206,26 @@ rg -Fx 'ipc_socket = true' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty same-process scratch startup requires IPC"
 rg -F 'scratch-terminal.sh\" bootstrap' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty must launch the managed scratch window pair"
-rg -Fx "bind 1 select-window -t :=1" .tmux.conf >/dev/null ||
-  fail "tmux prefix+1 must select window 1 on the current host"
-rg -Fx "bind 2 select-window -t :=2" .tmux.conf >/dev/null ||
-  fail "tmux prefix+2 must select window 2 on the current host"
+if rg -n '^bind [0-9]' .tmux.conf >/dev/null; then
+  fail "numeric window selection must use tmux's built-in mappings"
+fi
+rg -Fx 'chars = "\u0011\u0031"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+1 must emit tmux prefix+1"
+rg -Fx 'chars = "\u0011n"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+Shift+] must emit tmux prefix+n"
+rg -Fx 'key = "}"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+Shift+] must match its shifted logical key"
+rg -Fx 'key = "{"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+Shift+[ must match its shifted logical key"
+rg -Fx 'chars = "\u0011v"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+D must emit tmux prefix+v"
+if rg -n 'user-keys|bind -n User' .tmux.conf >/dev/null; then
+  fail "Alacritty shortcuts must use normal tmux prefix mappings"
+fi
+[ ! -e scripts/grid.sh ] || fail "retired tmux grid helper remains"
+if rg -n 'grid\.sh|rows=3|cols=3' .tmux.conf >/dev/null; then
+  fail "retired tmux grid mappings remain"
+fi
 rg -Fx "brew 'mosh'                    # Roaming transport for the Moria scratch window" Brewfile >/dev/null ||
   fail "Mosh must be provisioned on macOS"
 [ ! -e .config/tmuxinator ] || fail "retired tmuxinator profiles remain"
@@ -216,6 +239,11 @@ cleanup_tmux() {
 }
 trap cleanup_tmux EXIT
 tmux -L "$tmux_socket" -f /dev/null new-session -d -s check
+for window_index in 1 2 9; do
+  tmux -L "$tmux_socket" list-keys -T prefix "$window_index" |
+    rg -F "select-window -t :=$window_index" >/dev/null ||
+    fail "tmux default prefix+$window_index mapping is unavailable"
+done
 tmux -L "$tmux_socket" source-file -n .tmux.conf >/dev/null
 cleanup_tmux
 trap - EXIT

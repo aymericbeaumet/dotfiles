@@ -13,6 +13,7 @@ auto_install = false
 actionlint = "1.7.12"
 awscli = "latest"
 bat = "latest"
+bottom = "latest"
 buf = "1.69.0"
 bun = "latest"
 carapace = "latest"
