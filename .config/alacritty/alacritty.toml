@@ -134,11 +134,6 @@ mods = "Command"
 
 [[keyboard.bindings]]
 action = "None"
-key = "Q"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "None"
 key = "W"
 mods = "Command"
 
@@ -255,16 +250,20 @@ history = 0
 [selection]
 save_to_clipboard = true
 
-# Use login shell so PATH includes Homebrew (works on both Apple Silicon and Intel)
+# Use a login shell so Dock launches inherit Homebrew and mise. The bootstrap
+# creates the Moria sibling in this same Alacritty process, then attaches the
+# local scratch session.
 [terminal.shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "exec tmux new-session -A"]
+args = ["-l", "-c", "exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\" bootstrap"]
 
 [window]
 decorations = "None"
+dynamic_title = false
 padding = { x = 0, y = 0 }
 dynamic_padding = true
 startup_mode = "Maximized"
+title = "scratch@macbook"
 option_as_alt = "Both"
 opacity = 1
 blur = true
