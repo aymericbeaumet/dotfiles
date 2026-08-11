@@ -1,8 +1,0 @@
-name: headquarter
-root: ~
-on_project_start: tmux set -t headquarter remain-on-exit on \; set -t headquarter allow-rename off
-
-windows:
-  - ~: btop
-  - ~: nvtop
-  - ~: lazydocker

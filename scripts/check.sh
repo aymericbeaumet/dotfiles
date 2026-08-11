@@ -195,6 +195,20 @@ rg -Fx 'setopt SHARE_HISTORY' .zshrc >/dev/null ||
   fail "Zsh tabs must share history live"
 rg -Fx 'unsetopt APPEND_HISTORY INC_APPEND_HISTORY' .zshrc >/dev/null ||
   fail "Zsh shared history must own incremental writes"
+rg -Fx 'ipc_socket = true' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty same-process scratch startup requires IPC"
+rg -F 'scratch-terminal.sh\" bootstrap' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty must launch the managed scratch window pair"
+rg -Fx "bind 1 select-window -t :=1" .tmux.conf >/dev/null ||
+  fail "tmux prefix+1 must select window 1 on the current host"
+rg -Fx "bind 2 select-window -t :=2" .tmux.conf >/dev/null ||
+  fail "tmux prefix+2 must select window 2 on the current host"
+rg -Fx "brew 'mosh'                    # Roaming transport for the Moria scratch window" Brewfile >/dev/null ||
+  fail "Mosh must be provisioned on macOS"
+[ ! -e .config/tmuxinator ] || fail "retired tmuxinator profiles remain"
+if rg -n 'tmuxinator|headquarter|beside|session-picker' .tmux.conf scripts/status-click.sh >/dev/null; then
+  fail "retired named-session routing remains configured"
+fi
 
 tmux_socket="dotfiles-check-$$"
 cleanup_tmux() {

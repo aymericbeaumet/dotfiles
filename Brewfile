@@ -13,6 +13,7 @@ brew 'zsh'
 
 # macOS-only tools
 brew 'macmon'
+brew 'mosh'                    # Roaming transport for the Moria scratch window
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
 brew 'tw93/tap/mole'

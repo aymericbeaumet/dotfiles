@@ -741,13 +741,6 @@ if $DO_MACOS; then
   info "Screenshot Settings"
   defaults write com.apple.screencapture type -string "png"
 
-  # Free up Cmd+Shift+1/2/3 for terminal use (tmux session-switch via Alacritty).
-  # Only Cmd+Shift+3 is claimed by macOS (symbolic hotkey 28 = "Save picture of
-  # screen as a file"); 1 and 2 have no default global binding. Disabling
-  # requires logout/login (or restart of cfprefsd) to take effect.
-  defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 28 \
-    '{enabled = 0; value = { parameters = (51, 20, 1179648); type = standard; }; }'
-
   info "TextEdit Configuration"
   defaults write com.apple.TextEdit RichText -int 0
 
