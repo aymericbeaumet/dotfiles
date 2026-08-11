@@ -1042,7 +1042,19 @@ return {
 		},
 		config = function()
 			local treesitter = require("nvim-treesitter")
-			treesitter.install(require("config.languages").treesitter_parsers())
+			-- The main branch shells out to the tree-sitter CLI to build parsers. When
+			-- it is missing, install() raises a blocking "Press ENTER" error per parser
+			-- on every startup, so fall back to whatever parsers are already built.
+			if vim.fn.executable("tree-sitter") == 1 then
+				treesitter.install(require("config.languages").treesitter_parsers())
+			else
+				vim.schedule(function()
+					vim.notify(
+						"tree-sitter CLI not found; skipping parser install. Run: mise install tree-sitter",
+						vim.log.levels.WARN
+					)
+				end)
+			end
 
 			local group = vim.api.nvim_create_augroup("aym.treesitter", { clear = true })
 			vim.api.nvim_create_autocmd("FileType", {
