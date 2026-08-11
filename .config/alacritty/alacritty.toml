@@ -69,7 +69,8 @@ chars = "\u0011"
 key = "Q"
 mods = "Control"
 
-# Disable Alacritty's built-in macOS Command shortcuts; Flash owns these chords.
+# Disable Alacritty's built-in macOS Command shortcuts. Tmux window selection
+# below is terminal-native; Flash remains responsible for cross-terminal jumps.
 [[keyboard.bindings]]
 action = "None"
 key = "K"
@@ -133,7 +134,7 @@ key = "M"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011x"
 key = "W"
 mods = "Command"
 
@@ -143,9 +144,19 @@ key = "N"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011c"
 key = "T"
 mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011v"
+key = "D"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011s"
+key = "D"
+mods = "Command|Shift"
 
 [[keyboard.bindings]]
 action = "None"
@@ -165,14 +176,24 @@ mods = "Command"
 mode = "~Search"
 
 [[keyboard.bindings]]
-action = "None"
-key = "]"
+chars = "\u0011n"
+key = "}"
 mods = "Command|Shift"
 
 [[keyboard.bindings]]
-action = "None"
-key = "["
+chars = "\u0011p"
+key = "{"
 mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011o"
+key = "]"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011O"
+key = "["
+mods = "Command"
 
 [[keyboard.bindings]]
 action = "None"
@@ -185,47 +206,47 @@ key = "Tab"
 mods = "Command|Shift"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0031"
 key = "1"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0032"
 key = "2"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0033"
 key = "3"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0034"
 key = "4"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0035"
 key = "5"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0036"
 key = "6"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0037"
 key = "7"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0038"
 key = "8"
 mods = "Command"
 
 [[keyboard.bindings]]
-action = "None"
+chars = "\u0011\u0039"
 key = "9"
 mods = "Command"
 

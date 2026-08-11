@@ -176,6 +176,7 @@ export BAT_PAGER="less -R --mouse --wheel-lines=10"
 # aliases: tools
 alias ap=ansible-playbook
 alias tf=terraform
+alias htop=btm
 alias v=$EDITOR
 alias vi=$EDITOR
 alias vim=$EDITOR
