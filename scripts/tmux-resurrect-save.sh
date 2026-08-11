@@ -16,6 +16,9 @@ done < <(tmux list-panes -a -F '#{pane_id}|#{pane_title}|#{pane_current_command}
 restore_empty_titles() {
   local pane_id
 
+  # Bash 3.2 treats expansion of a declared-but-empty array as unbound under
+  # `set -u`, so avoid expanding it when every pane already had a title.
+  ((${#empty_title_panes[@]})) || return 0
   for pane_id in "${empty_title_panes[@]}"; do
     tmux select-pane -t "$pane_id" -T '' 2>/dev/null || true
   done
