@@ -34,12 +34,7 @@ jobs:
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             sudo apt-get update
-            sudo apt-get install --no-install-recommends --yes ruby zsh
-          else
-            command -v ruby >/dev/null || {
-              brew install ruby
-              echo "$(brew --prefix ruby)/bin" >> "$GITHUB_PATH"
-            }
+            sudo apt-get install --no-install-recommends --yes zsh
           fi
 
       - name: Install portable validators
@@ -56,6 +51,7 @@ jobs:
             stylua = "2.5.2"
             taplo = "0.10.0"
             tmux = "3.6b"
+            yq = "4.53.3"
 
       - name: Run checks
         run: scripts/check.sh

@@ -14,7 +14,31 @@ is_linux() {
 }
 
 file_mtime() {
-  stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null
+  mtime=
+  case "$(dotfiles_uname)" in
+    Darwin | FreeBSD | OpenBSD | NetBSD)
+      mtime=$(stat -f %m "$1" 2>/dev/null) && {
+        printf '%s\n' "$mtime"
+        return 0
+      }
+      ;;
+    *)
+      mtime=$(stat -c %Y "$1" 2>/dev/null) && {
+        printf '%s\n' "$mtime"
+        return 0
+      }
+      ;;
+  esac
+
+  mtime=$(stat -c %Y "$1" 2>/dev/null) && {
+    printf '%s\n' "$mtime"
+    return 0
+  }
+  mtime=$(stat -f %m "$1" 2>/dev/null) && {
+    printf '%s\n' "$mtime"
+    return 0
+  }
+  return 1
 }
 
 epoch_from_iso() {
