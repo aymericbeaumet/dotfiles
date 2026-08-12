@@ -148,6 +148,18 @@ chars = "\u0011c"
 key = "T"
 mods = "Command"
 
+# Ask a reachable tmux client to detach cleanly, then independently restart the
+# active remote window's local transport if the network cannot carry the chord.
+[[keyboard.bindings]]
+chars = "\u0011d"
+key = "R"
+mods = "Command"
+
+[[keyboard.bindings]]
+command = { program = "/bin/bash", args = ["-c", "exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\" reload"] }
+key = "R"
+mods = "Command"
+
 [[keyboard.bindings]]
 chars = "\u0011v"
 key = "D"
