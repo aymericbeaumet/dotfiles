@@ -9,7 +9,7 @@ description: Stage all changes, commit with an auto-generated message, pull/reba
 
 2. **Stage all changes**: Run `git add -A` to stage everything (tracked and untracked).
 
-3. **Generate a commit message**: Analyze the staged diff (`git diff --cached`) and recent commit history. Write a concise, conventional-commit-style message (e.g. `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`). The first line must be under 72 characters. Add a body only if the change is non-trivial. If `$ARGUMENTS` is provided, use it as guidance for the commit message — but still write the message yourself.
+3. **Generate a commit message**: Analyze the staged diff (`git diff --cached`) and recent commit history. The message MUST follow the latest published [Conventional Commits specification](https://www.conventionalcommits.org/): `<type>[optional scope][optional !]: <description>`, followed by an optional body and optional footers separated by blank lines. Use `feat` for a feature and `fix` for a bug fix. Mark a breaking change with `!` before `:` or a `BREAKING CHANGE:` footer. Other types such as `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, and `test` are allowed when they accurately describe the change. Keep the first line under 72 characters. Add a body only if the change is non-trivial. If `$ARGUMENTS` is provided, use it as guidance — but still write and validate the message yourself.
 
 4. **Commit**: Create the commit. Do NOT amend an existing commit. Do NOT use `--no-verify`.
 

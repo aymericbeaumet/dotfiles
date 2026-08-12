@@ -199,6 +199,12 @@ done
 require_relative_link .codex/AGENTS.md ../.agents/AGENTS.md
 require_relative_link .config/opencode/AGENTS.md ../../.agents/AGENTS.md
 require_relative_link .claude/skills ../.agents/skills
+rg -F '[Conventional Commits specification](https://www.conventionalcommits.org/)' AGENTS.md >/dev/null ||
+  fail "AGENTS.md must require the latest Conventional Commits specification"
+for commit_skill in .agents/skills/commit/SKILL.md .agents/skills/push/SKILL.md; do
+  rg -F 'MUST follow the latest published [Conventional Commits specification](https://www.conventionalcommits.org/)' "$commit_skill" >/dev/null ||
+    fail "$commit_skill must enforce the latest Conventional Commits specification"
+done
 rg -Fx 'export OPENCODE_DISABLE_CLAUDE_CODE=1' .zshenv >/dev/null ||
   fail "OpenCode must ignore Claude compatibility paths"
 rg -Fx 'setopt SHARE_HISTORY' .zshrc >/dev/null ||
