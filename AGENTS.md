@@ -8,6 +8,8 @@ client-specific config.
 
 - Prefix shell commands with `rtk` so command output stays concise.
 - Preserve unrelated working-tree changes. This is a live home-directory configuration repo.
+- Every commit message MUST follow the latest published
+  [Conventional Commits specification](https://www.conventionalcommits.org/).
 - Run `scripts/check.sh` after material changes. If an unrelated pre-existing change blocks the
   full check, run the relevant focused validators and report the blocker.
 - Cross-platform user-facing CLIs belong in `.config/mise/config.toml`. Prefer a mise registry
