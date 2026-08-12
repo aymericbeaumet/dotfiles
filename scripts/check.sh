@@ -29,7 +29,7 @@ require() {
   command -v "$1" >/dev/null 2>&1 || fail "required validator not found: $1"
 }
 
-for command_name in actionlint git jq rg ruby shellcheck shfmt stylua taplo tmux zsh; do
+for command_name in actionlint git jq rg shellcheck shfmt stylua taplo tmux yq zsh; do
   require "$command_name"
 done
 
@@ -122,6 +122,8 @@ rg -Fx '"pipx:semble" = "0.5.4"' .config/mise/config.toml >/dev/null ||
   fail "Semble CLI version must match the MCP configuration"
 rg -Fx 'bottom = "latest"' .config/mise/config.toml >/dev/null ||
   fail "Bottom must be installed through mise"
+rg -Fx 'yq = "4.53.3"' .config/mise/config.toml >/dev/null ||
+  fail "yq must be installed through mise"
 rg -Fx 'alias htop=btm' .zshrc >/dev/null ||
   fail "htop must invoke the mise-managed Bottom CLI"
 rg -F 'ChatGPT Pro/Plus (headless)' setup.sh >/dev/null ||
@@ -135,35 +137,32 @@ taplo check "${toml_files[@]}"
 stylua --check .config/nvim
 actionlint
 
-ruby <<'RUBY'
-require "yaml"
+yaml_files=()
+while IFS= read -r yaml_file; do
+  yaml_files+=("$yaml_file")
+done < <(git ls-files '*.yaml' '*.yml')
+if ((${#yaml_files[@]} > 0)); then
+  yq eval '.' "${yaml_files[@]}" >/dev/null
+fi
 
-Encoding.default_external = Encoding::UTF_8
-
-yaml_files = IO.popen(["git", "ls-files", "*.yaml", "*.yml"], &:read).split("\n")
-yaml_files.each { |path| YAML.load_file(path) }
-
-frontmatter_files = Dir[".agents/skills/*/SKILL.md"].sort
-frontmatter_files.each do |path|
-  content = File.read(path)
-  parts = content.split(/^---\s*$\n?/, 3)
-  abort "#{path}: missing YAML frontmatter" unless parts.length == 3 && parts.first.empty?
-
-  metadata = YAML.load(parts[1])
-  abort "#{path}: frontmatter must be a mapping" unless metadata.is_a?(Hash)
-  %w[name description].each do |key|
-    abort "#{path}: missing #{key}" unless metadata[key].is_a?(String) && !metadata[key].empty?
-  end
-
-  next unless path.end_with?("/SKILL.md")
-
-  directory_name = File.basename(File.dirname(path))
-  abort "#{path}: skill name must match directory" unless metadata["name"] == directory_name
-end
-RUBY
+while IFS= read -r skill_file; do
+  skill_name=$(basename "$(dirname "$skill_file")")
+  SKILL_NAME="$skill_name" yq --front-matter=extract -e \
+    '.name == strenv(SKILL_NAME) and (.description | type == "!!str" and . != "")' \
+    "$skill_file" >/dev/null ||
+    fail "$skill_file: frontmatter must define name=$skill_name and a non-empty description"
+done < <(git ls-files '.agents/skills/*/SKILL.md')
 
 section "Application configuration"
-ruby -c Brewfile >/dev/null
+awk '
+  /^[[:space:]]*($|#)/ { next }
+  /^(tap|brew|cask) '\''[^'\'']+'\''([[:space:]]+#.*)?$/ { next }
+  {
+    printf "%s:%d: unsupported Brewfile line: %s\n", FILENAME, FNR, $0 > "/dev/stderr"
+    bad = 1
+  }
+  END { exit bad }
+' Brewfile
 git config --file .gitconfig --list >/dev/null
 RIPGREP_CONFIG_PATH="$repo_root/.config/ripgrep/rc" rg --files >/dev/null
 bash setup.sh --help >/dev/null
