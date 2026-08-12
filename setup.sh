@@ -397,12 +397,25 @@ if $DO_MISE; then
       mise trust "$mise_source_config" >/dev/null 2>&1 || true
     fi
 
-    if [[ -z "${GITHUB_TOKEN:-}" ]] && command -v gh &>/dev/null; then
-      if token=$(gh auth token 2>/dev/null) && [[ -n "$token" ]]; then
-        export GITHUB_TOKEN="$token"
-        info "Using GitHub token from gh for mise release downloads"
+    mise_github_token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+    if command -v gh &>/dev/null; then
+      if keyring_token=$(env -u GH_TOKEN -u GITHUB_TOKEN gh auth token 2>/dev/null) &&
+        [[ -n "$keyring_token" ]]; then
+        mise_github_token="$keyring_token"
       fi
+      unset keyring_token
     fi
+    if [[ -n "$mise_github_token" ]]; then
+      info "Using a scoped GitHub token for mise release downloads"
+    fi
+
+    mise_with_github_token() {
+      if [[ -n "$mise_github_token" ]]; then
+        env -u GH_TOKEN -u GITHUB_TOKEN GITHUB_TOKEN="$mise_github_token" mise "$@"
+      else
+        mise "$@"
+      fi
+    }
 
     install_mise_bootstrap_tool() {
       local tool="$1"
@@ -411,7 +424,7 @@ if $DO_MISE; then
       fi
 
       info "Installing mise bootstrap tool: $tool..."
-      mise install "$tool"
+      mise_with_github_token install "$tool"
       export PATH="$HOME/.local/share/mise/shims:$PATH"
       mise reshim "$tool" >/dev/null 2>&1 || true
       hash -r 2>/dev/null || true
@@ -422,13 +435,13 @@ if $DO_MISE; then
     install_mise_bootstrap_tool pipx
 
     info "Installing mise tools from global config..."
-    if ! mise install; then
+    if ! mise_with_github_token install; then
       warning "Some mise tools failed to install; continuing with available tools"
     fi
     export PATH="$HOME/.local/share/mise/shims:$PATH"
 
     info "Refreshing agent clients and RTK to their configured latest versions..."
-    if ! mise upgrade \
+    if ! mise_with_github_token upgrade \
       rtk \
       aqua:anomalyco/opencode \
       npm:@anthropic-ai/claude-code \

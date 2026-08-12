@@ -167,6 +167,10 @@ git config --file .gitconfig --list >/dev/null
 RIPGREP_CONFIG_PATH="$repo_root/.config/ripgrep/rc" rg --files >/dev/null
 bash setup.sh --help >/dev/null
 
+if rg -q 'GITHUB_TOKEN|GH_TOKEN' .zprofile; then
+  fail "shell startup must not shadow gh keyring authentication with token environment variables"
+fi
+
 if rg -n '^@' .agents/AGENTS.md >/dev/null; then
   fail ".agents/AGENTS.md must be self-contained; client-specific import syntax is not portable"
 fi
@@ -218,9 +222,35 @@ rg -Fx 'key = "{"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+Shift+[ must match its shifted logical key"
 rg -Fx 'chars = "\u0011v"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+D must emit tmux prefix+v"
+rg -Fx 'chars = "\u0011d"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+R must ask tmux to detach cleanly"
+rg -F 'scratch-terminal.sh\" reload' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+R must also restart an unreachable local transport"
+rg -Fx 'set -g default-terminal "tmux-256color"' .tmux.conf >/dev/null ||
+  fail "tmux panes must use the tmux-256color terminfo contract"
+rg -Fx 'set-environment -g COLORTERM truecolor' .tmux.conf >/dev/null ||
+  fail "tmux panes must advertise truecolor to every CLI application"
+rg -Fx "set-environment -g COLORFGBG '15;0'" .tmux.conf >/dev/null ||
+  fail "tmux panes must advertise the shared dark terminal palette"
+rg -Fx 'foreground = "0xD8DEE9"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty must keep the shared Nord foreground"
+rg -Fx 'background = "0x2E3440"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty must keep the shared Nord background"
+rg -Fx 'black = "0x3B4252"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty must keep the shared Nord black"
+rg -Fx 'set -g window-style fg=#D8DEE9,bg=#3B4252' .tmux.conf >/dev/null ||
+  fail "inactive tmux panes must use the shared Nord foreground and black"
+rg -Fx 'set -g window-active-style fg=#D8DEE9,bg=#2E3440' .tmux.conf >/dev/null ||
+  fail "active tmux panes must expose Alacritty foreground and background colors"
 if rg -n 'user-keys|bind -n User' .tmux.conf >/dev/null; then
   fail "Alacritty shortcuts must use normal tmux prefix mappings"
 fi
+rg -F 'scratch_tmp_root=$(cd "$scratch_tmp_root" && pwd -P)' scripts/scratch-terminal.sh >/dev/null ||
+  fail "remote terminal reload state must use a physical macOS temporary path"
+rg -F 'kill -TERM "$child_pid"' scripts/scratch-terminal.sh >/dev/null ||
+  fail "remote terminal reload must request graceful transport shutdown"
+rg -F 'kill -KILL "$child_pid"' scripts/scratch-terminal.sh >/dev/null ||
+  fail "remote terminal reload must bound a stuck transport shutdown"
 [ ! -e scripts/grid.sh ] || fail "retired tmux grid helper remains"
 if rg -n 'grid\.sh|rows=3|cols=3' .tmux.conf >/dev/null; then
   fail "retired tmux grid mappings remain"
