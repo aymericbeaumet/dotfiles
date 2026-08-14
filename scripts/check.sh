@@ -108,14 +108,29 @@ jq -e '
 ' .config/opencode/opencode.json >/dev/null
 
 jq -e '
+  .env.CLAUDE_CODE_RETRY_WATCHDOG == "1" and
   .env.ENABLE_CLAUDEAI_MCP_SERVERS == "0" and
   .env.ENABLE_TOOL_SEARCH == "true" and
   [.permissions.allow[] | select(startswith("mcp__"))] == ["mcp__semble__*"] and
   ([.hooks.SessionStart[]?.hooks[]?.command] |
-    any(contains("scripts/agent-instructions.sh")))
+    any(contains("scripts/agent-instructions.sh"))) and
+  ([.hooks.StopFailure[]?.hooks[]?.command] |
+    any(contains("scripts/claude-retry.sh failure"))) and
+  ([.hooks.Stop[]?.hooks[]?.command] |
+    any(contains("scripts/claude-retry.sh reset")))
 ' .claude/settings.json >/dev/null
 
 [ -f .config/opencode/plugins/rtk.ts ] || fail "missing OpenCode RTK plugin"
+[ -f .config/opencode/plugins/transient-retry.ts ] || fail "missing OpenCode transient-retry plugin"
+[ -x scripts/claude-retry.sh ] || fail "Claude retry hook must be executable"
+printf '%s\n' \
+  '{"error":"unknown","error_details":"API Error: Connection closed mid-response"}' |
+  scripts/claude-retry.sh classify || fail "Claude retry hook missed a transient connection error"
+if printf '%s\n' \
+  '{"error":"unknown","error_details":"Authentication failed"}' |
+  scripts/claude-retry.sh classify; then
+  fail "Claude retry hook must not retry permanent authentication errors"
+fi
 rg -Fx '"aqua:anomalyco/opencode" = "latest"' .config/mise/config.toml >/dev/null ||
   fail "OpenCode must be installed through mise"
 rg -Fx '"pipx:semble" = "0.5.4"' .config/mise/config.toml >/dev/null ||
@@ -128,6 +143,10 @@ rg -Fx 'alias htop=btm' .zshrc >/dev/null ||
   fail "htop must invoke the mise-managed Bottom CLI"
 rg -F 'ChatGPT Pro/Plus (headless)' setup.sh >/dev/null ||
   fail "Linux OpenCode authentication must support headless machines"
+rg -F '"$CLAUDE_MISE_ROOT/node_modules/@anthropic-ai/claude-code/install.cjs"' setup.sh >/dev/null ||
+  fail "Claude postinstall repair must support mise's aube npm layout"
+rg -F '"$CLAUDE_MISE_ROOT/lib/node_modules/@anthropic-ai/claude-code/install.cjs"' setup.sh >/dev/null ||
+  fail "Claude postinstall repair must support mise's legacy npm layout"
 
 toml_files=()
 while IFS= read -r toml_file; do
@@ -156,13 +175,23 @@ done < <(git ls-files '.agents/skills/*/SKILL.md')
 section "Application configuration"
 awk '
   /^[[:space:]]*($|#)/ { next }
-  /^(tap|brew|cask) '\''[^'\'']+'\''([[:space:]]+#.*)?$/ { next }
+  /^tap '\''[^'\'']+'\'', trusted: true([[:space:]]+#.*)?$/ { next }
+  /^(brew|cask) '\''[^'\'']+'\''([[:space:]]+#.*)?$/ { next }
   {
     printf "%s:%d: unsupported Brewfile line: %s\n", FILENAME, FNR, $0 > "/dev/stderr"
     bad = 1
   }
   END { exit bad }
 ' Brewfile
+rg -F 'brew bundle cleanup --force --no-tap --file ./Brewfile' setup.sh >/dev/null ||
+  fail "Homebrew Bundle cleanup must leave tap removal to the noninteractive force-untap pass"
+rg -F 'HOMEBREW_NO_REQUIRE_TAP_TRUST=1 brew untap --force "$tap_name"' setup.sh >/dev/null ||
+  fail "stale Homebrew taps must be removed without prompting"
+rg -Fx "brew 'mole'" Brewfile >/dev/null ||
+  fail "Mole must use its current Homebrew Core formula"
+if rg -n 'tw93/tap' Brewfile >/dev/null; then
+  fail "retired Mole tap remains in Brewfile"
+fi
 git config --file .gitconfig --list >/dev/null
 RIPGREP_CONFIG_PATH="$repo_root/.config/ripgrep/rc" rg --files >/dev/null
 bash setup.sh --help >/dev/null

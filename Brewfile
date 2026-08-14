@@ -2,8 +2,7 @@
 # setup.sh never runs this file on Linux. Cross-platform user-facing CLIs
 # belong in .config/mise/config.toml, and OS/system packages belong in setup.sh.
 
-tap 'tw93/tap'
-tap 'netbirdio/tap'
+tap 'netbirdio/tap', trusted: true
 
 # Bootstrap formulae (also ensured early in setup.sh). Listed here so
 # `brew bundle cleanup` keeps them instead of uninstalling them. These are
@@ -13,10 +12,10 @@ brew 'zsh'
 
 # macOS-only tools
 brew 'macmon'
+brew 'mole'
 brew 'mosh'                    # Roaming transport for the Moria scratch window
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
-brew 'tw93/tap/mole'
 cask 'ngrok'                   # ngrok tunnels CLI (Homebrew ships it as a cask)
 
 # macOS GUI applications

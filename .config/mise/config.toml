@@ -10,6 +10,7 @@ auto_install = false
 
 [tools]
 "aqua:anomalyco/opencode" = "latest"
+"aqua:scaleway/scaleway-cli" = "latest"
 actionlint = "1.7.12"
 awscli = "latest"
 bat = "latest"
