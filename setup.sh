@@ -338,11 +338,9 @@ if $DO_BREWFILE; then
     warning "Homebrew not found, skipping Brewfile"
   elif [[ -f ./Brewfile ]]; then
     info "Installing macOS software from Brewfile..."
-    # Homebrew refuses to load formulae/casks from untrusted third-party taps,
-    # which breaks both bundle installation and cleanup. Trust every installed
-    # tap so cleanup can inspect and remove stale formulae, plus every tap the
-    # Brewfile references so installation works on a fresh machine. Trust is
-    # persistent, so later manual `brew bundle` runs also just work.
+    # Trust every installed tap so Bundle can inspect stale packages while it
+    # builds the cleanup plan. Brewfile taps also declare `trusted: true`, which
+    # keeps their trust after forced cleanup resets Homebrew's global trust store.
     while IFS= read -r tap_name; do
       [[ -n "$tap_name" ]] || continue
       info "Trusting Homebrew tap: $tap_name"
@@ -356,7 +354,22 @@ if $DO_BREWFILE; then
     } | sort -u)
     brew bundle install --no-upgrade --file ./Brewfile
     info "Pruning Homebrew packages not listed in Brewfile..."
-    brew bundle cleanup --force --file ./Brewfile
+    # Homebrew Bundle does not forward --force to its nested `brew untap`, and
+    # forced cleanup resets trust before uninstalling stale third-party items.
+    # Clean packages without tap removal under the narrowly scoped compatibility
+    # override, then force-untap stale taps explicitly so neither step prompts.
+    HOMEBREW_NO_REQUIRE_TAP_TRUST=1 \
+      brew bundle cleanup --force --no-tap --file ./Brewfile
+
+    brewfile_taps=$(brew bundle list --tap --file ./Brewfile)
+    while IFS= read -r tap_name; do
+      [[ -n "$tap_name" ]] || continue
+      [[ "$tap_name" != homebrew/* ]] || continue
+      grep -Fxq "$tap_name" <<<"$brewfile_taps" && continue
+
+      info "Untapping Homebrew tap not listed in Brewfile: $tap_name"
+      HOMEBREW_NO_REQUIRE_TAP_TRUST=1 brew untap --force "$tap_name"
+    done < <(brew tap)
   else
     warning "Brewfile not found, skipping Homebrew dependencies"
   fi
@@ -453,9 +466,20 @@ if $DO_MISE; then
     # Some npm/mise upgrades finish before its postinstall links that executable;
     # rerunning the documented postinstall is harmless and repairs that state.
     CLAUDE_MISE_ROOT=$(mise where npm:@anthropic-ai/claude-code 2>/dev/null || true)
-    CLAUDE_POSTINSTALL="$CLAUDE_MISE_ROOT/lib/node_modules/@anthropic-ai/claude-code/install.cjs"
-    if [[ -f "$CLAUDE_POSTINSTALL" ]]; then
-      mise exec npm:@anthropic-ai/claude-code -- node "$CLAUDE_POSTINSTALL"
+    CLAUDE_POSTINSTALL=""
+    for claude_postinstall_candidate in \
+      "$CLAUDE_MISE_ROOT/node_modules/@anthropic-ai/claude-code/install.cjs" \
+      "$CLAUDE_MISE_ROOT/lib/node_modules/@anthropic-ai/claude-code/install.cjs"; do
+      if [[ -f "$claude_postinstall_candidate" ]]; then
+        CLAUDE_POSTINSTALL="$claude_postinstall_candidate"
+        break
+      fi
+    done
+    if [[ -n "$CLAUDE_POSTINSTALL" ]]; then
+      (
+        cd "$(dirname "$CLAUDE_POSTINSTALL")"
+        mise exec npm:@anthropic-ai/claude-code -- node install.cjs
+      )
     fi
     mise reshim >/dev/null 2>&1 || true
     hash -r 2>/dev/null || true

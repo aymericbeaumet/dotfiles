@@ -41,6 +41,15 @@ adapter or the same skill IDs twice.
 - OpenCode enables automatic compaction and old-tool-output pruning.
 - Skill bodies and supporting files remain unloaded until a matching skill is selected.
 
+## Failure recovery
+
+- Claude enables its supported retry watchdog. If a partial-response failure still reaches
+  `StopFailure`, the recovery hook sends `continue` only after the same tmux pane stays unchanged;
+  outside tmux, the native watchdog still applies.
+- OpenCode adds at most three guarded continuations per session, only when a terminal
+  provider/network error escaped its native retry loop. User activity cancels a pending retry.
+- Codex keeps its native request/stream retries and goals without terminal-error input injection.
+
 ## MCP policy
 
 All three clients are reconciled by `setup.sh` to exactly one global MCP server:
@@ -61,3 +70,4 @@ OpenCode authentication uses the ChatGPT browser flow on macOS and its headless 
 | `scripts/format-on-save.sh` | Formats files after edits |
 | `scripts/agent-pane-idle.sh` | Tracks tmux pane state |
 | `scripts/agent-pane-title.sh` | Updates compatible terminal pane titles |
+| `scripts/claude-retry.sh` | Continues transient Claude failures only while its tmux pane stays unchanged |
