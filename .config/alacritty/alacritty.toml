@@ -278,10 +278,13 @@ action = "ReceiveChar"
 mouse = "Right"
 
 [scrolling]
+# Scratch runs inside tmux, which owns scrollback for inline programs and
+# forwards wheel events to TUIs that enable native mouse tracking.
 history = 0
 
 [selection]
-save_to_clipboard = true
+# Tmux selections copy through scripts/clip.sh; avoid a second AppKit write.
+save_to_clipboard = false
 
 # Use a login shell so Dock launches inherit Homebrew and mise. The bootstrap
 # creates the Moria sibling in this same Alacritty process, then attaches the

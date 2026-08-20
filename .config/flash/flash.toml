@@ -2,18 +2,19 @@
 keys = "<colemak>"
 
 [open]
-ignored_apps = ["com.flash.app", "com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
+ignored_apps = ["com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
 
 [statusbar]
 enabled = true
 monitor = "primary"
 template = """
-#[align=left]#{mode}#[fg=colour245] · #[link=https://news.ycombinator.com]#[fg=colour178]HN#[fg=colour245]#[nolink] #{=80…:cycle:../../scripts/hn-top-stories.sh}
+#[align=left]#{mode}#[fg=colour245] · #[link=https://news.ycombinator.com]#[fg=colour178]HN#[fg=colour245]#[nolink] #{cycle:../../scripts/hn-top-stories.sh}
 
 #[align=center]#{active_app_name}
 
 #[align=right]
 #[link=https://claude.ai/new#settings/usage]#[fg=colour178]Cld#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --claude}#[nolink]
+#[fg=colour245] · #[link=https://claude.ai/new#settings/usage]#[fg=colour178]Fbl#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --fable}#[nolink]
 #[fg=colour245] · #[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]#[fg=colour178]Cdx#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --codex}#[nolink]
 #[fg=colour245] · #{plugin:system.battery}
 #[fg=colour245] · #{date}
@@ -45,9 +46,11 @@ sequence_timeout_ms = 1000
 
 [mode.normal]
 leader = "<space>"
-# Unmapped chords carrying these modifiers pass through to the focused app
-# (e.g. cmd+T -> new tab) while staying in NORMAL. Explicit mappings still win.
-passthrough_modifiers = ["cmd"]
+# Named unmapped keys enter INSERT and continue to the focused app unchanged.
+passthrough_keys = ["escape"]
+# Unmapped shortcuts carrying these modifiers enter INSERT and continue to the
+# focused app or macOS unchanged. Explicit mappings still win.
+passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 
 [mode.normal.mappings]
 # convenient utilities

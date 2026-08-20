@@ -1,25 +1,29 @@
 #!/bin/sh
 # Hacker News top stories for the Flash status bar's #{cycle:…} token.
 # Emits ONE story per line: a clickable `#[link=…]title#[nolink]` run linking to
-# the HN discussion, followed by a `↗` linking straight to the article (omitted
-# for self/Ask/Show posts that carry no external URL). The bar reels through
-# them. The static "HN" label lives in the template, not here. Network work is
-# cached with a TTL and refreshed in the background so the bar never blocks on
-# curl.
+# the HN discussion, followed when space permits by the article domain in
+# parentheses linking to HN's submissions for that domain, then a `↗` linking
+# straight to the article (omitted for self/Ask/Show posts that carry no external
+# URL). The bar reels through them. The static "HN" label links to HN from the
+# template, not here. Network work is cached with a TTL and refreshed in the
+# background so the bar never blocks on curl.
 
 DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
 
 now=$(date +%s)
 cache_root="${TMPDIR:-/tmp}/flash-hn-top-stories"
-# rendered-v1: the multi-line, marked-up output (one story per line).
-rendered_cache="$cache_root/rendered-v1.txt"
+# rendered-v4: the multi-line, marked-up output with distinct discussion,
+# domain-submission, and article links (one story per line). The versioned name
+# invalidates rows whose domain and arrow shared the article link.
+rendered_cache="$cache_root/rendered-v4.txt"
 refresh_lock="$cache_root/refresh.lock"
 : "${HN_STORIES_COUNT:=8}"
 : "${HN_RENDER_TTL_SECONDS:=300}"
 : "${HN_REFRESH_LOCK_SECONDS:=60}"
-# Capped below the bar's 80-col width so the trailing " ↗" always fits.
-: "${HN_TITLE_MAX_CHARS:=78}"
+# Keep the title itself below the bar's 80-column token cap; the formatter owns
+# final truncation of the optional domain and arrow suffix.
+: "${HN_TITLE_MAX_CHARS:=160}"
 
 cache_is_fresh() {
   file=${1:-}
@@ -96,11 +100,31 @@ render_stories() {
     title=$(printf '%s' "$title" | awk -v max="$HN_TITLE_MAX_CHARS" \
       '{ if (length($0) > max) printf "%s…", substr($0, 1, max - 1); else printf "%s", $0 }')
 
-    # Article URL powers the trailing ↗; self/Ask/Show posts have none → no arrow.
+    # Article URL powers the optional domain + ↗ suffix; self/Ask/Show posts have
+    # none, so they keep only the HN-discussion title link.
     url=$(printf '%s' "$item" | jq -r '.url // empty' 2>/dev/null)
+    domain=$(printf '%s' "$item" |
+      jq -r '
+        (.url // "") as $url
+        | if $url == "" then ""
+          else
+            try (
+              $url
+              | capture("^[A-Za-z][A-Za-z0-9+.-]*://(?<host>[^/:?#]+)")
+              | .host
+              | sub("^www\\."; "")
+            ) catch ""
+          end
+      ' 2>/dev/null)
 
-    line="#[link=https://news.ycombinator.com/item?id=${id}]${title}#[nolink]"
-    [ -n "$url" ] && line="${line} #[link=${url}]#[fg=colour178]↗#[fg=colour245]#[nolink]"
+    line="#[link=https://news.ycombinator.com/item?id=${id}]#[shrink]${title}#[noshrink]#[nolink]"
+    if [ -n "$url" ]; then
+      if [ -n "$domain" ]; then
+        line="${line} #[link=https://news.ycombinator.com/from?site=${domain}]#[fg=colour245](${domain})#[nolink] #[link=${url}]#[fg=colour178]↗#[fg=colour245]#[nolink]"
+      else
+        line="${line} #[link=${url}]#[fg=colour178]↗#[fg=colour245]#[nolink]"
+      fi
+    fi
     out="${out}${line}
 "
   done

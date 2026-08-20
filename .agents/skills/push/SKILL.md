@@ -1,21 +1,22 @@
 ---
 name: push
-description: Stage all changes, commit with an auto-generated message, pull/rebase remote, and push.
+description: Synchronize and push existing commits without staging or committing. Use when the user asks to push or publish the current branch.
 ---
 
-## Task
+# Push
 
-1. **Gather context**: Run `git status --short`, `git diff --stat`, `git log --oneline -5`, and `git rev-parse --abbrev-ref HEAD`.
+Do not stage files or create, amend, squash, or otherwise rewrite commits except for the explicit
+upstream rebase below. Preserve all staged and unstaged worktree changes.
 
-2. **Stage all changes**: Run `git add -A` to stage everything (tracked and untracked).
+1. Inspect the current branch, worktree and index status, configured upstream, recent commits, and
+   remotes.
+2. Fetch the current branch's remote when it has an upstream.
+3. Compare `HEAD` with its upstream. When the upstream is ahead or histories diverged, require a
+   clean worktree and index, then rebase onto the upstream.
+4. If rebase conflicts occur, resolve clear conflicts, stage only the resolutions, and continue the
+   rebase. If a resolution is ambiguous or risky, abort the rebase and stop the pipeline.
+5. Push with `git push`. If no upstream exists, use `git push -u origin HEAD` after confirming that
+   `origin` exists.
+6. Never force-push or bypass hooks.
 
-3. **Generate a commit message**: Analyze the staged diff (`git diff --cached`) and recent commit history. The message MUST follow the latest published [Conventional Commits specification](https://www.conventionalcommits.org/): `<type>[optional scope][optional !]: <description>`, followed by an optional body and optional footers separated by blank lines. Use `feat` for a feature and `fix` for a bug fix. Mark a breaking change with `!` before `:` or a `BREAKING CHANGE:` footer. Other types such as `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, and `test` are allowed when they accurately describe the change. Keep the first line under 72 characters. Add a body only if the change is non-trivial. If `$ARGUMENTS` is provided, use it as guidance — but still write and validate the message yourself.
-
-4. **Commit**: Create the commit. Do NOT amend an existing commit. Do NOT use `--no-verify`.
-
-5. **Pull with rebase**: Run `git pull --rebase` to fetch and rebase on top of the remote branch. If the current branch has no upstream, skip this step.
-   - If there are rebase conflicts, attempt to resolve them automatically by reading the conflicted files, making sensible choices, staging the resolved files, and running `git rebase --continue`. If a conflict is ambiguous or risky, abort the rebase (`git rebase --abort`) and report the issue to the user — do NOT force through.
-
-6. **Push**: Run `git push`. If the branch has no upstream, use `git push -u origin HEAD`.
-
-Report the commit message, number of files changed, and whether the push succeeded.
+Report the branch, synchronization performed, and push result.

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
+  "$docs": "https://code.claude.com/docs/en/keybindings",
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "escape": null,
+        "ctrl+t": "chat:modelPicker"
+      }
+    },
+    {
+      "context": "ModelPicker",
+      "bindings": {
+        "ctrl+t": "modelPicker:increaseEffort"
+      }
+    },
+    {
+      "context": "Confirmation",
+      "bindings": {
+        "k": "confirm:previous",
+        "j": "confirm:next"
+      }
+    },
+    {
+      "context": "DiffDialog",
+      "bindings": {
+        "h": "diff:previousSource",
+        "l": "diff:nextSource",
+        "k": "diff:previousFile",
+        "j": "diff:nextFile"
+      }
+    },
+    {
+      "context": "Tabs",
+      "bindings": {
+        "h": "tabs:previous",
+        "l": "tabs:next"
+      }
+    },
+    {
+      "context": "Footer",
+      "bindings": {
+        "k": "footer:up",
+        "j": "footer:down",
+        "h": "footer:previous",
+        "l": "footer:next"
+      }
+    },
+    {
+      "context": "Attachments",
+      "bindings": {
+        "h": "attachments:previous",
+        "l": "attachments:next"
+      }
+    }
+  ]
+}

@@ -458,6 +458,7 @@ if $DO_MISE; then
       rtk \
       aqua:anomalyco/opencode \
       npm:@anthropic-ai/claude-code \
+      npm:@earendil-works/pi-coding-agent \
       npm:@openai/codex; then
       warning "Some agent tools failed to upgrade; continuing with installed versions"
     fi
@@ -536,13 +537,13 @@ if $DO_SYMLINKS; then
   info "Linking dotfiles and Brewfile..."
   while IFS= read -r file; do
     symlink "${file#./}"
-  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type f -o -type l \) \( -name '.*' -o -name 'Brewfile' \))
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 \( -type f -o -type l \) \( -name '.*' -o -name 'Brewfile' \) \! -name '.memories' \! -name '.handouts')
 
   # Symlink hidden directories
   info "Linking hidden directories..."
   while IFS= read -r dir; do
     symlink "${dir#./}"
-  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type d -name '.*' \! -name '.config' \! -name '.git')
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type d -name '.*' \! -name '.config' \! -name '.git' \! -name '.memories' \! -name '.handouts')
 
   # Symlink .config directories
   if [[ -d .config ]]; then
@@ -556,6 +557,36 @@ if $DO_SYMLINKS; then
 
 else
   skip "Symlinking Dotfiles"
+fi
+
+banner "SETUP AGENT CONTINUITY"
+SHARED_MEMORY_ROOT="$PWD/.agents/memories"
+if [[ -e "$SHARED_MEMORY_ROOT/.git" || -L "$SHARED_MEMORY_ROOT/.git" ]]; then
+  LEGACY_MEMORY_ARCHIVE="$PWD/.agents/memories.codex-native-legacy"
+  if [[ -e "$LEGACY_MEMORY_ARCHIVE" || -L "$LEGACY_MEMORY_ARCHIVE" ]]; then
+    LEGACY_MEMORY_ARCHIVE="${LEGACY_MEMORY_ARCHIVE}.$(date '+%Y%m%d%H%M%S')"
+  fi
+  warning "Archiving legacy nested agent memory: $SHARED_MEMORY_ROOT -> $LEGACY_MEMORY_ARCHIVE"
+  mv "$SHARED_MEMORY_ROOT" "$LEGACY_MEMORY_ARCHIVE"
+fi
+mkdir -p "$SHARED_MEMORY_ROOT"
+chmod 700 "$SHARED_MEMORY_ROOT"
+SHARED_MEMORY_PATH=$("$PWD/scripts/project-memory.sh" --path "$PWD")
+info "Initialized shared project memory: $SHARED_MEMORY_PATH"
+
+if command -v codex &>/dev/null; then
+  codex features enable hooks
+  codex features disable memories
+  info "Enabled tracked Codex hooks and disabled Codex native memory"
+  if ! command -v node &>/dev/null; then
+    warning "Node.js not found; cannot configure Codex hook trust"
+  elif [[ ! -f "$HOME/.codex/hooks.json" ]]; then
+    warning "Codex hooks are not linked at $HOME/.codex/hooks.json; skipping trust configuration"
+  else
+    node "$PWD/scripts/configure-codex-hooks.mjs" "$PWD"
+  fi
+else
+  warning "Codex not found; cannot configure hooks or disable its native memory"
 fi
 
 banner "SETUP AGENT MCP SERVERS"
@@ -626,6 +657,15 @@ if $DO_OPENCODE; then
   fi
 else
   skip "OpenCode ChatGPT/Codex Authentication"
+fi
+
+banner "SETUP PI"
+if ! command -v pi &>/dev/null; then
+  warning "Pi not found; run setup with mise enabled to install it"
+elif pi auth check --provider openai-codex --no-refresh &>/dev/null; then
+  info "Pi is already authenticated with ChatGPT/Codex"
+else
+  warning "Pi needs separate authentication: run 'pi', then '/login openai-codex'"
 fi
 
 banner "SETUP NEOVIM"

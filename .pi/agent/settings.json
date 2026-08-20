@@ -1,0 +1,28 @@
+{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultThinkingLevel": "xhigh",
+  "enabledModels": [
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-terra",
+    "openai-codex/gpt-5.6-luna"
+  ],
+  "theme": "nord",
+  "tuiMode": "fullscreen",
+  "fullscreenExitOutput": "resume-hint",
+  "fullscreenScrollbar": "auto",
+  "defaultProjectTrust": "ask",
+  "enableInstallTelemetry": false,
+  "enableSkillCommands": true,
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 20000,
+    "keepRecentTokens": 20000
+  },
+  "extensions": [
+    "extensions/project-memory.ts",
+    "extensions/tmux-title.ts",
+    "~/.local/share/mise/installs/npm-earendil-works-pi-coding-agent/latest/node_modules/@earendil-works/pi-coding-agent/examples/extensions/subagent"
+  ],
+  "lastChangelogVersion": "0.84.2"
+}

@@ -8,6 +8,9 @@ setopt noglobalrcs
 # compatibility fallback so the .claude adapter is not discovered a second time.
 export OPENCODE_DISABLE_CLAUDE_CODE=1
 
+# mise owns Pi upgrades, so skip its independent startup version check.
+export PI_SKIP_VERSION_CHECK=1
+
 # load secret env files
 if [[ -f "$HOME/.zshsecret" ]]; then
   source "$HOME/.zshsecret"

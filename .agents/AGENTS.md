@@ -3,6 +3,35 @@
 These defaults apply across repositories and clients. A repository's own `AGENTS.md` adds the
 project-specific commands and constraints.
 
+## Git branches
+
+- Name every branch you create `ab/<slug>`, using a short lowercase kebab-case slug.
+
+## Git workflows
+
+- Treat slash-separated Git workflow names in a user request as an ordered pipeline of the matching
+  skills. For example, `commit/push` means run `commit`, then `push`.
+- Re-inspect repository state between pipeline stages. Stop immediately when a stage fails or needs
+  user input; do not continue with later stages.
+- Do not infer omitted workflow stages. The `pullrequest` skill is explicitly end-to-end: invoke it
+  once and let it create commits, publish the branch, create or update the PR, and converge review
+  and CI based on live state.
+
+## Project continuity
+
+- Treat `.memories/MEMORY.md` as the canonical local project memory shared by every client.
+  Maintain it proactively after non-trivial work when concise, non-secret, non-obvious project
+  knowledge would materially help future sessions; otherwise leave it unchanged.
+- Treat the applicable `AGENTS.md` chain as committed project guidance, not as a session log or a
+  substitute for shared project memory.
+- Use the `distill` skill when asked to integrate durable, reusable lessons into the narrowest
+  applicable `AGENTS.md`.
+- Keep unfinished work and session-resumption details in `.handouts/`, not in `.memories/` or
+  `AGENTS.md`.
+- Do not copy memory into handouts or distill it into `AGENTS.md` automatically; each surface has a
+  separate lifecycle.
+- Never save project memory in a client-specific memory or state directory.
+
 ## Token-efficient shell use
 
 - Prefix every shell command with `rtk`.
@@ -21,3 +50,14 @@ project-specific commands and constraints.
 - For prose or configuration discovery, use
   `rtk proxy semble search --content docs config --max-snippet-lines 10 "<query>" <path>`.
 - Use `rg` for exact strings, filenames, and exhaustive caller/reference searches.
+
+## Parallel delegation
+
+- When two or more non-trivial workstreams are independent, launch all suitable subagents in one
+  assistant message so they execute concurrently.
+- Give each subagent a disjoint scope, complete context, expected output, and verification needs.
+- Do not duplicate delegated work. Wait for all relevant results before integrating them.
+- Parallelize edits only when agents own disjoint files; otherwise parallelize research and keep
+  integration serial.
+- Do not delegate trivial reads, exact-string searches, or work involving only one or two known
+  files.

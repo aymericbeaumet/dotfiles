@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Stage all changes and commit with an auto-generated message. Does NOT push.
+description: Stage all changes and create a Conventional Commit without pushing. Use when the user asks to commit all current changes.
 ---
 
 ## Task
@@ -9,7 +9,7 @@ description: Stage all changes and commit with an auto-generated message. Does N
 
 2. **Stage all changes**: Run `git add -A` to stage everything (tracked and untracked).
 
-3. **Generate a commit message**: Analyze the staged diff (`git diff --cached`) and recent commit history. The message MUST follow the latest published [Conventional Commits specification](https://www.conventionalcommits.org/): `<type>[optional scope][optional !]: <description>`, followed by an optional body and optional footers separated by blank lines. Use `feat` for a feature and `fix` for a bug fix. Mark a breaking change with `!` before `:` or a `BREAKING CHANGE:` footer. Other types such as `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, and `test` are allowed when they accurately describe the change. Keep the first line under 72 characters. Add a body only if the change is non-trivial. If `$ARGUMENTS` is provided, use it as guidance — but still write and validate the message yourself.
+3. **Generate a commit message**: Analyze the staged diff (`git diff --cached`) and recent commit history. The message MUST follow the latest published [Conventional Commits specification](https://www.conventionalcommits.org/): `<type>[optional scope][optional !]: <description>`, followed by an optional body and optional footers separated by blank lines. Use `feat` for a feature and `fix` for a bug fix. Mark a breaking change with `!` before `:` or a `BREAKING CHANGE:` footer. Other types such as `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, and `test` are allowed when they accurately describe the change. Keep the first line under 72 characters. Add a body only if the change is non-trivial. If the user's request includes commit-message guidance, use it as guidance, but still write and validate the message yourself.
 
 4. **Commit**: Create the commit. Do NOT amend an existing commit. Do NOT use `--no-verify`. Do NOT push.
 

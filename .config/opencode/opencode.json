@@ -1,28 +1,44 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "openai/gpt-5.6-sol",
+  "small_model": "openai/gpt-5.6-luna-fast",
   "autoupdate": false,
   "compaction": {
     "auto": true,
     "prune": true,
-    "reserved": 20000
+    "reserved": 20000,
+    "tail_turns": 15
   },
-  "watcher": {
-    "ignore": [
-      ".git/**",
-      "node_modules/**",
-      "dist/**",
-      "build/**",
-      ".next/**",
-      "target/**",
-      ".venv/**"
-    ]
+  "permission": "allow",
+  "tool_output": {
+    "max_lines": 200,
+    "max_bytes": 8192
+  },
+  "agent": {
+    "explore": {
+      "model": "openai/gpt-5.6-luna-fast",
+      "variant": "low"
+    }
+  },
+  "provider": {
+    "openai": {
+      "models": {
+        "gpt-5.6-sol": {
+          "variants": {
+            "none": {
+              "disabled": true
+            }
+          }
+        }
+      }
+    }
   },
   "mcp": {
     "semble": {
       "type": "local",
       "command": ["uvx", "--from", "semble[mcp]==0.5.4", "semble"],
-      "enabled": true
+      "enabled": true,
+      "timeout": 30000
     }
   }
 }

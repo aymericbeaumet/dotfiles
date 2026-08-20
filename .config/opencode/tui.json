@@ -1,0 +1,19 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "theme": "nord",
+  "mouse": true,
+  "scroll_acceleration": {
+    "enabled": true
+  },
+  "keybinds": {
+    "command_list": "<leader>p",
+    "input_move_left": "left,ctrl+b",
+    "input_move_right": "right,ctrl+f",
+    "input_move_up": "up,ctrl+p",
+    "input_move_down": "down,ctrl+n",
+    "model_cycle_favorite": "f3",
+    "model_cycle_favorite_reverse": "shift+f3",
+    "variant_cycle": "ctrl+t",
+    "variant_list": "<leader>v"
+  }
+}

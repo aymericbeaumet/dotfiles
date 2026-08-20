@@ -85,6 +85,7 @@ lazy-lock.json
 # Claude
 .claude/*
 !.claude/settings.json
+!.claude/keybindings.json
 !.claude/skills
 .claude/settings.local.json
 .claude/worktrees/
@@ -92,13 +93,14 @@ lazy-lock.json
 # Codex
 .codex/*
 !.codex/AGENTS.md
+!.codex/hooks.json
 !.codex/rules/
 
-# Codex system skills (auto-managed)
-.agents/skills/.system/
-
-# Shared agent memory (managed separately)
+# Shared and legacy agent memory (preserved locally)
 .agents/memories/
+/.agents/memories.codex-native-legacy*/
+/.memories
+/.handouts/
 
 *.lock
 automatic_backups/
