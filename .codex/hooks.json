@@ -1,0 +1,61 @@
+{
+  "description": "Portable dotfiles hooks shared by Codex installations.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/project-memory.sh'",
+            "timeout": 5,
+            "additionalContextLimit": 0
+          },
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh busy'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh idle'",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-title.sh codex'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/format-on-save.sh'",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

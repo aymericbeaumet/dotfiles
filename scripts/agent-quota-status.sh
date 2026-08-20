@@ -1,5 +1,5 @@
 #!/bin/sh
-# Claude/Codex quota usage for tmux status-right.
+# Claude, Fable, and Codex quota usage for status bars.
 
 DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
@@ -8,14 +8,15 @@ DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit
 # otherwise find the mise-managed codex/jq binaries used by this helper.
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
 
-now=$(date +%s)
+now=${AGENT_QUOTA_TEST_NOW:-$(date +%s)}
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
-last_good="$cache_root/rendered-v4.last"
-legacy_last_good="$cache_root/rendered-v3.last"
+last_good="$cache_root/rendered-v5.last"
+legacy_last_good="$cache_root/rendered-v4.last"
 claude_status_cache="$cache_root/rendered-claude-v1.last"
+fable_status_cache="$cache_root/rendered-fable-v1.last"
 codex_status_cache="$cache_root/rendered-codex-v1.last"
-claude_usage_cache="$cache_root/claude-usage.tsv"
-claude_usage_backoff="$cache_root/claude-usage.next"
+claude_usage_cache="$cache_root/claude-usage-v2.tsv"
+claude_usage_backoff="$cache_root/claude-usage-v2.next"
 refresh_lock="$cache_root/refresh.lock"
 : "${AGENT_QUOTA_RENDER_TTL_SECONDS:=30}"
 : "${AGENT_QUOTA_REFRESH_LOCK_SECONDS:=30}"
@@ -43,7 +44,8 @@ fmt_days_until() {
       } else {
         seconds = target - now
         if (seconds < 0) seconds = 0
-        printf "%dd", int((seconds + 86399) / 86400)
+        hours = int(seconds / 3600)
+        printf "%dd", int(hours / 24)
       }
     }'
 }
@@ -74,6 +76,29 @@ fmt_remaining_percent() {
         if (pct < 0) pct = 0
         printf "%d%%", pct
       }
+    }'
+}
+
+weekly_usage_ahead_of_pace() {
+  awk -v used="${1:-}" -v reset_at="${2:-}" -v window_mins="${3:-}" -v now="$now" '
+    BEGIN {
+      if (used == "" || used == "null" ||
+          reset_at == "" || reset_at == "null" ||
+          window_mins == "" || window_mins == "null" ||
+          window_mins != 10080) {
+        exit 1
+      }
+
+      duration = window_mins * 60
+      remaining = reset_at - now
+      if (remaining < 0 || remaining > duration) exit 1
+
+      elapsed = duration - remaining
+      # Include the current 24-hour quota day in the available pace budget.
+      allowed_days = int(elapsed / 86400) + 1
+      if (allowed_days > 7) allowed_days = 7
+      if ((used + 0) * 7 > allowed_days * 100) exit 0
+      exit 1
     }'
 }
 
@@ -270,6 +295,11 @@ claude_org_uuid() {
 }
 
 live_claude_usage() {
+  if [ "${AGENT_QUOTA_TEST_CLAUDE_TSV+x}" ]; then
+    printf '%s' "$AGENT_QUOTA_TEST_CLAUDE_TSV"
+    return
+  fi
+
   command -v curl >/dev/null 2>&1 || return
   command -v jq >/dev/null 2>&1 || return
 
@@ -306,11 +336,21 @@ live_claude_usage() {
   } |
     curl -fsS --max-time 5 -K - 'https://api.anthropic.com/api/oauth/usage' 2>/dev/null |
     jq -r '
+      ([
+        (.limits // [])[]
+        | select(
+            .kind == "weekly_scoped"
+            and ((.scope.model.display_name // "") | ascii_downcase) == "fable"
+          )
+      ] | first) as $fable
+      |
       [
         (.five_hour.utilization // "null"),
         (.five_hour.resets_at // "null"),
         (.seven_day.utilization // "null"),
-        (.seven_day.resets_at // "null")
+        (.seven_day.resets_at // "null"),
+        ($fable.percent // "null"),
+        ($fable.resets_at // "null")
       ]
       | @tsv
     ' 2>/dev/null)
@@ -333,6 +373,11 @@ live_claude_usage() {
 }
 
 live_codex_rate_limits() {
+  if [ "${AGENT_QUOTA_TEST_CODEX_TSV+x}" ]; then
+    printf '%s' "$AGENT_QUOTA_TEST_CODEX_TSV"
+    return
+  fi
+
   command -v codex >/dev/null 2>&1 || return
 
   (
@@ -411,6 +456,9 @@ format_period() {
       left=${pct%\%}
       if [ "$left" -lt 20 ]; then
         printf '#[fg=colour196]%s#[fg=colour245]' "$segment"
+      elif [ "$reset_kind" = days ] &&
+        weekly_usage_ahead_of_pace "$used_pct" "$reset_at" "$fallback_window_mins"; then
+        printf '#[fg=#D08770]%s#[fg=colour245]' "$segment"
       else
         printf '%s' "$segment"
       fi
@@ -468,10 +516,20 @@ unknown_provider_unlabelled() {
   printf '%s' '?%↻?h ?%↻?d'
 }
 
+unknown_weekly_provider_unlabelled() {
+  printf '%s' '?%↻?d'
+}
+
 unknown_provider() {
   label=${1:-}
   [ -n "$label" ] || return
   printf '#[fg=colour178]%s#[fg=colour245] %s' "$label" "$(unknown_provider_unlabelled)"
+}
+
+unknown_weekly_provider() {
+  label=${1:-}
+  [ -n "$label" ] || return
+  printf '#[fg=colour178]%s#[fg=colour245] %s' "$label" "$(unknown_weekly_provider_unlabelled)"
 }
 
 # Fetch + render Claude usage on its own. Falls back to the last
@@ -495,7 +553,7 @@ render_claude_unlabelled() {
   fi
 
   status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset" "$session_window_mins" "$week_window_mins")
-  cache="$cache_root/rendered-claude-unlabelled-v1.last"
+  cache="$cache_root/rendered-claude-unlabelled-v2.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
@@ -503,6 +561,31 @@ render_claude_unlabelled() {
     cat "$cache"
   else
     unknown_provider_unlabelled
+  fi
+}
+
+render_fable_unlabelled() {
+  week_pct=
+  week_reset=
+  week_window_mins=10080
+
+  if command -v jq >/dev/null 2>&1; then
+    limits=$(live_claude_usage)
+    if [ -n "$limits" ]; then
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $5}')
+      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $6}')")
+    fi
+  fi
+
+  status=$(format_provider_unlabelled "" "" "$week_pct" "$week_reset" "" "$week_window_mins")
+  cache="$cache_root/rendered-fable-unlabelled-v1.last"
+  if [ -n "$status" ]; then
+    write_cache_file "$cache" "$status" || true
+    printf '%s' "$status"
+  elif [ -s "$cache" ]; then
+    cat "$cache"
+  else
+    unknown_weekly_provider_unlabelled
   fi
 }
 
@@ -527,7 +610,7 @@ render_codex_unlabelled() {
   fi
 
   status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset" "$session_window_mins" "$week_window_mins")
-  cache="$cache_root/rendered-codex-unlabelled-v1.last"
+  cache="$cache_root/rendered-codex-unlabelled-v2.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
@@ -545,6 +628,9 @@ render_status() {
   claude_week_pct=
   claude_week_reset=
   claude_week_window_mins=10080
+  fable_week_pct=
+  fable_week_reset=
+  fable_week_window_mins=10080
   codex_session_pct=
   codex_session_reset=
   codex_session_window_mins=
@@ -559,6 +645,8 @@ render_status() {
       claude_session_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $2}')")
       claude_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $3}')
       claude_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $4}')")
+      fable_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $5}')
+      fable_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $6}')")
     fi
 
     codex_limits=$(live_codex_rate_limits)
@@ -573,6 +661,7 @@ render_status() {
   fi
 
   claude_status=$(format_provider Cld "$claude_session_pct" "$claude_session_reset" "$claude_week_pct" "$claude_week_reset" "$claude_session_window_mins" "$claude_week_window_mins")
+  fable_status=$(format_provider Fbl "" "" "$fable_week_pct" "$fable_week_reset" "" "$fable_week_window_mins")
   codex_status=$(format_provider Cdx "$codex_session_pct" "$codex_session_reset" "$codex_week_pct" "$codex_week_reset" "$codex_session_window_mins" "$codex_week_window_mins")
 
   if [ -n "$claude_status" ]; then
@@ -581,6 +670,13 @@ render_status() {
     claude_status=$(previous_provider_status Cld "$claude_status_cache")
   fi
   [ -n "$claude_status" ] || claude_status=$(unknown_provider Cld)
+
+  if [ -n "$fable_status" ]; then
+    write_cache_file "$fable_status_cache" "$fable_status" || true
+  else
+    fable_status=$(previous_provider_status Fbl "$fable_status_cache")
+  fi
+  [ -n "$fable_status" ] || fable_status=$(unknown_weekly_provider Fbl)
 
   if [ -n "$codex_status" ]; then
     write_cache_file "$codex_status_cache" "$codex_status" || true
@@ -592,6 +688,10 @@ render_status() {
   status=
   if [ -n "$claude_status" ]; then
     status=$claude_status
+  fi
+  if [ -n "$fable_status" ]; then
+    [ -n "$status" ] && status="$status#[fg=colour245] · "
+    status="$status$fable_status"
   fi
   if [ -n "$codex_status" ]; then
     [ -n "$status" ] && status="$status#[fg=colour245] · "
@@ -609,6 +709,10 @@ case "${1:-}" in
     ;;
   --codex)
     render_codex_unlabelled
+    exit 0
+    ;;
+  --fable)
+    render_fable_unlabelled
     exit 0
     ;;
 esac

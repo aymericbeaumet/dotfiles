@@ -133,8 +133,8 @@
 [maintenance]
 	strategy = incremental
 [credential "https://github.com"]
-	helper = ""
-	helper = !gh auth git-credential
+	helper =
+	helper = !$HOME/.local/share/mise/shims/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = ""
-	helper = !gh auth git-credential
+	helper =
+	helper = !$HOME/.local/share/mise/shims/gh auth git-credential

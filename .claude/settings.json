@@ -2,6 +2,7 @@
   "env": {
     "DISABLE_TELEMETRY": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_RETRY_WATCHDOG": "1",
     "DISABLE_AUTOUPDATER": "1",
     "ENABLE_CLAUDEAI_MCP_SERVERS": "0",
@@ -50,6 +51,16 @@
           {
             "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-instructions.sh'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/project-memory.sh'",
             "timeout": 5
           }
         ]
@@ -108,6 +119,8 @@
     ]
   },
   "effortLevel": "xhigh",
+  "tui": "fullscreen",
+  "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "agentPushNotifEnabled": true,

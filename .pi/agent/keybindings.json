@@ -1,0 +1,10 @@
+{
+  "tui.editor.cursorLeft": ["left", "ctrl+b"],
+  "tui.editor.cursorRight": ["right", "ctrl+f"],
+  "tui.editor.historyPrevious": "ctrl+p",
+  "tui.editor.historyNext": "ctrl+n",
+  "app.model.cycleForward": "f3",
+  "app.model.cycleBackward": "shift+f3",
+  "app.thinking.cycle": "ctrl+t",
+  "app.thinking.toggle": "ctrl+shift+t"
+}

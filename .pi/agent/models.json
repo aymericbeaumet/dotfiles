@@ -1,0 +1,23 @@
+{
+  "providers": {
+    "openai-codex": {
+      "modelOverrides": {
+        "gpt-5.6-sol": {
+          "thinkingLevelMap": {
+            "minimal": null
+          }
+        },
+        "gpt-5.6-terra": {
+          "thinkingLevelMap": {
+            "minimal": null
+          }
+        },
+        "gpt-5.6-luna": {
+          "thinkingLevelMap": {
+            "minimal": null
+          }
+        }
+      }
+    }
+  }
+}
