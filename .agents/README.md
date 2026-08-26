@@ -13,6 +13,7 @@ guidance lives in the root `AGENTS.md` here.
 | Repo guidance | `<repo>/AGENTS.md` | Standard project instructions |
 | Project memory | `<repo>/.memories/MEMORY.md` | Local knowledge shared across agent clients |
 | Work handouts | `<repo>/.handouts/<id>.md` | Local session-resumption snapshots |
+| Project blueprints | `~/.dotfiles/agents/blueprints/` | Reusable specs for new repos (not loaded automatically) |
 
 Do not add duplicated client-specific instruction bodies. Each client uses a thin native adapter
 around these canonical files because its global discovery paths differ.

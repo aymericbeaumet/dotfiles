@@ -19,7 +19,7 @@
     "deny": [],
     "defaultMode": "bypassPermissions"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5",
   "hooks": {
     "PreToolUse": [
       {
@@ -118,11 +118,10 @@
       }
     ]
   },
-  "effortLevel": "xhigh",
-  "tui": "fullscreen",
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
+  "tui": "fullscreen",
   "theme": "auto",
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "agentPushNotifEnabled": true
 }
