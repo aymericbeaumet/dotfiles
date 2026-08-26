@@ -16,6 +16,7 @@ template = """
 #[link=https://claude.ai/new#settings/usage]#[fg=colour178]Cld#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --claude}#[nolink]
 #[fg=colour245] · #[link=https://claude.ai/new#settings/usage]#[fg=colour178]Fbl#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --fable}#[nolink]
 #[fg=colour245] · #[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]#[fg=colour178]Cdx#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --codex}#[nolink]
+#[fg=colour245] · #[link=https://grok.com/?_s=usage]#[fg=colour178]Grk#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --grok}#[nolink]
 #[fg=colour245] · #{plugin:system.battery}
 #[fg=colour245] · #{date}
 """
@@ -30,9 +31,13 @@ log_level = "trace"
 sequence_timeout_ms = 1000
 
 [mode.all.mappings]
-# enter modes
+# enter normal mode
 "cmd+ctrl+[" = ["flash", "enter_normal_mode"]
-"cmd+shift+:" = ["flash", "enter_command_mode"]
+"cmd+escape" = ["flash", "enter_normal_mode"]
+# enter command mode
+"cmd+shift+colon" = ["flash", "enter_command_mode"]
+"cmd+ctrl+semicolon" = ["flash", "enter_command_mode"]
+# enter flashlight
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
 "cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
 # window management
@@ -46,10 +51,7 @@ sequence_timeout_ms = 1000
 
 [mode.normal]
 leader = "<space>"
-# Named unmapped keys enter INSERT and continue to the focused app unchanged.
 passthrough_keys = ["escape"]
-# Unmapped shortcuts carrying these modifiers enter INSERT and continue to the
-# focused app or macOS unchanged. Explicit mappings still win.
 passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 
 [mode.normal.mappings]
@@ -59,11 +61,7 @@ passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 "<leader>p" = ["sh", "../../scripts/toggle_play.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
 "<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
-# karabiner remaps
-"<delete_forward>" = ["flash", "scroll_half_page_down"] # ctrl+d
-"<tab>" = ["flash", "movement_forward"]                 # ctrl+i
-"cmd+<delete>" = ["flash", "scroll_half_page_up"]       # ctrl+u
-# app switch
+# app switch chords
 "'a" = ["flash", "app_open", "--name=Alacritty"]
 "'c" = ["flash", "app_open", "--name=Claude"]
 "'f" = ["flash", "app_open", "--name=Firefox"]

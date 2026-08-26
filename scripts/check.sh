@@ -280,7 +280,7 @@ check_project_memory
 
 check_agent_quota_status() (
   local test_root now first_day_now reset_iso reset_epoch earlier_reset later_reset
-  local claude_tsv codex_tsv output
+  local claude_tsv codex_tsv grok_json grok_tsv output
   test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-agent-quota.XXXXXX")
   trap 'rm -rf "$test_root"' EXIT
   now=1892937600
@@ -288,7 +288,7 @@ check_agent_quota_status() (
   reset_iso=2030-01-01T00:00:00.000000+00:00
   reset_epoch=1893456000
 
-  claude_tsv=$(printf 'null\tnull\t30\t%s\t10\t%s' "$reset_iso" "$reset_iso")
+  claude_tsv=$(printf '30\t%s\t10\t%s' "$reset_iso" "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
   [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
@@ -298,19 +298,32 @@ check_agent_quota_status() (
     AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --fable)
   [ "$output" = '90%↻6d' ] || fail "Fable scoped weekly quota was not rendered: $output"
 
-  codex_tsv=$(printf 'null\tnull\tnull\t30\t%s\t10080' "$reset_epoch")
+  codex_tsv=$(printf '30\t%s\t10080' "$reset_epoch")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
   [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
     fail "Codex weekly quota must warn when usage is ahead of elapsed weekly pace: $output"
 
-  claude_tsv=$(printf 'null\tnull\t14\t%s\tnull\tnull' "$reset_iso")
+  grok_tsv=$(printf '35\t%s\t10080' "$reset_iso")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_GROK_TSV="$grok_tsv" scripts/agent-quota-status.sh --grok)
+  [ "$output" = '#[fg=#D08770]65%↻6d#[fg=colour245]' ] ||
+    fail "Grok weekly quota was not rendered: $output"
+
+  grok_json=$(printf '{"config":{"currentPeriod":{"type":"USAGE_PERIOD_TYPE_WEEKLY","end":"%s"}}}' \
+    "$reset_iso")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_GROK_JSON="$grok_json" scripts/agent-quota-status.sh --grok)
+  [ "$output" = '100%↻6d' ] ||
+    fail "Grok must treat an omitted productUsage field as an unused weekly quota: $output"
+
+  claude_tsv=$(printf '14\t%s\tnull\tnull' "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$first_day_now" \
     AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
   [ "$output" = '86%↻7d' ] ||
     fail "the current quota day must include its full 100/7 allowance: $output"
 
-  claude_tsv=$(printf 'null\tnull\t15\t%s\tnull\tnull' "$reset_iso")
+  claude_tsv=$(printf '15\t%s\tnull\tnull' "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$first_day_now" \
     AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
   [ "$output" = '#[fg=#D08770]85%↻7d#[fg=colour245]' ] ||
@@ -318,27 +331,48 @@ check_agent_quota_status() (
 
   earlier_reset=$((now + 5 * 86400 + 23 * 3600))
   later_reset=$((now + 6 * 86400 + 1 * 3600))
-  codex_tsv=$(printf 'null\tnull\tnull\t0\t%s\t10080' "$earlier_reset")
+  codex_tsv=$(printf '0\t%s\t10080' "$earlier_reset")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
   [ "$output" = '100%↻5d' ] || fail "5d23h must floor to 5d: $output"
-  codex_tsv=$(printf 'null\tnull\tnull\t0\t%s\t10080' "$later_reset")
+  codex_tsv=$(printf '0\t%s\t10080' "$later_reset")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
   [ "$output" = '100%↻6d' ] || fail "6d01h must floor to 6d: $output"
 
-  claude_tsv=$(printf 'null\tnull\t81\t%s\tnull\tnull' "$reset_iso")
+  claude_tsv=$(printf '81\t%s\tnull\tnull' "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
   [ "$output" = '#[fg=colour196]19%↻6d#[fg=colour245]' ] ||
     fail "critical weekly quota must remain red instead of orange: $output"
+
+  mkdir -p "$test_root/tmux-agent-quota-status"
+  printf '50\t%s\t30\t%s\t10\t%s' "$reset_iso" "$reset_iso" "$reset_iso" \
+    >"$test_root/tmux-agent-quota-status/claude-usage-v2.tsv"
+  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/claude-usage-v3.next"
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --claude)
+  [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
+    fail "Claude must keep last-good weekly usage when the live fetch is in backoff: $output"
+  case "$output" in
+    *h*) fail "Claude status must not render a session or daily window: $output" ;;
+  esac
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --fable)
+  [ "$output" = '90%↻6d' ] ||
+    fail "Fable must keep last-good weekly usage when the live fetch is in backoff: $output"
 )
 check_agent_quota_status
 
 rg -F '.kind == "weekly_scoped"' scripts/agent-quota-status.sh >/dev/null ||
   fail "Claude quota parsing must include model-scoped Fable usage"
+if rg -n 'five_hour|\?%↻\?h' scripts/agent-quota-status.sh >/dev/null; then
+  fail "status bar must not render session or daily quotas"
+fi
 rg -F 'agent-quota-status.sh --fable' .config/flash/flash.toml >/dev/null ||
   fail "Flash status bar must render the Fable quota"
+rg -F 'agent-quota-status.sh --grok' .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must render the Grok quota"
 
 printf '%s\n' \
   '{"error":"unknown","error_details":"API Error: Connection closed mid-response"}' |

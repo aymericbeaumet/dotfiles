@@ -1,5 +1,5 @@
 #!/bin/sh
-# Claude, Fable, and Codex quota usage for status bars.
+# Claude, Fable, Codex, and Grok quota usage for status bars.
 
 DOTFILES_SCRIPT_DIR=$(CDPATH='' cd "$(dirname "$0")" 2>/dev/null && pwd) || exit 1
 . "$DOTFILES_SCRIPT_DIR/lib.sh"
@@ -10,31 +10,24 @@ export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/o
 
 now=${AGENT_QUOTA_TEST_NOW:-$(date +%s)}
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
-last_good="$cache_root/rendered-v5.last"
-legacy_last_good="$cache_root/rendered-v4.last"
-claude_status_cache="$cache_root/rendered-claude-v1.last"
+last_good="$cache_root/rendered-v6.last"
+legacy_last_good="$cache_root/rendered-v5.last"
+claude_status_cache="$cache_root/rendered-claude-v2.last"
 fable_status_cache="$cache_root/rendered-fable-v1.last"
-codex_status_cache="$cache_root/rendered-codex-v1.last"
-claude_usage_cache="$cache_root/claude-usage-v2.tsv"
-claude_usage_backoff="$cache_root/claude-usage-v2.next"
+codex_status_cache="$cache_root/rendered-codex-v2.last"
+grok_status_cache="$cache_root/rendered-grok-v1.last"
+claude_usage_cache="$cache_root/claude-usage-v3.tsv"
+claude_usage_backoff="$cache_root/claude-usage-v3.next"
+legacy_claude_usage_cache="$cache_root/claude-usage-v2.tsv"
+grok_usage_cache="$cache_root/grok-usage-v1.tsv"
+grok_usage_backoff="$cache_root/grok-usage-v1.next"
 refresh_lock="$cache_root/refresh.lock"
 : "${AGENT_QUOTA_RENDER_TTL_SECONDS:=30}"
 : "${AGENT_QUOTA_REFRESH_LOCK_SECONDS:=30}"
 : "${CLAUDE_USAGE_TTL_SECONDS:=120}"
 : "${CLAUDE_USAGE_RETRY_SECONDS:=60}"
-
-fmt_hours_until() {
-  awk -v target="${1:-}" -v now="$now" '
-    BEGIN {
-      if (target == "" || target == "null" || target <= 0) {
-        printf "?h"
-      } else {
-        seconds = target - now
-        if (seconds < 0) seconds = 0
-        printf "%dh", int((seconds + 3599) / 3600)
-      }
-    }'
-}
+: "${GROK_USAGE_TTL_SECONDS:=120}"
+: "${GROK_USAGE_RETRY_SECONDS:=60}"
 
 fmt_days_until() {
   awk -v target="${1:-}" -v now="$now" '
@@ -51,17 +44,12 @@ fmt_days_until() {
 }
 
 fmt_window_duration() {
-  awk -v minutes="${1:-}" -v kind="${2:-}" '
+  awk -v minutes="${1:-}" '
     BEGIN {
       if (minutes == "" || minutes == "null" || minutes <= 0) {
         exit 1
-      } else if (kind == "hours") {
-        printf "%dh", int((minutes + 59) / 60)
-      } else if (kind == "days") {
-        printf "%dd", int((minutes + 1439) / 1440)
-      } else {
-        exit 1
       }
+      printf "%dd", int((minutes + 1439) / 1440)
     }'
 }
 
@@ -294,6 +282,17 @@ claude_org_uuid() {
   jq -r '.oauthAccount.organizationUuid // empty' "$settings" 2>/dev/null
 }
 
+# Weekly Claude + Fable columns from the previous 6-column usage TSV.
+claude_usage_from_legacy() {
+  [ -f "$legacy_claude_usage_cache" ] || return
+  awk -F '\t' 'NF >= 6 { printf "%s\t%s\t%s\t%s", $3, $4, $5, $6 }' "$legacy_claude_usage_cache"
+}
+
+cached_claude_usage() {
+  [ -f "$claude_usage_cache" ] && cat "$claude_usage_cache" && return
+  claude_usage_from_legacy
+}
+
 live_claude_usage() {
   if [ "${AGENT_QUOTA_TEST_CLAUDE_TSV+x}" ]; then
     printf '%s' "$AGENT_QUOTA_TEST_CLAUDE_TSV"
@@ -311,7 +310,7 @@ live_claude_usage() {
   if [ -f "$claude_usage_backoff" ]; then
     next_retry=$(cat "$claude_usage_backoff" 2>/dev/null || printf 0)
     if [ "${next_retry:-0}" -gt "$now" ]; then
-      [ -f "$claude_usage_cache" ] && cat "$claude_usage_cache"
+      cached_claude_usage
       return
     fi
   fi
@@ -345,8 +344,6 @@ live_claude_usage() {
       ] | first) as $fable
       |
       [
-        (.five_hour.utilization // "null"),
-        (.five_hour.resets_at // "null"),
         (.seven_day.utilization // "null"),
         (.seven_day.resets_at // "null"),
         ($fable.percent // "null"),
@@ -368,7 +365,7 @@ live_claude_usage() {
   else
     mkdir -p "$cache_root" 2>/dev/null
     printf '%s' "$((now + CLAUDE_USAGE_RETRY_SECONDS))" >"$claude_usage_backoff" 2>/dev/null || true
-    [ -f "$claude_usage_cache" ] && cat "$claude_usage_cache"
+    cached_claude_usage
   fi
 }
 
@@ -389,18 +386,13 @@ live_codex_rate_limits() {
     codex app-server --stdio 2>/dev/null |
     jq -r '
       # Codex reports rate-limit windows under .primary/.secondary, but which
-      # slot holds the short (session) vs long (weekly) window is not stable —
-      # newer builds put the weekly limit in .primary and leave .secondary null.
-      # Classify by windowDurationMins instead: < 1 day = session, else weekly.
+      # slot holds the weekly window is not stable. Classify by duration:
+      # keep only windows of at least one day.
       select(.id == 2 and .result)
       | (.result.rateLimitsByLimitId.codex // .result.rateLimits) as $r
       | ([$r.primary, $r.secondary] | map(select(. != null))) as $wins
-      | ($wins | map(select((.windowDurationMins // 0) < 1440)) | first) as $sess
       | ($wins | map(select((.windowDurationMins // 0) >= 1440)) | first) as $week
       | [
-          ($sess.usedPercent // "null"),
-          ($sess.resetsAt // "null"),
-          ($sess.windowDurationMins // "null"),
           ($week.usedPercent // "null"),
           ($week.resetsAt // "null"),
           ($week.windowDurationMins // "null")
@@ -410,11 +402,94 @@ live_codex_rate_limits() {
     tail -n 1
 }
 
+opencode_auth_path() {
+  printf '%s/opencode/auth.json' "${XDG_DATA_HOME:-$HOME/.local/share}"
+}
+
+xai_oauth_token() {
+  auth=$(opencode_auth_path)
+  [ -f "$auth" ] || return
+  jq -r '.xai | select(.type == "oauth") | .access // empty' "$auth" 2>/dev/null
+}
+
+parse_grok_usage() {
+  jq -r '
+    (.config.currentPeriod // {}) as $period
+    | select($period.type == "USAGE_PERIOD_TYPE_WEEKLY")
+    | ([
+        (.config.productUsage // [])[]
+        | select(.product == "GrokBuild")
+      ] | first) as $grok
+    | [
+        # xAI omits productUsage for a valid week with no usage yet.
+        ($grok.usagePercent // 0),
+        ($period.end // .config.billingPeriodEnd // "null"),
+        10080
+      ]
+    | @tsv
+  ' 2>/dev/null
+}
+
+live_grok_usage() {
+  if [ "${AGENT_QUOTA_TEST_GROK_TSV+x}" ]; then
+    printf '%s' "$AGENT_QUOTA_TEST_GROK_TSV"
+    return
+  fi
+  if [ "${AGENT_QUOTA_TEST_GROK_JSON+x}" ]; then
+    printf '%s' "$AGENT_QUOTA_TEST_GROK_JSON" | parse_grok_usage
+    return
+  fi
+
+  command -v curl >/dev/null 2>&1 || return
+  command -v jq >/dev/null 2>&1 || return
+
+  if cache_is_fresh "$grok_usage_cache" "$GROK_USAGE_TTL_SECONDS"; then
+    cat "$grok_usage_cache"
+    return
+  fi
+
+  if [ -f "$grok_usage_backoff" ]; then
+    next_retry=$(cat "$grok_usage_backoff" 2>/dev/null || printf 0)
+    if [ "${next_retry:-0}" -gt "$now" ]; then
+      [ -f "$grok_usage_cache" ] && cat "$grok_usage_cache"
+      return
+    fi
+  fi
+
+  token=$(xai_oauth_token)
+  [ -n "$token" ] || return
+
+  usage=$({
+    printf 'header = "Authorization: Bearer %s"\n' "$token"
+    printf 'header = "Accept: application/json"\n'
+    printf 'header = "x-grok-client-identifier: grok-shell"\n'
+    printf 'header = "x-grok-client-version: 1.0.5"\n'
+    printf 'header = "X-XAI-Token-Auth: xai-grok-cli"\n'
+  } |
+    curl -fsS --max-time 5 -K - 'https://cli-chat-proxy.grok.com/v1/billing?format=credits' 2>/dev/null |
+    parse_grok_usage)
+
+  if [ -n "$usage" ]; then
+    mkdir -p "$cache_root" 2>/dev/null
+    tmp="${grok_usage_cache}.$$"
+    if printf '%s' "$usage" >"$tmp"; then
+      mv "$tmp" "$grok_usage_cache"
+      rm -f "$grok_usage_backoff"
+    else
+      rm -f "$tmp"
+    fi
+    printf '%s' "$usage"
+  else
+    mkdir -p "$cache_root" 2>/dev/null
+    printf '%s' "$((now + GROK_USAGE_RETRY_SECONDS))" >"$grok_usage_backoff" 2>/dev/null || true
+    [ -f "$grok_usage_cache" ] && cat "$grok_usage_cache"
+  fi
+}
+
 format_period() {
   used_pct=${1:-}
   reset_at=${2:-}
-  reset_kind=${3:-}
-  fallback_window_mins=${4:-}
+  fallback_window_mins=${3:-}
 
   have_used=1
   [ -n "$used_pct" ] && [ "$used_pct" != "null" ] || have_used=0
@@ -422,23 +497,11 @@ format_period() {
   [ -n "$reset_at" ] && [ "$reset_at" != "null" ] || have_reset=0
   [ "$have_used" -eq 1 ] || [ "$have_reset" -eq 1 ] || return
 
-  case "$reset_kind" in
-    hours)
-      if [ "$have_reset" -eq 1 ]; then
-        reset=$(fmt_hours_until "$reset_at")
-      else
-        reset=$(fmt_window_duration "$fallback_window_mins" hours 2>/dev/null || true)
-      fi
-      ;;
-    days)
-      if [ "$have_reset" -eq 1 ]; then
-        reset=$(fmt_days_until "$reset_at")
-      else
-        reset=$(fmt_window_duration "$fallback_window_mins" days 2>/dev/null || true)
-      fi
-      ;;
-    *) return ;;
-  esac
+  if [ "$have_reset" -eq 1 ]; then
+    reset=$(fmt_days_until "$reset_at")
+  else
+    reset=$(fmt_window_duration "$fallback_window_mins" 2>/dev/null || true)
+  fi
 
   if [ "$have_used" -eq 1 ]; then
     pct=$(fmt_remaining_percent "$used_pct")
@@ -456,8 +519,7 @@ format_period() {
       left=${pct%\%}
       if [ "$left" -lt 20 ]; then
         printf '#[fg=colour196]%s#[fg=colour245]' "$segment"
-      elif [ "$reset_kind" = days ] &&
-        weekly_usage_ahead_of_pace "$used_pct" "$reset_at" "$fallback_window_mins"; then
+      elif weekly_usage_ahead_of_pace "$used_pct" "$reset_at" "$fallback_window_mins"; then
         printf '#[fg=#D08770]%s#[fg=colour245]' "$segment"
       else
         printf '%s' "$segment"
@@ -469,23 +531,14 @@ format_period() {
 
 format_provider() {
   label=${1:-}
-  session_pct=${2:-}
-  session_reset=${3:-}
-  week_pct=${4:-}
-  week_reset=${5:-}
-  session_window_mins=${6:-}
-  week_window_mins=${7:-}
+  week_pct=${2:-}
+  week_reset=${3:-}
+  week_window_mins=${4:-}
 
-  session=$(format_period "$session_pct" "$session_reset" hours "$session_window_mins")
-  week=$(format_period "$week_pct" "$week_reset" days "$week_window_mins")
-  [ -n "$session" ] || [ -n "$week" ] || return
+  week=$(format_period "$week_pct" "$week_reset" "$week_window_mins")
+  [ -n "$week" ] || return
 
-  # Join only the windows the provider actually reports; a provider that exposes
-  # a single window (e.g. Codex's weekly-only limit) shows one segment rather
-  # than a phantom "?%↻?h" placeholder.
-  printf '#[fg=colour178]%s#[fg=colour245]' "$label"
-  [ -n "$session" ] && printf ' %s' "$session"
-  [ -n "$week" ] && printf ' %s' "$week"
+  printf '#[fg=colour178]%s#[fg=colour245] %s' "$label" "$week"
 }
 
 # Same content as `format_provider` minus the leading label + colour
@@ -493,37 +546,17 @@ format_provider() {
 # (Flash's `[statusbar].template`) can supply the label and separators
 # themselves and keep one ownership boundary per format concern.
 format_provider_unlabelled() {
-  session_pct=${1:-}
-  session_reset=${2:-}
-  week_pct=${3:-}
-  week_reset=${4:-}
-  session_window_mins=${5:-}
-  week_window_mins=${6:-}
+  week_pct=${1:-}
+  week_reset=${2:-}
+  week_window_mins=${3:-}
 
-  session=$(format_period "$session_pct" "$session_reset" hours "$session_window_mins")
-  week=$(format_period "$week_pct" "$week_reset" days "$week_window_mins")
-  [ -n "$session" ] || [ -n "$week" ] || return
-
-  # Join only the windows the provider actually reports (see format_provider).
-  status=$session
-  if [ -n "$week" ]; then
-    [ -n "$status" ] && status="$status $week" || status=$week
-  fi
-  printf '%s' "$status"
-}
-
-unknown_provider_unlabelled() {
-  printf '%s' '?%↻?h ?%↻?d'
+  week=$(format_period "$week_pct" "$week_reset" "$week_window_mins")
+  [ -n "$week" ] || return
+  printf '%s' "$week"
 }
 
 unknown_weekly_provider_unlabelled() {
   printf '%s' '?%↻?d'
-}
-
-unknown_provider() {
-  label=${1:-}
-  [ -n "$label" ] || return
-  printf '#[fg=colour178]%s#[fg=colour245] %s' "$label" "$(unknown_provider_unlabelled)"
 }
 
 unknown_weekly_provider() {
@@ -535,9 +568,6 @@ unknown_weekly_provider() {
 # Fetch + render Claude usage on its own. Falls back to the last
 # rendered cached value when the live fetch produces nothing.
 render_claude_unlabelled() {
-  session_pct=
-  session_reset=
-  session_window_mins=300
   week_pct=
   week_reset=
   week_window_mins=10080
@@ -545,22 +575,20 @@ render_claude_unlabelled() {
   if command -v jq >/dev/null 2>&1; then
     limits=$(live_claude_usage)
     if [ -n "$limits" ]; then
-      session_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
-      session_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')")
-      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
-      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')")
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')")
     fi
   fi
 
-  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset" "$session_window_mins" "$week_window_mins")
-  cache="$cache_root/rendered-claude-unlabelled-v2.last"
+  status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
+  cache="$cache_root/rendered-claude-unlabelled-v3.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
   elif [ -s "$cache" ]; then
     cat "$cache"
   else
-    unknown_provider_unlabelled
+    unknown_weekly_provider_unlabelled
   fi
 }
 
@@ -572,12 +600,12 @@ render_fable_unlabelled() {
   if command -v jq >/dev/null 2>&1; then
     limits=$(live_claude_usage)
     if [ -n "$limits" ]; then
-      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $5}')
-      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $6}')")
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')")
     fi
   fi
 
-  status=$(format_provider_unlabelled "" "" "$week_pct" "$week_reset" "" "$week_window_mins")
+  status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
   cache="$cache_root/rendered-fable-unlabelled-v1.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
@@ -590,9 +618,6 @@ render_fable_unlabelled() {
 }
 
 render_codex_unlabelled() {
-  session_pct=
-  session_reset=
-  session_window_mins=
   week_pct=
   week_reset=
   week_window_mins=
@@ -600,76 +625,101 @@ render_codex_unlabelled() {
   if command -v jq >/dev/null 2>&1; then
     limits=$(live_codex_rate_limits)
     if [ -n "$limits" ]; then
-      session_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
-      session_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')
-      session_window_mins=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
-      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')
-      week_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $5}')
-      week_window_mins=$(printf '%s\n' "$limits" | awk -F '\t' '{print $6}')
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      week_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')
+      week_window_mins=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
     fi
   fi
 
-  status=$(format_provider_unlabelled "$session_pct" "$session_reset" "$week_pct" "$week_reset" "$session_window_mins" "$week_window_mins")
-  cache="$cache_root/rendered-codex-unlabelled-v2.last"
+  status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
+  cache="$cache_root/rendered-codex-unlabelled-v3.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
   elif [ -s "$cache" ]; then
     cat "$cache"
   else
-    unknown_provider_unlabelled
+    unknown_weekly_provider_unlabelled
+  fi
+}
+
+render_grok_unlabelled() {
+  week_pct=
+  week_reset=
+  week_window_mins=10080
+
+  if command -v jq >/dev/null 2>&1; then
+    limits=$(live_grok_usage)
+    if [ -n "$limits" ]; then
+      week_pct=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')")
+      reported_window=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      [ -n "$reported_window" ] && [ "$reported_window" != null ] && week_window_mins=$reported_window
+    fi
+  fi
+
+  status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
+  cache="$cache_root/rendered-grok-unlabelled-v1.last"
+  if [ -n "$status" ]; then
+    write_cache_file "$cache" "$status" || true
+    printf '%s' "$status"
+  elif [ -s "$cache" ]; then
+    cat "$cache"
+  else
+    unknown_weekly_provider_unlabelled
   fi
 }
 
 render_status() {
-  claude_session_pct=
-  claude_session_reset=
-  claude_session_window_mins=300
   claude_week_pct=
   claude_week_reset=
   claude_week_window_mins=10080
   fable_week_pct=
   fable_week_reset=
   fable_week_window_mins=10080
-  codex_session_pct=
-  codex_session_reset=
-  codex_session_window_mins=
   codex_week_pct=
   codex_week_reset=
   codex_week_window_mins=
+  grok_week_pct=
+  grok_week_reset=
+  grok_week_window_mins=10080
 
   if command -v jq >/dev/null 2>&1; then
     claude_limits=$(live_claude_usage)
     if [ -n "$claude_limits" ]; then
-      claude_session_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $1}')
-      claude_session_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $2}')")
-      claude_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $3}')
-      claude_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $4}')")
-      fable_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $5}')
-      fable_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $6}')")
+      claude_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $1}')
+      claude_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $2}')")
+      fable_week_pct=$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $3}')
+      fable_week_reset=$(epoch_from_iso "$(printf '%s\n' "$claude_limits" | awk -F '\t' '{print $4}')")
     fi
 
     codex_limits=$(live_codex_rate_limits)
     if [ -n "$codex_limits" ]; then
-      codex_session_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $1}')
-      codex_session_reset=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $2}')
-      codex_session_window_mins=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $3}')
-      codex_week_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $4}')
-      codex_week_reset=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $5}')
-      codex_week_window_mins=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $6}')
+      codex_week_pct=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $1}')
+      codex_week_reset=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $2}')
+      codex_week_window_mins=$(printf '%s\n' "$codex_limits" | awk -F '\t' '{print $3}')
+    fi
+
+    grok_limits=$(live_grok_usage)
+    if [ -n "$grok_limits" ]; then
+      grok_week_pct=$(printf '%s\n' "$grok_limits" | awk -F '\t' '{print $1}')
+      grok_week_reset=$(epoch_from_iso "$(printf '%s\n' "$grok_limits" | awk -F '\t' '{print $2}')")
+      reported_window=$(printf '%s\n' "$grok_limits" | awk -F '\t' '{print $3}')
+      [ -n "$reported_window" ] && [ "$reported_window" != null ] && grok_week_window_mins=$reported_window
     fi
   fi
 
-  claude_status=$(format_provider Cld "$claude_session_pct" "$claude_session_reset" "$claude_week_pct" "$claude_week_reset" "$claude_session_window_mins" "$claude_week_window_mins")
-  fable_status=$(format_provider Fbl "" "" "$fable_week_pct" "$fable_week_reset" "" "$fable_week_window_mins")
-  codex_status=$(format_provider Cdx "$codex_session_pct" "$codex_session_reset" "$codex_week_pct" "$codex_week_reset" "$codex_session_window_mins" "$codex_week_window_mins")
+  claude_status=$(format_provider Cld "$claude_week_pct" "$claude_week_reset" "$claude_week_window_mins")
+  fable_status=$(format_provider Fbl "$fable_week_pct" "$fable_week_reset" "$fable_week_window_mins")
+  codex_status=$(format_provider Cdx "$codex_week_pct" "$codex_week_reset" "$codex_week_window_mins")
+  grok_status=$(format_provider Grk "$grok_week_pct" "$grok_week_reset" "$grok_week_window_mins")
 
   if [ -n "$claude_status" ]; then
     write_cache_file "$claude_status_cache" "$claude_status" || true
   else
     claude_status=$(previous_provider_status Cld "$claude_status_cache")
   fi
-  [ -n "$claude_status" ] || claude_status=$(unknown_provider Cld)
+  [ -n "$claude_status" ] || claude_status=$(unknown_weekly_provider Cld)
 
   if [ -n "$fable_status" ]; then
     write_cache_file "$fable_status_cache" "$fable_status" || true
@@ -683,7 +733,14 @@ render_status() {
   else
     codex_status=$(previous_provider_status Cdx "$codex_status_cache")
   fi
-  [ -n "$codex_status" ] || codex_status=$(unknown_provider Cdx)
+  [ -n "$codex_status" ] || codex_status=$(unknown_weekly_provider Cdx)
+
+  if [ -n "$grok_status" ]; then
+    write_cache_file "$grok_status_cache" "$grok_status" || true
+  else
+    grok_status=$(previous_provider_status Grk "$grok_status_cache")
+  fi
+  [ -n "$grok_status" ] || grok_status=$(unknown_weekly_provider Grk)
 
   status=
   if [ -n "$claude_status" ]; then
@@ -696,6 +753,10 @@ render_status() {
   if [ -n "$codex_status" ]; then
     [ -n "$status" ] && status="$status#[fg=colour245] · "
     status="$status$codex_status"
+  fi
+  if [ -n "$grok_status" ]; then
+    [ -n "$status" ] && status="$status#[fg=colour245] · "
+    status="$status$grok_status"
   fi
   [ -n "$status" ] || return
 
@@ -713,6 +774,10 @@ case "${1:-}" in
     ;;
   --fable)
     render_fable_unlabelled
+    exit 0
+    ;;
+  --grok)
+    render_grok_unlabelled
     exit 0
     ;;
 esac
