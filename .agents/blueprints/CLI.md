@@ -16,14 +16,13 @@ Use this when creating or aligning a standalone command-line tool. Substitute
 | Site | https://aymericbeaumet.com |
 | GitHub | `aymericbeaumet/<name>` |
 | License | MIT |
-| Homebrew tap | `aymericbeaumet/homebrew-tap` |
 | Default branch | `main` |
-| Tags | `vX.Y.Z` |
+| Tags | `vX.Y.Z` (minted by CI, never by hand) |
 | Commits | [Conventional Commits](https://www.conventionalcommits.org/) |
 | Agent branches | `ab/<slug>` |
 
 Keep crate `authors`, `license`, `repository`, clap `author`, the MIT copyright
-line, README install URLs, and Homebrew `homepage` identical.
+line, and README install URLs identical.
 
 ## Layout
 
@@ -35,12 +34,10 @@ Prefer squeeze's flat crates (no `src/`):
 │   ├── dependabot.yml
 │   └── workflows/
 │       ├── ci.yml
-│       ├── nightly.yml
 │       └── release.yml
 ├── AGENTS.md
 ├── Cargo.lock
 ├── Cargo.toml
-├── Formula/<bin>.rb
 ├── LICENSE
 ├── Makefile
 ├── readme.md
@@ -59,9 +56,6 @@ Prefer squeeze's flat crates (no `src/`):
 
 Split a library crate from the binary crate even for a small tool. The library
 owns behavior and tests; the binary owns clap, I/O, and process exit.
-
-Skip `Formula/` and `nightly.yml` until the Homebrew tap should publish the
-tool.
 
 ## License
 
@@ -138,16 +132,9 @@ Commit `Cargo.lock`. Ignore `target/`, editor dirs, `.DS_Store`, and
 `proptest-regressions/` if proptest is used. Do not add `rustfmt.toml` or
 `clippy.toml` unless the default is wrong.
 
-Allow Homebrew and CI to override the reported version:
-
-```rust
-const VERSION: &str = match option_env!("<NAME>_VERSION") {
-    Some(v) => v,
-    None => env!("CARGO_PKG_VERSION"),
-};
-```
-
-Pass that constant to clap's `version`.
+Use clap's plain `version` (from `CARGO_PKG_VERSION`). The release workflow
+stamps the computed version into `Cargo.toml` before building, so no
+`option_env!` override is needed.
 
 ## CLI conventions
 
@@ -165,6 +152,24 @@ Unix filter first:
 Do not call `pbcopy` or `open` directly if those features exist. Route through
 the same abstractions used in squeeze (`arboard` / `open`, with a Linux
 clipboard helper if clipboard support is required).
+
+## Configuration layering
+
+When the tool needs configuration, layer it with figment, low to high
+precedence:
+
+1. compiled defaults
+2. `~/.config/<name>/config.toml` (personal, global)
+3. `<repo>/.<name>.toml` (checked in, team policy) — when the tool is
+   repo-scoped
+4. `git config <name>.*` (per-clone personal overrides) — when the tool is
+   git-aware
+5. `<NAME>_*` environment variables, with `__` nesting sections
+   (`<NAME>_SECTION__KEY=…`)
+6. CLI flags
+
+Every layer uses the same key names. Skip layers 3–4 for tools that are not
+repo- or git-scoped.
 
 ## Tests
 
@@ -204,20 +209,21 @@ toolchain as `rust-version`.
 
 ## README
 
-Use `readme.md`. Open with the name, a CI badge, and one sentence.
+Use `readme.md`. Open with the name, the release-workflow badge
+(`actions/workflows/release.yml/badge.svg` — ci does not run on `main`
+pushes), and one sentence.
 
 Required sections:
 
-1. **Install** — Homebrew tap, `cargo install --git`, from source.
+1. **Install** — mise first, then `cargo install --git`.
 2. **Getting Started** — stdin examples that show the actual output.
 3. **Integrations** — only if the tool is meant to be piped from vim/tmux/shell.
 4. **Development** — `cargo run` and `cargo test` / `watchexec`.
 
-Homebrew:
+mise:
 
 ```shell
-brew tap aymericbeaumet/tap
-brew install <bin>
+mise use -g github:aymericbeaumet/<name>
 ```
 
 Cargo:
@@ -246,74 +252,96 @@ Keep it short and harness-neutral:
 
 ### `.github/workflows/ci.yml`
 
-Triggers: `pull_request`, `push` to `main`, daily `schedule`.
+Triggers: `pull_request`, `workflow_dispatch`, `workflow_call` — no `push`;
+release.yml calls ci on every push to `main`, so a push trigger would run it
+twice.
 
 Jobs:
 
 | Job | What |
 |---|---|
-| `check` | `dtolnay/rust-toolchain@stable` with `rustfmt, clippy`, `Swatinem/rust-cache`, `cargo fmt --all -- --check`, `cargo clippy --all-targets -- --deny warnings`, `cargo build --release`, `cargo test --all-targets` |
+| `test` | 6-leg native matrix (below); `dtolnay/rust-toolchain@stable` with `rustfmt, clippy`, `Swatinem/rust-cache`, `cargo fmt --check` (one linux leg only), `cargo clippy --all-targets -- --deny warnings`, `cargo test --all-targets` |
 | `msrv` | toolchain = crate `rust-version`; `cargo build` and `cargo test --all-targets` |
-| `test` | matrix `ubuntu-latest`, `macos-latest`, `windows-latest` |
 | `docs` | `RUSTDOCFLAGS=-D warnings` rustdoc for `<lib>` and `<cli>` |
+
+Test matrix — every release target has a native runner, so nothing is ever
+cross-compiled:
+
+| Leg | Runner |
+|---|---|
+| `linux-amd64` | `ubuntu-latest` |
+| `linux-arm64` | `ubuntu-24.04-arm` |
+| `darwin-amd64` | `macos-15-intel` |
+| `darwin-arm64` | `macos-latest` |
+| `windows-amd64` | `windows-latest` |
+| `windows-arm64` | `windows-11-arm` |
 
 ### `.github/workflows/release.yml`
 
-On `v*` tags, `contents: write`:
+Every green push to `main` publishes a real release. Triggers: `push` to
+`main`, `workflow_dispatch`. `permissions: contents: write` and
+`concurrency: group: release` (no cancel-in-progress) so concurrent pushes
+serialize and version computation never races.
 
-1. Parse version from the tag (`v` prefix stripped).
-2. Fail if it does not match the library crate `version`.
-3. `gh release create "$tag" --title "$tag" --generate-notes`.
-4. SHA256 the tag archive.
-5. Update `aymericbeaumet/homebrew-tap` with
-   `mislav/bump-homebrew-formula-action` and `HOMEBREW_TAP_TOKEN`.
+Jobs, in order:
 
-### `.github/workflows/nightly.yml`
-
-On push to `main`, rewrite `Formula/<bin>-nightly.rb` in the tap. Version
-`nightly-YYYYMMDD-<sha7>`, `conflicts_with` the stable formula, and set
-`<NAME>_VERSION` during `cargo install`.
+1. `test` — `uses: ./.github/workflows/ci.yml`. Nothing builds or publishes
+   unless the full suite is green on all six platforms.
+2. `version` — checkout with `fetch-depth: 0`; compute the next semver from
+   Conventional Commits since the latest `v*` tag: `!`/`BREAKING CHANGE` →
+   major, `feat` → minor, anything else → patch (always releases). With no
+   tags yet, seed from the crate `version` in `Cargo.toml`. Do **not** push a
+   tag here — a failed build must not burn the version number.
+3. `build` — needs `test` + `version`; the same 6-leg native matrix as ci.
+   Stamp the computed version into `Cargo.toml` with `perl -pi` (portable
+   across BSD/GNU sed and Windows; never committed), build **without**
+   `--locked` (the stamp would fail a locked build; resolution is unchanged),
+   `cargo build --release`, then package the binary alone:
+   `<bin>-{linux,darwin,windows}-{amd64,arm64}` as `.tar.gz` (`.zip` on
+   Windows). Upload as artifacts.
+4. `release` — download all artifacts, write `SHA256SUMS`, then
+   `gh release create "vX.Y.Z" --target "$GITHUB_SHA" --generate-notes` with
+   every asset. This mints the tag and the release atomically, only after
+   every build succeeded.
 
 ### `.github/dependabot.yml`
 
 Weekly `cargo` and `github-actions` updates. Commit prefixes `deps` and `ci`.
 
-## Homebrew
+## mise
 
-In-repo `Formula/<bin>.rb` is the template the tap should converge to:
+mise's `github` backend reads GitHub releases directly — a public repo needs
+no registry submission at all:
 
-```ruby
-class <Bin> < Formula
-  desc "<one line>"
-  homepage "https://github.com/aymericbeaumet/<name>"
-  url "https://github.com/aymericbeaumet/<name>/archive/refs/tags/vX.Y.Z.tar.gz"
-  sha256 "PLACEHOLDER_SHA256"
-  license "MIT"
-  head "https://github.com/aymericbeaumet/<name>.git", branch: "main"
-
-  depends_on "rust" => :build
-
-  def install
-    system "cargo", "install", *std_cargo_args(path: "<cli>")
-  end
-
-  test do
-    # pipe or exec <bin> with a stable assertion
-  end
-end
+```shell
+mise use -g github:aymericbeaumet/<name>
 ```
 
-Install from the CLI crate path, not the workspace root. The formula `test`
-must exercise the installed binary without the network.
+Requirements and caveats:
+
+- Asset names must be auto-detectable: use `linux`/`darwin`/`windows` and
+  `amd64`/`arm64` in the file names (`<bin>-<os>-<arch>.tar.gz`). Ship the
+  binary alone in each archive.
+- The `ubi:` backend is deprecated (removed in mise 2027.1) — document and
+  use `github:`.
+- `mise x github:…` silently falls back to a same-named binary already on
+  `PATH` (for example a `cargo install`ed copy) when the tool is not
+  installed. Verify installs with `mise install` + `mise where`, not just
+  `mise x … -- <bin> --version`.
 
 ## Release
 
-1. Bump every crate `version` together.
-2. `make check`.
-3. Commit, then tag `vX.Y.Z` on `main` and push the tag.
-4. Confirm the GitHub release and the tap formula update.
+Releases are continuous — never bump versions or push tags by hand:
 
-Do not hand-edit the tap formula when the release workflow owns it.
+1. Merge or push to `main`.
+2. release.yml runs the full ci suite, then builds and publishes
+   `vX.Y.Z` computed from the Conventional Commit messages since the last
+   tag. A red suite means no release.
+3. The crate `version` in `Cargo.toml` only seeds the very first release;
+   after that, tags are the single source of truth.
+
+Because commit types drive version bumps, commit messages must be accurate:
+a `feat:` mislabeled as `chore:` ships as a patch.
 
 ## Reference
 

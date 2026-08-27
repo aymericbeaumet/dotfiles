@@ -13,7 +13,7 @@ guidance lives in the root `AGENTS.md` here.
 | Repo guidance | `<repo>/AGENTS.md` | Standard project instructions |
 | Project memory | `<repo>/.memories/MEMORY.md` | Local knowledge shared across agent clients |
 | Work handouts | `<repo>/.handouts/<id>.md` | Local session-resumption snapshots |
-| Project blueprints | `~/.dotfiles/agents/blueprints/` | Reusable specs for new repos (not loaded automatically) |
+| Project blueprints | `~/.agents/blueprints/` | Reusable specs for new repos (not loaded automatically) |
 
 Do not add duplicated client-specific instruction bodies. Each client uses a thin native adapter
 around these canonical files because its global discovery paths differ.
@@ -40,10 +40,13 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
 - `handout` writes an ignored local `.handouts/<id>.md` snapshot for active work. Invoking it without
   an ID creates one; invoking it with an ID loads that snapshot.
 - `distill` writes durable, non-session guidance into the narrowest applicable `AGENTS.md`.
+- `enrich-blueprint` compares the current project to `~/.agents/blueprints/` and asks what to
+  include. It stays in plan mode until the user confirms.
 - Memory and handouts stay outside project Git history. Distilled `AGENTS.md` guidance follows the
   repository's normal version-control policy.
-- Claude Code, OpenCode, and Pi expose `/handout` and `/distill`. Codex exposes the same shared
-  skills as `$handout` and `$distill` because it does not support custom slash commands.
+- Claude Code, OpenCode, and Pi expose `/handout`, `/distill`, and `/enrich-blueprint`. Codex
+  exposes the same shared skills as `$handout`, `$distill`, and `$enrich-blueprint` because it
+  does not support custom slash commands.
 - Shared atomic Git workflow skills are `commit`, `push`, and `squash`. Slash-separated requests
   compose them in order and stop on the first failure.
 - `pullrequest` is the one-shot PR workflow: prepare and publish the branch, create or update the PR,

@@ -121,6 +121,10 @@ jq -e '
   .autoMemoryEnabled == false and
   .tui == "fullscreen" and
   [.permissions.allow[] | select(startswith("mcp__"))] == ["mcp__semble__*"] and
+  (.permissions.deny | index("EnterWorktree")) != null and
+  (.permissions.deny | index("ExitWorktree")) != null and
+  ([.hooks.PreToolUse[]?.hooks[]?.command] |
+    any(contains("scripts/worktree-guard.sh"))) and
   ([.hooks.SessionStart[]?.hooks[]?.command] |
     any(contains("scripts/agent-instructions.sh"))) and
   ([.hooks.SessionStart[]?.hooks[]?.command] |
@@ -135,13 +139,16 @@ jq -e '
   .theme == "nord" and
   .mouse == true and
   .scroll_acceleration.enabled == true and
+  .keybinds.app_exit == "ctrl+d,<leader>q" and
+  .keybinds.session_interrupt == "escape,ctrl+c" and
+  .keybinds.input_clear == "none" and
   .keybinds.command_list == "<leader>p" and
   .keybinds.input_move_left == "left,ctrl+b" and
   .keybinds.input_move_right == "right,ctrl+f" and
   .keybinds.input_move_up == "up,ctrl+p" and
   .keybinds.input_move_down == "down,ctrl+n" and
-  (.keybinds | has("history_previous") | not) and
-  (.keybinds | has("history_next") | not) and
+  .keybinds.history_previous == "up,ctrl+p" and
+  .keybinds.history_next == "down,ctrl+n" and
   .keybinds.model_cycle_favorite == "f3" and
   .keybinds.model_cycle_favorite_reverse == "shift+f3" and
   .keybinds.variant_cycle == "ctrl+t" and
@@ -197,7 +204,8 @@ jq -e '
 ' .claude/keybindings.json >/dev/null
 
 jq -e '
-  (.hooks | keys) == ["PostToolUse", "SessionStart", "Stop", "UserPromptSubmit"] and
+  (.hooks | keys) == ["PostToolUse", "PreToolUse", "SessionStart", "Stop", "UserPromptSubmit"] and
+  any(.hooks.PreToolUse[]?.hooks[]?; .command | contains("scripts/worktree-guard.sh")) and
   ([.hooks.SessionStart[]?.hooks[]? |
     select(.command | contains("scripts/project-memory.sh"))] | length) == 1 and
   ([.hooks.SessionStart[]?.hooks[]? |
@@ -214,8 +222,10 @@ jq -e '
 [ -f .config/opencode/plugins/transient-retry.ts ] || fail "missing OpenCode transient-retry plugin"
 [ -f .config/opencode/plugins/project-memory.ts ] || fail "missing OpenCode project-memory plugin"
 [ -f .config/opencode/plugins/tmux-pane.ts ] || fail "missing OpenCode tmux-pane plugin"
+[ -f .config/opencode/plugins/worktree-guard.ts ] || fail "missing OpenCode worktree-guard plugin"
 [ -f .pi/agent/extensions/project-memory.ts ] || fail "missing Pi project-memory extension"
 [ -x scripts/claude-retry.sh ] || fail "Claude retry hook must be executable"
+[ -x scripts/worktree-guard.sh ] || fail "worktree guard must be executable"
 [ -x scripts/project-memory.sh ] || fail "project-memory helper must be executable"
 [ -x scripts/configure-codex-hooks.mjs ] || fail "Codex hook configurator must be executable"
 node --check scripts/configure-codex-hooks.mjs
@@ -492,13 +502,21 @@ done
 [ ! -e .handouts/.gitkeep ] || fail "project handouts must not contain a tracked placeholder"
 [ -f .config/opencode/commands/handout.md ] || fail "missing OpenCode handout command"
 [ -f .config/opencode/commands/distill.md ] || fail "missing OpenCode distill command"
+[ -f .config/opencode/commands/enrich-blueprint.md ] || fail "missing OpenCode enrich-blueprint command"
 [ -f .pi/agent/prompts/handout.md ] || fail "missing Pi handout prompt"
 [ -f .pi/agent/prompts/distill.md ] || fail "missing Pi distill prompt"
+[ -f .pi/agent/prompts/enrich-blueprint.md ] || fail "missing Pi enrich-blueprint prompt"
+[ -f .agents/skills/enrich-blueprint/SKILL.md ] || fail "missing enrich-blueprint skill"
+[ -f .agents/blueprints/CLI.md ] || fail "missing CLI blueprint"
+[ ! -e agents ] || fail "project blueprints must live under .agents/blueprints"
 
 require_relative_link .codex/AGENTS.md ../.agents/AGENTS.md
 require_relative_link .config/opencode/AGENTS.md ../../.agents/AGENTS.md
 require_relative_link .claude/skills ../.agents/skills
 require_relative_link .pi/agent/AGENTS.md ../../.agents/AGENTS.md
+require_relative_link .codex/skills/bonsai ../../.agents/skills/bonsai
+require_relative_link .config/opencode/skills/bonsai ../../../.agents/skills/bonsai
+require_relative_link .pi/agent/skills/bonsai ../../../.agents/skills/bonsai
 git check-ignore -q --no-index .memories ||
   fail "per-project memory symlinks must be ignored globally"
 git check-ignore -q --no-index .handouts/example.md ||
@@ -556,6 +574,18 @@ rg -F 'applicable `AGENTS.md`' .agents/skills/distill/SKILL.md >/dev/null ||
   fail "distill skill must write harness-neutral AGENTS.md guidance"
 rg -F 'client-specific memory or state directory' .agents/skills/distill/SKILL.md >/dev/null ||
   fail "distill skill must reject client-specific memory stores"
+rg -F 'Stay in plan mode' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
+  fail "enrich-blueprint skill must stay in plan mode"
+rg -F 'Ask which candidates to include' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
+  fail "enrich-blueprint skill must ask which project conventions to include"
+rg -F 'stack and language manifests' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
+  fail "enrich-blueprint skill must survey the project stack"
+rg -F 'CI workflows' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
+  fail "enrich-blueprint skill must survey CI"
+rg -F 'README' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
+  fail "enrich-blueprint skill must survey the README"
+rg -F 'direct dependencies' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
+  fail "enrich-blueprint skill must survey dependencies"
 for shared_skill in .agents/skills/*/SKILL.md; do
   if rg -n 'Codex|Claude|OpenCode|CODEX_HOME|CLAUDE_PROJECT_DIR|\$ARGUMENTS|disallowed-tools|allowed-tools' "$shared_skill" >/dev/null; then
     fail "$shared_skill contains harness-specific instructions"

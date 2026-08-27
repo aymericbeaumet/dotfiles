@@ -16,7 +16,10 @@
       "Edit",
       "mcp__semble__*"
     ],
-    "deny": [],
+    "deny": [
+      "EnterWorktree",
+      "ExitWorktree"
+    ],
     "defaultMode": "bypassPermissions"
   },
   "model": "claude-fable-5",
@@ -28,6 +31,16 @@
           {
             "type": "command",
             "command": "rtk hook claude"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|EnterWorktree|ExitWorktree",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/worktree-guard.sh'",
+            "timeout": 5
           }
         ]
       }

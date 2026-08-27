@@ -1,6 +1,18 @@
 {
   "description": "Portable dotfiles hooks shared by Codex installations.",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|shell|local_shell|exec_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '$HOME/.dotfiles/scripts/worktree-guard.sh'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [

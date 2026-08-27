@@ -1,0 +1,18 @@
+# Bonsai worktree manager — shared across machines and harnesses.
+# https://github.com/aymericbeaumet/bonsai
+
+[add]
+# Setting `copy` replaces bonsai's defaults, so they are restated here.
+# `.memories` is intentionally absent: it is a symlink recreated per checkout
+# by scripts/project-memory.sh (keyed by remote, so every worktree of a repo
+# shares the same memory). Copying it as real files would break that wiring.
+copy = [
+  ".env",
+  ".env.*",
+  ".envrc",
+  ".mcp.json",
+  "CLAUDE.local.md",
+  ".claude/settings.local.json",
+  ".cursor/mcp.json",
+  ".handouts/*",
+]
