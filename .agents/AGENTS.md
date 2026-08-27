@@ -7,6 +7,19 @@ project-specific commands and constraints.
 
 - Name every branch you create `ab/<slug>`, using a short lowercase kebab-case slug.
 
+## Git worktrees
+
+- `bonsai` is the only tool for the worktree lifecycle: create, list, jump, remove, clean. Never
+  run `git worktree` directly, and never use a harness-native worktree feature (Claude Code
+  `EnterWorktree` or agent `isolation: "worktree"`, Cursor worktrees, Codex cloud environments).
+- Create or reuse a worktree with `path=$(bonsai add <branch>)`; the command is idempotent, prints
+  the worktree's absolute path, and pre-provisions local config. Run all subsequent work inside
+  that directory.
+- Worktrees live at `~/.bonsai/<repo-id>/<branch>` regardless of client, so any harness resumes a
+  task by opening the same path. Use the `handout` skill to pass in-progress context across
+  clients.
+- Load the `bonsai` skill before any non-trivial worktree operation.
+
 ## Git workflows
 
 - Treat slash-separated Git workflow names in a user request as an ordered pipeline of the matching
