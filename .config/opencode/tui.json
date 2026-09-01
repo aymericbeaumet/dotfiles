@@ -20,5 +20,8 @@
     "model_cycle_favorite_reverse": "shift+f3",
     "variant_cycle": "ctrl+t",
     "variant_list": "<leader>v"
-  }
+  },
+  "plugin": [
+    "@prevalentware/opencode-goal-plugin"
+  ]
 }
