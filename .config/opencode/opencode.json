@@ -40,5 +40,9 @@
       "enabled": true,
       "timeout": 30000
     }
-  }
+  },
+  "instructions": ["attribution.md"],
+  "plugin": [
+    "@prevalentware/opencode-goal-plugin"
+  ]
 }

@@ -110,7 +110,8 @@ jq -e '
     "command": ["uvx", "--from", "semble[mcp]==0.5.4", "semble"],
     "enabled": true,
     "timeout": 30000
-  }
+  } and
+  .instructions == ["attribution.md"]
 ' .config/opencode/opencode.json >/dev/null
 
 jq -e '
@@ -120,6 +121,7 @@ jq -e '
   .env.ENABLE_TOOL_SEARCH == "true" and
   .autoMemoryEnabled == false and
   .tui == "fullscreen" and
+  .attribution == {"commit": "", "pr": "", "sessionUrl": false} and
   [.permissions.allow[] | select(startswith("mcp__"))] == ["mcp__semble__*"] and
   (.permissions.deny | index("EnterWorktree")) != null and
   (.permissions.deny | index("ExitWorktree")) != null and
@@ -134,6 +136,15 @@ jq -e '
   ([.hooks.Stop[]?.hooks[]?.command] |
     any(contains("scripts/claude-retry.sh reset")))
 ' .claude/settings.json >/dev/null
+rg -Fx '.claude/settings.json filter=claude-settings' .gitattributes >/dev/null ||
+  fail "Claude settings must use a git filter so model and effort stay local"
+git config --file .gitconfig --get filter.claude-settings.clean |
+  rg -F 'scripts/claude-settings-clean.jq' >/dev/null ||
+  fail "gitconfig must clean Claude settings with scripts/claude-settings-clean.jq"
+printf '%s\n' '{"model":"x","effortLevel":"high","tui":"fullscreen","theme":"auto"}' |
+  jq --indent 2 -f scripts/claude-settings-clean.jq |
+  jq -e '(has("model") | not) and (has("effortLevel") | not) and .tui == "fullscreen" and .theme == "auto"' >/dev/null ||
+  fail "Claude settings clean filter must drop model and effortLevel"
 
 jq -e '
   .theme == "nord" and
@@ -290,6 +301,7 @@ check_project_memory
 
 check_agent_quota_status() (
   local test_root now first_day_now reset_iso reset_epoch earlier_reset later_reset
+  local subday_reset almost_day_reset
   local claude_tsv codex_tsv grok_json grok_tsv output
   test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-agent-quota.XXXXXX")
   trap 'rm -rf "$test_root"' EXIT
@@ -349,6 +361,16 @@ check_agent_quota_status() (
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
   [ "$output" = '100%↻6d' ] || fail "6d01h must floor to 6d: $output"
+  subday_reset=$((now + 5 * 3600))
+  codex_tsv=$(printf '0\t%s\t10080' "$subday_reset")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
+  [ "$output" = '100%↻5h' ] || fail "remaining under 1d must render hours: $output"
+  almost_day_reset=$((now + 23 * 3600))
+  codex_tsv=$(printf '0\t%s\t10080' "$almost_day_reset")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
+  [ "$output" = '100%↻23h' ] || fail "23h remaining must render hours: $output"
 
   claude_tsv=$(printf '81\t%s\tnull\tnull' "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
@@ -534,6 +556,12 @@ rg -F '`commit/push` means run `commit`, then `push`' .agents/AGENTS.md >/dev/nu
   fail "global agent guidance must compose slash-separated Git workflows"
 rg -F 'The `pullrequest` skill is explicitly end-to-end' .agents/AGENTS.md >/dev/null ||
   fail "global agent guidance must define pullrequest as a one-shot workflow"
+rg -F 'Never add `Co-Authored-By`' .agents/AGENTS.md >/dev/null ||
+  fail "global agent guidance must forbid harness authorship trailers"
+rg -F 'Never add `Co-Authored-By`' .pi/agent/APPEND_SYSTEM.md >/dev/null ||
+  fail "Pi adapter must forbid harness authorship trailers"
+rg -F 'Never add `Co-Authored-By`' .config/opencode/attribution.md >/dev/null ||
+  fail "OpenCode must load a no-attribution instruction file"
 rg -F 'canonical local project memory' .agents/AGENTS.md >/dev/null ||
   fail "global agent guidance must define the shared project-memory location"
 rg -Fx '  codex features enable hooks' setup.sh >/dev/null ||

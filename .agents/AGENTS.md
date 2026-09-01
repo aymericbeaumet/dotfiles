@@ -29,6 +29,9 @@ project-specific commands and constraints.
 - Do not infer omitted workflow stages. The `pullrequest` skill is explicitly end-to-end: invoke it
   once and let it create commits, publish the branch, create or update the PR, and converge review
   and CI based on live state.
+- Never add `Co-Authored-By`, `Made-with`, `Generated-by`, "Generated with …", or any other agent or
+  harness attribution in commits, pull requests, comments, or files. Leave no trace that a tool
+  authored the work.
 
 ## Project continuity
 
@@ -74,3 +77,14 @@ project-specific commands and constraints.
   integration serial.
 - Do not delegate trivial reads, exact-string searches, or work involving only one or two known
   files.
+
+## Implementation
+
+- Prefer pure functions and a functional style when they make behavior easier to test and change:
+  explicit inputs and outputs, no hidden mutation, composition over shared mutable state.
+- Model multi-step or event-driven logic as an explicit state machine when the transitions matter;
+  do not hide them in ad-hoc flags and nested conditionals.
+- Use TDD when the behavior is non-trivial and testable: pin the contract with a failing test, then
+  implement. Skip the ceremony for trivial glue.
+- Add comments only when the why is not obvious from names and structure. Prefer a clear idiom over
+  a comment that restates the code.

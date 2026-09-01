@@ -102,6 +102,10 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 
+[filter "claude-settings"]
+	clean = jq --indent 2 -f scripts/claude-settings-clean.jq
+	smudge = cat
+
 [interactive]
 	diffFilter = delta --color-only
 

@@ -22,7 +22,6 @@
     ],
     "defaultMode": "bypassPermissions"
   },
-  "model": "claude-fable-5",
   "hooks": {
     "PreToolUse": [
       {
@@ -131,10 +130,15 @@
       }
     ]
   },
+  "tui": "fullscreen",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "skipAutoPermissionPrompt": true,
-  "tui": "fullscreen",
   "theme": "auto",
   "agentPushNotifEnabled": true
 }

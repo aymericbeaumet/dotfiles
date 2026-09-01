@@ -64,6 +64,7 @@ passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 # app switch chords
 "'a" = ["flash", "app_open", "--name=Alacritty"]
 "'c" = ["flash", "app_open", "--name=Claude"]
+"'e" = ["flash", "app_open", "--name=Element"]
 "'f" = ["flash", "app_open", "--name=Firefox"]
 "'i" = ["flash", "app_open", "--name=Messages"]
 "'l" = ["flash", "app_open", "--name=Linear"]
