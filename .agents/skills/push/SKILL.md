@@ -6,7 +6,9 @@ description: Synchronize and push existing commits without staging or committing
 # Push
 
 Do not stage files or create, amend, squash, or otherwise rewrite commits except for the explicit
-upstream rebase below. Preserve all staged and unstaged worktree changes.
+upstream rebase below. Preserve all staged and unstaged worktree changes. If this checkout is not
+already a bonsai worktree, create or reuse one with `path=$(bonsai add ab/<slug>)` and continue
+there without waiting for confirmation.
 
 1. Inspect the current branch, worktree and index status, configured upstream, recent commits, and
    remotes.

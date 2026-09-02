@@ -95,6 +95,9 @@ lazy-lock.json
 !.codex/AGENTS.md
 !.codex/hooks.json
 !.codex/rules/
+!.codex/skills/
+.codex/skills/*
+!.codex/skills/bonsai
 
 # Shared and legacy agent memory (preserved locally)
 .agents/memories/
