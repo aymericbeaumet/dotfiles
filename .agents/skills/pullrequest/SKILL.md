@@ -12,6 +12,8 @@ the pull request.
 
 ## Safety
 
+- Run this workflow only inside a bonsai worktree. If the current checkout is not one, create or
+  reuse `path=$(bonsai add ab/<slug>)` and continue there without waiting for confirmation.
 - Preserve unrelated or concurrent work. Re-check branch, HEAD, worktree, and index before every
   branch creation, merge, commit, and push.
 - When pending changes are clearly the intended PR work, validate and commit them. If unrelated or
