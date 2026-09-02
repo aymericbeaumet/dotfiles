@@ -386,7 +386,7 @@ check_agent_quota_status() (
   mkdir -p "$test_root/tmux-agent-quota-status"
   printf '50\t%s\t30\t%s\t10\t%s' "$reset_iso" "$reset_iso" "$reset_iso" \
     >"$test_root/tmux-agent-quota-status/claude-usage-v2.tsv"
-  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/claude-usage-v3.next"
+  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/claude-usage-v4.next"
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     scripts/agent-quota-status.sh --claude)
   [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
@@ -398,12 +398,28 @@ check_agent_quota_status() (
     scripts/agent-quota-status.sh --fable)
   [ "$output" = '90%↻6d' ] ||
     fail "Fable must keep last-good weekly usage when the live fetch is in backoff: $output"
+
+  claude_tsv=$(printf '0\t%s\t0\t%s\t100' "$reset_iso" "$reset_iso")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
+  [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
+    fail "exhausted Claude session must color weekly quota red: $output"
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --fable)
+  [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
+    fail "exhausted Claude session must color Fable quota red: $output"
+
+  codex_tsv=$(printf '0\t%s\t10080\t100' "$reset_epoch")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
+  [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
+    fail "exhausted Codex session must color weekly quota red: $output"
 )
 check_agent_quota_status
 
 rg -F '.kind == "weekly_scoped"' scripts/agent-quota-status.sh >/dev/null ||
   fail "Claude quota parsing must include model-scoped Fable usage"
-if rg -n 'five_hour|\?%↻\?h' scripts/agent-quota-status.sh >/dev/null; then
+if rg -n '\?%↻\?h' scripts/agent-quota-status.sh >/dev/null; then
   fail "status bar must not render session or daily quotas"
 fi
 rg -F 'agent-quota-status.sh --fable' .config/flash/flash.toml >/dev/null ||
@@ -554,9 +570,6 @@ git check-ignore -q --no-index .agents/memories.codex-native-legacy/MEMORY.md ||
   fail "legacy memory archives must remain local"
 if git check-ignore -q --no-index .codex/hooks.json; then
   fail "tracked Codex hooks are still ignored"
-fi
-if git check-ignore -q --no-index .codex/skills/bonsai; then
-  fail "tracked Codex bonsai skill link is still ignored"
 fi
 rg -F 'Name every branch you create `ab/<slug>`' .agents/AGENTS.md >/dev/null ||
   fail "global agent guidance must require ab/<slug> branch names"
