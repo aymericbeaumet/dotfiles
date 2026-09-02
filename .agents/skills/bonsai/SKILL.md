@@ -1,6 +1,6 @@
 ---
 name: bonsai
-description: Manage git worktrees with the bonsai CLI - create isolated per-branch worktrees outside the repo, jump between them, and clean up merged ones. Use when working on a branch in isolation, parallelizing tasks across worktrees, or tidying up worktrees and branches.
+description: Manage git worktrees with the bonsai CLI - create isolated per-branch worktrees outside the repo, jump between them, and clean up merged ones. Use when starting commit, push, or pull-request work, isolating a branch, parallelizing tasks across worktrees, or tidying up worktrees and branches.
 ---
 
 # bonsai — centralized git worktrees

@@ -10,12 +10,12 @@ export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/o
 
 now=${AGENT_QUOTA_TEST_NOW:-$(date +%s)}
 cache_root="${TMPDIR:-/tmp}/tmux-agent-quota-status"
-last_good="$cache_root/rendered-v7.last"
-legacy_last_good="$cache_root/rendered-v6.last"
-claude_status_cache="$cache_root/rendered-claude-v3.last"
-fable_status_cache="$cache_root/rendered-fable-v2.last"
-codex_status_cache="$cache_root/rendered-codex-v3.last"
-grok_status_cache="$cache_root/rendered-grok-v2.last"
+last_good="$cache_root/rendered-v8.last"
+legacy_last_good="$cache_root/rendered-v7.last"
+claude_status_cache="$cache_root/rendered-claude-v4.last"
+fable_status_cache="$cache_root/rendered-fable-v3.last"
+codex_status_cache="$cache_root/rendered-codex-v4.last"
+grok_status_cache="$cache_root/rendered-grok-v3.last"
 claude_usage_cache="$cache_root/claude-usage-v3.tsv"
 claude_usage_backoff="$cache_root/claude-usage-v3.next"
 legacy_claude_usage_cache="$cache_root/claude-usage-v2.tsv"
@@ -38,7 +38,9 @@ fmt_days_until() {
         seconds = target - now
         if (seconds < 0) seconds = 0
         hours = int(seconds / 3600)
-        if (hours < 24) {
+        if (hours < 1) {
+          printf "%dmin", int(seconds / 60)
+        } else if (hours < 24) {
           printf "%dh", hours
         } else {
           printf "%dd", int(hours / 24)
@@ -585,7 +587,7 @@ render_claude_unlabelled() {
   fi
 
   status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
-  cache="$cache_root/rendered-claude-unlabelled-v4.last"
+  cache="$cache_root/rendered-claude-unlabelled-v5.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
@@ -610,7 +612,7 @@ render_fable_unlabelled() {
   fi
 
   status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
-  cache="$cache_root/rendered-fable-unlabelled-v2.last"
+  cache="$cache_root/rendered-fable-unlabelled-v3.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
@@ -636,7 +638,7 @@ render_codex_unlabelled() {
   fi
 
   status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
-  cache="$cache_root/rendered-codex-unlabelled-v4.last"
+  cache="$cache_root/rendered-codex-unlabelled-v5.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"
@@ -663,7 +665,7 @@ render_grok_unlabelled() {
   fi
 
   status=$(format_provider_unlabelled "$week_pct" "$week_reset" "$week_window_mins")
-  cache="$cache_root/rendered-grok-unlabelled-v2.last"
+  cache="$cache_root/rendered-grok-unlabelled-v3.last"
   if [ -n "$status" ]; then
     write_cache_file "$cache" "$status" || true
     printf '%s' "$status"

@@ -48,7 +48,8 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
   exposes the same shared skills as `$handout`, `$distill`, and `$enrich-blueprint` because it
   does not support custom slash commands.
 - Shared atomic Git workflow skills are `commit`, `push`, and `squash`. Slash-separated requests
-  compose them in order and stop on the first failure.
+  compose them in order and stop on the first failure. `commit`, `push`, and `pullrequest` always
+  run inside a bonsai worktree without waiting for confirmation to create it.
 - `pullrequest` is the one-shot PR workflow: prepare and publish the branch, create or update the PR,
   merge the actual base, fix or answer review feedback, repair actionable CI failures, and repeat
   until the PR is ready to merge.

@@ -301,7 +301,7 @@ check_project_memory
 
 check_agent_quota_status() (
   local test_root now first_day_now reset_iso reset_epoch earlier_reset later_reset
-  local subday_reset almost_day_reset
+  local subday_reset almost_day_reset subhour_reset
   local claude_tsv codex_tsv grok_json grok_tsv output
   test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-agent-quota.XXXXXX")
   trap 'rm -rf "$test_root"' EXIT
@@ -371,6 +371,11 @@ check_agent_quota_status() (
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
     AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
   [ "$output" = '100%↻23h' ] || fail "23h remaining must render hours: $output"
+  subhour_reset=$((now + 12 * 60))
+  codex_tsv=$(printf '0\t%s\t10080' "$subhour_reset")
+  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
+  [ "$output" = '100%↻12min' ] || fail "remaining under 1h must render minutes: $output"
 
   claude_tsv=$(printf '81\t%s\tnull\tnull' "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
@@ -550,8 +555,13 @@ git check-ignore -q --no-index .agents/memories.codex-native-legacy/MEMORY.md ||
 if git check-ignore -q --no-index .codex/hooks.json; then
   fail "tracked Codex hooks are still ignored"
 fi
+if git check-ignore -q --no-index .codex/skills/bonsai; then
+  fail "tracked Codex bonsai skill link is still ignored"
+fi
 rg -F 'Name every branch you create `ab/<slug>`' .agents/AGENTS.md >/dev/null ||
   fail "global agent guidance must require ab/<slug> branch names"
+rg -F 'Always run `commit`, `push`, and `pullrequest` from a bonsai worktree' .agents/AGENTS.md >/dev/null ||
+  fail "global agent guidance must require commit/push/PR inside a bonsai worktree"
 rg -F '`commit/push` means run `commit`, then `push`' .agents/AGENTS.md >/dev/null ||
   fail "global agent guidance must compose slash-separated Git workflows"
 rg -F 'The `pullrequest` skill is explicitly end-to-end' .agents/AGENTS.md >/dev/null ||
