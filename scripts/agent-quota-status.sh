@@ -18,14 +18,23 @@ codex_status_cache="$cache_root/rendered-codex-v5.last"
 grok_status_cache="$cache_root/rendered-grok-v4.last"
 claude_usage_cache="$cache_root/claude-usage-v4.tsv"
 claude_usage_backoff="$cache_root/claude-usage-v4.next"
+claude_usage_lock="$cache_root/claude-usage-v4.lock"
+claude_oauth_backoff="$cache_root/claude-oauth-refresh-v1.next"
 legacy_claude_usage_cache="$cache_root/claude-usage-v2.tsv"
+codex_usage_cache="$cache_root/codex-usage-v1.tsv"
+codex_usage_lock="$cache_root/codex-usage-v1.lock"
 grok_usage_cache="$cache_root/grok-usage-v1.tsv"
 grok_usage_backoff="$cache_root/grok-usage-v1.next"
+grok_usage_lock="$cache_root/grok-usage-v1.lock"
+grok_oauth_backoff="$cache_root/grok-oauth-refresh-v1.next"
 refresh_lock="$cache_root/refresh.lock"
 : "${AGENT_QUOTA_RENDER_TTL_SECONDS:=30}"
 : "${AGENT_QUOTA_REFRESH_LOCK_SECONDS:=30}"
-: "${CLAUDE_USAGE_TTL_SECONDS:=120}"
-: "${CLAUDE_USAGE_RETRY_SECONDS:=60}"
+: "${AGENT_QUOTA_USAGE_LOCK_SECONDS:=30}"
+: "${AGENT_QUOTA_OAUTH_RETRY_SECONDS:=300}"
+: "${CLAUDE_USAGE_TTL_SECONDS:=600}"
+: "${CLAUDE_USAGE_RETRY_SECONDS:=300}"
+: "${CODEX_USAGE_TTL_SECONDS:=120}"
 : "${GROK_USAGE_TTL_SECONDS:=120}"
 : "${GROK_USAGE_RETRY_SECONDS:=60}"
 
@@ -119,6 +128,17 @@ cache_path_is_fresh() {
   [ -e "$path" ] || return 1
   mtime=$(file_mtime "$path") || return 1
   [ $((now - mtime)) -lt "$ttl" ]
+}
+
+acquire_usage_lock() {
+  lock=${1:-}
+  [ -n "$lock" ] || return 1
+  mkdir -p "${lock%/*}" 2>/dev/null || return 1
+
+  if [ -d "$lock" ] && ! cache_path_is_fresh "$lock" "$AGENT_QUOTA_USAGE_LOCK_SECONDS"; then
+    rmdir "$lock" 2>/dev/null || true
+  fi
+  mkdir "$lock" 2>/dev/null
 }
 
 script_path() {
@@ -291,6 +311,116 @@ claude_oauth_token() {
   printf '%s' "$credentials" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null
 }
 
+claude_oauth_token_needs_refresh() {
+  [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] || return 1
+  credentials=$(claude_credentials_json)
+  [ -n "$credentials" ] || return 1
+  expires=$(printf '%s' "$credentials" | jq -r '.claudeAiOauth.expiresAt // empty' 2>/dev/null)
+  case "$expires" in
+    '' | *[!0-9]*) return 0 ;;
+  esac
+  [ "$expires" -le "$(((now + 120) * 1000))" ]
+}
+
+store_claude_credentials() {
+  credentials_file=${1:-}
+  [ -s "$credentials_file" ] || return 1
+
+  if command -v security >/dev/null 2>&1; then
+    account=$(claude_keychain_account)
+    service=$(claude_keychain_service)
+    if security find-generic-password -a "$account" -s "$service" >/dev/null 2>&1; then
+      security add-generic-password -U -a "$account" -s "$service" -w \
+        <"$credentials_file" >/dev/null 2>&1
+      return
+    fi
+  fi
+
+  config_dir=$(claude_config_dir)
+  target=
+  for path in "$config_dir/.credentials.json" "$HOME/.claude/.credentials.json"; do
+    if [ -f "$path" ]; then
+      target=$path
+      break
+    fi
+  done
+  [ -n "$target" ] || target="$config_dir/.credentials.json"
+  mkdir -p "${target%/*}" 2>/dev/null || return
+  mv "$credentials_file" "$target"
+}
+
+refresh_claude_oauth_token() {
+  credentials=$(claude_credentials_json)
+  [ -n "$credentials" ] || return
+  refresh=$(printf '%s' "$credentials" | jq -r '.claudeAiOauth.refreshToken // empty' 2>/dev/null)
+  [ -n "$refresh" ] || return
+
+  if [ "${AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON+x}" ]; then
+    response=$AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON
+  else
+    response=$(printf '%s' "$refresh" |
+      jq -Rs '{
+        grant_type: "refresh_token",
+        refresh_token: .,
+        client_id: "9d1c250a-e61b-44d9-88ed-5944d1962f5e"
+      }' |
+      curl -fsS --max-time 5 \
+        -H 'Accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'anthropic-beta: oauth-2025-04-20' \
+        -H 'User-Agent: anthropic-sdk-typescript/0.94.0 userOAuthProvider' \
+        --data-binary @- \
+        'https://platform.claude.com/v1/oauth/token' 2>/dev/null)
+  fi
+
+  printf '%s' "$response" | jq -e '
+    (.access_token | type == "string" and length > 0)
+    and ((.refresh_token // "") | type == "string")
+  ' >/dev/null 2>&1 || return
+
+  expires_in=$(printf '%s' "$response" | jq -r '(.expires_in | tonumber?) // 3600' 2>/dev/null)
+  case "$expires_in" in
+    '' | *[!0-9]*) expires_in=3600 ;;
+  esac
+  expires=$(((now + expires_in) * 1000))
+
+  mkdir -p "$cache_root" 2>/dev/null
+  umask 077
+  credentials_file="$cache_root/claude-credentials.$$"
+  token_file="$cache_root/claude-oauth-refresh.$$"
+  if ! printf '%s' "$credentials" >"$credentials_file" || ! printf '%s' "$response" >"$token_file"; then
+    rm -f "$credentials_file" "$token_file"
+    return
+  fi
+  updated_file="$cache_root/claude-credentials-updated.$$"
+  if ! jq -c --slurpfile token "$token_file" --argjson expires "$expires" --argjson now_ms "$((now * 1000))" '
+    .claudeAiOauth.accessToken = $token[0].access_token
+    | .claudeAiOauth.refreshToken = (
+        if (($token[0].refresh_token // "") | length) > 0
+        then $token[0].refresh_token
+        else .claudeAiOauth.refreshToken
+        end
+      )
+    | .claudeAiOauth.expiresAt = $expires
+    | ($token[0].refresh_token_expires_in | tonumber?) as $refresh_expires_in
+    | if $refresh_expires_in != null
+      then .claudeAiOauth.refreshTokenExpiresAt = ($now_ms + ($refresh_expires_in * 1000))
+      else .
+      end
+  ' "$credentials_file" >"$updated_file"; then
+    rm -f "$credentials_file" "$token_file" "$updated_file"
+    return
+  fi
+
+  rm -f "$credentials_file" "$token_file"
+  if store_claude_credentials "$updated_file"; then
+    rm -f "$updated_file"
+    claude_oauth_token
+    return
+  fi
+  rm -f "$updated_file"
+}
+
 claude_org_uuid() {
   settings=$(claude_settings_path)
   [ -f "$settings" ] || return
@@ -298,10 +428,11 @@ claude_org_uuid() {
 }
 
 # Weekly Claude + Fable columns from the previous 6-column usage TSV, plus
-# the session utilization used only for unavailable coloring.
+# the session utilization used only for unavailable coloring. Old data has
+# no session reset timestamp, so the final field is explicitly unknown.
 claude_usage_from_legacy() {
   [ -f "$legacy_claude_usage_cache" ] || return
-  awk -F '\t' 'NF >= 6 { printf "%s\t%s\t%s\t%s\t%s", $3, $4, $5, $6, $1 }' "$legacy_claude_usage_cache"
+  awk -F '\t' 'NF >= 6 { printf "%s\t%s\t%s\t%s\t%s\tnull", $3, $4, $5, $6, $1 }' "$legacy_claude_usage_cache"
 }
 
 cached_claude_usage() {
@@ -323,17 +454,50 @@ live_claude_usage() {
     return
   fi
 
+  # Flash renders provider segments independently. Serialize the shared
+  # Claude/Fable request so a cold cache does not send two simultaneous calls
+  # to Anthropic's aggressively rate-limited usage endpoint.
+  if ! acquire_usage_lock "$claude_usage_lock"; then
+    cached_claude_usage
+    return
+  fi
+
+  if cache_is_fresh "$claude_usage_cache" "$CLAUDE_USAGE_TTL_SECONDS"; then
+    cat "$claude_usage_cache"
+    rmdir "$claude_usage_lock" 2>/dev/null || true
+    return
+  fi
+
+  token=
+  if claude_oauth_token_needs_refresh; then
+    next_retry=$(cat "$claude_oauth_backoff" 2>/dev/null || printf 0)
+    if [ "${next_retry:-0}" -le "$now" ]; then
+      token=$(refresh_claude_oauth_token)
+      if [ -n "$token" ]; then
+        rm -f "$claude_oauth_backoff"
+      else
+        printf '%s' "$((now + AGENT_QUOTA_OAUTH_RETRY_SECONDS))" >"$claude_oauth_backoff" 2>/dev/null || true
+        printf '%s\n' 'Claude OAuth refresh failed; run: claude auth login --claudeai' >&2
+      fi
+    fi
+  else
+    token=$(claude_oauth_token)
+  fi
+  if [ -z "$token" ]; then
+    cached_claude_usage
+    rmdir "$claude_usage_lock" 2>/dev/null || true
+    return
+  fi
+  org=$(claude_org_uuid)
+
   if [ -f "$claude_usage_backoff" ]; then
     next_retry=$(cat "$claude_usage_backoff" 2>/dev/null || printf 0)
     if [ "${next_retry:-0}" -gt "$now" ]; then
       cached_claude_usage
+      rmdir "$claude_usage_lock" 2>/dev/null || true
       return
     fi
   fi
-
-  token=$(claude_oauth_token)
-  [ -n "$token" ] || return
-  org=$(claude_org_uuid)
 
   case "$(dotfiles_uname)" in
     Darwin) client_platform=macos ;;
@@ -347,6 +511,7 @@ live_claude_usage() {
     printf 'header = "anthropic-version: 2023-06-01"\n'
     printf 'header = "anthropic-beta: oauth-2025-04-20"\n'
     printf 'header = "anthropic-client-platform: %s"\n' "$client_platform"
+    printf 'header = "User-Agent: claude-code/quota-status"\n'
     [ -n "$org" ] && printf 'header = "x-organization-uuid: %s"\n' "$org"
   } |
     curl -fsS --max-time 5 -K - 'https://api.anthropic.com/api/oauth/usage' 2>/dev/null |
@@ -364,7 +529,8 @@ live_claude_usage() {
         (.seven_day.resets_at // "null"),
         ($fable.percent // "null"),
         ($fable.resets_at // "null"),
-        (.five_hour.utilization // "null")
+        (.five_hour.utilization // "null"),
+        (.five_hour.resets_at // "null")
       ]
       | @tsv
     ' 2>/dev/null)
@@ -384,6 +550,7 @@ live_claude_usage() {
     printf '%s' "$((now + CLAUDE_USAGE_RETRY_SECONDS))" >"$claude_usage_backoff" 2>/dev/null || true
     cached_claude_usage
   fi
+  rmdir "$claude_usage_lock" 2>/dev/null || true
 }
 
 live_codex_rate_limits() {
@@ -394,14 +561,31 @@ live_codex_rate_limits() {
 
   command -v codex >/dev/null 2>&1 || return
 
-  (
-    printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"tmux-status","version":"1"},"capabilities":{"experimentalApi":true,"requestAttestation":false}}}'
-    printf '%s\n' '{"jsonrpc":"2.0","method":"initialized"}'
-    printf '%s\n' '{"jsonrpc":"2.0","id":2,"method":"account/rateLimits/read"}'
-    sleep 2
-  ) |
-    codex app-server --stdio 2>/dev/null |
-    jq -r '
+  if cache_is_fresh "$codex_usage_cache" "$CODEX_USAGE_TTL_SECONDS"; then
+    cat "$codex_usage_cache"
+    return
+  fi
+
+  if ! acquire_usage_lock "$codex_usage_lock"; then
+    [ -f "$codex_usage_cache" ] && cat "$codex_usage_cache"
+    return
+  fi
+
+  if cache_is_fresh "$codex_usage_cache" "$CODEX_USAGE_TTL_SECONDS"; then
+    cat "$codex_usage_cache"
+    rmdir "$codex_usage_lock" 2>/dev/null || true
+    return
+  fi
+
+  usage=$(
+    (
+      printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"tmux-status","version":"1"},"capabilities":{"experimentalApi":true,"requestAttestation":false}}}'
+      printf '%s\n' '{"jsonrpc":"2.0","method":"initialized"}'
+      printf '%s\n' '{"jsonrpc":"2.0","id":2,"method":"account/rateLimits/read"}'
+      sleep 2
+    ) |
+      codex app-server --stdio 2>/dev/null |
+      jq -r '
       # Codex reports rate-limit windows under .primary/.secondary, but which
       # slot holds the weekly window is not stable. Classify by duration:
       # keep only windows of at least one day.
@@ -414,21 +598,101 @@ live_codex_rate_limits() {
           ($week.usedPercent // "null"),
           ($week.resetsAt // "null"),
           ($week.windowDurationMins // "null"),
-          ($session.usedPercent // "null")
+          ($session.usedPercent // "null"),
+          ($session.resetsAt // "null"),
+          ($session.windowDurationMins // "null")
         ]
       | @tsv
     ' 2>/dev/null |
-    tail -n 1
+      tail -n 1
+  )
+
+  if [ -n "$usage" ]; then
+    write_cache_file "$codex_usage_cache" "$usage" || true
+    printf '%s' "$usage"
+  elif [ -f "$codex_usage_cache" ]; then
+    cat "$codex_usage_cache"
+  fi
+  rmdir "$codex_usage_lock" 2>/dev/null || true
 }
 
 opencode_auth_path() {
-  printf '%s/opencode/auth.json' "${XDG_DATA_HOME:-$HOME/.local/share}"
+  if [ -n "${AGENT_QUOTA_TEST_XAI_AUTH_PATH:-}" ]; then
+    printf '%s' "$AGENT_QUOTA_TEST_XAI_AUTH_PATH"
+  else
+    printf '%s/opencode/auth.json' "${XDG_DATA_HOME:-$HOME/.local/share}"
+  fi
 }
 
 xai_oauth_token() {
   auth=$(opencode_auth_path)
   [ -f "$auth" ] || return
   jq -r '.xai | select(.type == "oauth") | .access // empty' "$auth" 2>/dev/null
+}
+
+xai_oauth_token_needs_refresh() {
+  auth=$(opencode_auth_path)
+  [ -f "$auth" ] || return 1
+  expires=$(jq -r '.xai | select(.type == "oauth") | .expires // empty' "$auth" 2>/dev/null)
+  case "$expires" in
+    '' | *[!0-9]*) return 0 ;;
+  esac
+  [ "$expires" -le "$(((now + 120) * 1000))" ]
+}
+
+refresh_xai_oauth_token() {
+  auth=$(opencode_auth_path)
+  [ -f "$auth" ] || return
+  refresh=$(jq -r '.xai | select(.type == "oauth") | .refresh // empty' "$auth" 2>/dev/null)
+  [ -n "$refresh" ] || return
+
+  if [ "${AGENT_QUOTA_TEST_XAI_REFRESH_JSON+x}" ]; then
+    response=$AGENT_QUOTA_TEST_XAI_REFRESH_JSON
+  else
+    response=$(printf 'grant_type=refresh_token&refresh_token=%s&client_id=b1a00492-073a-47ea-816f-4c329264a828' \
+      "$(url_encode "$refresh")" |
+      curl -fsS --max-time 5 \
+        -H 'Accept: application/json' \
+        -H 'Content-Type: application/x-www-form-urlencoded' \
+        -H 'User-Agent: opencode/quota-status' \
+        --data-binary @- \
+        'https://auth.x.ai/oauth2/token' 2>/dev/null)
+  fi
+
+  printf '%s' "$response" | jq -e '
+    (.access_token | type == "string" and length > 0)
+    and ((.refresh_token // "") | type == "string")
+  ' >/dev/null 2>&1 || return
+
+  expires_in=$(printf '%s' "$response" | jq -r '(.expires_in | tonumber?) // 3600' 2>/dev/null)
+  case "$expires_in" in
+    '' | *[!0-9]*) expires_in=3600 ;;
+  esac
+  expires=$(((now + expires_in) * 1000))
+
+  mkdir -p "$cache_root" 2>/dev/null
+  umask 077
+  token_file="$cache_root/xai-oauth-refresh.$$"
+  tmp_auth="${auth}.quota.$$"
+  if ! printf '%s' "$response" >"$token_file"; then
+    return
+  fi
+  if jq --slurpfile token "$token_file" --argjson expires "$expires" '
+    .xai.access = $token[0].access_token
+    | .xai.refresh = (
+        if (($token[0].refresh_token // "") | length) > 0
+        then $token[0].refresh_token
+        else .xai.refresh
+        end
+      )
+    | .xai.expires = $expires
+  ' "$auth" >"$tmp_auth" && mv "$tmp_auth" "$auth"; then
+    rm -f "$token_file"
+    xai_oauth_token
+    return
+  fi
+
+  rm -f "$token_file" "$tmp_auth"
 }
 
 parse_grok_usage() {
@@ -467,16 +731,46 @@ live_grok_usage() {
     return
   fi
 
+  if ! acquire_usage_lock "$grok_usage_lock"; then
+    [ -f "$grok_usage_cache" ] && cat "$grok_usage_cache"
+    return
+  fi
+
+  if cache_is_fresh "$grok_usage_cache" "$GROK_USAGE_TTL_SECONDS"; then
+    cat "$grok_usage_cache"
+    rmdir "$grok_usage_lock" 2>/dev/null || true
+    return
+  fi
+
+  token=
+  if xai_oauth_token_needs_refresh; then
+    next_retry=$(cat "$grok_oauth_backoff" 2>/dev/null || printf 0)
+    if [ "${next_retry:-0}" -le "$now" ]; then
+      token=$(refresh_xai_oauth_token)
+      if [ -n "$token" ]; then
+        rm -f "$grok_oauth_backoff"
+      else
+        printf '%s' "$((now + AGENT_QUOTA_OAUTH_RETRY_SECONDS))" >"$grok_oauth_backoff" 2>/dev/null || true
+        printf '%s\n' 'xAI OAuth refresh failed; reconnect xAI in OpenCode.' >&2
+      fi
+    fi
+  else
+    token=$(xai_oauth_token)
+  fi
+  if [ -z "$token" ]; then
+    [ -f "$grok_usage_cache" ] && cat "$grok_usage_cache"
+    rmdir "$grok_usage_lock" 2>/dev/null || true
+    return
+  fi
+
   if [ -f "$grok_usage_backoff" ]; then
     next_retry=$(cat "$grok_usage_backoff" 2>/dev/null || printf 0)
     if [ "${next_retry:-0}" -gt "$now" ]; then
       [ -f "$grok_usage_cache" ] && cat "$grok_usage_cache"
+      rmdir "$grok_usage_lock" 2>/dev/null || true
       return
     fi
   fi
-
-  token=$(xai_oauth_token)
-  [ -n "$token" ] || return
 
   usage=$({
     printf 'header = "Authorization: Bearer %s"\n' "$token"
@@ -503,6 +797,7 @@ live_grok_usage() {
     printf '%s' "$((now + GROK_USAGE_RETRY_SECONDS))" >"$grok_usage_backoff" 2>/dev/null || true
     [ -f "$grok_usage_cache" ] && cat "$grok_usage_cache"
   fi
+  rmdir "$grok_usage_lock" 2>/dev/null || true
 }
 
 format_period() {
@@ -795,7 +1090,161 @@ render_status() {
   printf '%s' "$status"
 }
 
+valid_usage_percent() {
+  awk -v value="${1:-}" '
+    BEGIN {
+      if (value !~ /^[0-9]+([.][0-9]+)?$/) exit 1
+      if ((value + 0) < 0 || (value + 0) > 100) exit 1
+    }'
+}
+
+valid_epoch() {
+  case "${1:-}" in
+    '' | *[!0-9]*) return 1 ;;
+    *) [ "$1" -gt 0 ] ;;
+  esac
+}
+
+format_detail_line() {
+  label=${1:-}
+  used_pct=${2:-}
+  reset_at=${3:-}
+  [ -n "$label" ] || return 1
+  valid_usage_percent "$used_pct" || return 1
+
+  pct=$(fmt_remaining_percent "$used_pct")
+  if valid_epoch "$reset_at"; then
+    printf '%s %s remaining · resets in %s' "$label" "$pct" "$(fmt_days_until "$reset_at")"
+  else
+    printf '%s %s remaining' "$label" "$pct"
+  fi
+}
+
+format_window_label() {
+  minutes=${1:-}
+  case "$minutes" in
+    '' | *[!0-9]*) printf '%s' Session ;;
+    *)
+      if [ "$minutes" -ge 1440 ] && [ $((minutes % 1440)) -eq 0 ]; then
+        printf '%s-day' "$((minutes / 1440))"
+      elif [ "$minutes" -ge 60 ] && [ $((minutes % 60)) -eq 0 ]; then
+        printf '%s-hour' "$((minutes / 60))"
+      else
+        printf '%s-minute' "$minutes"
+      fi
+      ;;
+  esac
+}
+
+format_cache_age() {
+  file=${1:-}
+  mtime=$(file_mtime "$file" 2>/dev/null) || {
+    printf '%s' unknown
+    return
+  }
+  age=$((now - mtime))
+  [ "$age" -ge 0 ] || age=0
+  if [ "$age" -lt 60 ]; then
+    printf '%s' now
+  elif [ "$age" -lt 3600 ]; then
+    printf '%sm ago' "$((age / 60))"
+  elif [ "$age" -lt 86400 ]; then
+    printf '%sh ago' "$((age / 3600))"
+  else
+    printf '%sd ago' "$((age / 86400))"
+  fi
+}
+
+# Popup reads are deliberately cache-only. Flash refreshes these through its
+# normal status scheduler; moving the pointer must never perform OAuth, network,
+# or app-server work.
+render_usage_details() {
+  provider=${1:-}
+  file=
+  printed=0
+
+  case "$provider" in
+    claude | fable)
+      if [ -f "$claude_usage_cache" ]; then
+        file=$claude_usage_cache
+        limits=$(cat "$file")
+      elif [ -f "$legacy_claude_usage_cache" ]; then
+        file=$legacy_claude_usage_cache
+        limits=$(claude_usage_from_legacy)
+      else
+        limits=
+      fi
+      session_used=$(printf '%s\n' "$limits" | awk -F '\t' '{print $5}')
+      session_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $6}')")
+      if [ "$provider" = claude ]; then
+        week_used=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+        week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')")
+        session_label=5-hour
+      else
+        week_used=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+        week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')")
+        session_label='Shared 5-hour'
+      fi
+      session_line=$(format_detail_line "$session_label" "$session_used" "$session_reset" 2>/dev/null || true)
+      week_line=$(format_detail_line 7-day "$week_used" "$week_reset" 2>/dev/null || true)
+      ;;
+    codex)
+      file=$codex_usage_cache
+      [ -f "$file" ] && limits=$(cat "$file") || limits=
+      week_used=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      week_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')
+      week_window=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      session_used=$(printf '%s\n' "$limits" | awk -F '\t' '{print $4}')
+      session_reset=$(printf '%s\n' "$limits" | awk -F '\t' '{print $5}')
+      session_window=$(printf '%s\n' "$limits" | awk -F '\t' '{print $6}')
+      session_line=$(format_detail_line "$(format_window_label "$session_window")" "$session_used" "$session_reset" 2>/dev/null || true)
+      week_line=$(format_detail_line "$(format_window_label "$week_window")" "$week_used" "$week_reset" 2>/dev/null || true)
+      ;;
+    grok)
+      file=$grok_usage_cache
+      [ -f "$file" ] && limits=$(cat "$file") || limits=
+      week_used=$(printf '%s\n' "$limits" | awk -F '\t' '{print $1}')
+      week_reset=$(epoch_from_iso "$(printf '%s\n' "$limits" | awk -F '\t' '{print $2}')")
+      week_window=$(printf '%s\n' "$limits" | awk -F '\t' '{print $3}')
+      session_line=
+      week_line=$(format_detail_line "$(format_window_label "$week_window")" "$week_used" "$week_reset" 2>/dev/null || true)
+      ;;
+    *)
+      printf '%s' 'No cached usage details'
+      return
+      ;;
+  esac
+
+  for line in "$session_line" "$week_line"; do
+    [ -n "$line" ] || continue
+    [ "$printed" -eq 0 ] || printf '\n'
+    printf '%s' "$line"
+    printed=1
+  done
+  if [ "$printed" -eq 1 ]; then
+    printf '\nUpdated %s' "$(format_cache_age "$file")"
+  else
+    printf '%s' 'No cached usage details'
+  fi
+}
+
 case "${1:-}" in
+  --details=claude)
+    render_usage_details claude
+    exit 0
+    ;;
+  --details=fable)
+    render_usage_details fable
+    exit 0
+    ;;
+  --details=codex)
+    render_usage_details codex
+    exit 0
+    ;;
+  --details=grok)
+    render_usage_details grok
+    exit 0
+    ;;
   --claude)
     render_claude_unlabelled
     exit 0

@@ -7,18 +7,57 @@ ignored_apps = ["com.flash.native-fixture", "com.flash.native-oracle", "com.flas
 [statusbar]
 enabled = true
 monitor = "primary"
+popup_fg = "#D8DEE9"
+popup_bg = "#242933F2"
+popup_border = "#4C566A"
+popup_border_size = 1
+popup_corner_radius = 8
+popup_padding = 10
+popup_max_width = 420
+popup_offset = 8
 template = """
 #[align=left]#{mode}#[fg=colour245] · #[link=https://news.ycombinator.com]#[fg=colour178]HN#[fg=colour245]#[nolink] #{cycle:../../scripts/hn-top-stories.sh}
 
-#[align=center]#{active_app_name}
+#[align=center]#[popup=active-app]#{active_app_name}#[nopopup]
 
 #[align=right]
-#[link=https://claude.ai/new#settings/usage]#[fg=colour178]Cld#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --claude}#[nolink]
-#[fg=colour245] · #[link=https://claude.ai/new#settings/usage]#[fg=colour178]Fbl#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --fable}#[nolink]
-#[fg=colour245] · #[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]#[fg=colour178]Cdx#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --codex}#[nolink]
-#[fg=colour245] · #[link=https://grok.com/?_s=usage]#[fg=colour178]Grk#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --grok}#[nolink]
-#[fg=colour245] · #{plugin:system.battery}
-#[fg=colour245] · #{date}
+#[popup=claude]#[link=https://claude.ai/new#settings/usage]#[fg=colour178]Cld#[fg=colour245] #{plugin:aiproviders.claude_usage}#[nolink]#[nopopup]
+#[fg=colour245] · #[popup=fable]#[link=https://claude.ai/new#settings/usage]#[fg=colour178]Fbl#[fg=colour245] #{plugin:aiproviders.fable_usage}#[nolink]#[nopopup]
+#[fg=colour245] · #[popup=codex]#[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]#[fg=colour178]Cdx#[fg=colour245] #{plugin:aiproviders.codex_usage}#[nolink]#[nopopup]
+#[fg=colour245] · #[popup=grok]#[link=https://grok.com/?_s=usage]#[fg=colour178]Grk#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --grok}#[nolink]#[nopopup]
+#[fg=colour245] · #[popup=battery]#{plugin:system.battery}#[nopopup]
+#[fg=colour245] · #[popup=date]#{date}#[nopopup]
+"""
+
+[statusbar.popup]
+active-app = """
+#[fg=colour178,bold]#{active_app_name}#[default]
+#{plugin:processes.focused_app_details}
+"""
+claude = """
+#[fg=colour178,bold]Claude#[default]
+#{plugin:aiproviders.claude_usage_details}
+"""
+fable = """
+#[fg=colour178,bold]Fable#[default]
+#{plugin:aiproviders.fable_usage_details}
+"""
+codex = """
+#[fg=colour178,bold]Codex#[default]
+#{plugin:aiproviders.codex_usage_details}
+"""
+grok = """
+#[fg=colour178,bold]Grok#[default]
+#{script=5:../../scripts/agent-quota-status.sh --details=grok}
+"""
+battery = """
+#[fg=colour178,bold]Battery#[default]
+#{plugin:system.battery_details}
+"""
+date = """
+#[fg=colour178,bold]%A, %-d %B %Y#[default]
+%H:%M %Z (UTC%z)
+ISO week %V of %G · day %j
 """
 
 [flashlight]
@@ -55,6 +94,8 @@ passthrough_keys = ["escape"]
 passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 
 [mode.normal.mappings]
+# window management
+"alt+z" = ["flash", "window_move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]
 # convenient utilities
 "<leader>l" = ["sh", "-c", "shortcuts run log && flash window_move --position=center"]
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]

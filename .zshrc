@@ -81,6 +81,11 @@ g() {
     fi
 }
 
+# Codex hooks are version-controlled here; run them without per-hash trust prompts.
+codex() {
+    command codex --dangerously-bypass-hook-trust "$@"
+}
+
 # worktree: `w` lists worktrees via fzf, `w <name>` creates/switches to a worktree
 w() {
     local REPO_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")

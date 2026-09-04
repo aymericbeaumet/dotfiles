@@ -131,6 +131,8 @@ jq -e '
     any(contains("scripts/agent-instructions.sh"))) and
   ([.hooks.SessionStart[]?.hooks[]?.command] |
     any(contains("scripts/project-memory.sh"))) and
+  ([.hooks.SessionStart[]?.hooks[]?.command] |
+    any(contains("scripts/agent-pane-idle.sh clear claude"))) and
   ([.hooks.StopFailure[]?.hooks[]?.command] |
     any(contains("scripts/claude-retry.sh failure"))) and
   ([.hooks.Stop[]?.hooks[]?.command] |
@@ -221,7 +223,7 @@ jq -e '
     select(.command | contains("scripts/project-memory.sh"))] | length) == 1 and
   ([.hooks.SessionStart[]?.hooks[]? |
     select(.command | contains("scripts/project-memory.sh"))][0].additionalContextLimit) == 0 and
-  any(.hooks.SessionStart[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh clear")) and
+  any(.hooks.SessionStart[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh clear codex")) and
   any(.hooks.UserPromptSubmit[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh busy")) and
   any(.hooks.Stop[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh idle")) and
   any(.hooks.Stop[]?.hooks[]?; .command | contains("scripts/agent-pane-title.sh codex")) and
@@ -240,6 +242,8 @@ jq -e '
 [ -x scripts/project-memory.sh ] || fail "project-memory helper must be executable"
 [ -x scripts/configure-codex-hooks.mjs ] || fail "Codex hook configurator must be executable"
 node --check scripts/configure-codex-hooks.mjs
+rg -F 'command codex --dangerously-bypass-hook-trust "$@"' .zshrc >/dev/null ||
+  fail "interactive Codex must bypass hook trust prompts"
 
 check_project_memory() (
   local test_root repo expected actual local_repo local_path commit_repo commit_path conflict_repo
@@ -302,7 +306,7 @@ check_project_memory
 check_agent_quota_status() (
   local test_root now first_day_now reset_iso reset_epoch earlier_reset later_reset
   local subday_reset almost_day_reset subhour_reset
-  local claude_tsv codex_tsv grok_json grok_tsv output
+  local claude_config claude_tsv codex_tsv details_root grok_json grok_tsv output refresh_error xai_auth
   test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-agent-quota.XXXXXX")
   trap 'rm -rf "$test_root"' EXIT
   now=1892937600
@@ -338,6 +342,64 @@ check_agent_quota_status() (
     AGENT_QUOTA_TEST_GROK_JSON="$grok_json" scripts/agent-quota-status.sh --grok)
   [ "$output" = '100%↻6d' ] ||
     fail "Grok must treat an omitted productUsage field as an unused weekly quota: $output"
+
+  mkdir -p "$test_root/tmux-agent-quota-status"
+  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/claude-usage-v4.next"
+  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/grok-usage-v1.next"
+
+  claude_config="$test_root/claude"
+  mkdir -p "$claude_config"
+  printf '%s' \
+    '{"claudeAiOauth":{"accessToken":"old-access","refreshToken":"old-refresh","expiresAt":1},"preserved":true}' \
+    >"$claude_config/.credentials.json"
+  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    CLAUDE_SECURESTORAGE_CONFIG_DIR="$claude_config" \
+    AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON='{"access_token":"new-access","refresh_token":"new-refresh","expires_in":3600,"refresh_token_expires_in":7200}' \
+    scripts/agent-quota-status.sh --claude >/dev/null
+  jq -e --argjson expires "$(((now + 3600) * 1000))" \
+    --argjson refresh_expires "$(((now + 7200) * 1000))" '
+      .claudeAiOauth.accessToken == "new-access"
+      and .claudeAiOauth.refreshToken == "new-refresh"
+      and .claudeAiOauth.expiresAt == $expires
+      and .claudeAiOauth.refreshTokenExpiresAt == $refresh_expires
+      and .preserved == true
+    ' "$claude_config/.credentials.json" >/dev/null ||
+    fail "Claude OAuth refresh must atomically persist rotated credentials"
+
+  xai_auth="$test_root/opencode-auth.json"
+  printf '%s' \
+    '{"xai":{"type":"oauth","access":"old-access","refresh":"old-refresh","expires":1},"preserved":true}' \
+    >"$xai_auth"
+  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_XAI_AUTH_PATH="$xai_auth" \
+    AGENT_QUOTA_TEST_XAI_REFRESH_JSON='{"access_token":"new-access","refresh_token":"new-refresh","expires_in":3600}' \
+    scripts/agent-quota-status.sh --grok >/dev/null
+  jq -e --argjson expires "$(((now + 3600) * 1000))" '
+      .xai.access == "new-access"
+      and .xai.refresh == "new-refresh"
+      and .xai.expires == $expires
+      and .preserved == true
+    ' "$xai_auth" >/dev/null ||
+    fail "xAI OAuth refresh must atomically persist rotated credentials"
+
+  printf '%s' \
+    '{"claudeAiOauth":{"accessToken":"expired","refreshToken":"invalid","expiresAt":1}}' \
+    >"$claude_config/.credentials.json"
+  refresh_error="$test_root/claude-refresh.error"
+  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    CLAUDE_SECURESTORAGE_CONFIG_DIR="$claude_config" \
+    AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON='{}' \
+    scripts/agent-quota-status.sh --claude >/dev/null 2>"$refresh_error"
+  [ "$(cat "$test_root/tmux-agent-quota-status/claude-oauth-refresh-v1.next")" = "$((now + 300))" ] ||
+    fail "failed Claude OAuth refresh must enter backoff"
+  [ "$(cat "$refresh_error")" = 'Claude OAuth refresh failed; run: claude auth login --claudeai' ] ||
+    fail "failed Claude OAuth refresh must emit one actionable diagnostic"
+  : >"$refresh_error"
+  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
+    CLAUDE_SECURESTORAGE_CONFIG_DIR="$claude_config" \
+    AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON='{}' \
+    scripts/agent-quota-status.sh --claude >/dev/null 2>"$refresh_error"
+  [ ! -s "$refresh_error" ] || fail "Claude OAuth backoff must suppress repeated diagnostics"
 
   claude_tsv=$(printf '14\t%s\tnull\tnull' "$reset_iso")
   output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$first_day_now" \
@@ -414,18 +476,191 @@ check_agent_quota_status() (
     AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
   [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
     fail "exhausted Codex session must color weekly quota red: $output"
+  details_root="$test_root/details"
+  mkdir -p "$details_root/tmux-agent-quota-status"
+  printf '30\t%s\t10\t%s\t25\t2029-12-26T08:00:00.000000+00:00' \
+    "$reset_iso" "$reset_iso" \
+    >"$details_root/tmux-agent-quota-status/claude-usage-v4.tsv"
+  printf '40\t%s\t10080\t20\t%s\t300' "$reset_epoch" "$((now + 4500))" \
+    >"$details_root/tmux-agent-quota-status/codex-usage-v1.tsv"
+  printf '35\t%s\t10080' "$reset_iso" \
+    >"$details_root/tmux-agent-quota-status/grok-usage-v1.tsv"
+
+  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --details=claude)
+  printf '%s\n' "$output" | rg -Fx '5-hour 75% remaining · resets in 8h' >/dev/null ||
+    fail "Claude popup details must include its session window: $output"
+  printf '%s\n' "$output" | rg -Fx '7-day 70% remaining · resets in 6d' >/dev/null ||
+    fail "Claude popup details must include its weekly window: $output"
+
+  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --details=fable)
+  printf '%s\n' "$output" | rg -Fx 'Shared 5-hour 75% remaining · resets in 8h' >/dev/null ||
+    fail "Fable popup details must label the shared Claude session window: $output"
+  printf '%s\n' "$output" | rg -Fx '7-day 90% remaining · resets in 6d' >/dev/null ||
+    fail "Fable popup details must include its scoped weekly window: $output"
+
+  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --details=codex)
+  printf '%s\n' "$output" | rg -Fx '5-hour 80% remaining · resets in 1h' >/dev/null ||
+    fail "Codex popup details must include its session window: $output"
+  printf '%s\n' "$output" | rg -Fx '7-day 60% remaining · resets in 6d' >/dev/null ||
+    fail "Codex popup details must include its weekly window: $output"
+
+  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --details=grok)
+  printf '%s\n' "$output" | rg -Fx '7-day 65% remaining · resets in 6d' >/dev/null ||
+    fail "Grok popup details must include only its reported weekly window: $output"
+  if printf '%s\n' "$output" | rg -q 'hour'; then
+    fail "Grok popup details must not invent a session window: $output"
+  fi
+
+  output=$(TMPDIR="$test_root/no-details" AGENT_QUOTA_TEST_NOW="$now" \
+    AGENT_QUOTA_TEST_CLAUDE_TSV="0\t$reset_iso\t0\t$reset_iso\t0\t$reset_iso" \
+    scripts/agent-quota-status.sh --details=claude)
+  [ "$output" = 'No cached usage details' ] ||
+    fail "popup detail reads must never enter a live-fetch path: $output"
+
+  printf 'NOT_A_PERCENT\tPWNED_MARKER\tnull\tnull\tnull\tnull' \
+    >"$details_root/tmux-agent-quota-status/claude-usage-v4.tsv"
+  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
+    scripts/agent-quota-status.sh --details=claude)
+  case "$output" in
+    *NOT_A_PERCENT* | *PWNED_MARKER*)
+      fail "untrusted cached quota fields reached popup output: $output"
+      ;;
+  esac
 )
 check_agent_quota_status
+
+check_hn_status() (
+  test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-hn-check.XXXXXX") || exit 1
+  trap 'rm -rf "$test_root"' EXIT INT TERM
+  mkdir -p "$test_root/items"
+
+  reader_preview=$(printf '%s\n' \
+    'Title: Publisher title' \
+    'URL Source: https://example.com/story' \
+    '' \
+    'Markdown Content:' \
+    'Actual first paragraph from the article.' |
+    python3 scripts/hn-article-preview.py --max-chars 80)
+  [ "$reader_preview" = 'Actual first paragraph from the article.' ] ||
+    fail "HN reader fallback must omit transport metadata: $reader_preview"
+
+  printf '%s\n' \
+    '{"id":101,"by":"alice","score":42,"descendants":7,"title":"News #[fg=red] trick","url":"https://example.com/story"}' \
+    >"$test_root/items/101.json"
+  printf '%s\n' \
+    '<html><body><nav>Skip navigation</nav><article>First paragraph from the article. Second paragraph remains readable.<script>ignore me</script></article></body></html>' \
+    >"$test_root/article.html"
+
+  TMPDIR="$test_root" HN_REFRESH=1 HN_TEST_TOP_IDS=101 \
+    HN_TEST_ITEMS_DIR="$test_root/items" \
+    HN_TEST_ARTICLE_HTML_FILE="$test_root/article.html" \
+    HN_STORIES_COUNT=1 HN_PREVIEW_MAX_CHARS=50 \
+    scripts/hn-top-stories.sh
+  output=$(command cat "$test_root/flash-hn-top-stories/rendered-v5.txt")
+  [ "$(printf '%s\n' "$output" | awk 'END { print NR }')" -eq 1 ] ||
+    fail "HN carousel entries must remain one physical line each"
+  printf '%s' "$output" | rg -F '#[popup=inline:' >/dev/null ||
+    fail "HN carousel row must carry its popup body atomically"
+  printf '%s' "$output" | rg -F '#[link=https://news.ycombinator.com/item?id=101]' >/dev/null ||
+    fail "HN carousel must preserve the discussion link"
+  printf '%s' "$output" | rg -F '#[link=https://example.com/story]' >/dev/null ||
+    fail "HN carousel must preserve the article link"
+  printf '%s' "$output" | rg -F '#[nopopup]' >/dev/null ||
+    fail "HN carousel popup span must be balanced"
+  encoded=$(printf '%s' "$output" | sed -n 's/^#\[popup=inline:\([^]]*\)\].*/\1/p')
+  decoded=$(printf '%s' "$encoded" |
+    python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.stdin.read()), end="")')
+  printf '%s' "$decoded" | rg -F 'First paragraph from the article.' >/dev/null ||
+    fail "HN popup must contain extracted article text: $decoded"
+  if printf '%s' "$decoded" | rg -q '^By .* points'; then
+    fail "HN popup must never substitute story metadata for article content: $decoded"
+  fi
+  printf '%s' "$decoded" | rg -F 'News ##[fg=red] trick' >/dev/null ||
+    fail "HN popup must escape marker-looking article data: $decoded"
+  [ "${#decoded}" -lt 180 ] || fail "HN popup preview must honor its configured character cap"
+
+  TMPDIR="$test_root" HN_REFRESH=1 HN_TEST_TOP_IDS=101 \
+    HN_TEST_ITEMS_DIR="$test_root/items" \
+    HN_TEST_ARTICLE_HTML_FILE="$test_root/missing.html" \
+    HN_STORIES_COUNT=1 HN_PREVIEW_MAX_CHARS=50 \
+    scripts/hn-top-stories.sh
+  output=$(command cat "$test_root/flash-hn-top-stories/rendered-v5.txt")
+  encoded=$(printf '%s' "$output" | sed -n 's/^#\[popup=inline:\([^]]*\)\].*/\1/p')
+  decoded=$(printf '%s' "$encoded" |
+    python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.stdin.read()), end="")')
+  printf '%s' "$decoded" | rg -F 'First paragraph from the article.' >/dev/null ||
+    fail "HN popup must retain a stale per-story preview after a fetch failure: $decoded"
+
+  printf '%s\n' \
+    '{"id":102,"by":"bob","score":3,"descendants":2,"title":"Ask HN: test","text":"<p>Self-post body is available without fetching an article.</p>"}' \
+    >"$test_root/items/102.json"
+  TMPDIR="$test_root" HN_REFRESH=1 HN_TEST_TOP_IDS=102 \
+    HN_TEST_ITEMS_DIR="$test_root/items" HN_STORIES_COUNT=1 \
+    scripts/hn-top-stories.sh
+  output=$(command cat "$test_root/flash-hn-top-stories/rendered-v5.txt")
+  encoded=$(printf '%s' "$output" | sed -n 's/^#\[popup=inline:\([^]]*\)\].*/\1/p')
+  decoded=$(printf '%s' "$encoded" |
+    python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.stdin.read()), end="")')
+  printf '%s' "$decoded" | rg -F 'Self-post body is available' >/dev/null ||
+    fail "HN self-post popup must use the item body: $decoded"
+
+  cache_root="$test_root/cache-only/flash-hn-top-stories"
+  mkdir -p "$cache_root" "$test_root/fake-bin"
+  printf '%s\n' 'cached carousel row' >"$cache_root/rendered-v5.txt"
+  printf '%s\n' '#!/bin/sh' 'touch "${HN_NETWORK_MARKER:?}"' 'exit 1' \
+    >"$test_root/fake-bin/curl"
+  chmod +x "$test_root/fake-bin/curl"
+  output=$(PATH="$test_root/fake-bin:$PATH" TMPDIR="$test_root/cache-only" \
+    HN_NETWORK_MARKER="$test_root/network-called" HN_RENDER_TTL_SECONDS=3600 \
+    scripts/hn-top-stories.sh)
+  [ "$output" = 'cached carousel row' ] || fail "HN must serve its rendered cache unchanged"
+  [ ! -e "$test_root/network-called" ] || fail "fresh HN cache must never perform network work"
+)
+check_hn_status
 
 rg -F '.kind == "weekly_scoped"' scripts/agent-quota-status.sh >/dev/null ||
   fail "Claude quota parsing must include model-scoped Fable usage"
 if rg -n '\?%↻\?h' scripts/agent-quota-status.sh >/dev/null; then
   fail "status bar must not render session or daily quotas"
 fi
-rg -F 'agent-quota-status.sh --fable' .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must render the Fable quota"
 rg -F 'agent-quota-status.sh --grok' .config/flash/flash.toml >/dev/null ||
   fail "Flash status bar must render the Grok quota"
+for provider in claude fable codex grok; do
+  rg -F "#[popup=$provider]" .config/flash/flash.toml >/dev/null ||
+    fail "Flash status bar must expose a $provider quota popup trigger"
+done
+for provider in claude fable codex; do
+  rg -F "#{plugin:aiproviders.${provider}_usage}" .config/flash/flash.toml >/dev/null ||
+    fail "Flash status bar must source $provider usage from aiproviders"
+  rg -F "#{plugin:aiproviders.${provider}_usage_details}" .config/flash/flash.toml >/dev/null ||
+    fail "Flash status bar must source $provider popup details from aiproviders"
+  if rg -F "agent-quota-status.sh --$provider" .config/flash/flash.toml >/dev/null ||
+    rg -F "agent-quota-status.sh --details=$provider" .config/flash/flash.toml >/dev/null; then
+    fail "Flash status bar must not bypass aiproviders for $provider usage"
+  fi
+done
+rg -F 'agent-quota-status.sh --details=grok' .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must define cached Grok popup details"
+for detail in battery date; do
+  rg -F "#[popup=$detail]" .config/flash/flash.toml >/dev/null ||
+    fail "Flash status bar must expose a $detail popup trigger"
+  rg -F "$detail = \"\"\"" .config/flash/flash.toml >/dev/null ||
+    fail "Flash status bar must define $detail popup details"
+done
+rg -F '#{plugin:system.battery_details}' .config/flash/flash.toml >/dev/null ||
+  fail "battery popup facts must come from the system plugin"
+popup_opens=$(rg -o '#\[popup=[^]]+\]' .config/flash/flash.toml | wc -l | tr -d ' ')
+popup_closes=$(rg -o '#\[nopopup\]' .config/flash/flash.toml | wc -l | tr -d ' ')
+[ "$popup_opens" -eq "$popup_closes" ] ||
+  fail "Flash status bar popup triggers must remain balanced"
+rg -F '#[popup=inline:' scripts/hn-top-stories.sh >/dev/null ||
+  fail "HN carousel rows must carry their own popup details"
+rg -F '"alt+z" = ["flash", "window_move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]' .config/flash/flash.toml >/dev/null ||
+  fail "Flash normal mode must map alt+z to a centered golden-area layout"
 
 printf '%s\n' \
   '{"error":"unknown","error_details":"API Error: Connection closed mid-response"}' |
@@ -743,8 +978,10 @@ rg -Fx "brew 'mosh'                    # Roaming transport for the Moria scratch
   fail "Mosh must be provisioned on macOS"
 [ ! -e .config/tmuxinator ] || fail "retired tmuxinator profiles remain"
 [ ! -e scripts/tmux-resurrect-save.sh ] || fail "tmux process/content save wrapper remains"
-rg -Fx "set -g @resurrect-processes 'false'" .tmux.conf >/dev/null ||
-  fail "tmux restore must start fresh shell processes"
+rg -Fx "set -g @resurrect-default-processes 'false'" .tmux.conf >/dev/null ||
+  fail "tmux restore must not relaunch default non-agent processes"
+rg -Fx "set -g @resurrect-processes '\"~codex->codex --dangerously-bypass-hook-trust\" \"~claude->claude\" \"~opencode->opencode\"'" .tmux.conf >/dev/null ||
+  fail "tmux restore must relaunch only Codex, Claude, and OpenCode through stable commands"
 if rg -n '@resurrect-capture-pane-contents|@resurrect-pane-contents-area|@resurrect-save-script-path' .tmux.conf >/dev/null; then
   fail "tmux restore must not capture pane content"
 fi

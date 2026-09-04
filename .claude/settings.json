@@ -82,7 +82,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear'",
+            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear claude'",
             "timeout": 5
           }
         ]
