@@ -4,6 +4,21 @@ keys = "<colemak>"
 [open]
 ignored_apps = ["com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
 
+[plugin.cpu]
+summary_mode = "compact"
+
+[plugin.memory]
+summary_mode = "compact"
+
+[plugin.disks]
+summary_mode = "compact"
+
+[plugin.network]
+summary_mode = "compact"
+
+[plugin.power]
+summary_mode = "compact"
+
 [statusbar]
 enabled = true
 monitor = "primary"
@@ -18,14 +33,15 @@ popup_offset = 8
 template = """
 #[align=left]#{mode}#[fg=colour245] · #[link=https://news.ycombinator.com]#[fg=colour178]HN#[fg=colour245]#[nolink] #{cycle:../../scripts/hn-top-stories.sh}
 
-#[align=center]#[popup=active-app]#{active_app_name}#[nopopup]
+#[align=center]#[popup=active-app]#{=24…:active_app_name}#[nopopup]
 
 #[align=right]
-#[popup=claude]#[link=https://claude.ai/new#settings/usage]#[fg=colour178]Cld#[fg=colour245] #{plugin:aiproviders.claude_usage}#[nolink]#[nopopup]
-#[fg=colour245] · #[popup=fable]#[link=https://claude.ai/new#settings/usage]#[fg=colour178]Fbl#[fg=colour245] #{plugin:aiproviders.fable_usage}#[nolink]#[nopopup]
-#[fg=colour245] · #[popup=codex]#[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]#[fg=colour178]Cdx#[fg=colour245] #{plugin:aiproviders.codex_usage}#[nolink]#[nopopup]
-#[fg=colour245] · #[popup=grok]#[link=https://grok.com/?_s=usage]#[fg=colour178]Grk#[fg=colour245] #{script:../../scripts/agent-quota-status.sh --grok}#[nolink]#[nopopup]
-#[fg=colour245] · #[popup=battery]#{plugin:system.battery}#[nopopup]
+#[popup=ai]#[fg=colour178]AI#[fg=colour245] #[link=https://claude.ai/new#settings/usage]C#{s/↻[^# ]+//:plugin:aiproviders.claude_usage} F#{s/↻[^# ]+//:plugin:aiproviders.fable_usage}#[nolink] #[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]O#{s/↻[^# ]+//:plugin:aiproviders.codex_usage}#[nolink] #[link=https://grok.com/?_s=usage]G#{s/↻[^# ]+//:script:../../scripts/agent-quota-status.sh --grok}#[nolink]#[nopopup]
+#[fg=colour245] · #{plugin:cpu.summary}
+#[fg=colour245] · #{plugin:memory.summary}
+#[fg=colour245] · #{plugin:disks.summary}
+#[fg=colour245] · #{plugin:network.summary}
+#[fg=colour245] · #{plugin:power.summary}
 #[fg=colour245] · #[popup=date]#{date}#[nopopup]
 """
 
@@ -34,25 +50,19 @@ active-app = """
 #[fg=colour178,bold]#{active_app_name}#[default]
 #{plugin:processes.focused_app_details}
 """
-claude = """
+ai = """
+#[fg=colour178,bold]AI usage#[default]
 #[fg=colour178,bold]Claude#[default]
 #{plugin:aiproviders.claude_usage_details}
-"""
-fable = """
+
 #[fg=colour178,bold]Fable#[default]
 #{plugin:aiproviders.fable_usage_details}
-"""
-codex = """
+
 #[fg=colour178,bold]Codex#[default]
 #{plugin:aiproviders.codex_usage_details}
-"""
-grok = """
+
 #[fg=colour178,bold]Grok#[default]
 #{script=5:../../scripts/agent-quota-status.sh --details=grok}
-"""
-battery = """
-#[fg=colour178,bold]Battery#[default]
-#{plugin:system.battery_details}
 """
 date = """
 #[fg=colour178,bold]%A, %-d %B %Y#[default]

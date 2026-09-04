@@ -629,12 +629,15 @@ if rg -n '\?%↻\?h' scripts/agent-quota-status.sh >/dev/null; then
 fi
 rg -F 'agent-quota-status.sh --grok' .config/flash/flash.toml >/dev/null ||
   fail "Flash status bar must render the Grok quota"
+rg -F '#[popup=ai]' .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must group AI quotas under one popup trigger"
 for provider in claude fable codex grok; do
-  rg -F "#[popup=$provider]" .config/flash/flash.toml >/dev/null ||
-    fail "Flash status bar must expose a $provider quota popup trigger"
+  if rg -F "#[popup=$provider]" .config/flash/flash.toml >/dev/null; then
+    fail "Flash status bar must not split $provider into its own popup segment"
+  fi
 done
 for provider in claude fable codex; do
-  rg -F "#{plugin:aiproviders.${provider}_usage}" .config/flash/flash.toml >/dev/null ||
+  rg -F "plugin:aiproviders.${provider}_usage" .config/flash/flash.toml >/dev/null ||
     fail "Flash status bar must source $provider usage from aiproviders"
   rg -F "#{plugin:aiproviders.${provider}_usage_details}" .config/flash/flash.toml >/dev/null ||
     fail "Flash status bar must source $provider popup details from aiproviders"
@@ -645,14 +648,36 @@ for provider in claude fable codex; do
 done
 rg -F 'agent-quota-status.sh --details=grok' .config/flash/flash.toml >/dev/null ||
   fail "Flash status bar must define cached Grok popup details"
-for detail in battery date; do
-  rg -F "#[popup=$detail]" .config/flash/flash.toml >/dev/null ||
-    fail "Flash status bar must expose a $detail popup trigger"
-  rg -F "$detail = \"\"\"" .config/flash/flash.toml >/dev/null ||
-    fail "Flash status bar must define $detail popup details"
+for provider in claude fable codex; do
+  rg -F "#{s/↻[^# ]+//:plugin:aiproviders.${provider}_usage}" \
+    .config/flash/flash.toml >/dev/null ||
+    fail "compact AI segment must hide $provider reset details"
 done
-rg -F '#{plugin:system.battery_details}' .config/flash/flash.toml >/dev/null ||
-  fail "battery popup facts must come from the system plugin"
+rg -F 'O#{s/↻[^# ]+//:plugin:aiproviders.codex_usage}' \
+  .config/flash/flash.toml >/dev/null ||
+  fail "compact AI segment must label OpenAI usage with O"
+rg -F '#{s/↻[^# ]+//:script:../../scripts/agent-quota-status.sh --grok}' \
+  .config/flash/flash.toml >/dev/null ||
+  fail "compact AI segment must hide Grok reset details"
+rg -F '#[popup=active-app]#{=24…:active_app_name}#[nopopup]' \
+  .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must bound the active-app segment without padding it"
+rg -F '#[popup=date]#{date}#[nopopup]' \
+  .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must expose a date popup trigger"
+rg -F 'date = """' .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must define date popup details"
+for monitor in cpu memory disks network power; do
+  awk -v section="[plugin.${monitor}]" '
+    $0 == section { in_section = 1; next }
+    in_section && /^\[/ { exit }
+    in_section && $0 == "summary_mode = \"compact\"" { found = 1 }
+    END { exit found ? 0 : 1 }
+  ' .config/flash/flash.toml ||
+    fail "Flash status bar must configure $monitor for a compact summary"
+  rg -F "#{plugin:${monitor}.summary}" .config/flash/flash.toml >/dev/null ||
+    fail "Flash status bar must render the $monitor summary"
+done
 popup_opens=$(rg -o '#\[popup=[^]]+\]' .config/flash/flash.toml | wc -l | tr -d ' ')
 popup_closes=$(rg -o '#\[nopopup\]' .config/flash/flash.toml | wc -l | tr -d ' ')
 [ "$popup_opens" -eq "$popup_closes" ] ||
