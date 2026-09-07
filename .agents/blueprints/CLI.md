@@ -24,6 +24,16 @@ Use this when creating or aligning a standalone command-line tool. Substitute
 Keep crate `authors`, `license`, `repository`, clap `author`, the MIT copyright
 line, and README install URLs identical.
 
+## Distribution
+
+Pure CLI apps use only GitHub Releases and mise for user distribution.
+Publish prebuilt binaries for Linux, macOS, and Windows on both `arm64`
+and `amd64`; every release must include all six targets.
+
+Use mise's `github:` backend to install those release assets. Do not use
+Homebrew for installation, packaging, or CI dependencies; do not create
+formulae, taps, or casks. Keep source builds in the development workflow.
+
 ## Layout
 
 Prefer squeeze's flat crates (no `src/`):
@@ -202,8 +212,8 @@ doc-check:
 	RUSTDOCFLAGS="-D warnings" cargo doc -p <cli> --no-deps --all-features
 ```
 
-Also provide `build`, `release`, `fmt`, `doc`, `clean`, `install`
-(`cargo install --path <cli>`), `watch` (`watchexec --clear --restart 'cargo test'`),
+Also provide `build`, `release`, `fmt`, `doc`, `clean`,
+`watch` (`watchexec --clear --restart 'cargo test'`),
 `msrv`, `update`, `outdated`, and `audit`. Keep the MSRV target on the same
 toolchain as `rust-version`.
 
@@ -215,7 +225,8 @@ pushes), and one sentence.
 
 Required sections:
 
-1. **Install** — mise first, then `cargo install --git`.
+1. **Install** — the mise command and a link to GitHub Releases. State
+   support for Linux, macOS, and Windows on both `arm64` and `amd64`.
 2. **Getting Started** — stdin examples that show the actual output.
 3. **Integrations** — only if the tool is meant to be piped from vim/tmux/shell.
 4. **Development** — `cargo run` and `cargo test` / `watchexec`.
@@ -226,11 +237,8 @@ mise:
 mise use -g github:aymericbeaumet/<name>
 ```
 
-Cargo:
-
-```shell
-cargo install --git https://github.com/aymericbeaumet/<name> <cli>
-```
+Link to `https://github.com/aymericbeaumet/<name>/releases` for direct
+downloads of the same binaries and checksums.
 
 ## Project AGENTS.md
 
@@ -243,6 +251,8 @@ Keep it short and harness-neutral:
 - Every commit message MUST follow the latest published
   [Conventional Commits specification](https://www.conventionalcommits.org/).
 - Keep reusable logic in `<lib>` and process I/O in `<cli>`.
+- Distribute only through GitHub Releases and mise for Linux, macOS, and
+  Windows on arm64 and amd64. Do not use Homebrew.
 - `cargo fmt`, `cargo clippy --all-targets -- --deny warnings`, and
   `cargo test --all-targets` must stay clean.
 - Do not add `CLAUDE.md` or other client-specific instruction files.
@@ -264,17 +274,18 @@ Jobs:
 | `msrv` | toolchain = crate `rust-version`; `cargo build` and `cargo test --all-targets` |
 | `docs` | `RUSTDOCFLAGS=-D warnings` rustdoc for `<lib>` and `<cli>` |
 
-Test matrix — every release target has a native runner, so nothing is ever
-cross-compiled:
+Test and release matrix — use a native
+[GitHub-hosted runner](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+for each target. macOS assets use `darwin` in their filenames.
 
-| Leg | Runner |
-|---|---|
-| `linux-amd64` | `ubuntu-latest` |
-| `linux-arm64` | `ubuntu-24.04-arm` |
-| `darwin-amd64` | `macos-15-intel` |
-| `darwin-arm64` | `macos-latest` |
-| `windows-amd64` | `windows-latest` |
-| `windows-arm64` | `windows-11-arm` |
+| Target | Runner | Release archive |
+|---|---|---|
+| `linux-amd64` | `ubuntu-latest` | `<bin>-linux-amd64.tar.gz` |
+| `linux-arm64` | `ubuntu-24.04-arm` | `<bin>-linux-arm64.tar.gz` |
+| `darwin-amd64` | `macos-15-intel` | `<bin>-darwin-amd64.tar.gz` |
+| `darwin-arm64` | `macos-latest` | `<bin>-darwin-arm64.tar.gz` |
+| `windows-amd64` | `windows-latest` | `<bin>-windows-amd64.zip` |
+| `windows-arm64` | `windows-11-arm` | `<bin>-windows-arm64.zip` |
 
 ### `.github/workflows/release.yml`
 
@@ -296,10 +307,11 @@ Jobs, in order:
    Stamp the computed version into `Cargo.toml` with `perl -pi` (portable
    across BSD/GNU sed and Windows; never committed), build **without**
    `--locked` (the stamp would fail a locked build; resolution is unchanged),
-   `cargo build --release`, then package the binary alone:
-   `<bin>-{linux,darwin,windows}-{amd64,arm64}` as `.tar.gz` (`.zip` on
-   Windows). Upload as artifacts.
-4. `release` — download all artifacts, write `SHA256SUMS`, then
+   `cargo build --release`, then package the binary alone at the archive
+   root using the names in the matrix: `<bin>` on Linux/macOS and
+   `<bin>.exe` on Windows. Upload as artifacts.
+4. `release` — download all artifacts, verify that all six expected
+   archives are present, write `SHA256SUMS`, then
    `gh release create "vX.Y.Z" --target "$GITHUB_SHA" --generate-notes` with
    every asset. This mints the tag and the release atomically, only after
    every build succeeded.
@@ -310,8 +322,8 @@ Weekly `cargo` and `github-actions` updates. Commit prefixes `deps` and `ci`.
 
 ## mise
 
-mise's `github` backend reads GitHub releases directly — a public repo needs
-no registry submission at all:
+mise's [GitHub backend](https://mise.jdx.dev/dev-tools/backends/github.html)
+reads GitHub Releases directly, without a registry submission:
 
 ```shell
 mise use -g github:aymericbeaumet/<name>
@@ -320,14 +332,11 @@ mise use -g github:aymericbeaumet/<name>
 Requirements and caveats:
 
 - Asset names must be auto-detectable: use `linux`/`darwin`/`windows` and
-  `amd64`/`arm64` in the file names (`<bin>-<os>-<arch>.tar.gz`). Ship the
-  binary alone in each archive.
-- The `ubi:` backend is deprecated (removed in mise 2027.1) — document and
-  use `github:`.
-- `mise x github:…` silently falls back to a same-named binary already on
-  `PATH` (for example a `cargo install`ed copy) when the tool is not
-  installed. Verify installs with `mise install` + `mise where`, not just
-  `mise x … -- <bin> --version`.
+  `amd64`/`arm64` in the file names. Use the six archive names in the
+  matrix, with `.zip` on Windows and `.tar.gz` on Linux/macOS.
+- Verify installs with `mise install` and `mise where`, then run the binary
+  from the returned install directory. A same-named binary elsewhere on
+  `PATH` must not mask a missing or incorrect release asset.
 
 ## Release
 
