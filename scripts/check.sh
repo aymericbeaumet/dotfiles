@@ -130,8 +130,6 @@ jq -e '
   ([.hooks.SessionStart[]?.hooks[]?.command] |
     any(contains("scripts/agent-instructions.sh"))) and
   ([.hooks.SessionStart[]?.hooks[]?.command] |
-    any(contains("scripts/project-memory.sh"))) and
-  ([.hooks.SessionStart[]?.hooks[]?.command] |
     any(contains("scripts/agent-pane-idle.sh clear claude"))) and
   ([.hooks.StopFailure[]?.hooks[]?.command] |
     any(contains("scripts/claude-retry.sh failure"))) and
@@ -184,7 +182,6 @@ jq -e '
   .defaultProjectTrust == "ask" and
   .enableInstallTelemetry == false and
   .compaction == {"enabled": true, "reserveTokens": 20000, "keepRecentTokens": 20000} and
-  .extensions[0] == "extensions/project-memory.ts" and
   (.extensions | index("extensions/tmux-title.ts")) != null
 ' .pi/agent/settings.json >/dev/null
 jq -e '
@@ -219,10 +216,6 @@ jq -e '
 jq -e '
   (.hooks | keys) == ["PostToolUse", "PreToolUse", "SessionStart", "Stop", "UserPromptSubmit"] and
   any(.hooks.PreToolUse[]?.hooks[]?; .command | contains("scripts/worktree-guard.sh")) and
-  ([.hooks.SessionStart[]?.hooks[]? |
-    select(.command | contains("scripts/project-memory.sh"))] | length) == 1 and
-  ([.hooks.SessionStart[]?.hooks[]? |
-    select(.command | contains("scripts/project-memory.sh"))][0].additionalContextLimit) == 0 and
   any(.hooks.SessionStart[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh clear codex")) and
   any(.hooks.UserPromptSubmit[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh busy")) and
   any(.hooks.Stop[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh idle")) and
@@ -233,75 +226,15 @@ jq -e '
 
 [ -f .config/opencode/plugins/rtk.ts ] || fail "missing OpenCode RTK plugin"
 [ -f .config/opencode/plugins/transient-retry.ts ] || fail "missing OpenCode transient-retry plugin"
-[ -f .config/opencode/plugins/project-memory.ts ] || fail "missing OpenCode project-memory plugin"
 [ -f .config/opencode/plugins/tmux-pane.ts ] || fail "missing OpenCode tmux-pane plugin"
 [ -f .config/opencode/plugins/worktree-guard.ts ] || fail "missing OpenCode worktree-guard plugin"
-[ -f .pi/agent/extensions/project-memory.ts ] || fail "missing Pi project-memory extension"
 [ -x scripts/claude-retry.sh ] || fail "Claude retry hook must be executable"
 [ -x scripts/worktree-guard.sh ] || fail "worktree guard must be executable"
-[ -x scripts/project-memory.sh ] || fail "project-memory helper must be executable"
 [ -x scripts/configure-codex-hooks.mjs ] || fail "Codex hook configurator must be executable"
 node --check scripts/configure-codex-hooks.mjs
 rg -F 'command codex --dangerously-bypass-hook-trust "$@"' .zshrc >/dev/null ||
   fail "interactive Codex must bypass hook trust prompts"
 
-check_project_memory() (
-  local test_root repo expected actual local_repo local_path commit_repo commit_path conflict_repo
-  test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-project-memory.XXXXXX")
-  test_root=$(CDPATH='' cd "$test_root" && pwd -P)
-  trap 'rm -rf "$test_root"' EXIT
-
-  repo="$test_root/repo"
-  mkdir -p "$repo"
-  git -C "$repo" init -q
-  git -C "$repo" remote add origin git@github.com:aymericbeaumet/dotfiles.git
-  expected="$test_root/store/git-aa1ddcd98e9d98e5f6cc1d399d077896b1f2f01b9af943741b73af6cd8a33b6e/MEMORY.md"
-  actual=$(PROJECT_MEMORY_ROOT="$test_root/store" scripts/project-memory.sh --path "$repo")
-  [ "$actual" = "$expected" ] || fail "project-memory SSH identity is unstable: $actual"
-  [ -L "$repo/.memories" ] || fail "project-memory helper did not create the project symlink"
-  [ "$(readlink "$repo/.memories")" = "${expected%/MEMORY.md}" ] ||
-    fail "project-memory helper did not create an absolute canonical symlink"
-
-  git -C "$repo" remote set-url origin https://github.com/aymericbeaumet/dotfiles.git
-  actual=$(PROJECT_MEMORY_ROOT="$test_root/store" scripts/project-memory.sh --path "$repo")
-  [ "$actual" = "$expected" ] || fail "equivalent HTTPS and SSH remotes use different memory"
-  PROJECT_MEMORY_ROOT="$test_root/store" scripts/project-memory.sh "$repo" |
-    rg -F '# Project Memory' >/dev/null || fail "project-memory helper did not render memory"
-
-  local_repo="$test_root/home/local"
-  mkdir -p "$local_repo"
-  git -C "$local_repo" init -q
-  git -C "$local_repo" remote add origin "file://$test_root/local-remote"
-  local_path=$(HOME="$test_root/home" PROJECT_MEMORY_ROOT="$test_root/store" \
-    scripts/project-memory.sh --path "$local_repo")
-  case "$local_path" in
-    "$test_root/store/path-"*/MEMORY.md) ;;
-    *) fail "unborn local repository did not use path identity: $local_path" ;;
-  esac
-
-  commit_repo="$test_root/commit"
-  mkdir -p "$commit_repo"
-  git -C "$commit_repo" init -q
-  git -C "$commit_repo" -c user.name=check -c user.email=check@example.com \
-    commit --allow-empty -qm root
-  commit_path=$(PROJECT_MEMORY_ROOT="$test_root/store" \
-    scripts/project-memory.sh --path "$commit_repo")
-  case "$commit_path" in
-    "$test_root/store/commit-"*/MEMORY.md) ;;
-    *) fail "repository without a remote did not use root-commit identity: $commit_path" ;;
-  esac
-
-  conflict_repo="$test_root/conflict"
-  mkdir -p "$conflict_repo/.memories"
-  git -C "$conflict_repo" init -q
-  git -C "$conflict_repo" remote add origin git@github.com:example/conflict.git
-  if PROJECT_MEMORY_ROOT="$test_root/store" \
-    scripts/project-memory.sh --path "$conflict_repo" >/dev/null 2>&1; then
-    fail "project-memory helper replaced a conflicting project path"
-  fi
-  [ -d "$conflict_repo/.memories" ] || fail "project-memory helper removed a conflicting path"
-)
-check_project_memory
 check_hn_status() (
   test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-hn-check.XXXXXX") || exit 1
   trap 'rm -rf "$test_root"' EXIT INT TERM
@@ -566,13 +499,14 @@ require_relative_link .pi/agent/AGENTS.md ../../.agents/AGENTS.md
 require_relative_link .codex/skills/bonsai ../../.agents/skills/bonsai
 require_relative_link .config/opencode/skills/bonsai ../../../.agents/skills/bonsai
 require_relative_link .pi/agent/skills/bonsai ../../../.agents/skills/bonsai
-git check-ignore -q --no-index .memories ||
-  fail "per-project memory symlinks must be ignored globally"
+if git check-ignore -q --no-index .memories; then
+  fail "obsolete per-project memory paths must not be ignored"
+fi
 git check-ignore -q --no-index .handouts/example.md ||
   fail "project handouts must be ignored globally"
-git check-ignore -q --no-index .agents/memories/example/MEMORY.md ||
-  fail "physical project memory must remain local"
-git check-ignore -q --no-index .agents/memories.codex-native-legacy/MEMORY.md ||
+git check-ignore -q --no-index .agents/memories/example/legacy.txt ||
+  fail "legacy project memory must remain local"
+git check-ignore -q --no-index .agents/memories.codex-native-legacy/legacy.txt ||
   fail "legacy memory archives must remain local"
 if git check-ignore -q --no-index .codex/hooks.json; then
   fail "tracked Codex hooks are still ignored"
@@ -591,18 +525,31 @@ rg -F 'Never add `Co-Authored-By`' .pi/agent/APPEND_SYSTEM.md >/dev/null ||
   fail "Pi adapter must forbid harness authorship trailers"
 rg -F 'Never add `Co-Authored-By`' .config/opencode/attribution.md >/dev/null ||
   fail "OpenCode must load a no-attribution instruction file"
-rg -F 'canonical local project memory' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must define the shared project-memory location"
+rg -F '`docs/` directory' .agents/AGENTS.md >/dev/null ||
+  fail "global agent guidance must store project memory under docs"
+rg -F 'be committed so every' .agents/AGENTS.md >/dev/null ||
+  fail "global agent guidance must require committed project memory"
+rg -F 'Never use `MEMORY.md`, `.memories/`, symlinked' .agents/AGENTS.md >/dev/null ||
+  fail "global agent guidance must forbid obsolete memory stores"
+for obsolete_memory_adapter in \
+  scripts/project-memory.sh \
+  .config/opencode/plugins/project-memory.ts \
+  .pi/agent/extensions/project-memory.ts; do
+  [ ! -e "$obsolete_memory_adapter" ] ||
+    fail "obsolete project-memory adapter remains: $obsolete_memory_adapter"
+done
+if rg -q 'scripts/project-memory\.sh|extensions/project-memory\.ts' \
+  .codex/hooks.json .claude/settings.json .pi/agent/settings.json; then
+  fail "client configuration still loads an obsolete project-memory adapter"
+fi
 rg -Fx '  codex features enable hooks' setup.sh >/dev/null ||
   fail "setup must enable tracked Codex hooks"
 rg -Fx '  codex features disable memories' setup.sh >/dev/null ||
-  fail "setup must disable Codex native memory in favor of shared project memory"
-rg -F 'memories.codex-native-legacy' setup.sh >/dev/null ||
-  fail "setup must preserve the legacy nested memory repository"
+  fail "setup must disable Codex native memory in favor of committed project docs"
 rg -F 'scripts/configure-codex-hooks.mjs' setup.sh >/dev/null ||
   fail "setup must configure Codex hook trust through the app server"
 rg -F "\\! -name '.memories'" setup.sh >/dev/null ||
-  fail "setup must not link generated project memory into the home directory"
+  fail "setup must not link obsolete project memory into the home directory"
 rg -F "\\! -name '.handouts'" setup.sh >/dev/null ||
   fail "setup must not link project handouts into the home directory"
 rg -F '[Conventional Commits specification](https://www.conventionalcommits.org/)' AGENTS.md >/dev/null ||

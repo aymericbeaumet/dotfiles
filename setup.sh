@@ -560,24 +560,10 @@ else
 fi
 
 banner "SETUP AGENT CONTINUITY"
-SHARED_MEMORY_ROOT="$PWD/.agents/memories"
-if [[ -e "$SHARED_MEMORY_ROOT/.git" || -L "$SHARED_MEMORY_ROOT/.git" ]]; then
-  LEGACY_MEMORY_ARCHIVE="$PWD/.agents/memories.codex-native-legacy"
-  if [[ -e "$LEGACY_MEMORY_ARCHIVE" || -L "$LEGACY_MEMORY_ARCHIVE" ]]; then
-    LEGACY_MEMORY_ARCHIVE="${LEGACY_MEMORY_ARCHIVE}.$(date '+%Y%m%d%H%M%S')"
-  fi
-  warning "Archiving legacy nested agent memory: $SHARED_MEMORY_ROOT -> $LEGACY_MEMORY_ARCHIVE"
-  mv "$SHARED_MEMORY_ROOT" "$LEGACY_MEMORY_ARCHIVE"
-fi
-mkdir -p "$SHARED_MEMORY_ROOT"
-chmod 700 "$SHARED_MEMORY_ROOT"
-SHARED_MEMORY_PATH=$("$PWD/scripts/project-memory.sh" --path "$PWD")
-info "Initialized shared project memory: $SHARED_MEMORY_PATH"
-
 if command -v codex &>/dev/null; then
   codex features enable hooks
   codex features disable memories
-  info "Enabled tracked Codex hooks and disabled Codex native memory"
+  info "Enabled tracked Codex hooks and disabled native memory in favor of committed project docs"
   if ! command -v node &>/dev/null; then
     warning "Node.js not found; cannot configure Codex hook trust"
   elif [[ ! -f "$HOME/.codex/hooks.json" ]]; then

@@ -11,7 +11,7 @@ guidance lives in the root `AGENTS.md` here.
 | Global guidance | `~/.agents/AGENTS.md` | Small, client-neutral defaults |
 | Personal skills | `~/.agents/skills/*/SKILL.md` | Agent Skills open standard; loaded on demand |
 | Repo guidance | `<repo>/AGENTS.md` | Standard project instructions |
-| Project memory | `<repo>/.memories/MEMORY.md` | Local knowledge shared across agent clients |
+| Project memory | `<repo>/docs/*.md` | Durable context committed with its project |
 | Work handouts | `<repo>/.handouts/<id>.md` | Local session-resumption snapshots |
 | Project blueprints | `~/.agents/blueprints/` | Reusable specs for new repos (not loaded automatically) |
 
@@ -20,20 +20,21 @@ around these canonical files because its global discovery paths differ.
 
 ## Client adapters
 
-| Client | Global instructions | Project memory adapter | Skills |
-|---|---|---|---|
-| Codex | `~/.codex/AGENTS.md` symlink | Tracked `SessionStart` hook | Reads `~/.agents/skills` natively |
-| OpenCode | `~/.config/opencode/AGENTS.md` symlink | `config.instructions` plugin | Reads `~/.agents/skills` natively |
-| Claude Code | `SessionStart` loads the `AGENTS.md` chain | `SessionStart` hook | `~/.claude/skills` symlink |
-| Pi | `~/.pi/agent/AGENTS.md` symlink | `before_agent_start` extension | Reads `~/.agents/skills` natively |
+| Client | Global instructions | Skills |
+|---|---|---|
+| Codex | `~/.codex/AGENTS.md` symlink | Reads `~/.agents/skills` natively |
+| OpenCode | `~/.config/opencode/AGENTS.md` symlink | Reads `~/.agents/skills` natively |
+| Claude Code | `SessionStart` loads the `AGENTS.md` chain | `~/.claude/skills` symlink |
+| Pi | `~/.pi/agent/AGENTS.md` symlink | Reads `~/.agents/skills` natively |
 
 Claude Code does not currently discover `AGENTS.md` directly. The SessionStart adapter keeps the
 repo free of `CLAUDE.md` files while presenting Claude with the same global and project guidance.
 
 ## Portable continuity
 
-- `.memories/MEMORY.md` is the canonical per-project memory shared by every client on one machine.
-  It is an absolute symlink to `~/.dotfiles/.agents/memories/<stable-project-id>/MEMORY.md`.
+- Durable project memory lives in concise, descriptively named documents under each repository's
+  committed `docs/` directory. Relevant documents are read and updated as part of normal project
+  work, without a client-specific injection adapter.
 - The applicable `AGENTS.md` chain remains the canonical committed project guidance.
 - Claude and Codex native auto-memory are disabled so new project knowledge cannot fork into local,
   client-only stores. Existing native memory files remain untouched as archives.
@@ -42,8 +43,8 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
 - `distill` writes durable, non-session guidance into the narrowest applicable `AGENTS.md`.
 - `enrich-blueprint` compares the current project to `~/.agents/blueprints/` and asks what to
   include. It stays in plan mode until the user confirms.
-- Memory and handouts stay outside project Git history. Distilled `AGENTS.md` guidance follows the
-  repository's normal version-control policy.
+- Project memory and distilled `AGENTS.md` guidance follow the repository's normal version-control
+  policy. Handouts remain ignored, transient working state.
 - Claude Code, OpenCode, and Pi expose `/handout`, `/distill`, and `/enrich-blueprint`. Codex
   exposes the same shared skills as `$handout`, `$distill`, and `$enrich-blueprint` because it
   does not support custom slash commands.
@@ -60,22 +61,7 @@ Use Agent Skills for portable reusable workflows.
 loads the canonical `AGENTS.md` and `.agents/skills` paths natively, without discovering the Claude
 adapter or the same skill IDs twice.
 
-## Project identity
-
-`scripts/project-memory.sh` creates memory only inside a Git project. It chooses a stable ID from
-the first available source:
-
-1. A normalized non-local fetch remote, preferring `origin` and then remote names in lexical order.
-2. The sorted root commits reachable from `HEAD`.
-3. The Git common root, relative to `$HOME` when possible, for an unborn repository.
-
-Equivalent SSH, SCP, and HTTP(S) remotes map to the same `git-<sha256>` ID. Repositories without a
-usable remote use `commit-<sha256>` or `path-<sha256>`. This keeps linked worktrees and both
-supported machines aligned when they share repository identity. The ignored memory files are not
-synced between machines; use an explicit private synchronization mechanism if that is required.
-
-The helper never replaces an existing `.memories` path that points elsewhere. `setup.sh` archives
-the old nested `.agents/memories` Git repository intact before creating the new store.
+## Codex hook trust
 
 Codex hook trust is machine- and path-specific. `setup.sh` uses Codex's `hooks/list` and
 `config/batchWrite` app-server APIs to remove an inline hook event only when every old handler has a
@@ -117,7 +103,6 @@ OpenCode authentication uses the ChatGPT browser flow on macOS and its headless 
 | Script | Purpose |
 |---|---|
 | `scripts/agent-instructions.sh` | Loads standard global/project `AGENTS.md` files for Claude |
-| `scripts/project-memory.sh` | Resolves, creates, links, and renders shared project memory |
 | `scripts/configure-codex-hooks.mjs` | Migrates mirrored inline Codex hooks and records native trust |
 | `scripts/format-on-save.sh` | Formats files after edits |
 | `scripts/agent-pane-idle.sh` | Tracks tmux pane state |

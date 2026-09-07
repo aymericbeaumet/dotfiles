@@ -20,7 +20,6 @@
     "keepRecentTokens": 20000
   },
   "extensions": [
-    "extensions/project-memory.ts",
     "extensions/tmux-title.ts",
     "~/.local/share/mise/installs/npm-earendil-works-pi-coding-agent/latest/node_modules/@earendil-works/pi-coding-agent/examples/extensions/subagent"
   ],

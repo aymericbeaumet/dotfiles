@@ -99,10 +99,9 @@ lazy-lock.json
 .codex/skills/*
 !.codex/skills/bonsai
 
-# Shared and legacy agent memory (preserved locally)
+# Legacy agent memory archives (preserved locally, no longer loaded)
 .agents/memories/
 /.agents/memories.codex-native-legacy*/
-/.memories
 /.handouts/
 
 *.lock

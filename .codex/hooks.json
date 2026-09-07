@@ -18,12 +18,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/project-memory.sh'",
-            "timeout": 5,
-            "additionalContextLimit": 0
-          },
-          {
-            "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear codex'",
             "timeout": 5
           }

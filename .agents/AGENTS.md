@@ -39,18 +39,21 @@ project-specific commands and constraints.
 
 ## Project continuity
 
-- Treat `.memories/MEMORY.md` as the canonical local project memory shared by every client.
-  Maintain it proactively after non-trivial work when concise, non-secret, non-obvious project
-  knowledge would materially help future sessions; otherwise leave it unchanged.
+- Keep durable project memory in concise, descriptively named documents under the project's
+  `docs/` directory. Read the relevant documents before related work, and maintain them proactively
+  after non-trivial work when non-secret, non-obvious context would materially help future
+  sessions; otherwise leave them unchanged.
+- Project memory must live directly inside the repository it describes and be committed so every
+  contributor and client shares the same context. Never use `MEMORY.md`, `.memories/`, symlinked
+  memory paths, external shared memory trees, or client-specific memory or state directories.
 - Treat the applicable `AGENTS.md` chain as committed project guidance, not as a session log or a
   substitute for shared project memory.
 - Use the `distill` skill when asked to integrate durable, reusable lessons into the narrowest
   applicable `AGENTS.md`.
-- Keep unfinished work and session-resumption details in `.handouts/`, not in `.memories/` or
-  `AGENTS.md`.
+- Keep unfinished work and session-resumption details in `.handouts/`, not in `docs/` or
+  `AGENTS.md`; handouts are transient context, not project memory.
 - Do not copy memory into handouts or distill it into `AGENTS.md` automatically; each surface has a
   separate lifecycle.
-- Never save project memory in a client-specific memory or state directory.
 
 ## Token-efficient shell use
 

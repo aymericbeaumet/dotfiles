@@ -3,9 +3,6 @@
 
 [add]
 # Setting `copy` replaces bonsai's defaults, so they are restated here.
-# `.memories` is intentionally absent: it is a symlink recreated per checkout
-# by scripts/project-memory.sh (keyed by remote, so every worktree of a repo
-# shares the same memory). Copying it as real files would break that wiring.
 copy = [
   ".env",
   ".env.*",
