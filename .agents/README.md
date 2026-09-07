@@ -10,8 +10,8 @@ guidance lives in the root `AGENTS.md` here.
 |---|---|---|
 | Global guidance | `~/.agents/AGENTS.md` | Small, client-neutral defaults |
 | Personal skills | `~/.agents/skills/*/SKILL.md` | Agent Skills open standard; loaded on demand |
-| Repo guidance | `<repo>/AGENTS.md` | Standard project instructions |
-| Project memory | `<repo>/docs/*.md` | Durable context committed with its project |
+| Repo guidance | `<repo>/AGENTS.md` | Distilled project instructions for agents |
+| Project documentation | `<repo>/docs/` | Documentation and context for humans and agents |
 | Work handouts | `<repo>/.handouts/<id>.md` | Local session-resumption snapshots |
 | Project blueprints | `~/.agents/blueprints/` | Reusable specs for new repos (not loaded automatically) |
 
@@ -35,10 +35,10 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
 
 ## Portable continuity
 
-- Durable project memory lives in concise, descriptively named documents under each repository's
-  committed `docs/` directory. Relevant documents are read and updated as part of normal project
-  work, without a client-specific injection adapter.
-- The applicable `AGENTS.md` chain remains the canonical committed project guidance.
+- Each project's `AGENTS.md` and committed `docs/` evolve through normal work and corrections.
+  `AGENTS.md` receives distilled instructions for agents; `docs/` holds documentation, rationale,
+  and context for humans and agents. Relevant content is read before related work and updated when
+  durable lessons emerge, without a separate request or client-specific injection adapter.
 - Claude and Codex native auto-memory are disabled so new project knowledge cannot fork into local,
   client-only stores. Existing native memory files remain untouched as archives.
 - `handout` writes an ignored local `.handouts/<id>.md` snapshot for active work. Invoking it without

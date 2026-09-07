@@ -11,6 +11,7 @@ need a separate compatibility check against the client that will use them.
 |---|---|
 | Collaboration across repositories | `.agents/AGENTS.md` |
 | Dotfiles development constraints | Root `AGENTS.md` |
+| Project documentation and context for humans and agents | `./docs/` |
 | Workflow-specific scope and stopping rules | `.agents/skills/*/SKILL.md` |
 | Native discovery and hooks | Client adapters described in `.agents/README.md` |
 
@@ -18,6 +19,11 @@ The client instruction symlinks and Claude's instruction hook distribute the sha
 Editing those defaults therefore changes behavior across clients without copying a prompt into
 each client's settings. Client-managed system skills and installed plugin caches are outside the
 tracked shared skill tree.
+
+Project guidance and documentation are maintained throughout development. Completed work and
+corrections feed concise, reusable instructions into the applicable `AGENTS.md`, while explanations,
+decisions, and broader context belong in `./docs`. Existing content is revised as understanding
+changes; transient session state stays in handouts.
 
 Codex's personal `config.toml` is intentionally ignored. OpenCode and Pi have tracked model choices
 and compatibility checks in `scripts/check.sh`. A prompting update does not establish a reason to

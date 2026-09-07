@@ -4,12 +4,19 @@ This is the canonical repository instruction file. Keep project guidance here in
 `AGENTS.md` form; do not add a parallel `CLAUDE.md` or copy these instructions into a
 client-specific config.
 
+Keep this `AGENTS.md` current with distilled instructions for agents. Maintain `./docs` as
+documentation and context for both humans and agents. After non-trivial work or corrections,
+integrate durable lessons into the appropriate surface and revise stale content.
+
 ## Working rules
 
 - Prefix shell commands with `rtk` so command output stays concise.
 - Preserve unrelated working-tree changes. This is a live home-directory configuration repo.
 - Every commit message MUST follow the latest published
   [Conventional Commits specification](https://www.conventionalcommits.org/).
+- Do not create pull requests for this repository. When publishing changes, validate and commit in
+  a bonsai worktree, fast-forward the clean local `main` checkout, and push `main` directly to
+  `origin` from the bonsai worktree. Never force-push.
 - Run `scripts/check.sh` after material changes. If an unrelated pre-existing change blocks the
   full check, run the relevant focused validators and report the blocker.
 - Cross-platform user-facing CLIs belong in `.config/mise/config.toml`. Prefer a mise registry

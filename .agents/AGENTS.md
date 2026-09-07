@@ -59,21 +59,22 @@ project-specific commands and constraints.
 
 ## Project continuity
 
-- Keep durable project memory in concise, descriptively named documents under the project's
-  `docs/` directory. Read the relevant documents before related work, and maintain them proactively
-  after non-trivial work when non-secret, non-obvious context would materially help future
-  sessions; otherwise leave them unchanged.
+- Proactively maintain each project's `AGENTS.md` and `./docs` over time. After non-trivial work or
+  corrections, distill durable lessons into the appropriate surface and update or remove stale
+  content. Leave them unchanged when there is nothing material to preserve.
+- Keep the applicable `AGENTS.md` chain concise and actionable for agents: workflows, constraints,
+  and reusable lessons that improve future work. Use the `distill` skill to integrate these into
+  the narrowest applicable `AGENTS.md` as part of normal work, without waiting to be asked.
+- Use the project's `docs/` directory for documentation and context shared by humans and agents:
+  architecture, decisions and rationale, usage, operations, and durable project knowledge. Read
+  relevant documents before related work and keep them concise, descriptively named, and current.
 - Project memory must live directly inside the repository it describes and be committed so every
   contributor and client shares the same context. Never use `MEMORY.md`, `.memories/`, symlinked
   memory paths, external shared memory trees, or client-specific memory or state directories.
-- Treat the applicable `AGENTS.md` chain as committed project guidance, not as a session log or a
-  substitute for shared project memory.
-- Use the `distill` skill when asked to integrate durable, reusable lessons into the narrowest
-  applicable `AGENTS.md`.
 - Keep unfinished work and session-resumption details in `.handouts/`, not in `docs/` or
   `AGENTS.md`; handouts are transient context, not project memory.
-- Do not copy memory into handouts or distill it into `AGENTS.md` automatically; each surface has a
-  separate lifecycle.
+- Distill instructions into `AGENTS.md` and explanations into `./docs`; link relevant documents
+  instead of duplicating them. Exclude secrets, session logs, and incidental history from both.
 
 ## Token-efficient shell use
 
