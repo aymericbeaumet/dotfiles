@@ -47,10 +47,15 @@ bonsai clean --yes              # then execute
 ## Destructive-command policy
 
 - Inspect first, then act: `bonsai clean --dry-run --json`, review, then
-  `bonsai clean --yes`. Same for `prune` (`--yes` skips confirmation).
-- Never pass `--force` or `-y`/`--yes` unattended unless the user explicitly
-  asked for it. `clean` never touches dirty worktrees; `remove` refuses them
-  without `--force`.
+  `bonsai clean --yes`. Same for `prune` (`--yes` skips confirmation). Check
+  that every target is within the requested cleanup; retain unfinished work
+  even when bonsai labels it merged.
+- An explicit request to clean up the reviewed targets authorizes `--yes`;
+  the user need not name the flag or repeat prior authorization. If the plan
+  includes other targets, narrow the operation or ask about those targets.
+- Never pass `--force` without explicit authorization to discard the affected
+  work. `clean` never touches dirty worktrees; `remove` refuses them without
+  `--force`.
 
 Flags drift; this file does not. Trust `bonsai <cmd> --help` for the exact
 current interface.

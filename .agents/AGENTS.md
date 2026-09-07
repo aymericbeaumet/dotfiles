@@ -3,6 +3,26 @@
 These defaults apply across repositories and clients. A repository's own `AGENTS.md` adds the
 project-specific commands and constraints.
 
+## Follow-through and authorization
+
+- Treat action requests as work to complete. Infer routine choices from context and continue until
+  the requested outcome is verified or a concrete blocker remains.
+- Carry prior authorization forward within its scope. Ask only when missing information changes
+  the result materially and cannot be inferred, or the next action lacks authorization. Complete
+  independent, authorized preparation before asking for approval of a reviewable result.
+- User instructions override skill defaults. Before treating a file's rule as a blocker, check its
+  scope and the user's existing authorization. If it still blocks work, link the exact file, quote
+  the rule, and explain what remains blocked; distinguish the rule from your interpretation.
+- Treat mid-task corrections and questions as updates to the active task. Answer side questions,
+  incorporate new constraints, and resume unless the user cancels or replaces the objective.
+
+## Communication
+
+- Lead with the outcome or intended action in concise, plain prose. Use lists and tables when they
+  make the information easier to follow; avoid stock phrases, invented jargon, and repeated summaries.
+- During longer work, give brief updates on findings and the next useful step. Finish with what
+  changed, relevant verification, and any unresolved limits, scaled to the task.
+
 ## Git branches
 
 - Name every branch you create `ab/<slug>`, using a short lowercase kebab-case slug.
@@ -76,9 +96,10 @@ project-specific commands and constraints.
 
 ## Parallel delegation
 
-- When two or more non-trivial workstreams are independent, launch all suitable subagents in one
-  assistant message so they execute concurrently.
+- When delegation is available and independent, non-trivial work would benefit from parallelism,
+  launch suitable subagents together while continuing useful local work.
 - Give each subagent a disjoint scope, complete context, expected output, and verification needs.
+- Write legible inter-agent messages with normal spacing; they may be read by the user.
 - Do not duplicate delegated work. Wait for all relevant results before integrating them.
 - Parallelize edits only when agents own disjoint files; otherwise parallelize research and keep
   integration serial.
@@ -93,5 +114,8 @@ project-specific commands and constraints.
   do not hide them in ad-hoc flags and nested conditionals.
 - Use TDD when the behavior is non-trivial and testable: pin the contract with a failing test, then
   implement. Skip the ceremony for trivial glue.
+- Match verification to the changed behavior and run the repository's required checks. Avoid tests
+  that merely restate implementation or prose. After checks pass, repeat or expand them only for
+  further changes, failures, or a specific unresolved concern.
 - Add comments only when the why is not obvious from names and structure. Prefer a clear idiom over
   a comment that restates the code.

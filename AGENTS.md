@@ -17,6 +17,10 @@ client-specific config.
 - Keep client-neutral guidance and Agent Skills under `AGENTS.md` and `.agents/skills/`.
   Client-specific settings may adapt native hooks, MCP syntax, or discovery paths, but must not
   become a second source of behavioral instructions.
+- When updating agent behavior, audit shared defaults, affected skills, and their client adapters
+  together for conflicting scope, approval, and completion rules. Replace conflicting guidance
+  at its canonical source; keep model selection and machine-local settings separate from prompting
+  changes. Read `docs/agent-guidance.md` for the configuration boundaries.
 - Semble is the only globally configured MCP server for Claude, Codex, and OpenCode.
 
 ## Supported machines

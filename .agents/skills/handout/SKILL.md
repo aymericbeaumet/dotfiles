@@ -39,8 +39,9 @@ path separators, an empty value, `.` and `..`.
 
 ## Create Mode
 
-1. Gather the active objective, user requirements, decisions and rationale, completed work,
-   unresolved work, failures, verification, and intended next action.
+1. Gather the active objective, user requirements and latest steering, existing authorization,
+   decisions and rationale, completed work, unresolved work, failures, verification, and intended
+   next action. Keep authorization distinct from proposed actions awaiting approval.
 2. Inspect live state that a fresh agent cannot recover from conversation alone: repository root,
    branch, HEAD, worktree status, relevant diff summary, and important untracked files.
 3. Write `.handouts/<id>.md` with the structure below. Use absolute dates and paths where ambiguity
@@ -58,7 +59,6 @@ path separators, an empty value, `.` and `..`.
 - Repository: `<root>`
 - Branch: `<branch>`
 - HEAD: `<commit>`
-- Source session: `<native session identifier when readily available>`
 
 ## Objective
 
@@ -66,7 +66,7 @@ path separators, an empty value, `.` and `..`.
 
 ## User Requirements
 
-- <explicit constraints, preferences, and acceptance criteria>
+- <explicit constraints, preferences, acceptance criteria, and existing authorization>
 
 ## Current State
 
@@ -108,9 +108,9 @@ path separators, an empty value, `.` and `..`.
 ```
 
 Omit empty sections. Capture enough reasoning to prevent repeated investigation, but reference
-existing plans, specs, diffs, issues, and commits instead of duplicating them. Distinguish
-user-authored changes from agent-authored changes when known. Never claim a test passed unless it
-ran successfully.
+existing plans, specs, diffs, issues, and commits instead of duplicating them. Distinguish changes
+within the task from pre-existing or concurrent work when known. Never claim a test passed unless
+it ran successfully.
 
 Redact secrets, tokens, credentials, private keys, sensitive environment values, and unnecessary
 personal information. Do not reproduce secret-like strings even when they appeared in the
@@ -123,6 +123,8 @@ conversation or diff.
 2. Read the applicable `AGENTS.md` chain and inspect the handout's declared working directory and
    current repository state.
 3. Treat the handout as navigation rather than authority. Reconcile its branch, HEAD, worktree,
-   files, and completed items with live state, and call out material drift.
+   files, and completed items with live state, and call out material drift. Reconcile recorded
+   requirements and authorization with newer user instructions; keep pending approvals distinct
+   from permission already given.
 4. Continue from **Next Actions** unless the user asked only for a summary. Do not rewrite the
    handout or repeat its contents before acting unless state reconciliation requires an update.

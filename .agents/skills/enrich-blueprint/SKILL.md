@@ -5,8 +5,9 @@ description: Propose plan-only improvements to ~/.agents/blueprints from the cur
 
 # Enrich Blueprint
 
-Stay in plan mode. Do not create, edit, or delete blueprint files until the user confirms which
-candidates to include.
+Stay in plan mode until the user confirms which candidates to include. Complete the comparison and
+prepare concrete proposed revisions before asking. Honor choices already confirmed in the session;
+apply those choices without asking again, and keep unconfirmed candidates as proposals.
 
 ## Location
 
@@ -40,10 +41,11 @@ Do not write blueprints into the current project.
    - **Update** — specified but drifted
    - **Skip** — product-specific, secret, machine-specific, or obvious from the repo
    - **Ask** — reusable value is unclear
-7. Present a short plan: target path, proposed adds and updates, and explicit skips.
-8. Ask which candidates to include. Cover stack, CI, README, dependencies, license, tests, and
-   release or packaging, plus every **Ask** item. Do not assume omitted areas should be copied.
-9. Stop. Wait for the user's selection. Do not apply edits in this turn.
+7. Present a short plan: target path, concrete proposed adds and updates, and material skips.
+8. Ask which candidates to include when the selection has not already been confirmed. Cover the
+   relevant surveyed areas and every **Ask** item. Do not assume omitted areas should be copied.
+9. Wait for selection before changing unconfirmed candidates. If the user has already confirmed
+   choices, apply only those revisions and check the resulting diff against the selection.
 
 ## Include only when
 
@@ -53,5 +55,6 @@ Do not write blueprints into the current project.
 
 ## Output
 
-Lead with the target blueprint path. Then list Add / Update / Skip / Ask. End with questions. Do not
-write files.
+Lead with the target blueprint path. For a proposal, list Add / Update / Skip / Ask and end with the
+remaining selection question. After applying confirmed choices, summarize the revisions and any
+unresolved candidates.

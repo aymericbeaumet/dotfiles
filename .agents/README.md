@@ -18,6 +18,9 @@ guidance lives in the root `AGENTS.md` here.
 Do not add duplicated client-specific instruction bodies. Each client uses a thin native adapter
 around these canonical files because its global discovery paths differ.
 
+The rationale and review boundaries for shared behavior updates are recorded in
+[`docs/agent-guidance.md`](../docs/agent-guidance.md).
+
 ## Client adapters
 
 | Client | Global instructions | Skills |
