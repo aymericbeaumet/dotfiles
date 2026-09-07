@@ -1,9 +1,9 @@
 ---
-name: enrich-blueprint
-description: Propose plan-only improvements to ~/.agents/blueprints from the current project. Use when the user asks to enrich, improve, update, or extract a blueprint, or mentions enrich-blueprint.
+name: blueprint
+description: Propose plan-only improvements to ~/.agents/blueprints from the current project. Use when the user asks to enrich, improve, update, or extract a blueprint.
 ---
 
-# Enrich Blueprint
+# Blueprint
 
 Stay in plan mode until the user confirms which candidates to include. Complete the comparison and
 prepare concrete proposed revisions before asking. Honor choices already confirmed in the session;

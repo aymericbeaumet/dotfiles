@@ -43,13 +43,12 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
   client-only stores. Existing native memory files remain untouched as archives.
 - `handout` writes an ignored local `.handouts/<id>.md` snapshot for active work. Invoking it without
   an ID creates one; invoking it with an ID loads that snapshot.
-- `distill` writes durable, non-session guidance into the narrowest applicable `AGENTS.md`.
-- `enrich-blueprint` compares the current project to `~/.agents/blueprints/` and asks what to
+- `blueprint` compares the current project to `~/.agents/blueprints/` and asks what to
   include. It stays in plan mode until the user confirms.
 - Project memory and distilled `AGENTS.md` guidance follow the repository's normal version-control
   policy. Handouts remain ignored, transient working state.
-- Claude Code, OpenCode, and Pi expose `/handout`, `/distill`, and `/enrich-blueprint`. Codex
-  exposes the same shared skills as `$handout`, `$distill`, and `$enrich-blueprint` because it
+- Claude Code, OpenCode, and Pi expose `/handout` and `/blueprint`. Codex
+  exposes the same shared skills as `$handout` and `$blueprint` because it
   does not support custom slash commands.
 - Shared atomic Git workflow skills are `commit`, `push`, and `squash`. Slash-separated requests
   compose them in order and stop on the first failure. `commit`, `push`, and `pullrequest` always

@@ -483,12 +483,19 @@ for obsolete_skill in commitpush commitsquash pr prcheck prready; do
 done
 [ ! -e .handouts/.gitkeep ] || fail "project handouts must not contain a tracked placeholder"
 [ -f .config/opencode/commands/handout.md ] || fail "missing OpenCode handout command"
-[ -f .config/opencode/commands/distill.md ] || fail "missing OpenCode distill command"
-[ -f .config/opencode/commands/enrich-blueprint.md ] || fail "missing OpenCode enrich-blueprint command"
+[ -f .config/opencode/commands/blueprint.md ] || fail "missing OpenCode blueprint command"
 [ -f .pi/agent/prompts/handout.md ] || fail "missing Pi handout prompt"
-[ -f .pi/agent/prompts/distill.md ] || fail "missing Pi distill prompt"
-[ -f .pi/agent/prompts/enrich-blueprint.md ] || fail "missing Pi enrich-blueprint prompt"
-[ -f .agents/skills/enrich-blueprint/SKILL.md ] || fail "missing enrich-blueprint skill"
+[ -f .pi/agent/prompts/blueprint.md ] || fail "missing Pi blueprint prompt"
+[ -f .agents/skills/blueprint/SKILL.md ] || fail "missing blueprint skill"
+for retired_skill in distill enrich-blueprint; do
+  for retired_path in \
+    ".agents/skills/$retired_skill" \
+    ".config/opencode/commands/$retired_skill.md" \
+    ".pi/agent/prompts/$retired_skill.md"; do
+    [ ! -e "$retired_path" ] && [ ! -L "$retired_path" ] ||
+      fail "retired skill path remains: $retired_path"
+  done
+done
 [ -f .agents/blueprints/CLI.md ] || fail "missing CLI blueprint"
 [ ! -e agents ] || fail "project blueprints must live under .agents/blueprints"
 
@@ -574,22 +581,18 @@ rg -F 'Finish only when local HEAD equals the PR head' .agents/skills/pullreques
   fail "pullrequest skill must converge PR head, base freshness, feedback, and CI"
 rg -F 'Never stage or commit handouts' .agents/skills/handout/SKILL.md >/dev/null ||
   fail "handout skill must keep handouts out of repository history"
-rg -F 'applicable `AGENTS.md`' .agents/skills/distill/SKILL.md >/dev/null ||
-  fail "distill skill must write harness-neutral AGENTS.md guidance"
-rg -F 'client-specific memory or state directory' .agents/skills/distill/SKILL.md >/dev/null ||
-  fail "distill skill must reject client-specific memory stores"
-rg -F 'Stay in plan mode' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
-  fail "enrich-blueprint skill must stay in plan mode"
-rg -F 'Ask which candidates to include' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
-  fail "enrich-blueprint skill must ask which project conventions to include"
-rg -F 'stack and language manifests' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
-  fail "enrich-blueprint skill must survey the project stack"
-rg -F 'CI workflows' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
-  fail "enrich-blueprint skill must survey CI"
-rg -F 'README' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
-  fail "enrich-blueprint skill must survey the README"
-rg -F 'direct dependencies' .agents/skills/enrich-blueprint/SKILL.md >/dev/null ||
-  fail "enrich-blueprint skill must survey dependencies"
+rg -F 'Stay in plan mode' .agents/skills/blueprint/SKILL.md >/dev/null ||
+  fail "blueprint skill must stay in plan mode"
+rg -F 'Ask which candidates to include' .agents/skills/blueprint/SKILL.md >/dev/null ||
+  fail "blueprint skill must ask which project conventions to include"
+rg -F 'stack and language manifests' .agents/skills/blueprint/SKILL.md >/dev/null ||
+  fail "blueprint skill must survey the project stack"
+rg -F 'CI workflows' .agents/skills/blueprint/SKILL.md >/dev/null ||
+  fail "blueprint skill must survey CI"
+rg -F 'README' .agents/skills/blueprint/SKILL.md >/dev/null ||
+  fail "blueprint skill must survey the README"
+rg -F 'direct dependencies' .agents/skills/blueprint/SKILL.md >/dev/null ||
+  fail "blueprint skill must survey dependencies"
 for shared_skill in .agents/skills/*/SKILL.md; do
   if rg -n 'Codex|Claude|OpenCode|CODEX_HOME|CLAUDE_PROJECT_DIR|\$ARGUMENTS|disallowed-tools|allowed-tools' "$shared_skill" >/dev/null; then
     fail "$shared_skill contains harness-specific instructions"

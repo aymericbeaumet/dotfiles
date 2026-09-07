@@ -63,8 +63,8 @@ project-specific commands and constraints.
   corrections, distill durable lessons into the appropriate surface and update or remove stale
   content. Leave them unchanged when there is nothing material to preserve.
 - Keep the applicable `AGENTS.md` chain concise and actionable for agents: workflows, constraints,
-  and reusable lessons that improve future work. Use the `distill` skill to integrate these into
-  the narrowest applicable `AGENTS.md` as part of normal work, without waiting to be asked.
+  and reusable lessons that improve future work. Integrate these directly into the narrowest
+  applicable `AGENTS.md` as part of normal work, without waiting to be asked.
 - Use the project's `docs/` directory for documentation and context shared by humans and agents:
   architecture, decisions and rationale, usage, operations, and durable project knowledge. Read
   relevant documents before related work and keep them concise, descriptively named, and current.
