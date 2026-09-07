@@ -302,237 +302,6 @@ check_project_memory() (
   [ -d "$conflict_repo/.memories" ] || fail "project-memory helper removed a conflicting path"
 )
 check_project_memory
-
-check_agent_quota_status() (
-  local test_root now first_day_now reset_iso reset_epoch earlier_reset later_reset
-  local subday_reset almost_day_reset subhour_reset
-  local claude_config claude_tsv codex_tsv details_root grok_json grok_tsv output refresh_error xai_auth
-  test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-agent-quota.XXXXXX")
-  trap 'rm -rf "$test_root"' EXIT
-  now=1892937600
-  first_day_now=1892851200
-  reset_iso=2030-01-01T00:00:00.000000+00:00
-  reset_epoch=1893456000
-
-  claude_tsv=$(printf '30\t%s\t10\t%s' "$reset_iso" "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
-  [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
-    fail "Claude weekly quota must warn when usage is ahead of elapsed weekly pace: $output"
-
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --fable)
-  [ "$output" = '90%↻6d' ] || fail "Fable scoped weekly quota was not rendered: $output"
-
-  codex_tsv=$(printf '30\t%s\t10080' "$reset_epoch")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
-    fail "Codex weekly quota must warn when usage is ahead of elapsed weekly pace: $output"
-
-  grok_tsv=$(printf '35\t%s\t10080' "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_GROK_TSV="$grok_tsv" scripts/agent-quota-status.sh --grok)
-  [ "$output" = '#[fg=#D08770]65%↻6d#[fg=colour245]' ] ||
-    fail "Grok weekly quota was not rendered: $output"
-
-  grok_json=$(printf '{"config":{"currentPeriod":{"type":"USAGE_PERIOD_TYPE_WEEKLY","end":"%s"}}}' \
-    "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_GROK_JSON="$grok_json" scripts/agent-quota-status.sh --grok)
-  [ "$output" = '100%↻6d' ] ||
-    fail "Grok must treat an omitted productUsage field as an unused weekly quota: $output"
-
-  mkdir -p "$test_root/tmux-agent-quota-status"
-  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/claude-usage-v4.next"
-  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/grok-usage-v1.next"
-
-  claude_config="$test_root/claude"
-  mkdir -p "$claude_config"
-  printf '%s' \
-    '{"claudeAiOauth":{"accessToken":"old-access","refreshToken":"old-refresh","expiresAt":1},"preserved":true}' \
-    >"$claude_config/.credentials.json"
-  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    CLAUDE_SECURESTORAGE_CONFIG_DIR="$claude_config" \
-    AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON='{"access_token":"new-access","refresh_token":"new-refresh","expires_in":3600,"refresh_token_expires_in":7200}' \
-    scripts/agent-quota-status.sh --claude >/dev/null
-  jq -e --argjson expires "$(((now + 3600) * 1000))" \
-    --argjson refresh_expires "$(((now + 7200) * 1000))" '
-      .claudeAiOauth.accessToken == "new-access"
-      and .claudeAiOauth.refreshToken == "new-refresh"
-      and .claudeAiOauth.expiresAt == $expires
-      and .claudeAiOauth.refreshTokenExpiresAt == $refresh_expires
-      and .preserved == true
-    ' "$claude_config/.credentials.json" >/dev/null ||
-    fail "Claude OAuth refresh must atomically persist rotated credentials"
-
-  xai_auth="$test_root/opencode-auth.json"
-  printf '%s' \
-    '{"xai":{"type":"oauth","access":"old-access","refresh":"old-refresh","expires":1},"preserved":true}' \
-    >"$xai_auth"
-  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_XAI_AUTH_PATH="$xai_auth" \
-    AGENT_QUOTA_TEST_XAI_REFRESH_JSON='{"access_token":"new-access","refresh_token":"new-refresh","expires_in":3600}' \
-    scripts/agent-quota-status.sh --grok >/dev/null
-  jq -e --argjson expires "$(((now + 3600) * 1000))" '
-      .xai.access == "new-access"
-      and .xai.refresh == "new-refresh"
-      and .xai.expires == $expires
-      and .preserved == true
-    ' "$xai_auth" >/dev/null ||
-    fail "xAI OAuth refresh must atomically persist rotated credentials"
-
-  printf '%s' \
-    '{"claudeAiOauth":{"accessToken":"expired","refreshToken":"invalid","expiresAt":1}}' \
-    >"$claude_config/.credentials.json"
-  refresh_error="$test_root/claude-refresh.error"
-  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    CLAUDE_SECURESTORAGE_CONFIG_DIR="$claude_config" \
-    AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON='{}' \
-    scripts/agent-quota-status.sh --claude >/dev/null 2>"$refresh_error"
-  [ "$(cat "$test_root/tmux-agent-quota-status/claude-oauth-refresh-v1.next")" = "$((now + 300))" ] ||
-    fail "failed Claude OAuth refresh must enter backoff"
-  [ "$(cat "$refresh_error")" = 'Claude OAuth refresh failed; run: claude auth login --claudeai' ] ||
-    fail "failed Claude OAuth refresh must emit one actionable diagnostic"
-  : >"$refresh_error"
-  TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    CLAUDE_SECURESTORAGE_CONFIG_DIR="$claude_config" \
-    AGENT_QUOTA_TEST_CLAUDE_REFRESH_JSON='{}' \
-    scripts/agent-quota-status.sh --claude >/dev/null 2>"$refresh_error"
-  [ ! -s "$refresh_error" ] || fail "Claude OAuth backoff must suppress repeated diagnostics"
-
-  claude_tsv=$(printf '14\t%s\tnull\tnull' "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$first_day_now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
-  [ "$output" = '86%↻7d' ] ||
-    fail "the current quota day must include its full 100/7 allowance: $output"
-
-  claude_tsv=$(printf '15\t%s\tnull\tnull' "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$first_day_now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
-  [ "$output" = '#[fg=#D08770]85%↻7d#[fg=colour245]' ] ||
-    fail "weekly quota must warn after exceeding the current day's allowance: $output"
-
-  earlier_reset=$((now + 5 * 86400 + 23 * 3600))
-  later_reset=$((now + 6 * 86400 + 1 * 3600))
-  codex_tsv=$(printf '0\t%s\t10080' "$earlier_reset")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '100%↻5d' ] || fail "5d23h must floor to 5d: $output"
-  codex_tsv=$(printf '0\t%s\t10080' "$later_reset")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '100%↻6d' ] || fail "6d01h must floor to 6d: $output"
-  subday_reset=$((now + 5 * 3600))
-  codex_tsv=$(printf '0\t%s\t10080' "$subday_reset")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '100%↻5h' ] || fail "remaining under 1d must render hours: $output"
-  almost_day_reset=$((now + 23 * 3600))
-  codex_tsv=$(printf '0\t%s\t10080' "$almost_day_reset")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '100%↻23h' ] || fail "23h remaining must render hours: $output"
-  subhour_reset=$((now + 12 * 60))
-  codex_tsv=$(printf '0\t%s\t10080' "$subhour_reset")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '100%↻12min' ] || fail "remaining under 1h must render minutes: $output"
-
-  claude_tsv=$(printf '81\t%s\tnull\tnull' "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
-  [ "$output" = '#[fg=colour196]19%↻6d#[fg=colour245]' ] ||
-    fail "critical weekly quota must remain red instead of orange: $output"
-
-  mkdir -p "$test_root/tmux-agent-quota-status"
-  printf '50\t%s\t30\t%s\t10\t%s' "$reset_iso" "$reset_iso" "$reset_iso" \
-    >"$test_root/tmux-agent-quota-status/claude-usage-v2.tsv"
-  printf '%s' "$((now + 3600))" >"$test_root/tmux-agent-quota-status/claude-usage-v4.next"
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --claude)
-  [ "$output" = '#[fg=#D08770]70%↻6d#[fg=colour245]' ] ||
-    fail "Claude must keep last-good weekly usage when the live fetch is in backoff: $output"
-  case "$output" in
-    *h*) fail "Claude status must not render a session or daily window: $output" ;;
-  esac
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --fable)
-  [ "$output" = '90%↻6d' ] ||
-    fail "Fable must keep last-good weekly usage when the live fetch is in backoff: $output"
-
-  claude_tsv=$(printf '0\t%s\t0\t%s\t100' "$reset_iso" "$reset_iso")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --claude)
-  [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
-    fail "exhausted Claude session must color weekly quota red: $output"
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="$claude_tsv" scripts/agent-quota-status.sh --fable)
-  [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
-    fail "exhausted Claude session must color Fable quota red: $output"
-
-  codex_tsv=$(printf '0\t%s\t10080\t100' "$reset_epoch")
-  output=$(TMPDIR="$test_root" AGENT_QUOTA_REFRESH=1 AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CODEX_TSV="$codex_tsv" scripts/agent-quota-status.sh --codex)
-  [ "$output" = '#[fg=colour196]100%↻6d#[fg=colour245]' ] ||
-    fail "exhausted Codex session must color weekly quota red: $output"
-  details_root="$test_root/details"
-  mkdir -p "$details_root/tmux-agent-quota-status"
-  printf '30\t%s\t10\t%s\t25\t2029-12-26T08:00:00.000000+00:00' \
-    "$reset_iso" "$reset_iso" \
-    >"$details_root/tmux-agent-quota-status/claude-usage-v4.tsv"
-  printf '40\t%s\t10080\t20\t%s\t300' "$reset_epoch" "$((now + 4500))" \
-    >"$details_root/tmux-agent-quota-status/codex-usage-v1.tsv"
-  printf '35\t%s\t10080' "$reset_iso" \
-    >"$details_root/tmux-agent-quota-status/grok-usage-v1.tsv"
-
-  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --details=claude)
-  printf '%s\n' "$output" | rg -Fx '5-hour 75% remaining · resets in 8h' >/dev/null ||
-    fail "Claude popup details must include its session window: $output"
-  printf '%s\n' "$output" | rg -Fx '7-day 70% remaining · resets in 6d' >/dev/null ||
-    fail "Claude popup details must include its weekly window: $output"
-
-  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --details=fable)
-  printf '%s\n' "$output" | rg -Fx 'Shared 5-hour 75% remaining · resets in 8h' >/dev/null ||
-    fail "Fable popup details must label the shared Claude session window: $output"
-  printf '%s\n' "$output" | rg -Fx '7-day 90% remaining · resets in 6d' >/dev/null ||
-    fail "Fable popup details must include its scoped weekly window: $output"
-
-  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --details=codex)
-  printf '%s\n' "$output" | rg -Fx '5-hour 80% remaining · resets in 1h' >/dev/null ||
-    fail "Codex popup details must include its session window: $output"
-  printf '%s\n' "$output" | rg -Fx '7-day 60% remaining · resets in 6d' >/dev/null ||
-    fail "Codex popup details must include its weekly window: $output"
-
-  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --details=grok)
-  printf '%s\n' "$output" | rg -Fx '7-day 65% remaining · resets in 6d' >/dev/null ||
-    fail "Grok popup details must include only its reported weekly window: $output"
-  if printf '%s\n' "$output" | rg -q 'hour'; then
-    fail "Grok popup details must not invent a session window: $output"
-  fi
-
-  output=$(TMPDIR="$test_root/no-details" AGENT_QUOTA_TEST_NOW="$now" \
-    AGENT_QUOTA_TEST_CLAUDE_TSV="0\t$reset_iso\t0\t$reset_iso\t0\t$reset_iso" \
-    scripts/agent-quota-status.sh --details=claude)
-  [ "$output" = 'No cached usage details' ] ||
-    fail "popup detail reads must never enter a live-fetch path: $output"
-
-  printf 'NOT_A_PERCENT\tPWNED_MARKER\tnull\tnull\tnull\tnull' \
-    >"$details_root/tmux-agent-quota-status/claude-usage-v4.tsv"
-  output=$(TMPDIR="$details_root" AGENT_QUOTA_TEST_NOW="$now" \
-    scripts/agent-quota-status.sh --details=claude)
-  case "$output" in
-    *NOT_A_PERCENT* | *PWNED_MARKER*)
-      fail "untrusted cached quota fields reached popup output: $output"
-      ;;
-  esac
-)
-check_agent_quota_status
-
 check_hn_status() (
   test_root=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-hn-check.XXXXXX") || exit 1
   trap 'rm -rf "$test_root"' EXIT INT TERM
@@ -622,43 +391,15 @@ check_hn_status() (
 )
 check_hn_status
 
-rg -F '.kind == "weekly_scoped"' scripts/agent-quota-status.sh >/dev/null ||
-  fail "Claude quota parsing must include model-scoped Fable usage"
-if rg -n '\?%↻\?h' scripts/agent-quota-status.sh >/dev/null; then
-  fail "status bar must not render session or daily quotas"
+rg -F '#{plugin:aiproviders.summary}' .config/flash/flash.toml >/dev/null ||
+  fail "Flash status bar must use the aiproviders-owned unified summary"
+if rg -F '#[popup=ai]' .config/flash/flash.toml >/dev/null ||
+  rg -F 'plugin:aiproviders.claude_usage' .config/flash/flash.toml >/dev/null ||
+  rg -F 'plugin:aiproviders.fable_usage' .config/flash/flash.toml >/dev/null ||
+  rg -F 'plugin:aiproviders.codex_usage' .config/flash/flash.toml >/dev/null ||
+  rg -F 'agent-quota-status.sh' .config/flash/flash.toml >/dev/null; then
+  fail "dotfiles must not assemble or fetch AI provider status outside aiproviders"
 fi
-rg -F 'agent-quota-status.sh --grok' .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must render the Grok quota"
-rg -F '#[popup=ai]' .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must group AI quotas under one popup trigger"
-for provider in claude fable codex grok; do
-  if rg -F "#[popup=$provider]" .config/flash/flash.toml >/dev/null; then
-    fail "Flash status bar must not split $provider into its own popup segment"
-  fi
-done
-for provider in claude fable codex; do
-  rg -F "plugin:aiproviders.${provider}_usage" .config/flash/flash.toml >/dev/null ||
-    fail "Flash status bar must source $provider usage from aiproviders"
-  rg -F "#{plugin:aiproviders.${provider}_usage_details}" .config/flash/flash.toml >/dev/null ||
-    fail "Flash status bar must source $provider popup details from aiproviders"
-  if rg -F "agent-quota-status.sh --$provider" .config/flash/flash.toml >/dev/null ||
-    rg -F "agent-quota-status.sh --details=$provider" .config/flash/flash.toml >/dev/null; then
-    fail "Flash status bar must not bypass aiproviders for $provider usage"
-  fi
-done
-rg -F 'agent-quota-status.sh --details=grok' .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must define cached Grok popup details"
-for provider in claude fable codex; do
-  rg -F "#{s/↻[^# ]+//:plugin:aiproviders.${provider}_usage}" \
-    .config/flash/flash.toml >/dev/null ||
-    fail "compact AI segment must hide $provider reset details"
-done
-rg -F 'O#{s/↻[^# ]+//:plugin:aiproviders.codex_usage}' \
-  .config/flash/flash.toml >/dev/null ||
-  fail "compact AI segment must label OpenAI usage with O"
-rg -F '#{s/↻[^# ]+//:script:../../scripts/agent-quota-status.sh --grok}' \
-  .config/flash/flash.toml >/dev/null ||
-  fail "compact AI segment must hide Grok reset details"
 rg -F '#[popup=active-app]#{=24…:active_app_name}#[nopopup]' \
   .config/flash/flash.toml >/dev/null ||
   fail "Flash status bar must bound the active-app segment without padding it"
@@ -684,8 +425,13 @@ popup_closes=$(rg -o '#\[nopopup\]' .config/flash/flash.toml | wc -l | tr -d ' '
   fail "Flash status bar popup triggers must remain balanced"
 rg -F '#[popup=inline:' scripts/hn-top-stories.sh >/dev/null ||
   fail "HN carousel rows must carry their own popup details"
-rg -F '"alt+z" = ["flash", "window_move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]' .config/flash/flash.toml >/dev/null ||
-  fail "Flash normal mode must map alt+z to a centered golden-area layout"
+awk '
+  $0 == "[mode.all.mappings]" { in_all = 1; next }
+  in_all && /^\[/ { exit }
+  in_all && $0 == "\"alt+z\" = [\"flash\", \"window_move\", \"--x=10.6925%\", \"--y=10.6925%\", \"--width=78.615%\", \"--height=78.615%\"]" { found = 1 }
+  END { exit found ? 0 : 1 }
+' .config/flash/flash.toml ||
+  fail "Flash all-mode mappings must map alt+z to a centered golden-area layout"
 
 printf '%s\n' \
   '{"error":"unknown","error_details":"API Error: Connection closed mid-response"}' |

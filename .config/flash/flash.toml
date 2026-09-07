@@ -36,7 +36,7 @@ template = """
 #[align=center]#[popup=active-app]#{=24…:active_app_name}#[nopopup]
 
 #[align=right]
-#[popup=ai]#[fg=colour178]AI#[fg=colour245] #[link=https://claude.ai/new#settings/usage]C#{s/↻[^# ]+//:plugin:aiproviders.claude_usage} F#{s/↻[^# ]+//:plugin:aiproviders.fable_usage}#[nolink] #[link=https://chatgpt.com/codex/cloud/settings/analytics#usage]O#{s/↻[^# ]+//:plugin:aiproviders.codex_usage}#[nolink] #[link=https://grok.com/?_s=usage]G#{s/↻[^# ]+//:script:../../scripts/agent-quota-status.sh --grok}#[nolink]#[nopopup]
+#{plugin:aiproviders.summary}
 #[fg=colour245] · #{plugin:cpu.summary}
 #[fg=colour245] · #{plugin:memory.summary}
 #[fg=colour245] · #{plugin:disks.summary}
@@ -47,25 +47,11 @@ template = """
 
 [statusbar.popup]
 active-app = """
-#[fg=colour178,bold]#{active_app_name}#[default]
+#[fg=colour178]#{active_app_name}#[default]
 #{plugin:processes.focused_app_details}
 """
-ai = """
-#[fg=colour178,bold]AI usage#[default]
-#[fg=colour178,bold]Claude#[default]
-#{plugin:aiproviders.claude_usage_details}
-
-#[fg=colour178,bold]Fable#[default]
-#{plugin:aiproviders.fable_usage_details}
-
-#[fg=colour178,bold]Codex#[default]
-#{plugin:aiproviders.codex_usage_details}
-
-#[fg=colour178,bold]Grok#[default]
-#{script=5:../../scripts/agent-quota-status.sh --details=grok}
-"""
 date = """
-#[fg=colour178,bold]%A, %-d %B %Y#[default]
+#[fg=colour178]%A, %-d %B %Y#[default]
 %H:%M %Z (UTC%z)
 ISO week %V of %G · day %j
 """
@@ -95,6 +81,7 @@ sequence_timeout_ms = 1000
 "alt+k" = ["flash", "window_move", "--position=tophalf"]
 "alt+l" = ["flash", "window_move", "--position=righthalf"]
 "alt+m" = ["flash", "window_move", "--position=maximized"]
+"alt+z" = ["flash", "window_move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]
 "alt+n" = ["flash", "window_move", "--screen=+1"]
 "alt+p" = ["flash", "window_move", "--screen=-1"]
 
@@ -104,8 +91,6 @@ passthrough_keys = ["escape"]
 passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 
 [mode.normal.mappings]
-# window management
-"alt+z" = ["flash", "window_move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]
 # convenient utilities
 "<leader>l" = ["sh", "-c", "shortcuts run log && flash window_move --position=center"]
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
