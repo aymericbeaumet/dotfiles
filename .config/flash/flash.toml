@@ -19,6 +19,12 @@ summary_mode = "compact"
 [plugin.power]
 summary_mode = "compact"
 
+[plugin.feed]
+label = "AGGR"
+url = "https://aggr.aymericbeaumet.com/rss.xml"
+refresh_interval = 300
+cycle_interval = 60
+
 [statusbar]
 enabled = true
 monitor = "primary"
@@ -30,30 +36,27 @@ popup_corner_radius = 8
 popup_padding = 10
 popup_max_width = 420
 popup_offset = 8
-template = """
-#[align=left]#{mode}#[fg=colour245] · #[link=https://news.ycombinator.com]#[fg=colour178]HN#[fg=colour245]#[nolink] #{cycle:../../scripts/hn-top-stories.sh}
+template = "#[align=left]#{E:@left}#[align=absolute-centre]#{E:@centre}#[align=right]#{T:@right}"
 
-#[align=center]#[popup=active-app]#{=24…:active_app_name}#[nopopup]
-
-#[align=right]
-#{plugin:aiproviders.summary}
-#[fg=colour245] · #{plugin:cpu.summary}
-#[fg=colour245] · #{plugin:memory.summary}
-#[fg=colour245] · #{plugin:disks.summary}
-#[fg=colour245] · #{plugin:network.summary}
-#[fg=colour245] · #{plugin:power.summary}
-#[fg=colour245] · #[popup=date]#{date}#[nopopup]
+[statusbar.options]
+"@left" = """
+#[pill]#{flash.mode}#[nopill]#[fg=colour245] · #[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.summary}#[nolink]
+"""
+"@centre" = """
+#[popup=active-app]#{=/23/…:flash.active_app_name}#[nopopup]
+"""
+"@right" = """
+#{?flash.plugin.caffeinate.state,#[fg=#EBCB8B]AWAKE#[default] ,}
+#{?flash.plugin.aiproviders.summary,#{flash.plugin.aiproviders.summary} ,}
+#[fg=#EBCB8B]#[popup=cpu]CPU#[nopopup] #[popup=memory]MEM#[nopopup] #[popup=disks]DISK#[nopopup] #[popup=network]NET#[nopopup]#[default]
+#{?flash.plugin.power.label, #[popup=battery]#{flash.plugin.power.label}#[nopopup],}
+#[fg=colour245] · #[popup=date]#{?flash.plugin.caffeinate.state,,%a %b %-d }#[default]%H:%M#[nopopup]
 """
 
 [statusbar.popup]
 active-app = """
-#[fg=colour178]#{active_app_name}#[default]
-#{plugin:processes.focused_app_details}
-"""
-date = """
-#[fg=colour178]%A, %-d %B %Y#[default]
-%H:%M %Z (UTC%z)
-ISO week %V of %G · day %j
+#[fg=#EBCB8B]#{flash.active_app_name}#[default]
+#{flash.plugin.processes.focused_app_details}
 """
 
 [flashlight]
@@ -66,11 +69,11 @@ log_level = "trace"
 sequence_timeout_ms = 1000
 
 [mode.all.mappings]
-# enter normal mode
-"cmd+ctrl+[" = ["flash", "enter_normal_mode"]
-"cmd+escape" = ["flash", "enter_normal_mode"]
+# leave insert, command, or terminal mode
+"cmd+ctrl+[" = ["flash", "leave_mode"]
+# enter insert mode
+"cmd+ctrl+i" = ["flash", "enter_insert_mode"]
 # enter command mode
-"cmd+shift+colon" = ["flash", "enter_command_mode"]
 "cmd+ctrl+semicolon" = ["flash", "enter_command_mode"]
 # enter flashlight
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
@@ -91,12 +94,11 @@ passthrough_keys = ["escape"]
 passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 
 [mode.normal.mappings]
+"'b" = ["flash", "terminal_show", "--name=bonsai"]
 # convenient utilities
-"<leader>l" = ["sh", "-c", "shortcuts run log && flash window_move --position=center"]
 "<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
 "<leader>p" = ["sh", "../../scripts/toggle_play.sh"]
 "<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
-"<leader>w" = ["sh", "../../scripts/toggle_wifi.sh"]
 # app switch chords
 "'a" = ["flash", "app_open", "--name=Alacritty"]
 "'c" = ["flash", "app_open", "--name=Claude"]
@@ -111,3 +113,52 @@ passthrough_modifiers = ["cmd", "ctrl", "shift", "alt"]
 "'s" = ["flash", "app_open", "--name=Slack"]
 "'y" = ["flash", "app_open", "--name=Spotify"]
 "'w" = ["flash", "app_open", "--name=WhatsApp"]
+
+[terminal.bonsai]
+command = ["bonsai", "hq", "--no-open", "--port", "0"]
+persistent = true
+working_directory = "~"
+columns = 120
+rows = 36
+
+[terminal.cpu]
+persistent = true
+working_directory = "."
+command = ["btm", "--config_location", "status/bottom-cpu.toml"]
+columns = 92
+rows = 22
+
+[terminal.memory]
+persistent = true
+working_directory = "."
+command = ["btm", "--config_location", "status/bottom-memory.toml"]
+columns = 92
+rows = 22
+
+[terminal.disks]
+persistent = true
+working_directory = "."
+command = ["btm", "--config_location", "status/bottom-disks.toml"]
+columns = 90
+rows = 16
+
+[terminal.network]
+persistent = true
+working_directory = "."
+command = ["btm", "--config_location", "status/bottom-network.toml"]
+columns = 84
+rows = 20
+
+[terminal.battery]
+working_directory = "."
+persistent = true
+command = ["btm", "--config_location", "status/bottom-battery.toml"]
+columns = 52
+rows = 12
+
+[terminal.date]
+working_directory = "."
+persistent = true
+command = ["calcurse", "--read-only", "--quiet", "-D", "status/calcurse", "-C", "status/calcurse"]
+columns = 74
+rows = 22

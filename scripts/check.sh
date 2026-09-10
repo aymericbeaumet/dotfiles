@@ -324,38 +324,70 @@ check_hn_status() (
 )
 check_hn_status
 
-rg -F '#{plugin:aiproviders.summary}' .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must use the aiproviders-owned unified summary"
-if rg -F '#[popup=ai]' .config/flash/flash.toml >/dev/null ||
-  rg -F 'plugin:aiproviders.claude_usage' .config/flash/flash.toml >/dev/null ||
-  rg -F 'plugin:aiproviders.fable_usage' .config/flash/flash.toml >/dev/null ||
-  rg -F 'plugin:aiproviders.codex_usage' .config/flash/flash.toml >/dev/null ||
-  rg -F 'agent-quota-status.sh' .config/flash/flash.toml >/dev/null; then
-  fail "dotfiles must not assemble or fetch AI provider status outside aiproviders"
-fi
-rg -F '#[popup=active-app]#{=24…:active_app_name}#[nopopup]' \
-  .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must bound the active-app segment without padding it"
-rg -F '#[popup=date]#{date}#[nopopup]' \
-  .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must expose a date popup trigger"
-rg -F 'date = """' .config/flash/flash.toml >/dev/null ||
-  fail "Flash status bar must define date popup details"
-for monitor in cpu memory disks network power; do
-  awk -v section="[plugin.${monitor}]" '
-    $0 == section { in_section = 1; next }
-    in_section && /^\[/ { exit }
-    in_section && $0 == "summary_mode = \"compact\"" { found = 1 }
-    END { exit found ? 0 : 1 }
-  ' .config/flash/flash.toml ||
-    fail "Flash status bar must configure $monitor for a compact summary"
-  rg -F "#{plugin:${monitor}.summary}" .config/flash/flash.toml >/dev/null ||
-    fail "Flash status bar must render the $monitor summary"
-done
-popup_opens=$(rg -o '#\[popup=[^]]+\]' .config/flash/flash.toml | wc -l | tr -d ' ')
-popup_closes=$(rg -o '#\[nopopup\]' .config/flash/flash.toml | wc -l | tr -d ' ')
-[ "$popup_opens" -eq "$popup_closes" ] ||
-  fail "Flash status bar popup triggers must remain balanced"
+check_flash_status() (
+  config=$(yq -p toml -o json '.' .config/flash/flash.toml)
+  printf '%s' "$config" | jq -e '
+    .statusbar.options["@right"] | contains("#{flash.plugin.aiproviders.summary}")
+  ' >/dev/null || fail "Flash status bar must use the aiproviders-owned unified summary"
+  if printf '%s' "$config" | jq -e '
+    [.. | strings] | any(test("#\\[popup=ai\\]|(?:plugin:|flash\\.plugin\\.)aiproviders\\.(?:claude|fable|codex)_usage|agent-quota-status\\.sh"))
+  ' >/dev/null; then
+    fail "dotfiles must not assemble or fetch AI provider status outside aiproviders"
+  fi
+  printf '%s' "$config" | jq -e '
+    .plugin.feed.label == "AGGR" and
+    .plugin.feed.url == "https://aggr.aymericbeaumet.com/rss.xml" and
+    (.statusbar.options["@left"] |
+      contains("#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.summary}#[nolink]"))
+  ' >/dev/null || fail "AGGR must link its label to the homepage and fetch its RSS feed"
+  printf '%s' "$config" | jq -e '
+    (.statusbar.options["@centre"] |
+      capture("#\\[popup=active-app\\]#\\{=/(?<width>[0-9]+)/…:flash\\.active_app_name\\}#\\[nopopup\\]") |
+      .width | tonumber | . > 0 and . <= 24) and
+    (.statusbar.popup["active-app"] | contains("#{flash.plugin.processes.focused_app_details}"))
+  ' >/dev/null || fail "Flash must bound the active-app label and retain focused-process details"
+  printf '%s' "$config" | jq -e '
+    . as $config |
+    all(["cpu", "memory", "disks", "network", "power"][];
+      $config.plugin[.].summary_mode == "compact") and
+    all(["cpu", "memory", "disks", "network", "battery", "date"][];
+      . as $name |
+      ($config.statusbar.options["@right"] | contains("#[popup=\($name)]")) and
+      ($config.terminal[$name] |
+        .persistent == true and .working_directory == "." and
+        .columns > 0 and .rows > 0 and
+        (if $name == "date" then
+          .command[0] == "calcurse" and
+          all(["--read-only", "-D", "-C"][]; . as $flag | $config.terminal[$name].command | index($flag) != null)
+        else .command[0] == "btm" and (.command | index("--config_location") != null) end)))
+  ' >/dev/null || fail "Flash monitor popups must use persistent Bottom and read-only calendar terminals"
+  printf '%s' "$config" | jq -e '
+    . as $config |
+    [.statusbar.template, .statusbar.options[], .statusbar.popup[]] |
+    all(.[];
+      ([scan("#\\[popup=[^]]+\\]")] | length) ==
+      ([scan("#\\[nopopup\\]")] | length)) and
+    all(.[] | scan("#\\[popup=([^]]+)\\]") | .[0];
+      . as $name |
+      startswith("inline:") or
+      ($config.statusbar.popup[$name] | type == "string") or
+      ($config.terminal[$name].command | type == "array"))
+  ' >/dev/null || fail "Flash popup markers must be balanced and point to defined content or terminals"
+  while IFS=$'\t' read -r flag config_path; do
+    [ -n "$config_path" ] && [ -e ".config/flash/$config_path" ] ||
+      fail "Flash terminal configuration does not exist: $config_path"
+    if [ "$flag" = '-C' ]; then
+      [ -s ".config/flash/$config_path/conf" ] && [ -s ".config/flash/$config_path/keys" ] ||
+        fail "Flash calendar configuration must include settings and key bindings"
+    fi
+  done < <(printf '%s' "$config" | jq -r '
+    .terminal[] | select(.command[0] == "btm" or .command[0] == "calcurse") |
+    .command as $args | range(0; $args | length) as $i |
+    select(["--config_location", "-D", "-C"] | index($args[$i])) |
+    [$args[$i], $args[$i + 1]] | @tsv
+  ')
+)
+check_flash_status
 rg -F '#[popup=inline:' scripts/hn-top-stories.sh >/dev/null ||
   fail "HN carousel rows must carry their own popup details"
 awk '

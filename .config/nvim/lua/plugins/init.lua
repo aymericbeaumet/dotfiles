@@ -335,9 +335,9 @@ return {
 				"<leader>s",
 				mode = { "n", "x", "o" },
 				function()
-					require("flash").jump()
+					require("config.jump").jump()
 				end,
-				desc = "Flash",
+				desc = "Jump to character with two-key hints",
 			},
 		},
 	},

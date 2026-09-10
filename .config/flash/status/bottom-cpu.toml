@@ -1,0 +1,27 @@
+# CPU history and the processes using it, sized for 92 columns by 22 rows.
+[flags]
+rate = "2s"
+read_only = true
+retention = "10m"
+table_gap = "none"
+
+[styles]
+theme = "nord"
+
+[cpu]
+default = "average"
+
+[processes]
+columns = ["PID", "Name", "CPU%", "Mem%"]
+default_sort = "CPU%"
+
+[[row]]
+ratio = 1
+[[row.child]]
+type = "cpu"
+default = true
+
+[[row]]
+ratio = 1
+[[row.child]]
+type = "proc"

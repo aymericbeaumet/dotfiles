@@ -79,6 +79,9 @@ lazy-lock.json
 # tmux
 .tmux/plugins/
 
+# Flash calendar popup runtime state
+/.config/flash/status/calcurse/.calcurse.pid
+
 # zsh
 .zsh/bundle/
 

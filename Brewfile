@@ -11,6 +11,7 @@ brew 'mise'
 brew 'zsh'
 
 # macOS-only tools
+brew 'calcurse'                # Flash's calendar popup
 brew 'macmon'
 brew 'mole'
 brew 'mosh'                    # Roaming transport for the Moria scratch window
@@ -21,6 +22,7 @@ cask 'ngrok'                   # ngrok tunnels CLI (Homebrew ships it as a cask)
 # macOS GUI applications
 cask 'alacritty'
 cask 'aws-vpn-client'
+cask 'chatgpt'                 # Includes the current Codex desktop app
 cask 'claude'
 cask 'cursor'
 cask 'db-browser-for-sqlite'

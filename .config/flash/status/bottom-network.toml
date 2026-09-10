@@ -1,0 +1,17 @@
+# Network throughput history and totals, sized for 84 columns by 20 rows.
+[flags]
+rate = "2s"
+read_only = true
+expanded = true
+retention = "10m"
+
+[styles]
+theme = "nord"
+
+[network_graph]
+use_bytes = true
+
+[[row]]
+[[row.child]]
+type = "net"
+default = true

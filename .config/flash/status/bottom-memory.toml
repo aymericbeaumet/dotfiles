@@ -1,0 +1,24 @@
+# Memory/swap history and memory-heavy processes, sized for 92 by 22 cells.
+[flags]
+rate = "2s"
+read_only = true
+retention = "10m"
+table_gap = "none"
+
+[styles]
+theme = "nord"
+
+[processes]
+columns = ["PID", "Name", "Mem%", "CPU%"]
+default_sort = "Mem%"
+
+[[row]]
+ratio = 1
+[[row.child]]
+type = "mem"
+default = true
+
+[[row]]
+ratio = 1
+[[row.child]]
+type = "proc"

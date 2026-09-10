@@ -1,0 +1,13 @@
+# A dedicated battery-only layout avoids collecting unused process widgets.
+[flags]
+rate = "5s"
+read_only = true
+expanded = true
+
+[styles]
+theme = "nord"
+
+[[row]]
+[[row.child]]
+type = "battery"
+default = true
