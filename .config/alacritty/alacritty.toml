@@ -161,16 +161,6 @@ key = "R"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0011v"
-key = "D"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011s"
-key = "D"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
 action = "None"
 key = "F"
 mods = "Command|Control"
@@ -186,26 +176,6 @@ action = "None"
 key = "B"
 mods = "Command"
 mode = "~Search"
-
-[[keyboard.bindings]]
-chars = "\u0011n"
-key = "}"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011p"
-key = "{"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011o"
-key = "]"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011O"
-key = "["
-mods = "Command"
 
 [[keyboard.bindings]]
 action = "None"

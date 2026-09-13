@@ -484,6 +484,7 @@ if $DO_MISE; then
     fi
     mise reshim >/dev/null 2>&1 || true
     hash -r 2>/dev/null || true
+    bash scripts/configure-docker-plugins.sh
     if command -v claude &>/dev/null && ! claude --version &>/dev/null; then
       warning "Claude installed but its platform-native executable is unavailable"
     fi

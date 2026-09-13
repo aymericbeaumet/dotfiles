@@ -327,8 +327,13 @@ check_hn_status
 check_flash_status() (
   config=$(yq -p toml -o json '.' .config/flash/flash.toml)
   printf '%s' "$config" | jq -e '
-    .statusbar.options["@right"] | contains("#{flash.plugin.aiproviders.summary}")
-  ' >/dev/null || fail "Flash status bar must use the aiproviders-owned unified summary"
+    . as $config |
+    all(["claude", "codex"][];
+      . as $name |
+      ($config.statusbar.options["@right"] |
+        contains("#{flash.plugin.aiproviders.\($name)_label}")) and
+      $config.statusbar.popup[$name] == "#{flash.plugin.aiproviders.\($name)_details}")
+  ' >/dev/null || fail "Flash provider labels and popups must use aiproviders-owned content"
   if printf '%s' "$config" | jq -e '
     [.. | strings] | any(test("#\\[popup=ai\\]|(?:plugin:|flash\\.plugin\\.)aiproviders\\.(?:claude|fable|codex)_usage|agent-quota-status\\.sh"))
   ' >/dev/null; then
@@ -350,17 +355,19 @@ check_flash_status() (
     . as $config |
     all(["cpu", "memory", "disks", "network", "power"][];
       $config.plugin[.].summary_mode == "compact") and
-    all(["cpu", "memory", "disks", "network", "battery", "date"][];
+    all(["cpu", "memory", "disks", "network", "battery"][];
       . as $name |
+      (if $name == "battery" then "power" else $name end) as $plugin |
       ($config.statusbar.options["@right"] | contains("#[popup=\($name)]")) and
-      ($config.terminal[$name] |
-        .persistent == true and .working_directory == "." and
-        .columns > 0 and .rows > 0 and
-        (if $name == "date" then
-          .command[0] == "calcurse" and
-          all(["--read-only", "-D", "-C"][]; . as $flag | $config.terminal[$name].command | index($flag) != null)
-        else .command[0] == "btm" and (.command | index("--config_location") != null) end)))
-  ' >/dev/null || fail "Flash monitor popups must use persistent Bottom and read-only calendar terminals"
+      ($config.statusbar.options["@right"] | contains("#{flash.plugin.\($plugin).label}")) and
+      $config.statusbar.popup[$name] == "#{flash.plugin.\($plugin).details}") and
+    ($config.statusbar.options["@right"] | contains("#[popup=date]")) and
+    ($config.terminal.date |
+      .persistent == true and .working_directory == "." and
+      .columns > 0 and .rows > 0 and .command[0] == "calcurse") and
+    all(["--read-only", "-D", "-C"][];
+      . as $flag | $config.terminal.date.command | index($flag) != null)
+  ' >/dev/null || fail "Flash monitor popups must use plugin details and a read-only calendar terminal"
   printf '%s' "$config" | jq -e '
     . as $config |
     [.statusbar.template, .statusbar.options[], .statusbar.popup[]] |
@@ -647,14 +654,6 @@ if rg -n '^bind [0-9]' .tmux.conf >/dev/null; then
 fi
 rg -Fx 'chars = "\u0011\u0031"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+1 must emit tmux prefix+1"
-rg -Fx 'chars = "\u0011n"' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty Cmd+Shift+] must emit tmux prefix+n"
-rg -Fx 'key = "}"' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty Cmd+Shift+] must match its shifted logical key"
-rg -Fx 'key = "{"' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty Cmd+Shift+[ must match its shifted logical key"
-rg -Fx 'chars = "\u0011v"' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty Cmd+D must emit tmux prefix+v"
 rg -Fx 'chars = "\u0011d"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+R must ask tmux to detach cleanly"
 rg -F 'scratch-terminal.sh\" reload' .config/alacritty/alacritty.toml >/dev/null ||

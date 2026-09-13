@@ -1,18 +1,19 @@
-# CPU history and the processes using it, sized for 92 columns by 22 rows.
+# Per-core history and CPU-heavy processes, sized for 120 by 38 cells.
 [flags]
 rate = "2s"
-read_only = true
 retention = "10m"
 table_gap = "none"
+show_table_scroll_position = true
 
 [styles]
 theme = "nord"
 
 [cpu]
-default = "average"
+default = "all"
+show_decimal = true
 
 [processes]
-columns = ["PID", "Name", "CPU%", "Mem%"]
+columns = ["PID", "Name", "CPU%", "Mem", "R/s", "W/s", "User", "State", "Time"]
 default_sort = "CPU%"
 
 [[row]]

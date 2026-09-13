@@ -120,3 +120,14 @@ project-specific commands and constraints.
   further changes, failures, or a specific unresolved concern.
 - Add comments only when the why is not obvious from names and structure. Prefer a clear idiom over
   a comment that restates the code.
+
+## Local containers
+
+- Default to Colima with Docker on macOS; use native Docker Engine on Linux. On Apple Silicon,
+  prefer Apple's VZ virtualization, virtiofs mounts, and Rosetta for required amd64 images.
+- Inspect the current Docker context and Colima status before starting or changing a runtime.
+  Respect explicit remote contexts. Derive socket paths from the selected context; do not force
+  `DOCKER_HOST` globally or replace `/var/run/docker.sock` with a symlink.
+- Preserve existing profiles, named volumes, and databases. VM deletion, volume pruning, and
+  `docker compose down --volumes` require explicit authorization for the affected data; they are
+  not routine troubleshooting or cache cleanup.

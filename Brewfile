@@ -12,6 +12,8 @@ brew 'zsh'
 
 # macOS-only tools
 brew 'calcurse'                # Flash's calendar popup
+brew 'colima'                  # macOS VM integration; Docker CLI stays in mise
+brew 'docker-credential-helper' # macOS Keychain integration for Docker credentials
 brew 'macmon'
 brew 'mole'
 brew 'mosh'                    # Roaming transport for the Moria scratch window

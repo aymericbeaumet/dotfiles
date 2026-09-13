@@ -21,6 +21,9 @@ integrate durable lessons into the appropriate surface and revise stale content.
   full check, run the relevant focused validators and report the blocker.
 - Cross-platform user-facing CLIs belong in `.config/mise/config.toml`. Prefer a mise registry
   short name, then `aqua:`, `ubi:`, `npm:`, or `pipx:`.
+- Use Colima for local containers on macOS and native Docker Engine on Linux. Colima's macOS VM
+  integration is an explicit Homebrew exception; keep the Docker CLI in mise. On Apple Silicon,
+  prefer VZ, virtiofs, and Rosetta. Read `docs/containers.md` before changing runtime or storage.
 - Keep client-neutral guidance and Agent Skills under `AGENTS.md` and `.agents/skills/`.
   Client-specific settings may adapt native hooks, MCP syntax, or discovery paths, but must not
   become a second source of behavioral instructions.

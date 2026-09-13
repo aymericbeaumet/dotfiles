@@ -1,7 +1,6 @@
-# Capacity and I/O for visible volumes, sized for 90 columns by 16 rows.
+# Capacity and I/O for visible volumes, sized for 120 columns by 24 rows.
 [flags]
 rate = "2s"
-read_only = true
 expanded = true
 table_gap = "none"
 
@@ -9,7 +8,7 @@ table_gap = "none"
 theme = "nord"
 
 [disk]
-columns = ["Mount", "Used%", "Free", "R/s", "W/s"]
+columns = ["Disk", "Mount", "Used", "Free", "Total", "Used%", "R/s", "W/s"]
 
 [disk.mount_filter]
 is_list_ignored = true
