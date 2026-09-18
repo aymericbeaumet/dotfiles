@@ -38,10 +38,6 @@ command -v apt-get &>/dev/null && IS_DEBIAN=true
 
 SEMBLE_VERSION="0.5.4"
 SEMBLE_UVX_PACKAGE="semble[mcp]==${SEMBLE_VERSION}"
-OPENCODE_AUTH_METHOD="ChatGPT Pro/Plus (browser)"
-if ! $IS_DARWIN; then
-  OPENCODE_AUTH_METHOD="ChatGPT Pro/Plus (headless)"
-fi
 
 # Section flags (all enabled by default)
 DO_SSH=true
@@ -54,7 +50,6 @@ DO_ZSH=true
 DO_TMUX=true
 DO_MACOS=true
 DO_MISE=true
-DO_OPENCODE=true
 
 usage() {
   cat <<'USAGE'
@@ -71,7 +66,6 @@ Options:
   --no-tmux       Skip tmux plugin installation
   --no-macos      Skip macOS defaults configuration
   --no-mise       Skip mise tool installation
-  --no-opencode   Skip OpenCode ChatGPT/Codex authentication
   -h, --help      Show this help message
 USAGE
 }
@@ -88,7 +82,6 @@ for arg in "$@"; do
     --no-tmux) DO_TMUX=false ;;
     --no-macos) DO_MACOS=false ;;
     --no-mise) DO_MISE=false ;;
-    --no-opencode) DO_OPENCODE=false ;;
     -h | --help)
       usage
       exit 0
@@ -443,9 +436,8 @@ if $DO_MISE; then
       hash -r 2>/dev/null || true
     }
 
-    # pipx must exist before mise install runs so pipx:* backends resolve.
-    export PIPX_DEFAULT_BACKEND="${PIPX_DEFAULT_BACKEND:-pip}"
-    install_mise_bootstrap_tool pipx
+    # The Semble backend uses uv instead of a separate pipx installation.
+    install_mise_bootstrap_tool uv
 
     info "Installing mise tools from global config..."
     if ! mise_with_github_token install; then
@@ -456,9 +448,7 @@ if $DO_MISE; then
     info "Refreshing agent clients and RTK to their configured latest versions..."
     if ! mise_with_github_token upgrade \
       rtk \
-      aqua:anomalyco/opencode \
       npm:@anthropic-ai/claude-code \
-      npm:@earendil-works/pi-coding-agent \
       npm:@openai/codex; then
       warning "Some agent tools failed to upgrade; continuing with installed versions"
     fi
@@ -544,14 +534,14 @@ if $DO_SYMLINKS; then
   info "Linking hidden directories..."
   while IFS= read -r dir; do
     symlink "${dir#./}"
-  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type d -name '.*' \! -name '.config' \! -name '.git' \! -name '.memories' \! -name '.handouts')
+  done < <(/usr/bin/find . -mindepth 1 -maxdepth 1 -type d -name '.*' \! -name '.config' \! -name '.git' \! -name '.memories' \! -name '.handouts' \! -name '.pi')
 
   # Symlink .config directories
   if [[ -d .config ]]; then
     info "Linking .config directories..."
     while IFS= read -r dir; do
       symlink "$dir"
-    done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type d)
+    done < <(/usr/bin/find .config -mindepth 1 -maxdepth 1 -type d \! -name 'opencode')
   else
     info "No .config directory found, skipping"
   fi
@@ -625,34 +615,6 @@ if command -v jq &>/dev/null; then
   info "Configured Claude user MCP servers: semble ${SEMBLE_VERSION}"
 else
   warning "jq not found; skipping Claude user MCP configuration"
-fi
-
-banner "SETUP OPENCODE"
-if $DO_OPENCODE; then
-  if ! command -v opencode &>/dev/null; then
-    warning "OpenCode not found; run setup with mise enabled to install it"
-  elif ! command -v jq &>/dev/null; then
-    warning "jq not found; cannot verify OpenCode authentication"
-  elif [[ -f "$HOME/.local/share/opencode/auth.json" ]] &&
-    jq -e '.openai.type == "oauth"' "$HOME/.local/share/opencode/auth.json" &>/dev/null; then
-    info "OpenCode is already authenticated with ChatGPT/Codex"
-  else
-    info "Authenticating OpenCode with ChatGPT/Codex via ${OPENCODE_AUTH_METHOD}..."
-    if ! opencode auth login --provider openai --method "$OPENCODE_AUTH_METHOD"; then
-      warning "OpenCode ChatGPT/Codex authentication did not complete"
-    fi
-  fi
-else
-  skip "OpenCode ChatGPT/Codex Authentication"
-fi
-
-banner "SETUP PI"
-if ! command -v pi &>/dev/null; then
-  warning "Pi not found; run setup with mise enabled to install it"
-elif pi auth check --provider openai-codex --no-refresh &>/dev/null; then
-  info "Pi is already authenticated with ChatGPT/Codex"
-else
-  warning "Pi needs separate authentication: run 'pi', then '/login openai-codex'"
 fi
 
 banner "SETUP NEOVIM"

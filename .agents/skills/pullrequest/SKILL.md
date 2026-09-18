@@ -17,8 +17,9 @@ choice; keep dependent mutations paused.
 
 ## Safety
 
-- Run this workflow only inside a bonsai worktree. If the current checkout is not one, create or
-  reuse `path=$(bonsai add ab/<slug>)` and continue there without waiting for confirmation.
+- Capture the source branch, HEAD, pending work, and existing PR before changing checkouts. Then run
+  this workflow inside a bonsai worktree using the bonsai skill's existing-work handoff, without
+  waiting for confirmation. Preserve the original PR head and push destination when one exists.
 - Preserve unrelated or concurrent work. Re-check branch, HEAD, worktree, and index before every
   branch creation, merge, commit, and push.
 - When pending changes are clearly the intended PR work, validate and commit them. If unrelated or
@@ -41,7 +42,7 @@ choice; keep dependent mutations paused.
 
 1. Read applicable repository instructions and inspect the current branch, HEAD, worktree, index,
    recent history, upstream, remotes, remote default branch, authentication, and repository status.
-2. Query for a pull request belonging to the current branch. When one exists, record its number,
+2. Query for a pull request belonging to the captured source branch. When one exists, record its number,
    URL, state, title, body, draft state, review decision, base and head names and OIDs, repositories,
    mergeability, and checks.
 3. When no PR exists, determine the intended base from the remote default branch, falling back to an
@@ -75,7 +76,8 @@ choice; keep dependent mutations paused.
 5. Inspect the complete unstaged and staged diffs. Commit intended work and any pending non-fast-
    forward base merge with accurate Conventional Commit messages. A merge commit may use
    `chore: merge <base> into <branch>` when accurate.
-6. Push normally, using `git push -u <head-remote> HEAD` for an unpublished branch. Never force.
+6. Push normally to the recorded PR head ref explicitly. For a new PR, publish the prepared task
+   branch and set its upstream. A checkout handoff must not change an existing PR's head. Never force.
 
 ## Create Or Update
 

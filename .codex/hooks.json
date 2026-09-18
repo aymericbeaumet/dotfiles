@@ -50,18 +50,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write|apply_patch",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/format-on-save.sh'",
-            "timeout": 10
-          }
-        ]
-      }
     ]
   }
 }

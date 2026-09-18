@@ -36,9 +36,10 @@ project-specific commands and constraints.
   the worktree's absolute path, and pre-provisions local config. Run all subsequent work inside
   that directory.
 - Always run `commit`, `push`, and `pullrequest` from a bonsai worktree, never from the primary
-  checkout. If the current directory is not already one, create or reuse `path=$(bonsai add ab/<slug>)`
-  and continue there. Do not wait for confirmation to create that worktree or to run the requested
-  workflow.
+  checkout. Before switching directories, capture the source branch, HEAD, upstream, and pending
+  work, then follow the bonsai skill's existing-work handoff. Preserve that source state and the
+  configured push destination, which may differ from the upstream. Do not wait for confirmation
+  to create the worktree or run the requested workflow.
 - Worktrees live at `~/.bonsai/<repo-id>/<branch>` regardless of client, so any harness resumes a
   task by opening the same path. Use the `handout` skill to pass in-progress context across
   clients.

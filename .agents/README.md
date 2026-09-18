@@ -1,6 +1,6 @@
 # Shared agent configuration
 
-This directory is the portable global source of truth for Claude Code, Codex, OpenCode, and Pi.
+This directory is the portable global source of truth for Claude Code and Codex.
 Repository-specific guidance belongs in each repository's root `AGENTS.md`; dotfiles development
 guidance lives in the root `AGENTS.md` here.
 
@@ -26,9 +26,7 @@ The rationale and review boundaries for shared behavior updates are recorded in
 | Client | Global instructions | Skills |
 |---|---|---|
 | Codex | `~/.codex/AGENTS.md` symlink | Reads `~/.agents/skills` natively |
-| OpenCode | `~/.config/opencode/AGENTS.md` symlink | Reads `~/.agents/skills` natively |
 | Claude Code | `SessionStart` loads the `AGENTS.md` chain | `~/.claude/skills` symlink |
-| Pi | `~/.pi/agent/AGENTS.md` symlink | Reads `~/.agents/skills` natively |
 
 Claude Code does not currently discover `AGENTS.md` directly. The SessionStart adapter keeps the
 repo free of `CLAUDE.md` files while presenting Claude with the same global and project guidance.
@@ -47,21 +45,18 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
   include. It stays in plan mode until the user confirms.
 - Project memory and distilled `AGENTS.md` guidance follow the repository's normal version-control
   policy. Handouts remain ignored, transient working state.
-- Claude Code, OpenCode, and Pi expose `/handout` and `/blueprint`. Codex
-  exposes the same shared skills as `$handout` and `$blueprint` because it
-  does not support custom slash commands.
+- Claude Code exposes `/handout` and `/blueprint`. Codex exposes the same shared skills as
+  `$handout` and `$blueprint`.
 - Shared atomic Git workflow skills are `commit`, `push`, and `squash`. Slash-separated requests
   compose them in order and stop on the first failure. `commit`, `push`, and `pullrequest` always
-  run inside a bonsai worktree without waiting for confirmation to create it.
+  run inside a bonsai worktree without waiting for confirmation to create it. Before a checkout
+  handoff, capture the source branch, commits, pending changes, and intended push destination;
+  follow the bonsai skill to preserve them.
 - `pullrequest` is the one-shot PR workflow: prepare and publish the branch, create or update the PR,
   merge the actual base, fix or answer review feedback, repair actionable CI failures, and repeat
   until the PR is ready to merge.
 Custom subagents are intentionally not shared: the clients use incompatible agent formats.
 Use Agent Skills for portable reusable workflows.
-
-`OPENCODE_DISABLE_CLAUDE_CODE=1` disables OpenCode's Claude-compatibility fallback. OpenCode still
-loads the canonical `AGENTS.md` and `.agents/skills` paths natively, without discovering the Claude
-adapter or the same skill IDs twice.
 
 ## Codex hook trust
 
@@ -72,33 +67,26 @@ other user configuration, then verifies that every tracked hook is enabled and t
 
 ## Token efficiency
 
-- RTK filters shell output. Claude uses its native pre-tool hook, OpenCode uses
-  `plugins/rtk.ts`, and Codex follows the global `AGENTS.md` rule.
+- RTK filters shell output. Claude uses its native pre-tool hook, and Codex follows the global
+  `AGENTS.md` rule.
 - Semble is the only configured MCP server. Use it for semantic code discovery, then open the
   returned file and lines directly; use `rg` for exact or exhaustive matches.
-- OpenCode enables automatic compaction and old-tool-output pruning.
 - Skill bodies and supporting files remain unloaded until a matching skill is selected.
 
-## Failure recovery
+## Formatting and failure recovery
 
-- Claude enables its supported retry watchdog. If a partial-response failure still reaches
-  `StopFailure`, the recovery hook sends `continue` only after the same tmux pane stays unchanged;
-  outside tmux, the native watchdog still applies.
-- OpenCode adds at most three guarded continuations per session, only when a terminal
-  provider/network error escaped its native retry loop. User activity cancels a pending retry.
+- Project formatter configuration, editor formatting, and the project's required checks own
+  formatting. Global agent hooks do not rewrite files after individual edits.
+- Claude enables its supported retry watchdog. A terminal failure that escapes native retries
+  requires an explicit continuation; no hook injects input into tmux.
 - Codex keeps its native request/stream retries and goals without terminal-error input injection.
 
 ## MCP policy
 
-All three clients are reconciled by `setup.sh` to exactly one global MCP server:
-
-```text
-uvx --from semble[mcp]==0.5.4 semble
-```
-
-Keep the Semble version pinned across clients so search behavior does not drift between machines.
-When updating it, change the mise tool entry, all native MCP configs, and the checks together.
-OpenCode authentication uses the ChatGPT browser flow on macOS and its headless flow on Linux.
+Both clients are reconciled by `setup.sh` to exactly one global MCP server: Semble. Mise manages the
+CLI through uv; MCP uses a separate cached `uvx --from semble[mcp]==0.5.4 semble` environment for its
+MCP dependencies. Keep their versions pinned together on both machines. When updating Semble,
+change the mise tool entry, native MCP configuration, and checks together.
 
 ## Shared hooks
 
@@ -106,7 +94,6 @@ OpenCode authentication uses the ChatGPT browser flow on macOS and its headless 
 |---|---|
 | `scripts/agent-instructions.sh` | Loads standard global/project `AGENTS.md` files for Claude |
 | `scripts/configure-codex-hooks.mjs` | Migrates mirrored inline Codex hooks and records native trust |
-| `scripts/format-on-save.sh` | Formats files after edits |
 | `scripts/agent-pane-idle.sh` | Tracks tmux pane state |
 | `scripts/agent-pane-title.sh` | Updates compatible terminal pane titles |
-| `scripts/claude-retry.sh` | Continues transient Claude failures only while its tmux pane stays unchanged |
+| `scripts/worktree-guard.sh` | Enforces the shared bonsai worktree workflow |

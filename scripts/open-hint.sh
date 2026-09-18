@@ -46,12 +46,53 @@ line="${rest%%:*}"
 # (currently the digit-only Alacritty regex) ever allows more in the line field.
 [[ "$line" =~ ^[0-9]+$ ]] || line=""
 
+# A relative path that does not exist under the pane's cwd was written
+# relative to somewhere else (`../../scripts/toggle_sleep.sh` inside
+# flash.toml, a path quoted from another checkout). Look for its trailing
+# components: first up the pane's ancestors, then bounded under $HOME.
+locate_relative() {
+  local rel="$1" base="$2" suffix dir hit
+  suffix="$rel"
+  while [[ "$suffix" == ./* || "$suffix" == ../* ]]; do
+    suffix="${suffix#./}"
+    suffix="${suffix#../}"
+  done
+  [[ -n "$suffix" && "$suffix" != "$rel" ]] || return 1
+  dir="$base"
+  while [[ "$dir" == "$HOME"/* || "$dir" == "$HOME" ]]; do
+    [[ -e "$dir/$suffix" ]] && {
+      printf '%s\n' "$dir/$suffix"
+      return 0
+    }
+    dir="${dir%/*}"
+  done
+  command -v fd >/dev/null 2>&1 || return 1
+  hit=$(
+    fd --hidden --full-path --absolute-path --max-depth 7 --max-results 50 \
+      --exclude Library --exclude .git --exclude node_modules --exclude target \
+      --exclude .cache --exclude .Trash --glob "**/$suffix" "$HOME" 2>/dev/null |
+      awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-
+  )
+  [[ -n "$hit" ]] || return 1
+  printf '%s\n' "$hit"
+}
+
 # Resolve relative paths against the active tmux pane's cwd
 if [[ "$file" != /* ]]; then
   pane_path=$(tmux display-message -p '#{pane_current_path}' 2>/dev/null)
-  if [[ -n "$pane_path" ]]; then
-    file="$pane_path/$file"
+  base="${pane_path:-$PWD}"
+  if [[ -e "$base/$file" ]]; then
+    file="$base/$file"
+  elif located=$(locate_relative "$file" "$base"); then
+    file="$located"
+  else
+    file="$base/$file"
   fi
+fi
+
+if [[ -n "${OPEN_HINT_DRY_RUN:-}" ]]; then
+  printf '%s\n' "$file"
+  exit 0
 fi
 
 if [[ ! -e "$file" ]]; then

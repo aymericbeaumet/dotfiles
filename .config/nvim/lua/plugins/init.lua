@@ -342,21 +342,6 @@ return {
 		},
 	},
 
-	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
-		dependencies = {
-			"copilotlsp-nvim/copilot-lsp",
-		},
-		config = function()
-			require("copilot").setup({
-				suggestion = { enabled = false },
-				panel = { enabled = false },
-			})
-		end,
-	},
-
 	-- Claude Code integration
 	{
 		"greggh/claude-code.nvim",
@@ -472,73 +457,6 @@ return {
 				end,
 				mode = "v",
 				desc = "Append selection to Claude instance",
-			},
-
-			-- 3. Replace Selection with Claude Output - Oneshot background execution (<leader>cr)
-			{
-				"<leader>cr",
-				function()
-					local start_pos = vim.fn.getpos("v")
-					local end_pos = vim.fn.getpos(".")
-					local start_line, start_col = start_pos[2] - 1, start_pos[3] - 1
-					local end_line, end_col = end_pos[2] - 1, end_pos[3]
-
-					if start_line > end_line or (start_line == end_line and start_col > end_col) then
-						start_line, end_line = end_line, start_line
-						start_col, end_col = end_col, start_col
-					end
-
-					local lines = vim.api.nvim_buf_get_text(0, start_line, start_col, end_line, end_col, {})
-					local selected_text = table.concat(lines, "\n")
-
-					if selected_text == "" then
-						vim.notify("No text selected!", vim.log.levels.WARN)
-						return
-					end
-
-					vim.ui.input({ prompt = "Instruction for Inline Rewrite: " }, function(input)
-						if not input or input == "" then
-							return
-						end
-
-						vim.notify("Claude is refactoring in background...", vim.log.levels.INFO)
-						local full_prompt = string.format("%s:\n```\n%s\n```", input, selected_text)
-						local stdout_chunks = {}
-
-						vim.fn.jobstart({ "claude", "-p", full_prompt }, {
-							stdout_buffered = true,
-							on_stdout = function(_, data)
-								if data then
-									for _, line in ipairs(data) do
-										table.insert(stdout_chunks, line)
-									end
-								end
-							end,
-							on_exit = function(_, exit_code)
-								if exit_code == 0 then
-									while #stdout_chunks > 0 and stdout_chunks[#stdout_chunks] == "" do
-										table.remove(stdout_chunks)
-									end
-									vim.schedule(function()
-										vim.api.nvim_buf_set_text(
-											0,
-											start_line,
-											start_col,
-											end_line,
-											end_col,
-											stdout_chunks
-										)
-										vim.notify("Text rewritten by Claude!", vim.log.levels.INFO)
-									end)
-								else
-									vim.notify("Claude oneshot execution failed.", vim.log.levels.ERROR)
-								end
-							end,
-						})
-					end)
-				end,
-				mode = "v",
-				desc = "Oneshot replace selection with Claude output",
 			},
 		},
 		opts = {
@@ -678,10 +596,6 @@ return {
 		"saghen/blink.cmp",
 		dependencies = {
 			"rafamadriz/friendly-snippets",
-			{
-				"giuxtaposition/blink-cmp-copilot",
-				dependencies = { "zbirenbaum/copilot.lua" },
-			},
 		},
 		version = "*",
 		event = "InsertEnter",
@@ -700,15 +614,7 @@ return {
 				nerd_font_variant = "mono",
 			},
 			sources = {
-				default = { "lsp", "path", "snippets", "buffer", "copilot" },
-				providers = {
-					copilot = {
-						name = "copilot",
-						module = "blink-cmp-copilot",
-						score_offset = 100,
-						async = true,
-					},
-				},
+				default = { "lsp", "path", "snippets", "buffer" },
 			},
 			completion = {
 				accept = { auto_brackets = { enabled = true } },
@@ -728,7 +634,7 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			"saghen/blink.cmp",
-			{ "mason-org/mason.nvim", config = true },
+			{ "mason-org/mason.nvim", opts = { PATH = "append" } },
 			{
 				"mason-org/mason-lspconfig.nvim",
 				opts = {
@@ -818,17 +724,27 @@ return {
 	-- linting
 	{
 		"mfussenegger/nvim-lint",
-		event = { "BufReadPost", "BufWritePost", "InsertLeave" },
+		event = "BufWritePost",
+		cmd = "Lint",
 		config = function()
 			local lint = require("lint")
 			lint.linters_by_ft = require("config.languages").linters_by_ft()
+			local function lint_buffer(buf)
+				if vim.bo[buf].buftype ~= "" or vim.b[buf].large_file then
+					return
+				end
+				vim.api.nvim_buf_call(buf, lint.try_lint)
+			end
 			local grp = vim.api.nvim_create_augroup("aym.lint", {})
-			vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
+			vim.api.nvim_create_autocmd("BufWritePost", {
 				group = grp,
-				callback = function()
-					lint.try_lint()
+				callback = function(args)
+					lint_buffer(args.buf)
 				end,
 			})
+			vim.api.nvim_create_user_command("Lint", function()
+				lint_buffer(vim.api.nvim_get_current_buf())
+			end, { desc = "Lint current file" })
 		end,
 	},
 
@@ -867,7 +783,7 @@ return {
 			"nvim-neotest/nvim-nio",
 			"rcarriga/nvim-dap-ui",
 			"theHamsta/nvim-dap-virtual-text",
-			{ "mason-org/mason.nvim", config = true },
+			"mason-org/mason.nvim",
 			{
 				"jay-babu/mason-nvim-dap.nvim",
 				opts = {
@@ -928,22 +844,9 @@ return {
 			{ "<leader>d", group = "debug" },
 			-- LSP group (keymaps set buffer-locally in LspAttach)
 			{ "<leader>l", group = "lsp" },
-			-- Git group (telescope/git-worktree keymaps on their plugins)
+			-- Git group (Telescope keymaps)
 			{ "<leader>g", group = "git" },
 		},
-	},
-
-	-- git worktree integration
-	{
-		"polarmutex/git-worktree.nvim",
-		dependencies = { "nvim-telescope/telescope.nvim" },
-		keys = {
-			{ "<leader>gw", "<cmd>Telescope git_worktree<cr>", desc = "Git worktrees" },
-			{ "<leader>gW", "<cmd>Telescope git_worktree create_git_worktree<cr>", desc = "Create worktree" },
-		},
-		config = function()
-			require("telescope").load_extension("git_worktree")
-		end,
 	},
 
 	-- treesitter

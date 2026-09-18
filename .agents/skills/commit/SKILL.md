@@ -5,10 +5,13 @@ description: Stage all changes and create a Conventional Commit without pushing.
 
 ## Task
 
-1. **Require a bonsai worktree**: If this checkout is not already a bonsai worktree, create or reuse
-   one with `path=$(bonsai add ab/<slug>)` and run the rest of this skill there. Do not wait for
-   confirmation.
-2. **Gather context**: Run `git status --short`, `git diff --stat`, `git log --oneline -5`, and `git rev-parse --abbrev-ref HEAD`.
+1. **Capture the source work**: Inspect the current branch, HEAD, upstream, index, complete tracked
+   diff, and untracked files before changing directories. The request refers to this checkout's
+   changes, including its existing local commits.
+2. **Require a bonsai worktree**: Follow the bonsai skill's existing-work handoff. When creating a
+   task branch, base it on the captured source HEAD and copy the intended pending changes without
+   altering their originals. Verify the destination contains the complete intended changes and no
+   unrelated additions before staging. Continue there without waiting for confirmation.
 
 3. **Stage all changes**: Run `git add -A` to stage everything (tracked and untracked).
 
@@ -16,4 +19,5 @@ description: Stage all changes and create a Conventional Commit without pushing.
 
 5. **Commit**: Create the commit. Do NOT amend an existing commit. Do NOT use `--no-verify`. Do NOT push.
 
-Report the commit message and number of files changed.
+Report the commit message, number of files changed, and worktree path. If work was copied from
+another checkout, state that its original pending changes remain there.

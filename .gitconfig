@@ -37,9 +37,6 @@
 	sm = submodule
 	st = status --short --branch
 	sw = show
-	wa = worktree add
-	wl = worktree list
-	wr = worktree remove
 
 [clean]
 	requireForce = true

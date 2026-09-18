@@ -8,8 +8,8 @@
 --   formatters  – { filetype = { "fmt", ... } }                  (table, or {})
 --   dap         – { adapters = {"name"}, setup = function() end } (table, or {})
 --
--- Mason tools are auto-derived from linters + formatters. Tools not found
--- in the mason registry (e.g. ships with a toolchain) are silently skipped.
+-- Mason tools are derived from linters + formatters through mason_packages.
+-- Add an explicit package mapping for each new tool; false means toolchain-owned.
 
 --- Apply identical config to several filetypes.
 local function for_filetypes(filetypes, config)
@@ -338,25 +338,34 @@ function M.lsp_configs()
 	return configs
 end
 
---- Flat list of mason tool names, auto-derived from linters + formatters.
---- Tools not found in the mason registry are silently skipped.
+local mason_packages = {
+	buf = "buf",
+	buf_lint = "buf",
+	eslint_d = "eslint_d",
+	gofumpt = "gofumpt",
+	goimports = "goimports",
+	golangcilint = "golangci-lint",
+	hadolint = "hadolint",
+	prettier = "prettier",
+	prettierd = "prettierd",
+	ruff = "ruff",
+	ruff_format = "ruff",
+	rustfmt = false,
+	shellcheck = "shellcheck",
+	shfmt = "shfmt",
+	stylua = "stylua",
+	taplo = "taplo",
+}
+
+--- Derive packages without requiring Mason during plugin specification loading.
 function M.mason_tools()
-	local ok, registry = pcall(require, "mason-registry")
-	if not ok then
-		return {}
-	end
 	local seen, list = {}, {}
 	local function add(name)
-		if seen[name] then
-			return
-		end
-		-- Try the name as-is, then with underscores replaced by hyphens.
-		for _, candidate in ipairs({ name, name:gsub("_", "-") }) do
-			if registry.has_package(candidate) then
-				seen[name] = true
-				list[#list + 1] = candidate
-				return
-			end
+		local package_name = mason_packages[name]
+		assert(package_name ~= nil, "Missing Mason package mapping for " .. name)
+		if package_name and not seen[package_name] then
+			seen[package_name] = true
+			list[#list + 1] = package_name
 		end
 	end
 	for _, lang in pairs(languages) do
@@ -371,6 +380,7 @@ function M.mason_tools()
 			end
 		end
 	end
+	table.sort(list)
 	return list
 end
 

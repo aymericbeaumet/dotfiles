@@ -31,7 +31,10 @@ integrate durable lessons into the appropriate surface and revise stale content.
   together for conflicting scope, approval, and completion rules. Replace conflicting guidance
   at its canonical source; keep model selection and machine-local settings separate from prompting
   changes. Read `docs/agent-guidance.md` for the configuration boundaries.
-- Semble is the only globally configured MCP server for Claude, Codex, and OpenCode.
+- Claude Code and Codex CLI are the supported agent clients. Semble is their only globally
+  configured MCP server; keep retired client state private and outside managed setup.
+- For shell completion changes, read `docs/zsh-completion.md`. Validate actual Tab completion
+  after deferred plugins load, including Git aliases and switching repositories.
 
 ## Supported machines
 

@@ -29,7 +29,7 @@ require() {
   command -v "$1" >/dev/null 2>&1 || fail "required validator not found: $1"
 }
 
-for command_name in actionlint git jq node rg shellcheck shfmt stylua taplo tmux yq zsh; do
+for command_name in actionlint git jq node nvim rg shellcheck shfmt stylua taplo tmux yq zsh; do
   require "$command_name"
 done
 
@@ -93,26 +93,9 @@ shfmt -d -i 2 -ci "${shell_files[@]}"
 
 section "Structured configuration"
 while IFS= read -r json_file; do
+  [ -f "$json_file" ] || continue
   jq empty "$json_file"
 done < <(git ls-files '*.json')
-
-jq -e '
-  .model == "openai/gpt-5.6-sol" and
-  .small_model == "openai/gpt-5.6-luna-fast" and
-  .compaction == {"auto": true, "prune": true, "reserved": 20000, "tail_turns": 15} and
-  .permission == "allow" and
-  .tool_output == {"max_lines": 200, "max_bytes": 8192} and
-  .agent.explore == {"model": "openai/gpt-5.6-luna-fast", "variant": "low"} and
-  .provider.openai.models."gpt-5.6-sol".variants.none.disabled == true and
-  (.mcp | keys) == ["semble"] and
-  .mcp.semble == {
-    "type": "local",
-    "command": ["uvx", "--from", "semble[mcp]==0.5.4", "semble"],
-    "enabled": true,
-    "timeout": 30000
-  } and
-  .instructions == ["attribution.md"]
-' .config/opencode/opencode.json >/dev/null
 
 jq -e '
   .env.CLAUDE_CODE_RETRY_WATCHDOG == "1" and
@@ -131,10 +114,8 @@ jq -e '
     any(contains("scripts/agent-instructions.sh"))) and
   ([.hooks.SessionStart[]?.hooks[]?.command] |
     any(contains("scripts/agent-pane-idle.sh clear claude"))) and
-  ([.hooks.StopFailure[]?.hooks[]?.command] |
-    any(contains("scripts/claude-retry.sh failure"))) and
-  ([.hooks.Stop[]?.hooks[]?.command] |
-    any(contains("scripts/claude-retry.sh reset")))
+  ([.hooks[][]?.hooks[]?.command] |
+    all(test("scripts/(claude-retry|format-on-save)\\.sh") | not))
 ' .claude/settings.json >/dev/null
 rg -Fx '.claude/settings.json filter=claude-settings' .gitattributes >/dev/null ||
   fail "Claude settings must use a git filter so model and effort stay local"
@@ -147,88 +128,19 @@ printf '%s\n' '{"model":"x","effortLevel":"high","tui":"fullscreen","theme":"aut
   fail "Claude settings clean filter must drop model and effortLevel"
 
 jq -e '
-  .theme == "nord" and
-  .mouse == true and
-  .scroll_acceleration.enabled == true and
-  .keybinds.app_exit == "ctrl+d,<leader>q" and
-  .keybinds.session_interrupt == "escape,ctrl+c" and
-  .keybinds.input_clear == "none" and
-  .keybinds.command_list == "<leader>p" and
-  .keybinds.input_move_left == "left,ctrl+b" and
-  .keybinds.input_move_right == "right,ctrl+f" and
-  .keybinds.input_move_up == "up,ctrl+p" and
-  .keybinds.input_move_down == "down,ctrl+n" and
-  .keybinds.history_previous == "up,ctrl+p" and
-  .keybinds.history_next == "down,ctrl+n" and
-  .keybinds.model_cycle_favorite == "f3" and
-  .keybinds.model_cycle_favorite_reverse == "shift+f3" and
-  .keybinds.variant_cycle == "ctrl+t" and
-  .keybinds.variant_list == "<leader>v"
-' .config/opencode/tui.json >/dev/null
-
-jq -e '
-  .defaultProvider == "openai-codex" and
-  .defaultModel == "gpt-5.6-sol" and
-  .defaultThinkingLevel == "xhigh" and
-  .enabledModels == [
-    "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-5.6-terra",
-    "openai-codex/gpt-5.6-luna"
-  ] and
-  .theme == "nord" and
-  .tuiMode == "fullscreen" and
-  .fullscreenExitOutput == "resume-hint" and
-  .fullscreenScrollbar == "auto" and
-  .defaultProjectTrust == "ask" and
-  .enableInstallTelemetry == false and
-  .compaction == {"enabled": true, "reserveTokens": 20000, "keepRecentTokens": 20000} and
-  (.extensions | index("extensions/tmux-title.ts")) != null
-' .pi/agent/settings.json >/dev/null
-jq -e '
-  .name == "nord" and
-  .vars.nord0 == "#2e3440" and
-  .colors.accent == "nord8" and
-  .export.pageBg == "nord0"
-' .pi/agent/themes/nord.json >/dev/null
-jq -e '
-  ."tui.editor.cursorLeft" == ["left", "ctrl+b"] and
-  ."tui.editor.cursorRight" == ["right", "ctrl+f"] and
-  ."tui.editor.historyPrevious" == "ctrl+p" and
-  ."tui.editor.historyNext" == "ctrl+n" and
-  ."app.model.cycleForward" == "f3" and
-  ."app.model.cycleBackward" == "shift+f3" and
-  ."app.thinking.cycle" == "ctrl+t" and
-  ."app.thinking.toggle" == "ctrl+shift+t"
-' .pi/agent/keybindings.json >/dev/null
-jq -e '
-  (.providers."openai-codex".modelOverrides."gpt-5.6-sol".thinkingLevelMap | has("minimal")) and
-  .providers."openai-codex".modelOverrides."gpt-5.6-sol".thinkingLevelMap.minimal == null and
-  (.providers."openai-codex".modelOverrides."gpt-5.6-terra".thinkingLevelMap | has("minimal")) and
-  .providers."openai-codex".modelOverrides."gpt-5.6-terra".thinkingLevelMap.minimal == null and
-  (.providers."openai-codex".modelOverrides."gpt-5.6-luna".thinkingLevelMap | has("minimal")) and
-  .providers."openai-codex".modelOverrides."gpt-5.6-luna".thinkingLevelMap.minimal == null
-' .pi/agent/models.json >/dev/null
-jq -e '
   any(.bindings[]; .context == "Chat" and .bindings."ctrl+t" == "chat:modelPicker") and
   any(.bindings[]; .context == "ModelPicker" and .bindings."ctrl+t" == "modelPicker:increaseEffort")
 ' .claude/keybindings.json >/dev/null
 
 jq -e '
-  (.hooks | keys) == ["PostToolUse", "PreToolUse", "SessionStart", "Stop", "UserPromptSubmit"] and
+  (.hooks | keys) == ["PreToolUse", "SessionStart", "Stop", "UserPromptSubmit"] and
   any(.hooks.PreToolUse[]?.hooks[]?; .command | contains("scripts/worktree-guard.sh")) and
   any(.hooks.SessionStart[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh clear codex")) and
   any(.hooks.UserPromptSubmit[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh busy")) and
   any(.hooks.Stop[]?.hooks[]?; .command | contains("scripts/agent-pane-idle.sh idle")) and
-  any(.hooks.Stop[]?.hooks[]?; .command | contains("scripts/agent-pane-title.sh codex")) and
-  any(.hooks.PostToolUse[]?; .matcher == "Edit|Write|apply_patch") and
-  any(.hooks.PostToolUse[]?.hooks[]?; .command | contains("scripts/format-on-save.sh"))
+  any(.hooks.Stop[]?.hooks[]?; .command | contains("scripts/agent-pane-title.sh codex"))
 ' .codex/hooks.json >/dev/null
 
-[ -f .config/opencode/plugins/rtk.ts ] || fail "missing OpenCode RTK plugin"
-[ -f .config/opencode/plugins/transient-retry.ts ] || fail "missing OpenCode transient-retry plugin"
-[ -f .config/opencode/plugins/tmux-pane.ts ] || fail "missing OpenCode tmux-pane plugin"
-[ -f .config/opencode/plugins/worktree-guard.ts ] || fail "missing OpenCode worktree-guard plugin"
-[ -x scripts/claude-retry.sh ] || fail "Claude retry hook must be executable"
 [ -x scripts/worktree-guard.sh ] || fail "worktree guard must be executable"
 [ -x scripts/configure-codex-hooks.mjs ] || fail "Codex hook configurator must be executable"
 node --check scripts/configure-codex-hooks.mjs
@@ -362,12 +274,9 @@ check_flash_status() (
       ($config.statusbar.options["@right"] | contains("#{flash.plugin.\($plugin).label}")) and
       $config.statusbar.popup[$name] == "#{flash.plugin.\($plugin).details}") and
     ($config.statusbar.options["@right"] | contains("#[popup=date]")) and
-    ($config.terminal.date |
-      .persistent == true and .working_directory == "." and
-      .columns > 0 and .rows > 0 and .command[0] == "calcurse") and
-    all(["--read-only", "-D", "-C"][];
-      . as $flag | $config.terminal.date.command | index($flag) != null)
-  ' >/dev/null || fail "Flash monitor popups must use plugin details and a read-only calendar terminal"
+    $config.statusbar.popup.date == "#{flash.calendar}" and
+    ($config.terminal | has("date") | not)
+  ' >/dev/null || fail "Flash monitor popups must use plugin details and the built-in calendar popup"
   printf '%s' "$config" | jq -e '
     . as $config |
     [.statusbar.template, .statusbar.options[], .statusbar.popup[]] |
@@ -405,41 +314,38 @@ awk '
 ' .config/flash/flash.toml ||
   fail "Flash all-mode mappings must map alt+z to a centered golden-area layout"
 
-printf '%s\n' \
-  '{"error":"unknown","error_details":"API Error: Connection closed mid-response"}' |
-  scripts/claude-retry.sh classify || fail "Claude retry hook missed a transient connection error"
-if printf '%s\n' \
-  '{"error":"unknown","error_details":"Authentication failed"}' |
-  scripts/claude-retry.sh classify; then
-  fail "Claude retry hook must not retry permanent authentication errors"
-fi
-rg -Fx '"aqua:anomalyco/opencode" = "latest"' .config/mise/config.toml >/dev/null ||
-  fail "OpenCode must be installed through mise"
-rg -Fx '"npm:@earendil-works/pi-coding-agent" = "latest"' .config/mise/config.toml >/dev/null ||
-  fail "Pi must be installed through mise"
-rg -Fx '"pipx:semble" = "0.5.4"' .config/mise/config.toml >/dev/null ||
-  fail "Semble CLI version must match the MCP configuration"
 rg -Fx 'bottom = "latest"' .config/mise/config.toml >/dev/null ||
   fail "Bottom must be installed through mise"
 rg -Fx 'yq = "4.53.3"' .config/mise/config.toml >/dev/null ||
   fail "yq must be installed through mise"
 rg -Fx 'alias htop=btm' .zshrc >/dev/null ||
   fail "htop must invoke the mise-managed Bottom CLI"
-rg -F 'ChatGPT Pro/Plus (headless)' setup.sh >/dev/null ||
-  fail "Linux OpenCode authentication must support headless machines"
-rg -F "run 'pi', then '/login openai-codex'" setup.sh >/dev/null ||
-  fail "setup must explain Pi's separate ChatGPT authentication"
 rg -F '"$CLAUDE_MISE_ROOT/node_modules/@anthropic-ai/claude-code/install.cjs"' setup.sh >/dev/null ||
   fail "Claude postinstall repair must support mise's aube npm layout"
 rg -F '"$CLAUDE_MISE_ROOT/lib/node_modules/@anthropic-ai/claude-code/install.cjs"' setup.sh >/dev/null ||
   fail "Claude postinstall repair must support mise's legacy npm layout"
 
+yq -p toml -o json '.' .config/mise/config.toml | jq -e '
+  (.tools | has("aqua:anomalyco/opencode") | not) and
+  (.tools | has("npm:@earendil-works/pi-coding-agent") | not) and
+  (.tools | has("pipx") | not) and
+  .tools."pipx:semble".version == "0.5.4" and
+  .tools."pipx:semble".uvx == true and
+  (.tools | has("uv"))
+' >/dev/null || fail "Semble must use uv and retired agents must not be provisioned"
+for retired_state in .config/opencode/example-state .pi/example-state; do
+  git check-ignore -q --no-index "$retired_state" ||
+    fail "retired agent state must remain private: $retired_state"
+done
+
 toml_files=()
 while IFS= read -r toml_file; do
+  [ -f "$toml_file" ] || continue
   toml_files+=("$toml_file")
 done < <(git ls-files '*.toml')
 taplo check "${toml_files[@]}"
-stylua --check .config/nvim
+stylua --check .config/nvim scripts/check-neovim.lua
+nvim --headless -u NONE -n -i NONE -l scripts/check-neovim.lua
 actionlint
 
 yaml_files=()
@@ -521,30 +427,13 @@ for obsolete_skill in commitpush commitsquash pr prcheck prready; do
     fail "obsolete Git workflow $obsolete_skill skill remains"
 done
 [ ! -e .handouts/.gitkeep ] || fail "project handouts must not contain a tracked placeholder"
-[ -f .config/opencode/commands/handout.md ] || fail "missing OpenCode handout command"
-[ -f .config/opencode/commands/blueprint.md ] || fail "missing OpenCode blueprint command"
-[ -f .pi/agent/prompts/handout.md ] || fail "missing Pi handout prompt"
-[ -f .pi/agent/prompts/blueprint.md ] || fail "missing Pi blueprint prompt"
 [ -f .agents/skills/blueprint/SKILL.md ] || fail "missing blueprint skill"
-for retired_skill in distill enrich-blueprint; do
-  for retired_path in \
-    ".agents/skills/$retired_skill" \
-    ".config/opencode/commands/$retired_skill.md" \
-    ".pi/agent/prompts/$retired_skill.md"; do
-    [ ! -e "$retired_path" ] && [ ! -L "$retired_path" ] ||
-      fail "retired skill path remains: $retired_path"
-  done
-done
 [ -f .agents/blueprints/CLI.md ] || fail "missing CLI blueprint"
 [ ! -e agents ] || fail "project blueprints must live under .agents/blueprints"
 
 require_relative_link .codex/AGENTS.md ../.agents/AGENTS.md
-require_relative_link .config/opencode/AGENTS.md ../../.agents/AGENTS.md
 require_relative_link .claude/skills ../.agents/skills
-require_relative_link .pi/agent/AGENTS.md ../../.agents/AGENTS.md
 require_relative_link .codex/skills/bonsai ../../.agents/skills/bonsai
-require_relative_link .config/opencode/skills/bonsai ../../../.agents/skills/bonsai
-require_relative_link .pi/agent/skills/bonsai ../../../.agents/skills/bonsai
 if git check-ignore -q --no-index .memories; then
   fail "obsolete per-project memory paths must not be ignored"
 fi
@@ -557,35 +446,9 @@ git check-ignore -q --no-index .agents/memories.codex-native-legacy/legacy.txt |
 if git check-ignore -q --no-index .codex/hooks.json; then
   fail "tracked Codex hooks are still ignored"
 fi
-rg -F 'Name every branch you create `ab/<slug>`' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must require ab/<slug> branch names"
-rg -F 'Always run `commit`, `push`, and `pullrequest` from a bonsai worktree' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must require commit/push/PR inside a bonsai worktree"
-rg -F '`commit/push` means run `commit`, then `push`' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must compose slash-separated Git workflows"
-rg -F 'The `pullrequest` skill is explicitly end-to-end' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must define pullrequest as a one-shot workflow"
-rg -F 'Never add `Co-Authored-By`' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must forbid harness authorship trailers"
-rg -F 'Never add `Co-Authored-By`' .pi/agent/APPEND_SYSTEM.md >/dev/null ||
-  fail "Pi adapter must forbid harness authorship trailers"
-rg -F 'Never add `Co-Authored-By`' .config/opencode/attribution.md >/dev/null ||
-  fail "OpenCode must load a no-attribution instruction file"
-rg -F '`docs/` directory' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must store project memory under docs"
-rg -F 'be committed so every' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must require committed project memory"
-rg -F 'Never use `MEMORY.md`, `.memories/`, symlinked' .agents/AGENTS.md >/dev/null ||
-  fail "global agent guidance must forbid obsolete memory stores"
-for obsolete_memory_adapter in \
-  scripts/project-memory.sh \
-  .config/opencode/plugins/project-memory.ts \
-  .pi/agent/extensions/project-memory.ts; do
-  [ ! -e "$obsolete_memory_adapter" ] ||
-    fail "obsolete project-memory adapter remains: $obsolete_memory_adapter"
-done
+[ ! -e scripts/project-memory.sh ] || fail "obsolete project-memory adapter remains"
 if rg -q 'scripts/project-memory\.sh|extensions/project-memory\.ts' \
-  .codex/hooks.json .claude/settings.json .pi/agent/settings.json; then
+  .codex/hooks.json .claude/settings.json; then
   fail "client configuration still loads an obsolete project-memory adapter"
 fi
 rg -Fx '  codex features enable hooks' setup.sh >/dev/null ||
@@ -598,49 +461,11 @@ rg -F "\\! -name '.memories'" setup.sh >/dev/null ||
   fail "setup must not link obsolete project memory into the home directory"
 rg -F "\\! -name '.handouts'" setup.sh >/dev/null ||
   fail "setup must not link project handouts into the home directory"
-rg -F '[Conventional Commits specification](https://www.conventionalcommits.org/)' AGENTS.md >/dev/null ||
-  fail "AGENTS.md must require the latest Conventional Commits specification"
-for commit_skill in .agents/skills/commit/SKILL.md .agents/skills/squash/SKILL.md .agents/skills/pullrequest/SKILL.md; do
-  rg -F 'MUST follow the latest published [Conventional Commits specification](https://www.conventionalcommits.org/)' "$commit_skill" >/dev/null ||
-    fail "$commit_skill must enforce the latest Conventional Commits specification"
-done
-rg -F 'Do not stage files or create, amend, squash, or otherwise rewrite commits' .agents/skills/push/SKILL.md >/dev/null ||
-  fail "push skill must not stage or create commits"
-rg -F 'Require a clean worktree and index' .agents/skills/squash/SKILL.md >/dev/null ||
-  fail "squash skill must reject pending worktree changes"
-rg -F 'This is the complete pull-request workflow. Invoke it once' .agents/skills/pullrequest/SKILL.md >/dev/null ||
-  fail "pullrequest skill must be a one-shot state-driven workflow"
-rg -F 'git merge --no-commit' .agents/skills/pullrequest/SKILL.md >/dev/null ||
-  fail "pullrequest skill must merge the latest PR base into the current branch"
-rg -F 'conversation comments, review summaries, and GraphQL' .agents/skills/pullrequest/SKILL.md >/dev/null ||
-  fail "pullrequest skill must inspect conversation, review, and inline feedback"
-rg -F 'resolveReviewThread' .agents/skills/pullrequest/SKILL.md >/dev/null ||
-  fail "pullrequest skill must resolve inline threads only after addressing them"
-rg -F 'Finish only when local HEAD equals the PR head' .agents/skills/pullrequest/SKILL.md >/dev/null ||
-  fail "pullrequest skill must converge PR head, base freshness, feedback, and CI"
-rg -F 'Never stage or commit handouts' .agents/skills/handout/SKILL.md >/dev/null ||
-  fail "handout skill must keep handouts out of repository history"
-rg -F 'Stay in plan mode' .agents/skills/blueprint/SKILL.md >/dev/null ||
-  fail "blueprint skill must stay in plan mode"
-rg -F 'Ask which candidates to include' .agents/skills/blueprint/SKILL.md >/dev/null ||
-  fail "blueprint skill must ask which project conventions to include"
-rg -F 'stack and language manifests' .agents/skills/blueprint/SKILL.md >/dev/null ||
-  fail "blueprint skill must survey the project stack"
-rg -F 'CI workflows' .agents/skills/blueprint/SKILL.md >/dev/null ||
-  fail "blueprint skill must survey CI"
-rg -F 'README' .agents/skills/blueprint/SKILL.md >/dev/null ||
-  fail "blueprint skill must survey the README"
-rg -F 'direct dependencies' .agents/skills/blueprint/SKILL.md >/dev/null ||
-  fail "blueprint skill must survey dependencies"
 for shared_skill in .agents/skills/*/SKILL.md; do
   if rg -n 'Codex|Claude|OpenCode|CODEX_HOME|CLAUDE_PROJECT_DIR|\$ARGUMENTS|disallowed-tools|allowed-tools' "$shared_skill" >/dev/null; then
     fail "$shared_skill contains harness-specific instructions"
   fi
 done
-rg -Fx 'export OPENCODE_DISABLE_CLAUDE_CODE=1' .zshenv >/dev/null ||
-  fail "OpenCode must ignore Claude compatibility paths"
-rg -Fx 'export PI_SKIP_VERSION_CHECK=1' .zshenv >/dev/null ||
-  fail "mise must own Pi updates"
 rg -Fx 'setopt SHARE_HISTORY' .zshrc >/dev/null ||
   fail "Zsh tabs must share history live"
 rg -Fx 'unsetopt APPEND_HISTORY INC_APPEND_HISTORY' .zshrc >/dev/null ||
@@ -654,6 +479,32 @@ if rg -n '^bind [0-9]' .tmux.conf >/dev/null; then
 fi
 rg -Fx 'chars = "\u0011\u0031"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+1 must emit tmux prefix+1"
+if [[ "$(rg -Fxc 'chars = "\u0011p"' .config/alacritty/alacritty.toml)" -ne 2 ]]; then
+  fail "Alacritty Cmd+Shift+{ must handle both shifted-bracket key forms"
+fi
+if [[ "$(rg -Fxc 'chars = "\u0011n"' .config/alacritty/alacritty.toml)" -ne 2 ]]; then
+  fail "Alacritty Cmd+Shift+} must handle both shifted-bracket key forms"
+fi
+rg -Fx 'key = "{"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+Shift+{ must bind the resulting brace"
+rg -Fx 'key = "}"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+Shift+} must bind the resulting brace"
+rg -Fx 'bind -r p previous-window' .tmux.conf >/dev/null ||
+  fail "tmux must expose previous-window navigation to Alacritty"
+rg -Fx 'bind -r n next-window' .tmux.conf >/dev/null ||
+  fail "tmux must expose next-window navigation to Alacritty"
+rg -Fx 'chars = "\u0011O"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+[ must select the previous tmux pane"
+rg -Fx 'chars = "\u0011o"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+] must select the next tmux pane"
+rg -Fx 'chars = "\u0011v"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+D must split the tmux pane vertically"
+rg -Fx 'chars = "\u0011s"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+Shift+D must split the tmux pane horizontally"
+rg -Fx 'bind      o select-pane -t :.+' .tmux.conf >/dev/null ||
+  fail "tmux must expose next-pane navigation to Alacritty"
+rg -Fx 'bind      O select-pane -t :.-' .tmux.conf >/dev/null ||
+  fail "tmux must expose previous-pane navigation to Alacritty"
 rg -Fx 'chars = "\u0011d"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+R must ask tmux to detach cleanly"
 rg -F 'scratch-terminal.sh\" reload' .config/alacritty/alacritty.toml >/dev/null ||
@@ -672,7 +523,7 @@ fi
 rg -Fx 'set -s extended-keys on' .tmux.conf >/dev/null ||
   fail "tmux must preserve extended keys for agent TUIs"
 rg -Fx 'set -g extended-keys-format csi-u' .tmux.conf >/dev/null ||
-  fail "tmux must encode extended keys with CSI-u for Pi"
+  fail "tmux must encode extended keys with CSI-u for agent TUIs"
 rg -F 'alacritty:extkeys' .tmux.conf >/dev/null ||
   fail "tmux must advertise Alacritty extended-key support"
 rg -Fx 'set -g allow-passthrough on' .tmux.conf >/dev/null ||
@@ -691,12 +542,6 @@ rg -Fx 'set -g window-style fg=#D8DEE9,bg=#3B4252' .tmux.conf >/dev/null ||
   fail "inactive tmux panes must use the shared Nord foreground and black"
 rg -Fx 'set -g window-active-style fg=#D8DEE9,bg=#2E3440' .tmux.conf >/dev/null ||
   fail "active tmux panes must expose Alacritty foreground and background colors"
-rg -F '#{s/^OC [|] //:pane_title}' .tmux.conf >/dev/null ||
-  fail "tmux pane borders must remove OpenCode's redundant title prefix"
-rg -F '#{m/r:^(OC [|] |OpenCode$),#{pane_title}}' .tmux.conf >/dev/null ||
-  fail "tmux pane borders must prioritize native OpenCode titles over stale agent state"
-rg -F '#{s/^PI [|] //:pane_title}' .tmux.conf >/dev/null ||
-  fail "tmux pane borders must render Pi session titles"
 [ "$(rg -c '^bind -r [HJKL] if -F' .tmux.conf)" -eq 4 ] ||
   fail "prefix+H/J/K/L must move panes left/down/up/right"
 [ "$(rg -c 'move-pane .* -s \. -t .*previous' .tmux.conf)" -eq 4 ] ||
@@ -707,12 +552,9 @@ rg -F '#{>=:#{pane_height},#{e|-:#{window_height},1}}' .tmux.conf >/dev/null ||
   fail "vertical pane movement must account for tmux border rows"
 rg -F '#{>=:#{pane_width},#{e|-:#{window_width},1}}' .tmux.conf >/dev/null ||
   fail "horizontal pane movement must account for tmux scrollbar columns"
-[ "$(rg -c '^bind -T copy-mode-vi (escape|q|C-c) if-shell -F' .tmux.conf)" -eq 3 ] ||
-  fail "OpenCode copy-mode exits must force a tmux client redraw"
 if rg -n '^bind J choose-tree' .tmux.conf >/dev/null; then
   fail "prefix+J must move the active pane, not open the join-pane picker"
 fi
-[ -f .pi/agent/extensions/tmux-title.ts ] || fail "missing Pi tmux title extension"
 if rg -n 'user-keys|bind -n User' .tmux.conf >/dev/null; then
   fail "Alacritty shortcuts must use normal tmux prefix mappings"
 fi
@@ -732,8 +574,8 @@ rg -Fx "brew 'mosh'                    # Roaming transport for the Moria scratch
 [ ! -e scripts/tmux-resurrect-save.sh ] || fail "tmux process/content save wrapper remains"
 rg -Fx "set -g @resurrect-default-processes 'false'" .tmux.conf >/dev/null ||
   fail "tmux restore must not relaunch default non-agent processes"
-rg -Fx "set -g @resurrect-processes '\"~codex->codex --dangerously-bypass-hook-trust\" \"~claude->claude\" \"~opencode->opencode\"'" .tmux.conf >/dev/null ||
-  fail "tmux restore must relaunch only Codex, Claude, and OpenCode through stable commands"
+rg -Fx "set -g @resurrect-processes '\"~codex->codex --dangerously-bypass-hook-trust\" \"~claude->claude\"'" .tmux.conf >/dev/null ||
+  fail "tmux restore must relaunch only Codex and Claude through stable commands"
 if rg -n '@resurrect-capture-pane-contents|@resurrect-pane-contents-area|@resurrect-save-script-path' .tmux.conf >/dev/null; then
   fail "tmux restore must not capture pane content"
 fi

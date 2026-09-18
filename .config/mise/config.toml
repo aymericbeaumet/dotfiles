@@ -9,7 +9,6 @@
 auto_install = false
 
 [tools]
-"aqua:anomalyco/opencode" = "latest"
 "aqua:dalance/procs" = "latest"
 "aqua:docker/buildx" = "latest"
 "aqua:scaleway/scaleway-cli" = "latest"
@@ -41,8 +40,7 @@ lnav = "latest"
 neovim = "latest"
 node = "26.0.0"
 opentofu = "1.12.2"
-pipx = "latest"
-"pipx:semble" = "0.5.4"
+"pipx:semble" = { version = "0.5.4", uvx = true }
 protoc = "34.1"
 ripgrep = "latest"
 rtk = "latest"
@@ -61,7 +59,6 @@ websocat = "latest"
 yq = "4.53.3"
 zoxide = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
-"npm:@earendil-works/pi-coding-agent" = "latest"
 "npm:@openai/codex" = "latest"
 "npm:ccusage" = "latest"
 "npm:greptile" = "latest"

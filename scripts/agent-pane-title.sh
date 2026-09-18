@@ -2,7 +2,7 @@
 # Update the pane border with agent session info from hook stdin JSON.
 # Called by Codex/agy Stop hooks (kind passed as $1). Inside a local tmux, set
 # @agent-kind + pane-title on the pane. Over ssh (no local $TMUX_PANE) emit an
-# OSC 2 title to the tty so the far-side tmux shows "[ssh:<host>] [<kind>] ..."
+# OSC 2 title to the tty so the far-side tmux shows "[ssh] [<kind>] ..."
 # (see .tmux.conf pane-border-format).
 
 set_pane_option() {

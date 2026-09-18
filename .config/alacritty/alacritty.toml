@@ -187,6 +187,49 @@ action = "None"
 key = "Tab"
 mods = "Command|Shift"
 
+# Route native macOS tab, pane, and split shortcuts through tmux. Depending on
+# the active keyboard layout, Alacritty can report shifted brackets as either
+# the base bracket or the resulting brace, so bind both forms.
+[[keyboard.bindings]]
+chars = "\u0011p"
+key = "["
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011p"
+key = "{"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011n"
+key = "]"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011n"
+key = "}"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+chars = "\u0011O"
+key = "["
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011o"
+key = "]"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011v"
+key = "D"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0011s"
+key = "D"
+mods = "Command|Shift"
+
 [[keyboard.bindings]]
 chars = "\u0011\u0031"
 key = "1"

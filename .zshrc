@@ -6,6 +6,39 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Deduplicate completion directories before compinit scans them.
+typeset -U fpath
+
+_dotfiles_compinit() {
+  zicompinit || return
+  zicdreplay
+  compdef _dotfiles_git_completion git
+  compdef g=git
+  local dump=${ZINIT[ZCOMPDUMP_PATH]}
+  if [[ -s $dump && ( ! -s $dump.zwc || $dump -nt $dump.zwc ) ]]; then
+    zcompile "$dump"
+  fi
+}
+
+_dotfiles_git_completion() {
+  # Native _git mishandles aliases after global options and ignores `git -C`.
+  if [[ $words[2] == -* ]] && (( $+functions[_carapace_completer] )); then
+    local -a words=(git "${words[@]:1}")
+    _carapace_completer "$@"
+  else
+    _git "$@"
+  fi
+}
+
+_dotfiles_carapace_init() {
+  export CARAPACE_BRIDGES="zsh,fish,bash" CARAPACE_MATCH=1
+  source <(CARAPACE_EXCLUDES="git,gitk" carapace _carapace zsh)
+  compdef _dotfiles_git_completion git
+  compdef _git gitk
+  compdef g=git
+  compdef _files lnav
+}
+
 # zinit plugin manager (auto-install if missing, then source)
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 if [[ ! -d "$ZINIT_HOME" ]]; then
@@ -13,6 +46,8 @@ if [[ ! -d "$ZINIT_HOME" ]]; then
 fi
 if [[ -d "$ZINIT_HOME" ]]; then
   source "${ZINIT_HOME}/zinit.zsh"
+  ZINIT[ZCOMPDUMP_PATH]="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-${ZSH_VERSION}"
+  [[ -d ${ZINIT[ZCOMPDUMP_PATH]:h} ]] || (umask 077; command mkdir -p -- "${ZINIT[ZCOMPDUMP_PATH]:h}")
 
   # theme: powerlevel10k (load immediately for instant prompt)
   zinit ice depth=1
@@ -23,22 +58,21 @@ if [[ -d "$ZINIT_HOME" ]]; then
 
   # plugins (turbo mode: deferred loading for faster startup)
   # All entries below load after the first prompt is rendered, in order.
-  # Tool inits (mise/zoxide/carapace) sit after zicompinit so their
+  # Tool inits (mise/zoxide/carapace) sit after compinit so their
   # compdefs find a ready completion system.
+  # Skip Git's semantic highlighter: it runs Git to validate each typed ref.
   zinit wait lucid for \
-    atinit"zicompinit; zicdreplay" \
-      zdharma-continuum/fast-syntax-highlighting \
     blockf \
       zsh-users/zsh-completions \
+    atinit"_dotfiles_compinit" atload'unset "FAST_HIGHLIGHT[chroma-git]"' \
+      zdharma-continuum/fast-syntax-highlighting \
     atload"!_zsh_autosuggest_start" \
       zsh-users/zsh-autosuggestions \
-    atload"compdef g=git" \
-      OMZL::git.zsh \
     has'mise' id-as'mise' atinit'eval "$(mise activate zsh)"' \
       zdharma-continuum/null \
     has'zoxide' id-as'zoxide' atinit'eval "$(zoxide init zsh --hook=prompt --no-cmd)"' \
       zdharma-continuum/null \
-    has'carapace' id-as'carapace' atinit'export CARAPACE_BRIDGES="zsh,fish,bash" CARAPACE_MATCH=1; source <(carapace _carapace zsh); compdef _files lnav' \
+    has'carapace' id-as'carapace' atinit'_dotfiles_carapace_init' \
       zdharma-continuum/null \
     has'bonsai' id-as'bonsai' atinit'eval "$(bonsai init zsh)"' \
       zdharma-continuum/null \
@@ -51,12 +85,15 @@ if [[ -f "$HOME/.p10k.zsh" ]]; then
 fi
 
 # zstyles
+zstyle ':completion:*' use-cache yes
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
 zstyle ':completion:*' menu select
 zstyle ':completion:*' ignore-line true
 zstyle ':completion:*' ignore-parents parent pwd
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' group-name ''
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+# Each matcher-list entry reruns the entire completer, including subprocesses.
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' complete-options true
@@ -65,7 +102,12 @@ zstyle ':completion:*:default' menu 'select=0'
 zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:functions' ignored-patterns '_*'
 zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:git-checkout:*' tag-order 'heads' 'remote-branch-names' '*'
+# Prefer refs before scanning modified files; skip expensive reflog suggestions.
+# Files remain available as a fallback and explicitly after `git checkout --`.
+# The final '-' prevents automatic fallback from adding the excluded tags back.
+zstyle ':completion:*:git-checkout:*' tag-order \
+  'tree-ishs' 'commits' 'heads' 'heads-local' 'heads-remote' \
+  'remote-branch-names-noprefix' '!recent-*' '-'
 zstyle ':completion:*:manuals' separate-sections true
 zstyle ':completion:*:warnings' format '%F{red}No matches for: %d%f'
 
@@ -84,50 +126,6 @@ g() {
 # Codex hooks are version-controlled here; run them without per-hash trust prompts.
 codex() {
     command codex --dangerously-bypass-hook-trust "$@"
-}
-
-# worktree: `w` lists worktrees via fzf, `w <name>` creates/switches to a worktree
-w() {
-    local REPO_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
-    if [ -z "$REPO_NAME" ]; then
-        echo "Not in a git repository."
-        return 1
-    fi
-    if [ -z "$1" ]; then
-        local dir
-        local selected
-        selected=$(git worktree list | tail -n +2 | while read -r wt_path wt_hash wt_branch _; do
-            wt_branch=${wt_branch#\[}; wt_branch=${wt_branch%\]}
-            local ts=$(git log -1 --format='%ct' "$wt_hash" 2>/dev/null || echo 0)
-            local dt=$(git log -1 --format='%cs' "$wt_hash" 2>/dev/null)
-            printf '%s\t%s  %s  %s\n' "$ts" "$dt" "$wt_branch" "$wt_path"
-        done | sort -rn | sed 's/^[0-9]*	//' | fzf --height=40% --reverse --with-nth=1,2 --delimiter='  ') || return
-        dir=$(echo "$selected" | awk -F'  ' '{print $NF}')
-        cd "$dir"
-    else
-        local SUFFIX=$(echo "$*" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-|-$//g')
-        local BRANCH_NAME="${USER}/${SUFFIX}"
-        local TARGET_PATH="../${SUFFIX}"
-        if [ -d "$TARGET_PATH" ]; then
-            cd "$TARGET_PATH"
-        else
-            git fetch origin main
-            local existing_branch
-            if git show-ref --verify --quiet "refs/heads/${BRANCH_NAME}" || \
-               git show-ref --verify --quiet "refs/remotes/origin/${BRANCH_NAME}"; then
-                existing_branch="$BRANCH_NAME"
-            elif git show-ref --verify --quiet "refs/heads/${SUFFIX}" || \
-                 git show-ref --verify --quiet "refs/remotes/origin/${SUFFIX}"; then
-                existing_branch="$SUFFIX"
-            fi
-            if [ -n "$existing_branch" ]; then
-                git worktree add "$TARGET_PATH" "$existing_branch"
-            else
-                git worktree add "$TARGET_PATH" -b "$BRANCH_NAME" origin/main
-            fi
-            cd "$TARGET_PATH"
-        fi
-    fi
 }
 
 # zoxide: `z` opens fzf for interactive selection, `z <query>` jumps to best match
@@ -238,7 +236,7 @@ _reset_cursor() { echo -ne '\e[5 q'; }
 add-zsh-hook precmd _reset_cursor
 
 # Report context to the terminal title via OSC 2. Over ssh the far-side tmux
-# captures this as pane_title and shows it as "[ssh:<host>] ..." (see
+# captures this as pane_title and shows it as "[ssh] ..." (see
 # .tmux.conf pane-border-format). Skipped inside a local tmux ($TMUX set), which
 # reads the pane border directly; ssh does not forward $TMUX, so a remote shell
 # still reports. precmd shows the cwd, preexec the running command.

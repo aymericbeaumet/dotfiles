@@ -25,10 +25,18 @@ corrections feed concise, reusable instructions into the applicable `AGENTS.md`,
 decisions, and broader context belong in `./docs`. Existing content is revised as understanding
 changes; transient session state stays in handouts.
 
-Codex's personal `config.toml` is intentionally ignored. OpenCode and Pi have tracked model choices
-and compatibility checks in `scripts/check.sh`. A prompting update does not establish a reason to
-change those models, reasoning levels, permissions, or transport settings. Verify native support
-before translating API guidance into a client setting.
+The retained clients are Claude Code and Codex. Codex's personal `config.toml` is intentionally
+ignored; Claude's shared settings and both clients' hook adapters are tracked. A prompting update
+does not establish a reason to change models, reasoning levels, permissions, or transport settings.
+Verify native support before translating API guidance into a client setting.
+
+Use native client retries and lightweight hooks for shared instructions, worktree policy, and pane
+state. Project formatting and editor formatting own file rewrites. Avoid maintaining a parallel
+retry loop or applying a global formatter policy after each agent edit.
+
+Git workflow handoffs preserve the checkout the user actually requested: source branch, HEAD,
+pending changes, and remote destination. The bonsai skill owns the handoff contract. A new worktree
+must not substitute the default branch for existing work or silently change the branch being pushed.
 
 ## Reviewing changes
 

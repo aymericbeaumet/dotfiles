@@ -44,18 +44,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/format-on-save.sh'",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "",
@@ -97,23 +85,6 @@
           {
             "type": "command",
             "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh idle'",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/claude-retry.sh reset'",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "StopFailure": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/claude-retry.sh failure'",
             "timeout": 5
           }
         ]

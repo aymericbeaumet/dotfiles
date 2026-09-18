@@ -34,7 +34,7 @@ popup_border = "#4C566A"
 popup_border_size = 1
 popup_corner_radius = 8
 popup_padding = 10
-popup_max_width = 420
+popup_max_width = 480
 popup_offset = 8
 template = "#[align=left]#{E:@left}#[align=absolute-centre]#{E:@centre}#[align=right]#{T:@right}"
 
@@ -53,6 +53,7 @@ template = "#[align=left]#{E:@left}#[align=absolute-centre]#{E:@centre}#[align=r
 """
 
 [statusbar.popup]
+date = "#{flash.calendar}"
 active-app = """
 #[fg=#EBCB8B]#{flash.active_app_name}#[default]
 #{flash.plugin.processes.focused_app_details}
@@ -73,18 +74,20 @@ suggestion_count = 10
 log_level = "trace"
 
 [mode]
+scroll_step_lines = 3
+scroll_page_lines = 20
 sequence_timeout_ms = 1000
 
 [mode.all.mappings]
-# leave insert, command, or terminal mode
-"cmd+ctrl+[" = ["flash", "leave_mode"]
+# enter normal mode
+"cmd+ctrl+[" = ["flash", "enter_normal_mode"]
 # enter insert mode
 "cmd+ctrl+i" = ["flash", "enter_insert_mode"]
 # enter command mode
 "cmd+ctrl+semicolon" = ["flash", "enter_command_mode"]
 # enter flashlight
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
-"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
+"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs "]
 # open ephemeral terminal
 "alt+space" = ["flash", "terminal_show"]
 # window management
@@ -101,11 +104,22 @@ sequence_timeout_ms = 1000
 leader = "<space>"
 
 [mode.normal.mappings]
+# Karabiner's Unix rules rewrite these chords outside Alacritty/UTM.
+# Match the emitted keys in NORMAL; keep Flash's original Ctrl bindings for exempt apps.
+"<delete_forward>" = ["flash", "scroll_half_page_down"] # Ctrl-D
+"cmd+<right>" = ["flash", "scroll_down"] # Ctrl-E
+"cmd+<delete>" = ["flash", "scroll_half_page_up"] # Ctrl-U
+"<tab>" = ["flash", "movement_forward"] # Ctrl-I
+"<right>" = ["flash", "mouse_grid"] # Ctrl-F
+"shift+<right>" = ["flash", "mouse_grid", "--modifiers=cmd+shift"] # Ctrl-Shift-F
+
+"t" = ["flash", "send_key", "--keys=cmd+t"]
+"[t" = { command = ["flash", "send_key", "--keys=cmd+shift+["], repeat = true }
+"]t" = { command = ["flash", "send_key", "--keys=cmd+shift+]"], repeat = true }
 "'b" = ["flash", "terminal_show", "--name=bonsai"]
 # convenient utilities
-"<leader>m" = ["sh", "../../scripts/toggle_mute.sh"]
-"<leader>p" = ["sh", "../../scripts/toggle_play.sh"]
-"<leader>s" = ["sh", "../../scripts/toggle_sleep.sh"]
+"<leader>p" = ["../../scripts/toggle_play.sh"]
+"<leader>s" = ["../../scripts/toggle_sleep.sh"]
 # app switch chords
 "'a" = ["flash", "app_open", "--name=Alacritty"]
 "'c" = ["flash", "app_open", "--name=Claude"]
@@ -114,7 +128,6 @@ leader = "<space>"
 "'i" = ["flash", "app_open", "--name=Messages"]
 "'l" = ["flash", "app_open", "--name=Linear"]
 "'n" = ["flash", "app_open", "--name=Notes"]
-"'o" = ["flash", "app_open", "--name=Notion"]
 "'p" = ["flash", "app_open", "--name=Postico 2"]
 "'r" = ["flash", "app_open", "--name=Reminders"]
 "'s" = ["flash", "app_open", "--name=Slack"]
@@ -128,13 +141,6 @@ working_directory = "~"
 columns = 120
 rows = 36
 
-
-[terminal.date]
-working_directory = "."
-persistent = true
-command = ["calcurse", "--read-only", "--quiet", "-D", "status/calcurse", "-C", "status/calcurse"]
-columns = 74
-rows = 22
 
 [mode.terminal.mappings]
 "alt+space" = ["flash", "terminal_show"]

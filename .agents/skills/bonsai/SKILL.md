@@ -44,6 +44,27 @@ bonsai clean --yes              # then execute
   assuming deps are in place. Follow any linked package-manager configuration
   warning to enable its worktree-optimized shared store.
 
+## Existing-work handoff
+
+- Before leaving the source checkout, record its absolute path, branch, HEAD,
+  upstream and remotes, staged and unstaged changes, and intended untracked
+  files. Resolve an existing pull request against this source branch.
+- Reuse a bonsai worktree only when it contains the intended branch and work.
+  For a new task branch, use `bonsai add ab/<slug> --base <source-head>`;
+  the default branch is not a substitute for the captured source HEAD.
+- For commit or pull-request work, copy the intended tracked changes and
+  untracked files into the destination without changing the source files or
+  index. Preserve binary contents, deletions, symlinks, and executable bits.
+  Verify the destination matches the intended source changes before staging;
+  do not overwrite concurrent or unrelated destination work.
+- For push-only work, leave pending source changes in place. Carry the source
+  branch's synchronization upstream and separately resolved Git push destination
+  across the handoff; these may differ in a fork workflow. A temporary task
+  branch must not silently become the branch being published.
+- Recheck the source HEAD and pending changes before publishing. If they changed
+  concurrently, stop and reconcile the intended work before continuing. Report
+  the source and destination paths; never silently clear the original checkout.
+
 ## Destructive-command policy
 
 - Inspect first, then act: `bonsai clean --dry-run --json`, review, then
