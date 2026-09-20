@@ -507,6 +507,21 @@ rg -Fx 'bind      O select-pane -t :.-' .tmux.conf >/dev/null ||
   fail "tmux must expose previous-pane navigation to Alacritty"
 rg -Fx 'chars = "\u0011d"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+R must ask tmux to detach cleanly"
+for shifted_arrow in 'B:D' 'F:C' 'N:B' 'P:A'; do
+  key=${shifted_arrow%%:*}
+  arrow=${shifted_arrow##*:}
+  awk -v key="$key" -v arrow="$arrow" '
+    /^\[\[keyboard.bindings\]\]$/ { chars = ""; k = ""; mods = ""; next }
+    /^chars = / { chars = $0 }
+    /^key = / { k = $0 }
+    /^mods = / {
+      mods = $0
+      if (chars == "chars = \"\\u001b[1;2" arrow "\"" && k == "key = \"" key "\"" && mods == "mods = \"Control|Shift\"") found = 1
+    }
+    END { exit !found }
+  ' .config/alacritty/alacritty.toml ||
+    fail "Alacritty Ctrl+Shift+$key must send Shift+arrow ($arrow) for terminal TUIs"
+done
 rg -F 'scratch-terminal.sh\" reload' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty Cmd+R must also restart an unreachable local transport"
 rg -Fx 'set -g default-terminal "tmux-256color"' .tmux.conf >/dev/null ||

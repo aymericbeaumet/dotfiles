@@ -69,6 +69,30 @@ chars = "\u0011"
 key = "Q"
 mods = "Control"
 
+# Shifted arrows through the Unix chords. Karabiner rewrites Ctrl-B/F/N/P to
+# arrows everywhere except Alacritty, where Ctrl-B is the tmux prefix. The
+# Shift variants are unused in the terminal, so send xterm Shift+arrow
+# sequences that tmux forwards to TUIs such as Codex and Claude.
+[[keyboard.bindings]]
+chars = "\u001b[1;2D"
+key = "B"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001b[1;2C"
+key = "F"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001b[1;2B"
+key = "N"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001b[1;2A"
+key = "P"
+mods = "Control|Shift"
+
 # Disable Alacritty's built-in macOS Command shortcuts. Tmux window selection
 # below is terminal-native; Flash remains responsible for cross-terminal jumps.
 [[keyboard.bindings]]
