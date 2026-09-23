@@ -79,7 +79,7 @@ while IFS= read -r script; do
 done < <(git grep -Il '^#!')
 
 section "Shell syntax, lint, and formatting"
-shell_files=(setup.sh .config/newsboat/run.sh scripts/*.sh)
+shell_files=(setup.sh scripts/*.sh)
 for shell_file in "${shell_files[@]}"; do
   case "$(head -n 1 "$shell_file")" in
     *bash*) bash -n "$shell_file" ;;
@@ -255,8 +255,48 @@ check_flash_status() (
     .plugin.feed.label == "aggr" and
     .plugin.feed.url == "https://aggr.aymericbeaumet.com/rss.xml" and
     (.statusbar.options["@left"] |
-      contains("#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.summary}#[nolink]"))
-  ' >/dev/null || fail "aggr must link its label to the homepage and fetch its RSS feed"
+      contains("#[popup=feed]#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.label}#[nolink]#[nopopup]")) and
+    (.terminal.feed.command | index("../newsboat/urls")) != null and
+    (.terminal.feed.command | index("../newsboat/config")) != null and
+    (.terminal.feed.command | any(test("scripts/newsboat\\.sh"))) and
+    (.terminal.feed.persistent == false) and
+    (.terminal.feed.env | not)
+  ' >/dev/null || fail "aggr must bind the popup-free feed label to the newsboat popup"
+  # One newsboat setup serves both the popup and a bare `newsboat` in a
+  # terminal, so the popup must own no config of its own and must not outlive
+  # its dismissal: newsboat refuses to start while another instance holds the
+  # shared cache lock.
+  [ ! -e .config/flash/status/newsboat ] ||
+    fail "the newsboat popup must not keep a second config beside the shared one"
+  [ -s .config/newsboat/urls ] && [ -s .config/newsboat/config ] ||
+    fail "the shared newsboat setup must ship its urls and config"
+  rg -Fx 'https://aggr.aymericbeaumet.com/rss.xml "~aggr"' .config/newsboat/urls >/dev/null ||
+    fail "newsboat must read the aggr feed"
+  [ "$(rg -cv '^\s*(#|$)' .config/newsboat/urls)" = 1 ] ||
+    fail "newsboat must read one feed so run-on-startup lands in the article list"
+  for newsboat_setting in 'show-keymap-hint no' 'run-on-startup open' \
+    'cache-file "~/.cache/newsboat/cache.db"'; do
+    rg -Fx "$newsboat_setting" .config/newsboat/config >/dev/null ||
+      fail "the shared newsboat config must set: $newsboat_setting"
+  done
+  # A highlight regex emits a full SGR reset before its span, so one matching the
+  # cursor row erases the accent background under it. The list views must carry
+  # their colour through the listnormal/listfocus elements instead.
+  if rg -n '^highlight (all|feedlist|articlelist) ' .config/newsboat/config >/dev/null; then
+    fail "newsboat list highlights punch holes through the cursor row"
+  fi
+  # Vim scrolling. ^D must stay bound here: newsboat ships it as
+  # delete-all-articles, which wipes the list on a scroll reflex.
+  for newsboat_binding in '^E down' '^Y up' '^D halfpagedown' '^U halfpageup'; do
+    rg -Fx "bind-key $newsboat_binding" .config/newsboat/config >/dev/null ||
+      fail "newsboat must bind vim scrolling: $newsboat_binding"
+  done
+  # ^Y only reaches newsboat once the tty stops treating it as delayed suspend,
+  # so neither entry point may launch the binary directly.
+  rg -Fx 'stty dsusp undef 2>/dev/null || true' scripts/newsboat.sh >/dev/null ||
+    fail "the newsboat wrapper must drop the tty delayed-suspend character"
+  rg -Fx 'alias newsboat=~/.dotfiles/scripts/newsboat.sh' .zshrc >/dev/null ||
+    fail "the terminal newsboat must launch through that wrapper"
   printf '%s' "$config" | jq -e '
     (.statusbar.options["@centre"] |
       capture("#\\[popup=active-app\\]#\\{=/(?<width>[0-9]+)/…:flash\\.active_app_name\\}#\\[nopopup\\]") |
@@ -607,6 +647,18 @@ rg -Fx "set -g @resurrect-processes '\"~codex->codex --dangerously-bypass-hook-t
 if rg -n '@resurrect-capture-pane-contents|@resurrect-pane-contents-area|@resurrect-save-script-path' .tmux.conf >/dev/null; then
   fail "tmux restore must not capture pane content"
 fi
+# A #() job on the status line re-runs about once a second and marks the status
+# dirty each time it finishes, and every client redraw repaints an open popup in
+# full. Same for a polling interval on a status line that carries no timed
+# content. Both read as a flickering popup border, so keep the status line inert
+# and tick tmux-continuum from hooks instead.
+if rg -n '^set -g status-format\[0\].*#\(' .tmux.conf >/dev/null; then
+  fail "the status line must run no #() job; each tick repaints open popups"
+fi
+rg -Fx 'set -g status-interval 0' .tmux.conf >/dev/null ||
+  fail "the status line carries no timed content, so it must not poll"
+rg -n 'set-hook -g [a-z-]+\[10\] +.run -b "~/\.tmux/plugins/tmux-continuum/scripts/continuum_save\.sh"' .tmux.conf >/dev/null ||
+  fail "tmux-continuum autosave must tick from hooks, not from a status-line job"
 if rg -n 'tmuxinator|headquarter|beside|session-picker' .tmux.conf scripts/status-click.sh >/dev/null; then
   fail "retired named-session routing remains configured"
 fi

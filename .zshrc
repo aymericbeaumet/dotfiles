@@ -183,6 +183,8 @@ alias ap=ansible-playbook
 alias b=bonsai
 alias tf=terraform
 alias htop=btm
+# Frees Ctrl+Y from the tty's delayed-suspend handling; see the script.
+alias newsboat=~/.dotfiles/scripts/newsboat.sh
 alias v=$EDITOR
 alias vi=$EDITOR
 alias vim=$EDITOR

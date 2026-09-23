@@ -15,6 +15,7 @@ brew 'calcurse'                # Flash's calendar popup
 brew 'colima'                  # macOS VM integration; Docker CLI stays in mise
 brew 'docker-credential-helper' # macOS Keychain integration for Docker credentials
 brew 'macmon'
+brew 'newsboat'                # Flash's news feed popup
 brew 'mole'
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'

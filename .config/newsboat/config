@@ -1,16 +1,84 @@
+# The only newsboat setup. A bare `newsboat` in a terminal picks this up from
+# XDG, and Flash's status-bar feed popup points -C/-u here, so both land on the
+# same feed, palette, keys, and read state.
+#
+# Newsboat resolves its state next to the config it was given, and the popup is
+# handed this checkout as its config dir. Pin the cache under the user cache
+# directory so neither entry point writes state back into the dotfiles.
+cache-file "~/.cache/newsboat/cache.db"
+
+show-title-bar yes
+# No keymap hint bar: the bindings below are the same in both entry points.
+show-keymap-hint no
+show-read-feeds yes
+show-read-articles yes
+confirm-exit no
+cleanup-on-quit yes
+history-limit 0
+
+# aggr already aggregates every followed source (Hacker News, lobste.rs, blogs,
+# YouTube), so there is exactly one feed here. Open its article list straight
+# away instead of landing on a one-line feed list.
+run-on-startup open
+refresh-on-startup yes
 auto-reload yes
 reload-time 10
-refresh-on-startup yes
-browser "~/.dotfiles/scripts/open-url.sh %u"
-
 article-sort-order date-desc
 
+# Open links in the configured browser through the shared helper.
+browser "~/.dotfiles/scripts/open-url.sh %u"
+
+# Nord surfaces with the gold accent the rest of the setup already uses. Newsboat
+# has no truecolour support, so these are the 256-colour indices closest to Nord:
+# 252 nord4 text, 245/240 nord3 dimmed, 109 nord8 frost, 108 nord14 green, and
+# colour178 for the accent, the same index tmux uses for the active window and
+# pane border. Every element is named rather than left to the defaults, which are
+# yellow-on-blue and clash with everything else on screen.
+color background          default default
+# Title bar styled like the tmux status line's active window: dark on gold.
+color title               color0   color178 bold
+color info                color245 default
+color hint-key            color178 default  bold
+color hint-keys-delimiter color240 default
+color hint-separator      color240 default
+color hint-description    color245 default
+# Read entries recede, unread entries stay bright, and the cursor row takes the
+# accent. This has to carry the colour in the lists on its own: a `highlight`
+# regex resets the background before painting its span, so any regex matching the
+# cursor row punches holes through the accent bar.
+color listnormal          color245 default
+color listnormal_unread   color252 default  bold
+color listfocus           color0   color178
+color listfocus_unread    color0   color178 bold
+color article             color252 default
+color end-of-text-marker  color240 default
+search-highlight-colors   color0   color109 bold
+
+# The article view has no cursor row, so regex highlights are safe here: the
+# header block takes the accent, links are frost blue, and the numbered link
+# references that newsboat scatters through the body are green.
+highlight article "^(Feed|Title|Author|Date|Link|Flags):" color178 default bold
+highlight article "https?://[^ ]+" color109 default underline
+highlight article "\\[[0-9]+\\]" color108 default
+
+# Vim-style movement, matching the other terminal popups.
 bind-key j down
 bind-key k up
+bind-key g home
+bind-key G end
 bind-key l open
 bind-key h quit
-bind-key J next-feed
-bind-key K prev-feed
 bind-key d pagedown
 bind-key u pageup
 bind-key b open-in-browser
+
+# Vim scrolling. The article view has no cursor, so down/up there scroll the text
+# a line at a time, which is what ^E/^Y do in vim; in the lists they step the
+# selection, the closest equivalent newsboat offers. All four keys carry newsboat
+# defaults that these replace: ^E edit-flags, ^U toggle-source-view and, most
+# worth losing, ^D delete-all-articles, which wipes the article list on what is
+# otherwise a scroll reflex.
+bind-key ^E down
+bind-key ^Y up
+bind-key ^D halfpagedown
+bind-key ^U halfpageup

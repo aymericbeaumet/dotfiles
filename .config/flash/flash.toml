@@ -40,7 +40,7 @@ template = "#[align=left]#{E:@left}#[align=absolute-centre]#{E:@centre}#[align=r
 
 [statusbar.options]
 "@left" = """
-#[pill]#{flash.mode}#[nopill]#[fg=colour245] · #[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.summary}#[nolink]
+#[pill]#{flash.mode}#[nopill]#[fg=colour245] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.label}#[nolink]#[nopopup]
 """
 "@centre" = """
 #[popup=active-app]#{=/23/…:flash.active_app_name}#[nopopup]
@@ -133,6 +133,32 @@ leader = "<space>"
 "'s" = ["flash", "app_open", "--name=Slack"]
 "'y" = ["flash", "app_open", "--name=Spotify"]
 "'w" = ["flash", "app_open", "--name=WhatsApp"]
+
+# Hovering the aggr segment opens newsboat on the same feed. The reader is a
+# plain terminal popup owned by this config, not a Flash feature; paths are
+# relative to this file's directory, and they point at the one newsboat setup
+# in ../newsboat so the popup and a bare `newsboat` in a terminal are identical.
+# Newsboat refuses to start while another instance holds its cache lock, so this
+# popup must not be persistent: it has to release the lock when dismissed.
+#
+# It launches through the same wrapper the shell alias uses, so Ctrl+Y survives
+# the tty here too. sh gets that wrapper's ~ expanded and keeps the argument
+# list in this file rather than buried in the script.
+[terminal.feed]
+command = [
+  "sh",
+  "-c",
+  "exec ~/.dotfiles/scripts/newsboat.sh \"$@\"",
+  "newsboat",
+  "-u",
+  "../newsboat/urls",
+  "-C",
+  "../newsboat/config",
+]
+persistent = false
+working_directory = "."
+columns = 100
+rows = 30
 
 [terminal.bonsai]
 command = ["bonsai", "hq", "--no-open", "--port", "0"]
