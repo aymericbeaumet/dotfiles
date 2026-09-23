@@ -8,7 +8,9 @@ description: Stage all changes and create a Conventional Commit without pushing.
 1. **Capture the source work**: Inspect the current branch, HEAD, upstream, index, complete tracked
    diff, and untracked files before changing directories. The request refers to this checkout's
    changes, including its existing local commits.
-2. **Require a bonsai worktree**: Follow the bonsai skill's existing-work handoff. When creating a
+2. **Require a bonsai worktree** unless the repository's `AGENTS.md` designates direct work on its
+   default branch, in which case stay in the current checkout and skip this step. Otherwise
+   follow the bonsai skill's existing-work handoff. When creating a
    task branch, base it on the captured source HEAD and copy the intended pending changes without
    altering their originals. Verify the destination contains the complete intended changes and no
    unrelated additions before staging. Continue there without waiting for confirmation.

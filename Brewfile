@@ -16,7 +16,6 @@ brew 'colima'                  # macOS VM integration; Docker CLI stays in mise
 brew 'docker-credential-helper' # macOS Keychain integration for Docker credentials
 brew 'macmon'
 brew 'mole'
-brew 'mosh'                    # Roaming transport for the Moria scratch window
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
 brew 'xcodegen'                # Generate Xcode projects from YAML specifications

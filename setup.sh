@@ -445,13 +445,18 @@ if $DO_MISE; then
     fi
     export PATH="$HOME/.local/share/mise/shims:$PATH"
 
-    info "Refreshing agent clients and RTK to their configured latest versions..."
-    if ! mise_with_github_token upgrade \
-      rtk \
-      npm:@anthropic-ai/claude-code \
-      npm:@openai/codex; then
-      warning "Some agent tools failed to upgrade; continuing with installed versions"
+    # Upgrade every tool, not just the agent clients: `mise install` only adds
+    # missing tools, so pins like "latest" otherwise keep their first install.
+    # mise holds back releases younger than minimum_release_age (24h by
+    # default) and warns about each one; that quarantine is intentional.
+    info "Upgrading all mise tools to their configured latest versions..."
+    if ! mise_with_github_token upgrade; then
+      warning "Some mise tools failed to upgrade; continuing with installed versions"
     fi
+    # An upgrade moves version-stamped install directories, so refresh the shims
+    # and this shell's lookup cache before later steps call the new binaries.
+    mise reshim >/dev/null 2>&1 || true
+    hash -r 2>/dev/null || true
 
     # Claude's npm package ships the native executable as an optional package.
     # Some npm/mise upgrades finish before its postinstall links that executable;

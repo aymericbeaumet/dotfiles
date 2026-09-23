@@ -252,11 +252,11 @@ check_flash_status() (
     fail "dotfiles must not assemble or fetch AI provider status outside aiproviders"
   fi
   printf '%s' "$config" | jq -e '
-    .plugin.feed.label == "AGGR" and
+    .plugin.feed.label == "aggr" and
     .plugin.feed.url == "https://aggr.aymericbeaumet.com/rss.xml" and
     (.statusbar.options["@left"] |
       contains("#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.summary}#[nolink]"))
-  ' >/dev/null || fail "AGGR must link its label to the homepage and fetch its RSS feed"
+  ' >/dev/null || fail "aggr must link its label to the homepage and fetch its RSS feed"
   printf '%s' "$config" | jq -e '
     (.statusbar.options["@centre"] |
       capture("#\\[popup=active-app\\]#\\{=/(?<width>[0-9]+)/…:flash\\.active_app_name\\}#\\[nopopup\\]") |
@@ -470,10 +470,28 @@ rg -Fx 'setopt SHARE_HISTORY' .zshrc >/dev/null ||
   fail "Zsh tabs must share history live"
 rg -Fx 'unsetopt APPEND_HISTORY INC_APPEND_HISTORY' .zshrc >/dev/null ||
   fail "Zsh shared history must own incremental writes"
-rg -Fx 'ipc_socket = true' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty same-process scratch startup requires IPC"
-rg -F 'scratch-terminal.sh\" bootstrap' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty must launch the managed scratch window pair"
+rg -F 'exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\""]' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty must attach its single window to the local scratch session"
+if rg -n 'ipc_socket|create-window|ALACRITTY_SOCKET|mosh|moria' .config/alacritty/alacritty.toml scripts/scratch-terminal.sh >/dev/null; then
+  fail "the remote Moria scratch window was retired; Alacritty runs one local window"
+fi
+alacritty_binding_action() {
+  awk -v key="$1" -v mods="$2" '
+    /^\[\[keyboard.bindings\]\]$/ { action = ""; k = ""; m = ""; next }
+    /^action = / { action = $0 }
+    /^key = / { k = $0 }
+    /^mods = / {
+      m = $0
+      if (k == "key = \"" key "\"" && m == "mods = \"" mods "\"") print action
+    }
+  ' .config/alacritty/alacritty.toml
+}
+[ "$(alacritty_binding_action W 'Command|Shift')" = 'action = "Quit"' ] ||
+  fail "Alacritty Cmd+Shift+W must close the single window by quitting"
+[ "$(alacritty_binding_action Q Command)" = 'action = "Quit"' ] ||
+  fail "Alacritty Cmd+Q must quit"
+rg -Fx 'chars = "\u0011x"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+W must kill the tmux pane"
 if rg -n '^bind [0-9]' .tmux.conf >/dev/null; then
   fail "numeric window selection must use tmux's built-in mappings"
 fi
@@ -522,8 +540,6 @@ for shifted_arrow in 'B:D' 'F:C' 'N:B' 'P:A'; do
   ' .config/alacritty/alacritty.toml ||
     fail "Alacritty Ctrl+Shift+$key must send Shift+arrow ($arrow) for terminal TUIs"
 done
-rg -F 'scratch-terminal.sh\" reload' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty Cmd+R must also restart an unreachable local transport"
 rg -Fx 'set -g default-terminal "tmux-256color"' .tmux.conf >/dev/null ||
   fail "tmux panes must use the tmux-256color terminfo contract"
 rg -Fx 'set -g mouse on' .tmux.conf >/dev/null ||
@@ -573,18 +589,15 @@ fi
 if rg -n 'user-keys|bind -n User' .tmux.conf >/dev/null; then
   fail "Alacritty shortcuts must use normal tmux prefix mappings"
 fi
-rg -F 'scratch_tmp_root=$(cd "$scratch_tmp_root" && pwd -P)' scripts/scratch-terminal.sh >/dev/null ||
-  fail "remote terminal reload state must use a physical macOS temporary path"
-rg -F 'kill -TERM "$child_pid"' scripts/scratch-terminal.sh >/dev/null ||
-  fail "remote terminal reload must request graceful transport shutdown"
-rg -F 'kill -KILL "$child_pid"' scripts/scratch-terminal.sh >/dev/null ||
-  fail "remote terminal reload must bound a stuck transport shutdown"
+rg -F 'tmux new-session -A -s "$LOCAL_SESSION" -c "$LOCAL_ROOT"' scripts/scratch-terminal.sh >/dev/null ||
+  fail "scratch terminal must reattach the local tmux session"
 [ ! -e scripts/grid.sh ] || fail "retired tmux grid helper remains"
 if rg -n 'grid\.sh|rows=3|cols=3' .tmux.conf >/dev/null; then
   fail "retired tmux grid mappings remain"
 fi
-rg -Fx "brew 'mosh'                    # Roaming transport for the Moria scratch window" Brewfile >/dev/null ||
-  fail "Mosh must be provisioned on macOS"
+if rg -n 'mosh' Brewfile >/dev/null; then
+  fail "Mosh was retired with the Moria scratch window"
+fi
 [ ! -e .config/tmuxinator ] || fail "retired tmuxinator profiles remain"
 [ ! -e scripts/tmux-resurrect-save.sh ] || fail "tmux process/content save wrapper remains"
 rg -Fx "set -g @resurrect-default-processes 'false'" .tmux.conf >/dev/null ||

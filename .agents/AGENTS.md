@@ -36,10 +36,11 @@ project-specific commands and constraints.
   the worktree's absolute path, and pre-provisions local config. Run all subsequent work inside
   that directory.
 - Always run `commit`, `push`, and `pullrequest` from a bonsai worktree, never from the primary
-  checkout. Before switching directories, capture the source branch, HEAD, upstream, and pending
-  work, then follow the bonsai skill's existing-work handoff. Preserve that source state and the
-  configured push destination, which may differ from the upstream. Do not wait for confirmation
-  to create the worktree or run the requested workflow.
+  checkout, unless the repository's `AGENTS.md` designates direct work on its default branch; then
+  stay in that checkout and skip the handoff. Before switching directories, capture the source
+  branch, HEAD, upstream, and pending work, then follow the bonsai skill's existing-work handoff.
+  Preserve that source state and the configured push destination, which may differ from the
+  upstream. Do not wait for confirmation to create the worktree or run the requested workflow.
 - Worktrees live at `~/.bonsai/<repo-id>/<branch>` regardless of client, so any harness resumes a
   task by opening the same path. Use the `handout` skill to pass in-progress context across
   clients.
@@ -76,6 +77,8 @@ project-specific commands and constraints.
   `AGENTS.md`; handouts are transient context, not project memory.
 - Distill instructions into `AGENTS.md` and explanations into `./docs`; link relevant documents
   instead of duplicating them. Exclude secrets, session logs, and incidental history from both.
+- Guidance files load on every turn, so keep them short and unconditional. Instructions that apply
+  only to a specific task belong in a skill, which is loaded on demand.
 
 ## Token-efficient shell use
 
@@ -84,6 +87,16 @@ project-specific commands and constraints.
   searches. Use `rtk proxy <command>` only when exact unfiltered output is required.
 - If RTK reports a saved full-output path after a failure, inspect that file instead of rerunning
   the noisy command.
+- Read files in bounded ranges. Beyond roughly 200 lines, pass an explicit offset and limit and
+  take the window around the symbol you need. Widen only when the target is not in range;
+  slurping a whole file is the exception, not the default.
+- Bound every search. Cap match output with `| head -50`, and prefer line-numbered matches
+  (`rg -n`) or file lists (`rg -l`) over dumping every hit. Narrow the pattern or path before
+  raising the cap, so large repositories never tokenize a haystack nobody reads.
+- Filter verbose command output at the source. Pipe test, build, and log runs through the failing
+  lines you actually need; tool output stays in context for the rest of the session, so a noisy
+  run is paid for on every later turn, not just once.
+- Prefer a purpose-built CLI over an equivalent MCP server when both expose the same capability.
 
 ## Code discovery
 
@@ -100,6 +113,9 @@ project-specific commands and constraints.
 
 - When delegation is available and independent, non-trivial work would benefit from parallelism,
   launch suitable subagents together while continuing useful local work.
+- Delegate to protect the main context, not only to parallelize. A search that would dump many
+  files into this window belongs in a subagent that returns the conclusion and its `file:line`
+  references. Ask for a bounded report rather than raw excerpts.
 - Give each subagent a disjoint scope, complete context, expected output, and verification needs.
 - Write legible inter-agent messages with normal spacing; they may be read by the user.
 - Do not duplicate delegated work. Wait for all relevant results before integrating them.

@@ -49,7 +49,8 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
   `$handout` and `$blueprint`.
 - Shared atomic Git workflow skills are `commit`, `push`, and `squash`. Slash-separated requests
   compose them in order and stop on the first failure. `commit`, `push`, and `pullrequest` always
-  run inside a bonsai worktree without waiting for confirmation to create it. Before a checkout
+  run inside a bonsai worktree without waiting for confirmation to create it, unless a repository's
+  `AGENTS.md` designates direct work on its default branch (this dotfiles repo). Before a checkout
   handoff, capture the source branch, commits, pending changes, and intended push destination;
   follow the bonsai skill to preserve them.
 - `pullrequest` is the one-shot PR workflow: prepare and publish the branch, create or update the PR,
@@ -57,6 +58,15 @@ repo free of `CLAUDE.md` files while presenting Claude with the same global and 
   until the PR is ready to merge.
 Custom subagents are intentionally not shared: the clients use incompatible agent formats.
 Use Agent Skills for portable reusable workflows.
+
+## Vendored third-party skills
+
+Third-party skills are copied verbatim into `~/.agents/skills/<name>/SKILL.md` so both clients load
+them from the shared tree without a per-client plugin install. Refresh them by re-copying upstream.
+
+| Skill | Upstream |
+|---|---|
+| `typesafe-ai` | https://github.com/typesafe-ai/skills/blob/main/skills/typesafe-ai/SKILL.md |
 
 ## Codex hook trust
 

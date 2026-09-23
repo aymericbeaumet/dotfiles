@@ -20,7 +20,7 @@ summary_mode = "compact"
 summary_mode = "compact"
 
 [plugin.feed]
-label = "AGGR"
+label = "aggr"
 url = "https://aggr.aymericbeaumet.com/rss.xml"
 refresh_interval = 300
 cycle_interval = 30
@@ -87,7 +87,7 @@ sequence_timeout_ms = 1000
 "cmd+ctrl+semicolon" = ["flash", "enter_command_mode"]
 # enter flashlight
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
-"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs "]
+"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
 # open ephemeral terminal
 "alt+space" = ["flash", "terminal_show"]
 # window management

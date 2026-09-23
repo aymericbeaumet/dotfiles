@@ -1,6 +1,5 @@
 [general]
 live_config_reload = true
-ipc_socket = true
 
 [colors.bright]
 black = "0x4C566A"
@@ -157,9 +156,21 @@ action = "None"
 key = "M"
 mods = "Command"
 
+# Cmd+W kills the tmux pane. Cmd+Shift+W closes the single window, which
+# quits Alacritty, and Cmd+Q quits too; the scratch session survives both.
 [[keyboard.bindings]]
 chars = "\u0011x"
 key = "W"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Quit"
+key = "W"
+mods = "Command|Shift"
+
+[[keyboard.bindings]]
+action = "Quit"
+key = "Q"
 mods = "Command"
 
 [[keyboard.bindings]]
@@ -172,15 +183,10 @@ chars = "\u0011c"
 key = "T"
 mods = "Command"
 
-# Ask a reachable tmux client to detach cleanly, then independently restart the
-# active remote window's local transport if the network cannot carry the chord.
+# Detach the tmux client; scripts/scratch-terminal.sh reattaches immediately,
+# which reloads the tmux configuration and resets the client state.
 [[keyboard.bindings]]
 chars = "\u0011d"
-key = "R"
-mods = "Command"
-
-[[keyboard.bindings]]
-command = { program = "/bin/bash", args = ["-c", "exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\" reload"] }
 key = "R"
 mods = "Command"
 
@@ -323,12 +329,11 @@ history = 0
 # Tmux selections copy through scripts/clip.sh; avoid a second AppKit write.
 save_to_clipboard = false
 
-# Use a login shell so Dock launches inherit Homebrew and mise. The bootstrap
-# creates the Moria sibling in this same Alacritty process, then attaches the
-# local scratch session.
+# Use a login shell so Dock launches inherit Homebrew and mise, then keep the
+# single window attached to the local scratch session.
 [terminal.shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\" bootstrap"]
+args = ["-l", "-c", "exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\""]
 
 [window]
 decorations = "None"

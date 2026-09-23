@@ -15,7 +15,9 @@ upstream rebase below. Preserve all staged and unstaged worktree changes.
    The synchronization upstream can differ from the push destination. Fall back to `origin` and
    the source branch name only for an unconfigured first publication. Stop when configuration
    forbids a default push, leaves the target ambiguous, or would publish additional refs.
-2. Require a bonsai worktree using the bonsai skill's existing-work handoff. Preserve the recorded
+2. Require a bonsai worktree using the bonsai skill's existing-work handoff, unless the repository's
+   `AGENTS.md` designates direct work on its default branch; then stay in the current checkout and
+   skip the handoff. Preserve the recorded
    source HEAD and destination; leave pending source changes untouched. A new task branch must use
    `--base <source-head>` and must not become a different remote branch merely because of the move.
 3. Fetch the recorded remotes. Compare the intended commits with the synchronization upstream,
