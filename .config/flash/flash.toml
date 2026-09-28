@@ -1,77 +1,24 @@
 [hints]
 keys = "<colemak>"
 
-[open]
-ignored_apps = ["com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
-
-[plugin.cpu]
-summary_mode = "compact"
-
-[plugin.memory]
-summary_mode = "compact"
-
-[plugin.disks]
-summary_mode = "compact"
-
-[plugin.network]
-summary_mode = "compact"
-
-[plugin.power]
-summary_mode = "compact"
-
-[plugin.feed]
-label = "aggr"
-url = "https://aggr.aymericbeaumet.com/rss.xml"
-refresh_interval = 300
-cycle_interval = 30
-
-[statusbar]
-enabled = true
-monitor = "primary"
-popup_fg = "#D8DEE9"
-popup_bg = "#242933F2"
-popup_border = "#4C566A"
-popup_border_size = 1
-popup_corner_radius = 8
-popup_padding = 10
-popup_max_width = 480
-popup_offset = 8
-template = "#[align=left]#{E:@left}#[align=absolute-centre]#{E:@centre}#[align=right]#{T:@right}"
-
-[statusbar.options]
-"@left" = """
-#[pill]#{flash.mode}#[nopill]#[fg=colour245] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.label}#[nolink]#[nopopup]
-"""
-"@centre" = """
-#[popup=active-app]#{=/23/…:flash.active_app_name}#[nopopup]
-"""
-"@right" = """
-#{?flash.plugin.caffeinate.state,#[fg=#EBCB8B]AWAKE#[default] ,}
-#[popup=claude]#[link=https://claude.ai/settings/usage]#{flash.plugin.aiproviders.claude_label}#[nolink]#[nopopup] #[popup=codex]#[link=https://chatgpt.com/codex/settings/usage]#{flash.plugin.aiproviders.codex_label}#[nolink]#[nopopup]
-#[fg=colour245] · #[popup=cpu]#{flash.plugin.cpu.label}#[nopopup] #[popup=memory]#{flash.plugin.memory.label}#[nopopup] #[popup=disks]#{flash.plugin.disks.label}#[nopopup] #[popup=network]#{flash.plugin.network.label}#[nopopup] #[popup=battery]#{flash.plugin.power.label}#[nopopup]
-#[fg=colour245] · #[popup=date]#{?flash.plugin.caffeinate.state,,%a %b %-d }#[default]%H:%M#[nopopup]
-"""
-
-[statusbar.popup]
-date = "#{flash.calendar}"
-active-app = """
-#[fg=#EBCB8B]#{flash.active_app_name}#[default]
-#{flash.plugin.processes.focused_app_details}
-"""
-
-claude = "#{flash.plugin.aiproviders.claude_details}"
-codex = "#{flash.plugin.aiproviders.codex_details}"
-cpu = "#{flash.plugin.cpu.details}"
-memory = "#{flash.plugin.memory.details}"
-disks = "#{flash.plugin.disks.details}"
-network = "#{flash.plugin.network.details}"
-battery = "#{flash.plugin.power.details}"
-
 [flashlight]
+ignored_apps = ["com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
 suggestion_count = 10
 
 [debug]
 log_level = "trace"
+
+[statusbar]
+enabled = true
+monitor = "primary"
+template = """
+#[align=left]#[pill]#{flash.mode}#[nopill]#[fg=colour245] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.label}#[nolink]#[nopopup]
+#[align=absolute-centre]#[popup=active-app]#{=/23/…:flash.active_app_name}#[nopopup]
+#[align=right]#{?flash.plugin.caffeinate.state,#[fg=#EBCB8B]AWAKE#[default] ,}
+#[popup=ai-usage]#[link=https://claude.ai/settings/usage]#{flash.plugin.aiproviders.claude_label}#[nolink] #[link=https://chatgpt.com/codex/settings/usage]#{flash.plugin.aiproviders.codex_label}#[nolink]#[nopopup]
+#[fg=colour245] · #[popup=btop]#{flash.plugin.cpu.label} #{flash.plugin.memory.label} #{flash.plugin.disks.label} #{flash.plugin.network.label} #{flash.plugin.power.label}#[nopopup]
+#[fg=colour245] · #[popup=date]#{?flash.plugin.caffeinate.state,,%a %b %-d }#[default]%H:%M#[nopopup]
+"""
 
 [mode]
 scroll_step_lines = 3
@@ -88,8 +35,8 @@ sequence_timeout_ms = 1000
 # enter flashlight
 "cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
 "cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
-# open ephemeral terminal
-"alt+space" = ["flash", "terminal_show"]
+# open the terminal popup
+"alt+space" = ["flash", "enter_terminal_mode"]
 # window management
 "alt+h" = ["flash", "window_move", "--position=lefthalf"]
 "alt+j" = ["flash", "window_move", "--position=bottomhalf"]
@@ -104,24 +51,9 @@ sequence_timeout_ms = 1000
 leader = "<space>"
 
 [mode.normal.mappings]
-# Karabiner's Unix rules rewrite these chords outside Alacritty/UTM.
-# Match the emitted keys in NORMAL; keep Flash's original Ctrl bindings for exempt apps.
-"<delete_forward>" = ["flash", "scroll_half_page_down"] # Ctrl-D
-"cmd+<right>" = ["flash", "scroll_down"] # Ctrl-E
-"cmd+<delete>" = ["flash", "scroll_half_page_up"] # Ctrl-U
-"<tab>" = ["flash", "movement_forward"] # Ctrl-I
-"<right>" = ["flash", "mouse_grid"] # Ctrl-F
-"shift+<right>" = ["flash", "mouse_grid", "--modifiers=cmd+shift"] # Ctrl-Shift-F
-
-"t" = ["flash", "send_key", "--keys=cmd+t"]
-"[t" = { command = ["flash", "send_key", "--keys=cmd+shift+["], repeat = true }
-"]t" = { command = ["flash", "send_key", "--keys=cmd+shift+]"], repeat = true }
-"'b" = ["flash", "terminal_show", "--name=bonsai"]
-# convenient utilities
-"<leader>p" = ["../../scripts/toggle_play.sh"]
-"<leader>s" = ["../../scripts/toggle_sleep.sh"]
 # app switch chords
 "'a" = ["flash", "app_open", "--name=Alacritty"]
+"'b" = ["flash", "enter_terminal_mode", "--name=bonsai"]
 "'c" = ["flash", "app_open", "--name=Claude"]
 "'e" = ["flash", "app_open", "--name=Element"]
 "'f" = ["flash", "app_open", "--name=Firefox"]
@@ -133,18 +65,50 @@ leader = "<space>"
 "'s" = ["flash", "app_open", "--name=Slack"]
 "'y" = ["flash", "app_open", "--name=Spotify"]
 "'w" = ["flash", "app_open", "--name=WhatsApp"]
+# convenient utilities
+"<leader>p" = ["../../scripts/toggle_play.sh"]
+"<leader>s" = ["../../scripts/toggle_sleep.sh"]
+# karabiner system-wide remap
+"<delete_forward>" = ["flash", "scroll_half_page_down"]            # Ctrl-D
+"cmd+<right>" = ["flash", "scroll_down"]                           # Ctrl-E
+"cmd+<delete>" = ["flash", "scroll_half_page_up"]                  # Ctrl-U
+"<tab>" = ["flash", "movement_forward"]                            # Ctrl-I
+"<right>" = ["flash", "mouse_grid"]                                # Ctrl-F
+"shift+<right>" = ["flash", "mouse_grid", "--modifiers=cmd+shift"] # Ctrl-Shift-F
 
-# Hovering the aggr segment opens newsboat on the same feed. The reader is a
-# plain terminal popup owned by this config, not a Flash feature; paths are
-# relative to this file's directory, and they point at the one newsboat setup
-# in ../newsboat so the popup and a bare `newsboat` in a terminal are identical.
-# Newsboat refuses to start while another instance holds its cache lock, so this
-# popup must not be persistent: it has to release the lock when dismissed.
-#
-# It launches through the same wrapper the shell alias uses, so Ctrl+Y survives
-# the tty here too. sh gets that wrapper's ~ expanded and keeps the argument
-# list in this file rather than buried in the script.
-[terminal.feed]
+[popup]
+bg = "#242933F2"
+padding = 10
+
+[popup.date]
+text = "#{flash.calendar}"
+
+[popup.active-app]
+text = """
+#[fg=#EBCB8B]#{flash.active_app_name}#[default]
+#{flash.plugin.processes.focused_app_details}
+"""
+
+# Claude and Codex subscription quotas from tokscale (installed through mise),
+# rerun every five minutes so hovering is instant; Cmd-R in the popup reruns it.
+[popup.ai-usage]
+command = ["sh", "-c", 'while :; do report=$(tokscale usage 2>&1); clear; printf "%s\n" "$report"; sleep 300; done']
+size = "68x16"
+persistent = true
+
+# One resident system monitor behind every system label.
+[popup.btop]
+command = ["btop"]
+size = "90%x85%"
+persistent = true
+
+[popup.bonsai]
+command = ["bonsai", "hq", "--no-open", "--port", "0"]
+cwd = "~"
+size = "120x36"
+persistent = true
+
+[popup.feed]
 command = [
   "sh",
   "-c",
@@ -154,19 +118,15 @@ command = [
   "../newsboat/urls",
   "-C",
   "../newsboat/config",
+  "-c",
+  "~/.cache/newsboat/flash-feed.db",
 ]
-persistent = false
-working_directory = "."
-columns = 100
-rows = 30
-
-[terminal.bonsai]
-command = ["bonsai", "hq", "--no-open", "--port", "0"]
+cwd = "."
+size = "100x30"
 persistent = true
-working_directory = "~"
-columns = 120
-rows = 36
 
-
-[mode.terminal.mappings]
-"alt+space" = ["flash", "terminal_show"]
+[plugin.feed]
+label = "aggr"
+url = "https://aggr.aymericbeaumet.com/rss.xml"
+refresh_interval = 300
+cycle_interval = 30

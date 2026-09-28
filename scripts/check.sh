@@ -238,34 +238,49 @@ check_hn_status
 
 check_flash_status() (
   config=$(yq -p toml -o json '.' .config/flash/flash.toml)
+  # Flash assembles tools rather than replacing them: aiproviders owns the
+  # compact quota labels, and tokscale owns the detailed report behind them,
+  # kept resident so hovering never refetches.
   printf '%s' "$config" | jq -e '
     . as $config |
     all(["claude", "codex"][];
       . as $name |
-      ($config.statusbar.options["@right"] |
-        contains("#{flash.plugin.aiproviders.\($name)_label}")) and
-      $config.statusbar.popup[$name] == "#{flash.plugin.aiproviders.\($name)_details}")
-  ' >/dev/null || fail "Flash provider labels and popups must use aiproviders-owned content"
+      $config.statusbar.template | contains("#{flash.plugin.aiproviders.\($name)_label}")) and
+    ($config.statusbar.template | contains("#[popup=ai-usage]")) and
+    ($config.popup["ai-usage"].command | any(test("\\btokscale usage\\b"))) and
+    $config.popup["ai-usage"].persistent == true
+  ' >/dev/null || fail "Flash AI labels must come from aiproviders and their popup from tokscale usage"
   if printf '%s' "$config" | jq -e '
-    [.. | strings] | any(test("#\\[popup=ai\\]|(?:plugin:|flash\\.plugin\\.)aiproviders\\.(?:claude|fable|codex)_usage|agent-quota-status\\.sh"))
+    [.. | strings] | any(test("#\\[popup=ai\\]|(?:plugin:|flash\\.plugin\\.)aiproviders\\.(?:claude_|codex_)?(?:usage|details)\\b|agent-quota-status\\.sh"))
   ' >/dev/null; then
-    fail "dotfiles must not assemble or fetch AI provider status outside aiproviders"
+    fail "dotfiles must not assemble AI provider status beside aiproviders and tokscale"
   fi
+  rg -Fx '"npm:tokscale" = "latest"' .config/mise/config.toml >/dev/null ||
+    fail "tokscale must be installed through mise"
+  jq -e '.usage.disabledProviders | index("copilot")' .config/tokscale/settings.json >/dev/null ||
+    fail "tokscale must skip Copilot, whose quota response it cannot parse"
+  for tokscale_state in credentials.json cache .settings.lock; do
+    git check-ignore -q ".config/tokscale/$tokscale_state" ||
+      fail "tokscale runtime state must stay out of the repository: $tokscale_state"
+  done
   printf '%s' "$config" | jq -e '
     .plugin.feed.label == "aggr" and
     .plugin.feed.url == "https://aggr.aymericbeaumet.com/rss.xml" and
-    (.statusbar.options["@left"] |
+    (.statusbar.template |
       contains("#[popup=feed]#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.label}#[nolink]#[nopopup]")) and
-    (.terminal.feed.command | index("../newsboat/urls")) != null and
-    (.terminal.feed.command | index("../newsboat/config")) != null and
-    (.terminal.feed.command | any(test("scripts/newsboat\\.sh"))) and
-    (.terminal.feed.persistent == false) and
-    (.terminal.feed.env | not)
+    (.popup.feed.command | index("../newsboat/urls")) != null and
+    (.popup.feed.command | index("../newsboat/config")) != null and
+    (.popup.feed.command | any(test("scripts/newsboat\\.sh"))) and
+    (.popup.feed.persistent == true) and
+    (.popup.feed.command | index("-c")) != null and
+    (.popup.feed.command | index("~/.cache/newsboat/flash-feed.db")) != null and
+    (.popup.feed.env | not)
   ' >/dev/null || fail "aggr must bind the popup-free feed label to the newsboat popup"
   # One newsboat setup serves both the popup and a bare `newsboat` in a
-  # terminal, so the popup must own no config of its own and must not outlive
-  # its dismissal: newsboat refuses to start while another instance holds the
-  # shared cache lock.
+  # terminal, so the popup must own no config of its own. It stays resident
+  # because newsboat only fetches while it runs, which holds a cache lock the
+  # whole time, so it takes a cache separate from the config default; otherwise
+  # a terminal `newsboat` could never start.
   [ ! -e .config/flash/status/newsboat ] ||
     fail "the newsboat popup must not keep a second config beside the shared one"
   [ -s .config/newsboat/urls ] && [ -s .config/newsboat/config ] ||
@@ -297,37 +312,51 @@ check_flash_status() (
     fail "the newsboat wrapper must drop the tty delayed-suspend character"
   rg -Fx 'alias newsboat=~/.dotfiles/scripts/newsboat.sh' .zshrc >/dev/null ||
     fail "the terminal newsboat must launch through that wrapper"
+  # Newsboat only fetches while it is running, so the reader keeps itself
+  # current by staying resident and re-fetching on its own timer. Drop either
+  # half and the popup serves whatever the cache last happened to hold.
+  rg -Fx 'auto-reload yes' .config/newsboat/config >/dev/null ||
+    fail "newsboat must re-fetch on its own timer, not only at startup"
+  # Newsboat's date direction is inverted, including against its own manual:
+  # date-desc opens the list on the oldest article and makes a current cache
+  # look days stale. Only date-asc puts the newest article first.
+  rg -Fx 'article-sort-order date-asc' .config/newsboat/config >/dev/null ||
+    fail "newsboat must sort date-asc, which is newsboat's newest-first"
+  rg -N '^reload-time [0-9]+$' .config/newsboat/config >/dev/null ||
+    fail "newsboat auto-reload needs an explicit reload-time"
+  [ ! -e scripts/newsboat-refresh.sh ] ||
+    fail "the retired out-of-band newsboat refresh script remains"
   printf '%s' "$config" | jq -e '
-    (.statusbar.options["@centre"] |
+    (.statusbar.template |
       capture("#\\[popup=active-app\\]#\\{=/(?<width>[0-9]+)/…:flash\\.active_app_name\\}#\\[nopopup\\]") |
       .width | tonumber | . > 0 and . <= 24) and
-    (.statusbar.popup["active-app"] | contains("#{flash.plugin.processes.focused_app_details}"))
+    (.popup["active-app"].text | contains("#{flash.plugin.processes.focused_app_details}"))
   ' >/dev/null || fail "Flash must bound the active-app label and retain focused-process details"
+  # One resident btop sits behind every system label rather than a homemade
+  # popup per metric.
   printf '%s' "$config" | jq -e '
     . as $config |
+    ($config.statusbar.template |
+      capture("#\\[popup=btop\\](?<labels>[^\n]*?)#\\[nopopup\\]").labels) as $labels |
     all(["cpu", "memory", "disks", "network", "power"][];
-      $config.plugin[.].summary_mode == "compact") and
-    all(["cpu", "memory", "disks", "network", "battery"][];
-      . as $name |
-      (if $name == "battery" then "power" else $name end) as $plugin |
-      ($config.statusbar.options["@right"] | contains("#[popup=\($name)]")) and
-      ($config.statusbar.options["@right"] | contains("#{flash.plugin.\($plugin).label}")) and
-      $config.statusbar.popup[$name] == "#{flash.plugin.\($plugin).details}") and
-    ($config.statusbar.options["@right"] | contains("#[popup=date]")) and
-    $config.statusbar.popup.date == "#{flash.calendar}" and
-    ($config.terminal | has("date") | not)
-  ' >/dev/null || fail "Flash monitor popups must use plugin details and the built-in calendar popup"
+      . as $plugin |
+      $labels | contains("#{flash.plugin.\($plugin).label}")) and
+    $config.popup.btop.command == ["btop"] and
+    $config.popup.btop.persistent == true and
+    ($config.statusbar.template | contains("#[popup=date]")) and
+    $config.popup.date.text == "#{flash.calendar}"
+  ' >/dev/null || fail "Flash system labels must open btop and the date the built-in calendar popup"
   printf '%s' "$config" | jq -e '
     . as $config |
-    [.statusbar.template, .statusbar.options[], .statusbar.popup[]] |
+    [.statusbar.template, (.popup[] | objects | .text // empty)] |
     all(.[];
       ([scan("#\\[popup=[^]]+\\]")] | length) ==
       ([scan("#\\[nopopup\\]")] | length)) and
     all(.[] | scan("#\\[popup=([^]]+)\\]") | .[0];
       . as $name |
       startswith("inline:") or
-      ($config.statusbar.popup[$name] | type == "string") or
-      ($config.terminal[$name].command | type == "array"))
+      ($config.popup[$name].text | type == "string") or
+      ($config.popup[$name].command | type == "array"))
   ' >/dev/null || fail "Flash popup markers must be balanced and point to defined content or terminals"
   while IFS=$'\t' read -r flag config_path; do
     [ -n "$config_path" ] && [ -e ".config/flash/$config_path" ] ||
@@ -337,7 +366,7 @@ check_flash_status() (
         fail "Flash calendar configuration must include settings and key bindings"
     fi
   done < <(printf '%s' "$config" | jq -r '
-    .terminal[] | select(.command[0] == "btm" or .command[0] == "calcurse") |
+    .popup[] | objects | select((.command // [])[0] | . == "btm" or . == "calcurse") |
     .command as $args | range(0; $args | length) as $i |
     select(["--config_location", "-D", "-C"] | index($args[$i])) |
     [$args[$i], $args[$i + 1]] | @tsv
