@@ -23,7 +23,13 @@ run-on-startup open
 refresh-on-startup yes
 auto-reload yes
 reload-time 10
-article-sort-order date-desc
+# Newest article first. This reads backwards because newsboat's date direction
+# is inverted from every other sort field, and inverted from its own manual,
+# which claims date-desc puts the newest first. It does not: date-desc opens the
+# list on the oldest article it still has, which is what made the reader look
+# days out of date while its cache was perfectly current. Verified against a
+# live cache, not from the documentation.
+article-sort-order date-asc
 
 # Open links in the configured browser through the shared helper.
 browser "~/.dotfiles/scripts/open-url.sh %u"
