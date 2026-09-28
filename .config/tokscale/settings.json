@@ -1,0 +1,41 @@
+{
+  "colorPalette": "blue",
+  "autoRefreshEnabled": false,
+  "autoRefreshMs": 60000,
+  "includeUnusedModels": false,
+  "nativeTimeoutMs": 300000,
+  "scanner": {
+    "opencodeDbPaths": [],
+    "extraScanPaths": {},
+    "bucketTimezone": "Europe/Paris"
+  },
+  "defaultClients": [],
+  "light": {
+    "writeCache": false
+  },
+  "usage": {
+    "disabledProviders": [
+      "copilot"
+    ]
+  },
+  "minutelyTabEnabled": false,
+  "autosubmit": {
+    "enabled": false,
+    "intervalMinutes": 1440,
+    "clients": [],
+    "since": null,
+    "until": null,
+    "year": null,
+    "today": false,
+    "yesterday": false,
+    "week": false,
+    "month": false,
+    "scheduler": null,
+    "managedExecutable": null,
+    "managedExecutableVersion": null,
+    "lastRunAtMs": null,
+    "lastError": null
+  },
+  "modelAliases": {},
+  "tuiLightMode": false
+}
