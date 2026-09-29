@@ -11,6 +11,7 @@ brew 'mise'
 brew 'zsh'
 
 # macOS-only tools
+brew 'btop'                    # Flash's system monitor popup; mise's aqua build is Linux-only
 brew 'calcurse'                # Flash's calendar popup
 brew 'colima'                  # macOS VM integration; Docker CLI stays in mise
 brew 'docker-credential-helper' # macOS Keychain integration for Docker credentials

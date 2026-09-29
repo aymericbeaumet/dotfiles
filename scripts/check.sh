@@ -239,17 +239,17 @@ check_hn_status
 check_flash_status() (
   config=$(yq -p toml -o json '.' .config/flash/flash.toml)
   # Flash assembles tools rather than replacing them: aiproviders owns the
-  # compact quota labels, and tokscale owns the detailed report behind them,
-  # kept resident so hovering never refetches.
+  # compact quota labels, and tokscale's own TUI owns the details behind them,
+  # kept resident so hovering never reloads it.
   printf '%s' "$config" | jq -e '
     . as $config |
     all(["claude", "codex"][];
       . as $name |
       $config.statusbar.template | contains("#{flash.plugin.aiproviders.\($name)_label}")) and
     ($config.statusbar.template | contains("#[popup=ai-usage]")) and
-    ($config.popup["ai-usage"].command | any(test("\\btokscale usage\\b"))) and
+    $config.popup["ai-usage"].command == ["tokscale"] and
     $config.popup["ai-usage"].persistent == true
-  ' >/dev/null || fail "Flash AI labels must come from aiproviders and their popup from tokscale usage"
+  ' >/dev/null || fail "Flash AI labels must come from aiproviders and their popup from tokscale"
   if printf '%s' "$config" | jq -e '
     [.. | strings] | any(test("#\\[popup=ai\\]|(?:plugin:|flash\\.plugin\\.)aiproviders\\.(?:claude_|codex_)?(?:usage|details)\\b|agent-quota-status\\.sh"))
   ' >/dev/null; then
@@ -259,6 +259,9 @@ check_flash_status() (
     fail "tokscale must be installed through mise at a pinned version"
   jq -e '.usage.disabledProviders | index("copilot")' .config/tokscale/settings.json >/dev/null ||
     fail "tokscale must skip Copilot, whose quota response it cannot parse"
+  jq -e '.autoRefreshEnabled == true and .autoRefreshMs >= 60000' \
+    .config/tokscale/settings.json >/dev/null ||
+    fail "the resident tokscale TUI must refresh itself, at most once a minute"
   for tokscale_state in credentials.json cache .settings.lock; do
     git check-ignore -q ".config/tokscale/$tokscale_state" ||
       fail "tokscale runtime state must stay out of the repository: $tokscale_state"
@@ -346,6 +349,8 @@ check_flash_status() (
     ($config.statusbar.template | contains("#[popup=date]")) and
     $config.popup.date.text == "#{flash.calendar}"
   ' >/dev/null || fail "Flash system labels must open btop and the date the built-in calendar popup"
+  # mise's aqua btop is Linux-only, so macOS takes it from Homebrew.
+  rg -q "^brew 'btop'" Brewfile || fail "the btop popup needs btop in the Brewfile"
   printf '%s' "$config" | jq -e '
     . as $config |
     [.statusbar.template, (.popup[] | objects | .text // empty)] |
