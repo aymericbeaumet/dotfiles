@@ -255,8 +255,8 @@ check_flash_status() (
   ' >/dev/null; then
     fail "dotfiles must not assemble AI provider status beside aiproviders and tokscale"
   fi
-  rg -Fx '"npm:tokscale" = "latest"' .config/mise/config.toml >/dev/null ||
-    fail "tokscale must be installed through mise"
+  rg -x '"npm:tokscale" = "[0-9]+\.[0-9]+\.[0-9]+"' .config/mise/config.toml >/dev/null ||
+    fail "tokscale must be installed through mise at a pinned version"
   jq -e '.usage.disabledProviders | index("copilot")' .config/tokscale/settings.json >/dev/null ||
     fail "tokscale must skip Copilot, whose quota response it cannot parse"
   for tokscale_state in credentials.json cache .settings.lock; do
