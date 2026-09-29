@@ -89,11 +89,12 @@ text = """
 #{flash.plugin.processes.focused_app_details}
 """
 
-# Claude and Codex subscription quotas from tokscale (installed through mise),
-# rerun every five minutes so hovering is instant; Cmd-R in the popup reruns it.
+# AI usage from tokscale's own TUI (installed through mise): tokens and cost by
+# day and model, subscription quotas under Usage. It stays resident and refreshes
+# itself every five minutes (tokscale's autoRefresh setting); r refreshes now.
 [popup.ai-usage]
-command = ["sh", "-c", 'while :; do report=$(tokscale usage 2>&1); clear; printf "%s\n" "$report"; sleep 300; done']
-size = "68x16"
+command = ["tokscale"]
+size = "140x40"
 persistent = true
 
 # One resident system monitor behind every system label.

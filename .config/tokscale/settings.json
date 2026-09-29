@@ -1,7 +1,7 @@
 {
   "colorPalette": "blue",
-  "autoRefreshEnabled": false,
-  "autoRefreshMs": 60000,
+  "autoRefreshEnabled": true,
+  "autoRefreshMs": 300000,
   "includeUnusedModels": false,
   "nativeTimeoutMs": 300000,
   "scanner": {
