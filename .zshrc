@@ -128,6 +128,14 @@ codex() {
     command codex --dangerously-bypass-hook-trust "$@"
 }
 
+# Keep worktrees out of the zoxide database: `bonsai cd` already jumps between
+# them, and they are created and deleted constantly, so they would otherwise
+# crowd the frecency ranking with paths that no longer exist. The glob needs
+# both the root and `**`, which matches across separators where `*` would not.
+# Setting this replaces zoxide's default rather than extending it, so $HOME has
+# to stay in the list.
+export _ZO_EXCLUDE_DIRS="$HOME:$HOME/.bonsai:$HOME/.bonsai/**"
+
 # zoxide: `z` opens fzf for interactive selection, `z <query>` jumps to best match
 z() {
   local dir
