@@ -138,10 +138,27 @@ project-specific commands and constraints.
 - Add comments only when the why is not obvious from names and structure. Prefer a clear idiom over
   a comment that restates the code.
 
+## Global dependencies
+
+- Install every globally available CLI with `mise`, pinned to an explicit version, so tooling comes
+  from checked-in configuration rather than from whatever a machine happens to carry. Do not install
+  one with a system package manager, a vendor install script, or an unpinned `curl | sh`.
+- Prefer a mise registry short name, then the `aqua:`, `ubi:`, `npm:`, or `pipx:` backends.
+- Leave to the system only what mise cannot own: OS packages and libraries, daemons, GUI
+  applications, and anything that must exist before mise itself does.
+- When work needs a tool that is not declared yet, add it to the mise configuration as part of that
+  change instead of installing it ad hoc. A tool that merely happens to be on `PATH` is not a
+  dependency you may rely on.
+
 ## Local containers
 
-- Default to Colima with Docker on macOS; use native Docker Engine on Linux. On Apple Silicon,
-  prefer Apple's VZ virtualization, virtiofs mounts, and Rosetta for required amd64 images.
+- On macOS, containers run on Colima (its Docker runtime), never Docker Desktop: don't install,
+  start, or recommend it. Check `colima status` and run `colima start` when it is stopped; the
+  Docker CLI and `docker compose` then target Colima's context. On Linux, use native Docker Engine.
+  On Apple Silicon, prefer Apple's VZ virtualization, virtiofs mounts, and Rosetta for required
+  amd64 images.
+- In project docs, scripts and error messages, name Colima as the runtime (e.g. `colima start`,
+  then `docker compose up -d <service>`), not "Docker".
 - Inspect the current Docker context and Colima status before starting or changing a runtime.
   Respect explicit remote contexts. Derive socket paths from the selected context; do not force
   `DOCKER_HOST` globally or replace `/var/run/docker.sock` with a symlink.
