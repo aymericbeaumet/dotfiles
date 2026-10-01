@@ -77,9 +77,23 @@ locate_relative() {
   printf '%s\n' "$hit"
 }
 
+# The most recently active attached tmux client a person is using. Control-mode
+# clients (Flash's tmux observer) never receive input, so they are skipped even
+# when their attach time is newer than the last keystroke.
+latest_tmux_client() {
+  tmux list-clients -F '#{client_activity} #{client_control_mode} #{client_name}' 2>/dev/null |
+    awk '$2 == 0' |
+    sort -rn |
+    awk 'NR == 1 { print $3; exit }'
+}
+
 # Resolve relative paths against the active tmux pane's cwd
 if [[ "$file" != /* ]]; then
-  pane_path=$(tmux display-message -p '#{pane_current_path}' 2>/dev/null)
+  if [[ -n "${TMUX:-}" ]]; then
+    pane_path=$(tmux display-message -p '#{pane_current_path}' 2>/dev/null)
+  elif client=$(latest_tmux_client) && [[ -n "$client" ]]; then
+    pane_path=$(tmux display-message -c "$client" -p '#{pane_current_path}' 2>/dev/null)
+  fi
   base="${pane_path:-$PWD}"
   if [[ -e "$base/$file" ]]; then
     file="$base/$file"
@@ -135,11 +149,7 @@ fi
 # so they do not inherit TMUX from the active pane. The default tmux socket is
 # still discoverable; target its most recently active attached client explicitly.
 if command -v tmux >/dev/null 2>&1; then
-  tmux_client=$(
-    tmux list-clients -F '#{client_activity} #{client_name}' 2>/dev/null |
-      sort -rn |
-      awk 'NR == 1 { print $2; exit }'
-  )
+  tmux_client=$(latest_tmux_client)
   if [[ -n "$tmux_client" ]]; then
     exec tmux display-popup -E -c "$tmux_client" -w 90% -h 90% "$cmd"
   fi
