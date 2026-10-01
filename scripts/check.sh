@@ -351,6 +351,30 @@ check_flash_status() (
   ' >/dev/null || fail "Flash system labels must open btop and the date the built-in calendar popup"
   # mise's aqua btop is Linux-only, so macOS takes it from Homebrew.
   rg -q "^brew 'btop'" Brewfile || fail "the btop popup needs btop in the Brewfile"
+  # The container count round-trips to the Colima VM, so it belongs to a named
+  # source on its own interval rather than a job re-run with every render. The
+  # popup must stay a terminal one: a `#()` job keeps only its latest line, so a
+  # text popup reports a single container no matter how many are running. It
+  # redraws itself because a report that exits closes on hover, and one held
+  # open instead serves the snapshot its prewarmed process drew at Flash start.
+  printf '%s' "$config" | jq -e '
+    . as $config |
+    ($config.statusbar.template |
+      contains("#[popup=docker]#[fg=#EBCB8B]DKR#[default] #[fg=colour245]")) and
+    ($config.statusbar.template | contains("#{flash.source.docker}")) and
+    ($config.popup.docker.command | any(test("watch"))) and
+    ($config.popup.docker.persistent == true) and
+    ($config.statusbar.sources.docker.command | any(test("docker-status\\.sh"))) and
+    ($config.statusbar.sources.docker.interval > 0) and
+    ($config.popup.docker.command | any(test("docker-status\\.sh"))) and
+    ($config.popup.docker.text | not) and
+    ($config.popup.docker.size | test("^[0-9]+x[0-9]+$"))
+  ' >/dev/null || fail "the DKR label needs an interval source and a terminal docker popup"
+  [ -x scripts/docker-status.sh ] ||
+    fail "the DKR label needs its executable helper"
+  # Flash is a GUI app: the mise-managed Docker CLI is not on the PATH it starts from.
+  rg -Fq 'mise/shims' scripts/docker-status.sh ||
+    fail "docker-status.sh must resolve the mise-managed Docker CLI itself"
   printf '%s' "$config" | jq -e '
     . as $config |
     [.statusbar.template, (.popup[] | objects | .text // empty)] |

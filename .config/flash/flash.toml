@@ -16,9 +16,18 @@ template = """
 #[align=absolute-centre]#[popup=active-app]#[shrink]#{flash.active_app_name}#[noshrink]#[nopopup]
 #[align=right]#{?flash.plugin.caffeinate.state,#[fg=#EBCB8B]AWAKE#[default] ,}
 #[popup=ai-usage]#[link=https://claude.ai/new#settings/usage]#{flash.plugin.aiproviders.claude_label}#[nolink] #[link=https://chatgpt.com/settings/usage?tab=overview]#{flash.plugin.aiproviders.codex_label}#[nolink]#[nopopup]
+#[fg=colour245] · #[popup=docker]#[fg=#EBCB8B]DKR#[default] #[fg=colour245]#{flash.source.docker}#[default]#[nopopup]
 #[fg=colour245] · #[popup=btop]#{flash.plugin.cpu.label} #{flash.plugin.memory.label} #{flash.plugin.disks.label} #{flash.plugin.network.label} #{flash.plugin.power.label}#[nopopup]
 #[fg=colour245] · #[popup=date]#{?flash.plugin.caffeinate.state,,%a %b %-d }#[default]%H:%M#[nopopup]
 """
+
+# Running-container count. This round-trips to the Colima VM, so it runs on its
+# own interval as a named source rather than re-running with every render of the
+# bar. The script resolves the mise-managed Docker CLI, which is not on the PATH
+# a GUI app inherits.
+[statusbar.sources.docker]
+command = ["~/.dotfiles/scripts/docker-status.sh", "count"]
+interval = 30
 
 [mode]
 scroll_step_lines = 3
@@ -96,6 +105,23 @@ text = """
 command = ["tokscale"]
 size = "140x40"
 persistent = true
+
+# The container table behind the DKR label. A plain `docker ps` snapshot, taken
+# when the popup is shown; the same script explains a stopped Colima in place.
+# A terminal popup rather than a text one: `#()` keeps only its latest line, so
+# a text popup reported a single container however many were running.
+#
+# It redraws itself on a timer and is resident, which is the shape the popup
+# docs recommend for a view that has one. A report that simply exits is the
+# obvious alternative, but it closed the moment it was hovered, and holding it
+# open with `cat` instead froze the prewarmed snapshot taken at Flash start and
+# kept the blank rows, since only a finished screen is trimmed to its output.
+# `size` matches what the renderer draws: 100 columns and a header, a row per
+# container and a footer, with a little headroom.
+[popup.docker]
+command = ["~/.dotfiles/scripts/docker-status.sh", "watch"]
+persistent = true
+size = "102x20"
 
 # One resident system monitor behind every system label.
 [popup.btop]
