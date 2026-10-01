@@ -329,12 +329,13 @@ check_flash_status() (
     fail "newsboat auto-reload needs an explicit reload-time"
   [ ! -e scripts/newsboat-refresh.sh ] ||
     fail "the retired out-of-band newsboat refresh script remains"
+  # The centred app name is the bar's elastic span: Flash sizes it to the space
+  # the side lanes leave and ends it with an ellipsis, so no fixed trim width.
   printf '%s' "$config" | jq -e '
     (.statusbar.template |
-      capture("#\\[popup=active-app\\]#\\{=/(?<width>[0-9]+)/…:flash\\.active_app_name\\}#\\[nopopup\\]") |
-      .width | tonumber | . > 0 and . <= 24) and
+      contains("#[popup=active-app]#[shrink]#{flash.active_app_name}#[noshrink]#[nopopup]")) and
     (.popup["active-app"].text | contains("#{flash.plugin.processes.focused_app_details}"))
-  ' >/dev/null || fail "Flash must bound the active-app label and retain focused-process details"
+  ' >/dev/null || fail "Flash must shrink the active-app label and retain focused-process details"
   # One resident btop sits behind every system label rather than a homemade
   # popup per metric.
   printf '%s' "$config" | jq -e '
