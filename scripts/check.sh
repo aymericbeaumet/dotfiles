@@ -573,6 +573,22 @@ rg -F 'exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\""]' .config/alacritty
 if rg -n 'ipc_socket|create-window|ALACRITTY_SOCKET|mosh|moria' .config/alacritty/alacritty.toml scripts/scratch-terminal.sh >/dev/null; then
   fail "the remote Moria scratch window was retired; Alacritty runs one local window"
 fi
+# Shift suppresses tmux's mouse reporting, so a Shift+drag is Alacritty's own
+# selection, which tmux never sees. Cmd+C is bound to None, so without this the
+# selection is unreachable. tmux copies through clip.sh with set-clipboard off,
+# so enabling this cannot produce a competing clipboard write.
+rg -Fx 'save_to_clipboard = true' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty must copy its own Shift selections; nothing else can reach them"
+rg -Fx 'set -g set-clipboard off' .tmux.conf >/dev/null ||
+  fail "tmux must keep copying through clip.sh rather than OSC 52"
+# Alacritty's semantic selection breaks on U+2502 out of the box; tmux's stock
+# word-separators are ASCII only, so select-word would swallow the box-drawing
+# verticals that table and tree output use.
+tmux_separators=$(rg -N '^set -g word-separators ' .tmux.conf)
+for vertical in '│' '┃' '║'; do
+  printf '%s' "$tmux_separators" | rg -F "$vertical" >/dev/null ||
+    fail "tmux word-separators must break on the box-drawing vertical $vertical"
+done
 alacritty_binding_action() {
   awk -v key="$1" -v mods="$2" '
     /^\[\[keyboard.bindings\]\]$/ { action = ""; k = ""; m = ""; next }

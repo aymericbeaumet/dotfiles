@@ -326,8 +326,12 @@ mouse = "Right"
 history = 0
 
 [selection]
-# Tmux selections copy through scripts/clip.sh; avoid a second AppKit write.
-save_to_clipboard = false
+# Shift suppresses tmux's mouse reporting, so a Shift+drag is selected by
+# Alacritty itself rather than by tmux. Without this that selection has nowhere
+# to go: tmux never sees it, and Cmd+C is bound to None below. The two copy
+# paths cannot collide, because tmux copies through scripts/clip.sh and has
+# set-clipboard off, so it never asks Alacritty to write the clipboard for it.
+save_to_clipboard = true
 
 # Use a login shell so Dock launches inherit Homebrew and mise, then keep the
 # single window attached to the local scratch session.
