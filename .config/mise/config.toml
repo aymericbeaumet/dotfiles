@@ -13,7 +13,6 @@ auto_install = false
 "aqua:docker/buildx" = "latest"
 "aqua:scaleway/scaleway-cli" = "latest"
 actionlint = "1.7.12"
-antigravity-cli = "latest"
 awscli = "latest"
 bat = "latest"
 bottom = "latest"

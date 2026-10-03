@@ -21,6 +21,7 @@ brew 'mole'
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
 brew 'xcodegen'                # Generate Xcode projects from YAML specifications
+cask 'antigravity-cli'         # Antigravity agent CLI; macOS-only, so not mise
 cask 'ngrok'                   # ngrok tunnels CLI (Homebrew ships it as a cask)
 
 # macOS GUI applications
