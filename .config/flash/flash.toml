@@ -14,11 +14,10 @@ monitor = "primary"
 template = """
 #[align=left]#[pill]#{flash.mode}#[nopill]#[fg=colour245] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#{flash.plugin.feed.label}#[nolink]#[nopopup]
 #[align=absolute-centre]#[popup=active-app]#[shrink]#{flash.active_app_name}#[noshrink]#[nopopup]
-#[align=right]#{?flash.plugin.caffeinate.state,#[fg=#EBCB8B]AWAKE#[default] ,}
-#[popup=ai-usage]#[link=https://claude.ai/new#settings/usage]#{flash.plugin.aiproviders.claude_label}#[nolink] #[link=https://chatgpt.com/settings/usage?tab=overview]#{flash.plugin.aiproviders.codex_label}#[nolink]#[nopopup]
+#[align=right]#[popup=ai-usage]#[link=https://claude.ai/new#settings/usage]#{flash.plugin.aiproviders.claude_label}#[nolink] #[link=https://chatgpt.com/settings/usage?tab=overview]#{flash.plugin.aiproviders.codex_label}#[nolink]#[nopopup]
 #[fg=colour245] · #[popup=docker]#[fg=#EBCB8B]DKR#[default] #[fg=colour245]#{flash.source.docker}#[default]#[nopopup]
 #[fg=colour245] · #[popup=btop]#{flash.plugin.cpu.label} #{flash.plugin.memory.label} #{flash.plugin.disks.label} #{flash.plugin.network.label} #{flash.plugin.power.label}#[nopopup]
-#[fg=colour245] · #[popup=date]#{?flash.plugin.caffeinate.state,,%a %b %-d }#[default]%H:%M#[nopopup]
+#[fg=colour245] · #[popup=date]%a %b %-d #[default]%H:%M#[nopopup]
 """
 
 # Running-container count. This round-trips to the Colima VM, so it runs on its
@@ -76,7 +75,16 @@ leader = "<space>"
 "'w" = ["flash", "app_open", "--name=WhatsApp"]
 # convenient utilities
 "<leader>p" = ["../../scripts/toggle_play.sh"]
-"<leader>s" = ["../../scripts/toggle_sleep.sh"]
+# Flash's own caffeinate plugin owns the sleep assertion: it holds -dimsu for
+# as long as it lives and ties it to the plugin with -w, so nothing keeps the
+# Mac awake unowned. The state it publishes is no longer drawn in the bar;
+# `flash caffeinate` reports it when the toggle's effect is in question.
+#
+# Spawned through env rather than written as a bare `["flash", …]` verb: config
+# validation only resolves built-in verbs, deliberately, so that a stale verb
+# fails loudly instead of becoming a silent no-op plugin call. Plugin verbs
+# reach the plugin over the AppleEvent path, which is what the binary uses.
+"<leader>s" = ["/usr/bin/env", "flash", "caffeinate_toggle"]
 # karabiner system-wide remap
 "<delete_forward>" = ["flash", "scroll_half_page_down"]            # Ctrl-D
 "cmd+<right>" = ["flash", "scroll_down"]                           # Ctrl-E

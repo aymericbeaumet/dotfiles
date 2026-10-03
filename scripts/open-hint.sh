@@ -47,7 +47,7 @@ line="${rest%%:*}"
 [[ "$line" =~ ^[0-9]+$ ]] || line=""
 
 # A relative path that does not exist under the pane's cwd was written
-# relative to somewhere else (`../../scripts/toggle_sleep.sh` inside
+# relative to somewhere else (`../../scripts/toggle_play.sh` inside
 # flash.toml, a path quoted from another checkout). Look for its trailing
 # components: first up the pane's ancestors, then bounded under $HOME.
 locate_relative() {
