@@ -102,6 +102,10 @@ lazy-lock.json
 .codex/skills/*
 !.codex/skills/bonsai
 
+# Grok keeps its folder-trust store, sessions, memory and vendored docs here.
+.grok/*
+!.grok/AGENTS.md
+
 # tokscale keeps caches, its lock and credentials beside its settings.
 /.config/tokscale/*
 !/.config/tokscale/settings.json

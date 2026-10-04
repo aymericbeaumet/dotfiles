@@ -40,7 +40,11 @@ jobs:
       - name: Install portable validators
         uses: jdx/mise-action@v4
         with:
-          version: 2026.5.18
+          # CI installs this checkout's own tool list too, because
+          # .config/mise/config.toml is one of mise's project config paths. A
+          # pin far behind the machines therefore fails on any tool newer than
+          # the pinned registry, whatever backend the entry names.
+          version: 2026.8.4
           mise_toml: |
             [tools]
             actionlint = "1.7.12"
