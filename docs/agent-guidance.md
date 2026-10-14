@@ -30,9 +30,10 @@ ignored; Claude's shared settings and both clients' hook adapters are tracked. A
 does not establish a reason to change models, reasoning levels, permissions, or transport settings.
 Verify native support before translating API guidance into a client setting.
 
-Use native client retries and lightweight hooks for shared instructions, worktree policy, and pane
-state. Project formatting and editor formatting own file rewrites. Avoid maintaining a parallel
-retry loop or applying a global formatter policy after each agent edit.
+Use native client retries and lightweight hooks for shared instructions and worktree policy. Pane
+context comes from the terminal title each client already reports (`docs/terminal-titles.md`).
+Project formatting and editor formatting own file rewrites. Avoid maintaining a parallel retry
+loop or applying a global formatter policy after each agent edit.
 
 Git workflow handoffs preserve the checkout the user actually requested: source branch, HEAD,
 pending changes, and remote destination. The bonsai skill owns the handoff contract. A new worktree

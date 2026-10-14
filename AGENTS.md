@@ -20,6 +20,10 @@ integrate durable lessons into the appropriate surface and revise stale content.
   Never force-push.
 - Run `scripts/check.sh` after material changes. If an unrelated pre-existing change blocks the
   full check, run the relevant focused validators and report the blocker.
+- Flash status names, colours, links, and hovers live in `.config/flash/flash.toml`
+  (`docs/flash-status.md`). Plugins and `scripts/ai-quota` print values only.
+  Hovering `aggr` opens the newsboat list; hovering the headline opens that
+  article's text. The Cld/Cdx/Grk segment stays here; do not move it back into a Flash plugin.
 - Cross-platform user-facing CLIs belong in `.config/mise/config.toml`. Prefer a mise registry
   short name, then `aqua:`, `ubi:`, `npm:`, or `pipx:`.
 - Use Colima for local containers on macOS and native Docker Engine on Linux. Colima's macOS VM
@@ -36,6 +40,12 @@ integrate durable lessons into the appropriate surface and revise stale content.
   configured MCP server; keep retired client state private and outside managed setup.
 - For shell completion changes, read `docs/zsh-completion.md`. Validate actual Tab completion
   after deferred plugins load, including Git aliases and switching repositories.
+- Pane context comes from terminal titles only: every program reports through OSC 2 and tmux
+  shows `#{pane_title}` on the pane border. Do not add agent hooks, tmux options, or process
+  matching for pane state; read `docs/terminal-titles.md`.
+- For shell startup or prompt changes, read `docs/zsh-performance.md`: precmd hooks write to
+  `/dev/tty`, tool integrations load through `_dotfiles_cached_source`, and nothing new may
+  spawn a process before every prompt. Run `scripts/zsh-latency.sh` afterwards.
 
 ## Supported machines
 

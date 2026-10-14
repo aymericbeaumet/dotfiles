@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Report the Claude Code weekly limit captured by claude-statusline.sh.
+#
+# The sample is ${XDG_CACHE_HOME:-$HOME/.cache}/claude/rate-limits.json, written
+# after a Claude Code response. -s prints one line for a status bar:
+# `7d 62% (+19) ↻4d 0h`. The full report adds pace, projection, and budget.
+# A sample older than an hour is marked (stale). A window that has already
+# reset is reported as reset instead of repeating the old percentages.
+# CLAUDE_USAGE_NOW pins the clock for tests.
+set -u
+
+mode=full
+case ${1:-} in
+  "") ;;
+  -s | --short) mode=short ;;
+  -h | --help)
+    printf '%s\n' "usage: claude-week [-s]"
+    exit 0
+    ;;
+  *)
+    printf '%s\n' "usage: claude-week [-s]" >&2
+    exit 2
+    ;;
+esac
+
+if ! command -v jq >/dev/null 2>&1; then
+  printf '%s\n' "claude-week needs jq" >&2
+  exit 1
+fi
+
+cache=${XDG_CACHE_HOME:-$HOME/.cache}/claude/rate-limits.json
+if [ ! -f "$cache" ]; then
+  if [ "$mode" = short ]; then
+    printf '%s\n' "7d —"
+  else
+    printf '%s\n' "No Claude Code usage sample yet. It appears after the first response in a session."
+  fi
+  exit 0
+fi
+
+now=${CLAUDE_USAGE_NOW:-$(date +%s)}
+filter=$(
+  cat <<'JQ'
+def epoch:
+  if type == "number" then
+    if . >= 100000000000 then (. / 1000 | floor) else floor end
+  elif type == "string" then
+    try fromdateiso8601 catch null
+  else null end;
+def signed:
+  if . > 0 then "+\(.)" elif . < 0 then "\(.)" else "+0" end;
+def ago:
+  if . < 60 then "just now"
+  elif . < 3600 then "\(. / 60 | floor)m ago"
+  elif . < 86400 then "\(. / 3600 | floor)h ago"
+  else "\(. / 86400 | floor)d ago" end;
+def remain($seconds):
+  if $seconds >= 86400 then
+    "\($seconds / 86400 | floor)d \($seconds % 86400 / 3600 | floor)h"
+  elif $seconds >= 3600 then
+    "\($seconds / 3600 | floor)h \($seconds % 3600 / 60 | floor)m"
+  else
+    "\($seconds / 60 | floor)m"
+  end;
+. as $root
+| ($root.updated_at // 0) as $updated
+| ($root.rate_limits.seven_day.used_percentage) as $used
+| ($root.rate_limits.seven_day.resets_at | epoch) as $resets
+| if ($used | type) != "number" or ($resets | type) != "number" then
+    "The statusline sample has no weekly window."
+  elif $resets <= $now then
+    if $mode == "short" then "7d reset"
+    else "The weekly window reset since this sample (\([$now - $updated, 0] | max | ago))."
+    end
+  else
+    ($resets - $now) as $left
+    | (((1 - ($left / 604800)) * 100) | if . < 0 then 0 else . end) as $pace
+    | ($used - $pace | round) as $delta
+    | ($used | round) as $shown
+    | (if $pace > 2 then ($used / $pace * 100 | round) else null end) as $projection
+    | ($left / 86400) as $days
+    | (if $days >= (1 / 24) then ((100 - $used) / $days) else null end) as $budget
+    | ([($now - $updated), 0] | max) as $age
+    | ($age > 3600) as $stale
+    | if $mode == "short" then
+        "7d \($shown)% (\($delta | signed)) ↻\(remain($left))"
+        + (if $stale then " (stale)" else "" end)
+      else
+        [
+          "7d \($shown)% (\($delta | signed))",
+          "pace \($pace | round)%",
+          (if $projection != null then "projection \($projection)%" else empty end),
+          (if $budget != null then
+            "budget \(($budget * 10 | round) / 10)%/day vs 14.3%/day"
+          else empty end),
+          "resets \($resets | strflocaltime("%a %-d %b %H:%M")) (\(remain($left)))",
+          "sample \($age | ago)" + (if $stale then " (stale)" else "" end)
+        ]
+        | join("\n")
+      end
+  end
+JQ
+)
+
+if ! report=$(jq -r --argjson now "$now" --arg mode "$mode" "$filter" "$cache"); then
+  printf '%s\n' "The statusline sample could not be read." >&2
+  exit 1
+fi
+printf '%s\n' "$report"

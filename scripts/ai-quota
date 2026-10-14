@@ -1,0 +1,788 @@
+#!/usr/bin/env python3
+"""Print one AI quota metric for the Flash status bar.
+
+The template owns the names, colours, links, and hover popup. This command
+prints only the metric (`6%↻22h`). A reading, once stored, stays until a newer
+sample replaces it: a missing file, a failed fetch, or an expired token never
+becomes an em dash. Every tracked window is weekly, so once a stored reset has
+passed the window rolls forward: the quota is full and the countdown points at
+the following reset. The dash is only for a provider that has never produced a
+weekly window.
+
+State is `${XDG_CACHE_HOME:-~/.cache}/ai-quota.json`, mode 0600. It stores
+percentages and reset times, never tokens.
+"""
+
+from __future__ import annotations
+
+import fcntl
+import json
+import math
+import os
+import select
+import subprocess
+import sys
+import time
+from datetime import datetime, timezone
+
+UNKNOWN = "\u2014"
+ARROW = "\u21bb"
+PROVIDERS = ("claude", "codex", "grok")
+FETCH_TTL = 120
+RETRY_SECONDS = 300
+WEEK_SECONDS = 7 * 86400
+GROK_USAGE_URL = "https://cli-chat-proxy.grok.com/v1/billing?format=credits"
+MILLIS_THRESHOLD = 100_000_000_000
+
+
+def now_epoch() -> int:
+    override = os.environ.get("AI_QUOTA_NOW")
+    if override:
+        return int(override)
+    return int(time.time())
+
+
+def cache_home() -> str:
+    configured = os.environ.get("XDG_CACHE_HOME")
+    if configured:
+        return configured
+    return os.path.join(os.path.expanduser("~"), ".cache")
+
+
+def state_path() -> str:
+    return os.environ.get("AI_QUOTA_STATE") or os.path.join(cache_home(), "ai-quota.json")
+
+
+def claude_path() -> str:
+    return os.environ.get("AI_QUOTA_CLAUDE_FILE") or os.path.join(
+        cache_home(), "claude", "rate-limits.json"
+    )
+
+
+def grok_auth_path() -> str:
+    home = os.environ.get("GROK_HOME")
+    if home:
+        return os.path.join(home, "auth.json")
+    override = os.environ.get("AI_QUOTA_GROK_AUTH")
+    if override:
+        return override
+    return os.path.join(os.path.expanduser("~"), ".grok", "auth.json")
+
+
+def seed_dir() -> str | None:
+    override = os.environ.get("AI_QUOTA_SEED_DIR")
+    if override:
+        return override
+    if sys.platform == "darwin":
+        return os.path.expanduser(
+            "~/Library/Application Support/Flash/Plugins/aiproviders"
+        )
+    return None
+
+
+def offline() -> bool:
+    return os.environ.get("AI_QUOTA_OFFLINE") == "1"
+
+
+def remaining_percent(used: float) -> int:
+    remaining = int(100 - math.floor(used))
+    if remaining < 0:
+        remaining = 0
+    if remaining > 100:
+        remaining = 100
+    return min(remaining, 99)
+
+
+def quota_reset_delay(now: int, reset: int) -> str:
+    remaining = reset - now
+    if remaining < 3600:
+        return f"{remaining // 60}min"
+    if remaining < 86400:
+        return f"{remaining // 3600}h"
+    days = (datetime.fromtimestamp(reset).date() - datetime.fromtimestamp(now).date()).days
+    return f"{max(days, 1)}d"
+
+
+def current_window(entry: dict, now: int) -> tuple[float, int | None]:
+    """Return the used percentage and reset of the window open at `now`."""
+    used = float(entry["used_percent"])
+    reset = entry.get("resets_at")
+    if not isinstance(reset, int):
+        return used, None
+    if reset <= now:
+        reset += ((now - reset) // WEEK_SECONDS + 1) * WEEK_SECONDS
+        used = 0.0
+    return used, reset
+
+
+def metric(entry: dict | None, now: int) -> str:
+    if not has_reading(entry):
+        return UNKNOWN
+    used, reset = current_window(entry, now)
+    text = f"{remaining_percent(used)}%"
+    if reset is not None:
+        text += ARROW + quota_reset_delay(now, reset)
+    return text
+
+
+def has_reading(entry: object) -> bool:
+    return isinstance(entry, dict) and isinstance(entry.get("used_percent"), (int, float))
+
+
+def usage_percent(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    if not math.isfinite(value) or not 0 <= value <= 100:
+        return None
+    return float(value)
+
+
+def parse_rfc3339(value: str) -> int | None:
+    raw = value.encode()
+    if (
+        len(raw) < 20
+        or raw[4:5] != b"-"
+        or raw[7:8] != b"-"
+        or raw[10:11] != b"T"
+        or raw[13:14] != b":"
+        or raw[16:17] != b":"
+    ):
+        return None
+    try:
+        year = int(raw[0:4])
+        month = int(raw[5:7])
+        day = int(raw[8:10])
+        hour = int(raw[11:13])
+        minute = int(raw[14:16])
+        second = int(raw[17:19])
+    except ValueError:
+        return None
+    if not (1 <= month <= 12 and 1 <= day <= 31 and hour <= 23 and minute <= 59 and second <= 60):
+        return None
+    zone_at = next(
+        (index for index, byte in enumerate(raw[19:], start=19) if byte in b"Z+-"),
+        None,
+    )
+    if zone_at is None:
+        return None
+    if raw[zone_at:zone_at + 1] == b"Z" and zone_at + 1 == len(raw):
+        offset = 0
+    elif (
+        raw[zone_at:zone_at + 1] in (b"+", b"-")
+        and zone_at + 6 == len(raw)
+        and raw[zone_at + 3:zone_at + 4] == b":"
+    ):
+        try:
+            offset_hour = int(raw[zone_at + 1:zone_at + 3])
+            offset_minute = int(raw[zone_at + 4:zone_at + 6])
+        except ValueError:
+            return None
+        if offset_hour > 23 or offset_minute > 59:
+            return None
+        offset = offset_hour * 3600 + offset_minute * 60
+        if raw[zone_at:zone_at + 1] == b"-":
+            offset = -offset
+    else:
+        return None
+    days = _days_from_civil(year, month, day)
+    if days is None:
+        return None
+    stamp = days * 86400 + hour * 3600 + minute * 60 + second - offset
+    if stamp < 0:
+        return None
+    return stamp
+
+
+def _days_from_civil(year: int, month: int, day: int) -> int | None:
+    leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    if month == 2:
+        length = 29 if leap else 28
+    elif month in (4, 6, 9, 11):
+        length = 30
+    elif month in (1, 3, 5, 7, 8, 10, 12):
+        length = 31
+    else:
+        return None
+    if day < 1 or day > length:
+        return None
+    adjusted = year - (1 if month <= 2 else 0)
+    era = (adjusted if adjusted >= 0 else adjusted - 399) // 400
+    year_of_era = adjusted - era * 400
+    day_of_year = (153 * (month + (-3 if month > 2 else 9)) + 2) // 5 + day - 1
+    day_of_era = year_of_era * 365 + year_of_era // 4 - year_of_era // 100 + day_of_year
+    return era * 146097 + day_of_era - 719468
+
+
+def parse_epoch(value: object) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        if not math.isfinite(value) or value < 0:
+            return None
+        seconds = int(value)
+        if seconds >= MILLIS_THRESHOLD:
+            seconds //= 1000
+        return seconds
+    if isinstance(value, str):
+        return parse_rfc3339(value)
+    return None
+
+
+def window_from(obj: object) -> dict | None:
+    if not isinstance(obj, dict):
+        return None
+    used = usage_percent(obj.get("used_percent"))
+    if used is None:
+        used = usage_percent(obj.get("used_percentage"))
+    if used is None:
+        used = usage_percent(obj.get("usedPercent"))
+    if used is None:
+        return None
+    reset_value = obj.get("resets_at")
+    if reset_value is None and "resetsAt" in obj:
+        reset_value = obj.get("resetsAt")
+    return {"used_percent": used, "resets_at": parse_epoch(reset_value)}
+
+
+def parse_claude_statusline(raw: str) -> dict | None:
+    root = json.loads(raw)
+    if not isinstance(root, dict):
+        return None
+    limits = root.get("rate_limits")
+    if not isinstance(limits, dict):
+        return None
+    return window_from(limits.get("seven_day"))
+
+
+def parse_grok_usage(raw: str) -> dict | None:
+    root = json.loads(raw)
+    if not isinstance(root, dict):
+        return None
+    config = root.get("config")
+    if not isinstance(config, dict):
+        return None
+    period = config.get("currentPeriod")
+    if not isinstance(period, dict) or period.get("type") != "USAGE_PERIOD_TYPE_WEEKLY":
+        return None
+    reset = parse_epoch(period.get("end"))
+    if reset is None:
+        reset = parse_epoch(config.get("billingPeriodEnd"))
+    used = 0.0
+    products = config.get("productUsage")
+    if isinstance(products, list):
+        for entry in products:
+            if isinstance(entry, dict) and entry.get("product") == "GrokBuild":
+                parsed = usage_percent(entry.get("usagePercent"))
+                used = 0.0 if parsed is None else parsed
+                break
+    return {"used_percent": used, "resets_at": reset}
+
+
+def parse_codex_rate_limits(raw: str) -> dict | None:
+    for line in raw.splitlines():
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(value, dict) or value.get("id") != 2:
+            continue
+        result = value.get("result")
+        if not isinstance(result, dict):
+            return None
+        limits = result.get("rateLimitsByLimitId")
+        codex = limits.get("codex") if isinstance(limits, dict) else None
+        if not isinstance(codex, dict):
+            codex = result.get("rateLimits")
+        if not isinstance(codex, dict):
+            return None
+        for key in ("primary", "secondary"):
+            window = codex.get(key)
+            if not isinstance(window, dict):
+                continue
+            minutes = window.get("windowDurationMins")
+            if not isinstance(minutes, int) or minutes < 1440:
+                continue
+            parsed = window_from(window)
+            if parsed is not None:
+                return parsed
+        return None
+    return None
+
+
+def load_json(path: str) -> dict | None:
+    try:
+        with open(path, encoding="utf-8") as handle:
+            value = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def seed_state(state: dict) -> dict:
+    directory = seed_dir()
+    if not directory:
+        return state
+    sources = {
+        "claude": ("anthropic-usage-v1.json", ("claude_week",)),
+        "codex": ("openai-usage-v1.json", ("openai", "weekly")),
+        "grok": ("grok-usage-v1.json", ("weekly",)),
+    }
+    for provider, (filename, keys) in sources.items():
+        if has_reading(state.get(provider)):
+            continue
+        payload = load_json(os.path.join(directory, filename))
+        if payload is None:
+            continue
+        node: object = payload
+        for key in keys:
+            if not isinstance(node, dict):
+                node = None
+                break
+            node = node.get(key)
+        window = window_from(node)
+        if window is None:
+            continue
+        updated = payload.get("updated_at")
+        if isinstance(updated, int):
+            window["fetched_at"] = updated
+        state[provider] = window
+    return state
+
+
+def due(entry: dict, now: int) -> bool:
+    retry_at = entry.get("retry_at")
+    if isinstance(retry_at, int) and now < retry_at:
+        return False
+    fetched_at = entry.get("fetched_at")
+    if not isinstance(fetched_at, int):
+        return True
+    return now - fetched_at >= FETCH_TTL
+
+
+def refresh_claude(entry: dict, now: int) -> dict:
+    payload = load_json(claude_path())
+    if payload is None:
+        return entry
+    try:
+        window = parse_claude_statusline(json.dumps(payload))
+    except json.JSONDecodeError:
+        return entry
+    if window is None:
+        return entry
+    window["fetched_at"] = now
+    return window
+
+
+def safe_header_value(value: str) -> bool:
+    if not value:
+        return False
+    return all(33 <= byte <= 126 and byte not in (34, 92) for byte in value.encode())
+
+
+def select_grok_token(credentials: dict, now: int) -> tuple[str | None, bool]:
+    usable: tuple[int, str] | None = None
+    expired = False
+    for entry in credentials.values():
+        if not isinstance(entry, dict):
+            continue
+        token = entry.get("key")
+        if not isinstance(token, str) or not safe_header_value(token):
+            continue
+        expires = entry.get("expires_at")
+        expires_at = parse_rfc3339(expires) if isinstance(expires, str) else None
+        if expires_at is not None and expires_at <= now:
+            expired = True
+            continue
+        if expires_at is None:
+            if usable is None:
+                usable = (0, token)
+            continue
+        if usable is None or expires_at > usable[0]:
+            usable = (expires_at, token)
+    if usable is not None:
+        return usable[1], False
+    return None, expired
+
+
+def fetch_grok(now: int) -> tuple[dict | None, bool]:
+    credentials = load_json(grok_auth_path())
+    if credentials is None:
+        return None, False
+    token, expired = select_grok_token(credentials, now)
+    if token is None:
+        return None, expired
+    curl = "/usr/bin/curl" if os.path.isfile("/usr/bin/curl") else "curl"
+    config = (
+        f'header = "Authorization: Bearer {token}"\n'
+        'header = "Accept: application/json"\n'
+        'header = "x-grok-client-identifier: grok-shell"\n'
+        'header = "X-XAI-Token-Auth: xai-grok-cli"\n'
+    )
+    try:
+        completed = subprocess.run(
+            [curl, "-sS", "--max-time", "5", "-w", "\n%{http_code}", "-K", "-", GROK_USAGE_URL],
+            input=config.encode(),
+            capture_output=True,
+            timeout=6,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None, False
+    stdout = completed.stdout.decode("utf-8", "replace")
+    body, _, status = stdout.rpartition("\n")
+    if status.strip() != "200":
+        return None, False
+    try:
+        return parse_grok_usage(body), False
+    except json.JSONDecodeError:
+        return None, False
+
+
+def refresh_grok(entry: dict, now: int) -> dict:
+    if has_reading(entry) and not due(entry, now):
+        return entry
+    window, expired = fetch_grok(now)
+    if window is None:
+        if not expired:
+            entry["retry_at"] = now + RETRY_SECONDS
+        else:
+            entry.pop("retry_at", None)
+        return entry
+    window["fetched_at"] = now
+    return window
+
+
+def codex_path() -> str | None:
+    override = os.environ.get("AI_QUOTA_CODEX")
+    if override:
+        return override
+    for directory in os.environ.get("PATH", "").split(os.pathsep):
+        candidate = os.path.join(directory, "codex")
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            return candidate
+    return None
+
+
+def fetch_codex() -> dict | None:
+    program = codex_path()
+    if program is None:
+        return None
+    payload = (
+        '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{'
+        '"clientInfo":{"name":"dotfiles-ai-quota","version":"1"},'
+        '"capabilities":{"experimentalApi":true,"requestAttestation":false}}}\n'
+        '{"jsonrpc":"2.0","method":"initialized"}\n'
+        '{"jsonrpc":"2.0","id":2,"method":"account/rateLimits/read"}\n'
+    )
+    try:
+        process = subprocess.Popen(
+            [program, "app-server", "--stdio"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+    except OSError:
+        return None
+    try:
+        assert process.stdin is not None and process.stdout is not None
+        process.stdin.write(payload.encode())
+        process.stdin.flush()
+        deadline = time.monotonic() + 5
+        collected: list[str] = []
+        while time.monotonic() < deadline:
+            ready, _, _ = select.select(
+                [process.stdout], [], [], max(0, deadline - time.monotonic())
+            )
+            if not ready:
+                break
+            line = process.stdout.readline()
+            if not line:
+                break
+            text = line.decode("utf-8", "replace")
+            collected.append(text)
+            if '"id":2' in text or '"id": 2' in text:
+                break
+        return parse_codex_rate_limits("".join(collected))
+    finally:
+        process.kill()
+        try:
+            process.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            pass
+
+
+def refresh_codex(entry: dict, now: int) -> dict:
+    if has_reading(entry) and not due(entry, now):
+        return entry
+    window = fetch_codex()
+    if window is None:
+        entry["retry_at"] = now + RETRY_SECONDS
+        return entry
+    window["fetched_at"] = now
+    return window
+
+
+def refresh(state: dict, provider: str, now: int) -> dict:
+    entry = state.get(provider)
+    entry = dict(entry) if isinstance(entry, dict) else {}
+    if provider == "claude":
+        state[provider] = refresh_claude(entry, now)
+    elif provider == "codex":
+        state[provider] = refresh_codex(entry, now)
+    else:
+        state[provider] = refresh_grok(entry, now)
+    return state
+
+
+def load_state(path: str) -> dict:
+    payload = load_json(path)
+    return payload if payload is not None else {}
+
+
+def write_state(path: str, state: dict) -> None:
+    directory = os.path.dirname(path)
+    os.makedirs(directory, mode=0o700, exist_ok=True)
+    temporary = f"{path}.tmp"
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    descriptor = os.open(temporary, flags, 0o600)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        json.dump(state, handle, separators=(",", ":"))
+        handle.write("\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, path)
+    os.chmod(path, 0o600)
+
+
+def acquire_lock(lock_path: str):
+    directory = os.path.dirname(lock_path)
+    os.makedirs(directory, mode=0o700, exist_ok=True)
+    descriptor = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+    os.chmod(lock_path, 0o600)
+    deadline = time.monotonic() + 2
+    while True:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return descriptor
+        except BlockingIOError:
+            if time.monotonic() >= deadline:
+                os.close(descriptor)
+                return None
+            time.sleep(0.05)
+
+
+def run(provider: str) -> str:
+    now = now_epoch()
+    path = state_path()
+    lock = acquire_lock(path + ".lock")
+    if lock is None:
+        return metric(load_state(path).get(provider), now)
+    try:
+        state = seed_state(load_state(path))
+        write_state(path, state)
+        if not offline():
+            state = refresh(state, provider, now)
+            write_state(path, state)
+        return metric(state.get(provider), now)
+    finally:
+        os.close(lock)
+
+
+def self_test() -> int:
+    failures: list[str] = []
+
+    def check(condition: bool, message: str) -> None:
+        if not condition:
+            failures.append(message)
+
+    check(remaining_percent(94) == 6, "94 used is 6 remaining")
+    check(remaining_percent(91) == 9, "91 used is 9 remaining")
+    check(remaining_percent(0) == 99, "unused quota caps at 99")
+    check(remaining_percent(100) == 0, "a full window is 0")
+    check(remaining_percent(85.9) == 15, "floor the used percentage before subtracting")
+
+    os.environ["TZ"] = "Europe/Paris"
+    if hasattr(time, "tzset"):
+        time.tzset()
+    now = int(datetime(2026, 10, 6, 10, 0).timestamp())
+    check(
+        quota_reset_delay(now, int(datetime(2026, 10, 8, 9, 0).timestamp())) == "2d",
+        "47 hours landing the day after tomorrow is 2d",
+    )
+    check(
+        quota_reset_delay(now, int(datetime(2026, 10, 7, 11, 0).timestamp())) == "1d",
+        "25 hours landing tomorrow is 1d",
+    )
+    check(
+        quota_reset_delay(now, int(datetime(2026, 10, 7, 6, 0).timestamp())) == "20h",
+        "a reset under a day stays in hours when it falls tomorrow",
+    )
+    check(quota_reset_delay(now, now + 30 * 60) == "30min", "under an hour is minutes")
+    shown = 1791290827
+    check(
+        metric({"used_percent": 94.0, "resets_at": 1791370800}, shown) == f"6%{ARROW}22h",
+        "claude sample renders 6% with a 22 hour reset",
+    )
+    check(
+        metric({"used_percent": 91.0, "resets_at": 1791380696}, shown) == f"9%{ARROW}1d",
+        "grok sample renders 9% resetting tomorrow",
+    )
+    check(
+        metric({"used_percent": 94.0, "resets_at": shown - 45 * 60}, shown) == f"99%{ARROW}7d",
+        "a window whose reset has passed rolls to a full week ending a week later",
+    )
+    check(
+        metric({"used_percent": 94.0, "resets_at": shown - WEEK_SECONDS - 3600}, shown)
+        == f"99%{ARROW}7d",
+        "a window stale by more than a week rolls to the next future reset",
+    )
+    check(
+        metric({"used_percent": 91.0}, shown) == "9%",
+        "a reading without a reset keeps the percentage alone",
+    )
+    check(metric(None, shown) == UNKNOWN, "a provider with no sample is an em dash")
+    grok_reset = int(datetime(2026, 10, 7, 13, 44, 56, tzinfo=timezone.utc).timestamp())
+    check(
+        parse_rfc3339("2026-10-07T13:44:56.858074+00:00") == grok_reset,
+        "fractional RFC3339 parses to seconds",
+    )
+    check(parse_epoch(grok_reset * 1000) == grok_reset, "millisecond resets count as seconds")
+    check(
+        parse_grok_usage(
+            json.dumps(
+                {
+                    "config": {
+                        "currentPeriod": {
+                            "type": "USAGE_PERIOD_TYPE_WEEKLY",
+                            "end": "2026-10-07T13:44:56.858074+00:00",
+                        },
+                        "productUsage": [{"product": "GrokBuild", "usagePercent": 91}],
+                    }
+                }
+            )
+        )
+        == {"used_percent": 91.0, "resets_at": grok_reset},
+        "grok billing weekly window",
+    )
+    check(
+        parse_codex_rate_limits(
+            json.dumps(
+                {
+                    "id": 2,
+                    "result": {
+                        "rateLimitsByLimitId": {
+                            "codex": {
+                                "primary": {
+                                    "usedPercent": 85,
+                                    "windowDurationMins": 10080,
+                                    "resetsAt": 1791626816,
+                                },
+                                "secondary": {
+                                    "usedPercent": 10,
+                                    "windowDurationMins": 300,
+                                    "resetsAt": 18000,
+                                },
+                            }
+                        }
+                    },
+                }
+            )
+        )
+        == {"used_percent": 85.0, "resets_at": 1791626816},
+        "codex keeps the weekly window and ignores the session",
+    )
+    check(
+        parse_codex_rate_limits(
+            json.dumps(
+                {
+                    "id": 2,
+                    "result": {
+                        "rateLimits": {
+                            "primary": {
+                                "usedPercent": 89,
+                                "windowDurationMins": 10080,
+                                "resetsAt": 1791626816,
+                            }
+                        }
+                    },
+                }
+            )
+        )
+        == {"used_percent": 89.0, "resets_at": 1791626816},
+        "codex accepts the rateLimits object the app-server returns",
+    )
+    saved = {key: os.environ.get(key) for key in list(os.environ) if key.startswith("AI_QUOTA")}
+    directory = os.path.join(
+        os.environ.get("TMPDIR", "/tmp"), f"ai-quota-test-{os.getpid()}"
+    )
+    os.makedirs(directory, exist_ok=True)
+    try:
+        os.environ["AI_QUOTA_STATE"] = os.path.join(directory, "ai-quota.json")
+        os.environ["AI_QUOTA_CLAUDE_FILE"] = os.path.join(directory, "rate-limits.json")
+        os.environ["AI_QUOTA_SEED_DIR"] = os.path.join(directory, "seed")
+        os.environ["AI_QUOTA_GROK_AUTH"] = os.path.join(directory, "auth.json")
+        os.environ["AI_QUOTA_OFFLINE"] = "1"
+        os.environ["AI_QUOTA_NOW"] = str(shown)
+        os.makedirs(os.environ["AI_QUOTA_SEED_DIR"], exist_ok=True)
+        with open(
+            os.path.join(os.environ["AI_QUOTA_SEED_DIR"], "grok-usage-v1.json"), "w"
+        ) as handle:
+            json.dump(
+                {
+                    "updated_at": shown,
+                    "weekly": {
+                        "used_percent": 91.0,
+                        "resets_at": 1791380696,
+                        "window_minutes": 10080,
+                    },
+                },
+                handle,
+            )
+        check(run("grok") == f"9%{ARROW}1d", "a seeded grok reading is not a dash")
+        os.remove(os.path.join(os.environ["AI_QUOTA_SEED_DIR"], "grok-usage-v1.json"))
+        check(run("grok") == f"9%{ARROW}1d", "a missing later sample keeps the last reading")
+        mode = os.stat(os.environ["AI_QUOTA_STATE"]).st_mode & 0o777
+        check(mode == 0o600, f"quota state is mode 0600, found {oct(mode)}")
+        with open(os.environ["AI_QUOTA_CLAUDE_FILE"], "w") as handle:
+            json.dump(
+                {
+                    "updated_at": shown,
+                    "rate_limits": {"seven_day": {"used_percentage": 94, "resets_at": 1791370800}},
+                },
+                handle,
+            )
+        os.environ["AI_QUOTA_OFFLINE"] = "0"
+        check(run("claude") == f"6%{ARROW}22h", "claude reads the status-line sample")
+        os.remove(os.environ["AI_QUOTA_CLAUDE_FILE"])
+        check(run("claude") == f"6%{ARROW}22h", "a missing claude file keeps the last percentage")
+        os.environ["AI_QUOTA_NOW"] = "1791370800"
+        check(run("claude") == f"99%{ARROW}7d", "at the reset instant the window rolls to the next week")
+    finally:
+        for key, value in saved.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        import shutil
+
+        shutil.rmtree(directory, ignore_errors=True)
+
+    if failures:
+        print("\n".join(failures), file=sys.stderr)
+        return 1
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) == 2 and argv[1] == "--self-test":
+        return self_test()
+    if len(argv) != 2 or argv[1] not in PROVIDERS:
+        print("usage: ai-quota claude|codex|grok", file=sys.stderr)
+        return 2
+    sys.stdout.write(run(argv[1]) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

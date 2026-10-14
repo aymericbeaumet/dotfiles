@@ -8,7 +8,7 @@
 # ^Y is the one vim scroll binding that needs this.
 #
 # Both entry points run through here: the `newsboat` alias in .zshrc and the
-# Flash status-bar feed popup.
+# Flash status-bar feed popup. They share one config, including the cursor.
 set -euo pipefail
 
 stty dsusp undef 2>/dev/null || true

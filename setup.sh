@@ -551,6 +551,17 @@ if $DO_SYMLINKS; then
     info "No .config directory found, skipping"
   fi
 
+  # claude-week reads the status-line cache. Leave a real file in ~/.local/bin
+  # alone; only create the link when the path is missing or already a symlink.
+  mkdir -p "$HOME/.local/bin"
+  claude_week="$HOME/.local/bin/claude-week"
+  if [[ -L "$claude_week" || ! -e "$claude_week" ]]; then
+    ln -sfn "$PWD/scripts/claude-week" "$claude_week"
+    info "Linked claude-week into ~/.local/bin"
+  else
+    warning "Leaving existing claude-week in place: $claude_week"
+  fi
+
 else
   skip "Symlinking Dotfiles"
 fi

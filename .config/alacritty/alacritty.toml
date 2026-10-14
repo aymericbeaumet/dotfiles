@@ -92,33 +92,14 @@ chars = "\u001b[1;2A"
 key = "P"
 mods = "Control|Shift"
 
-# Disable Alacritty's built-in macOS Command shortcuts. Tmux window selection
-# below is terminal-native; Flash remains responsible for cross-terminal jumps.
+# Disable Alacritty's built-in macOS Command shortcuts. Flash remains
+# responsible for cross-terminal jumps. Cmd+0 resets the font size; Cmd+=
+# and Cmd++ (including the keypad plus) increase it.
 [[keyboard.bindings]]
 action = "None"
 key = "K"
 mods = "Command"
 mode = "~Vi|~Search"
-
-[[keyboard.bindings]]
-action = "None"
-key = "0"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "None"
-key = "="
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "None"
-key = "+"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "None"
-key = "NumpadAdd"
-mods = "Command"
 
 [[keyboard.bindings]]
 action = "None"
@@ -156,10 +137,10 @@ action = "None"
 key = "M"
 mods = "Command"
 
-# Cmd+W kills the tmux pane. Cmd+Shift+W closes the single window, which
-# quits Alacritty, and Cmd+Q quits too; the scratch session survives both.
+# Cmd+Shift+W closes the single window, which quits Alacritty, and Cmd+Q
+# quits too; the scratch session survives both.
 [[keyboard.bindings]]
-chars = "\u0011x"
+action = "None"
 key = "W"
 mods = "Command"
 
@@ -176,11 +157,6 @@ mods = "Command"
 [[keyboard.bindings]]
 action = "None"
 key = "N"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011c"
-key = "T"
 mods = "Command"
 
 # Detach the tmux client; scripts/scratch-terminal.sh reattaches immediately,
@@ -216,94 +192,6 @@ mods = "Command"
 action = "None"
 key = "Tab"
 mods = "Command|Shift"
-
-# Route native macOS tab, pane, and split shortcuts through tmux. Depending on
-# the active keyboard layout, Alacritty can report shifted brackets as either
-# the base bracket or the resulting brace, so bind both forms.
-[[keyboard.bindings]]
-chars = "\u0011p"
-key = "["
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011p"
-key = "{"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011n"
-key = "]"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011n"
-key = "}"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011O"
-key = "["
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011o"
-key = "]"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011v"
-key = "D"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011s"
-key = "D"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0031"
-key = "1"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0032"
-key = "2"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0033"
-key = "3"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0034"
-key = "4"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0035"
-key = "5"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0036"
-key = "6"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0037"
-key = "7"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0038"
-key = "8"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0011\u0039"
-key = "9"
-mods = "Command"
 
 # Shift-click: URLs → browser, images → Preview, text → nvim tmux popup
 [[hints.enabled]]

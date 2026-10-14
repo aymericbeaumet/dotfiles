@@ -104,6 +104,4 @@ change the mise tool entry, native MCP configuration, and checks together.
 |---|---|
 | `scripts/agent-instructions.sh` | Loads standard global/project `AGENTS.md` files for Claude |
 | `scripts/configure-codex-hooks.mjs` | Migrates mirrored inline Codex hooks and records native trust |
-| `scripts/agent-pane-idle.sh` | Tracks tmux pane state |
-| `scripts/agent-pane-title.sh` | Updates compatible terminal pane titles |
 | `scripts/worktree-guard.sh` | Enforces the shared bonsai worktree workflow |

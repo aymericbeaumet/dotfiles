@@ -14,14 +14,15 @@ export LC_CTYPE=en_US.UTF-8
 typeset -U path
 path=(${path:#*\#\{HOME\}*})
 
-# homebrew (support both Apple Silicon and Intel)
+# homebrew (support both Apple Silicon and Intel). `brew shellenv` is a Bash
+# script with a fixed output, so its result is cached (see .zshenv).
 export HOMEBREW_NO_ENV_HINTS=true
 if command -v brew &>/dev/null; then
-  eval "$(brew shellenv)"
+  _dotfiles_cached_source brew-shellenv brew brew shellenv
 elif [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  _dotfiles_cached_source brew-shellenv /opt/homebrew/bin/brew /opt/homebrew/bin/brew shellenv
 elif [[ -x /usr/local/bin/brew ]]; then
-  eval "$(/usr/local/bin/brew shellenv)"
+  _dotfiles_cached_source brew-shellenv /usr/local/bin/brew /usr/local/bin/brew shellenv
 fi
 
 # local user bin

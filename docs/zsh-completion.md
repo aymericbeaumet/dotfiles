@@ -8,6 +8,8 @@ Ordinary Git commands use Zsh's native `_git` completer. Exclude `git` and `gitk
 only while generating Carapace's registrations, and bind `g=git` after Carapace
 loads so the wrapper uses the same Git service. Do not export `CARAPACE_EXCLUDES`
 globally: it also disables direct completion requests for excluded commands.
+Carapace's generated registrations are cached by `_dotfiles_cached_source`
+(see `docs/zsh-performance.md`); the excludes are part of the cache key.
 `_dotfiles_git_completion` delegates leading global options
 (such as `git -C <directory> co`) to Carapace: native `_git` ignores `-C` and fails
 to expand aliases after global options. Other commands retain Carapace completion.

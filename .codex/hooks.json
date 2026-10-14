@@ -12,44 +12,6 @@
           }
         ]
       }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh clear codex'",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh busy'",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-idle.sh idle'",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "sh -c '$HOME/.dotfiles/scripts/agent-pane-title.sh codex'",
-            "timeout": 5
-          }
-        ]
-      }
     ]
   }
 }

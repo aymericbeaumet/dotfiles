@@ -1,1 +1,1 @@
-https://aggr.aymericbeaumet.com/rss.xml "~aggr"
+filter:~/.dotfiles/scripts/newsboat-aggr.py:https://aggr.aymericbeaumet.com/rss.xml "~aggr"

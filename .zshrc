@@ -32,11 +32,42 @@ _dotfiles_git_completion() {
 
 _dotfiles_carapace_init() {
   export CARAPACE_BRIDGES="zsh,fish,bash" CARAPACE_MATCH=1
-  source <(CARAPACE_EXCLUDES="git,gitk" carapace _carapace zsh)
+  _dotfiles_cached_source carapace carapace env CARAPACE_EXCLUDES=git,gitk carapace _carapace zsh
   compdef _dotfiles_git_completion git
   compdef _git gitk
   compdef g=git
   compdef _files lnav
+}
+
+# mise's own precmd hook runs `mise hook-env` before every prompt, the largest
+# share of the prompt delay. Keep its chpwd hook, and refresh at the prompt only
+# after a command line that names mise or a tool-versions file, which covers
+# `mise use`, `mise install`, and editing a mise config. After anything else
+# changes a config, `cd .` applies it.
+_dotfiles_mise_init() {
+  _dotfiles_cached_source mise mise mise activate zsh || return
+  typeset -gi _dotfiles_mise_refresh=0
+  add-zsh-hook -d precmd _mise_hook_precmd
+  add-zsh-hook preexec _dotfiles_mise_preexec
+  add-zsh-hook precmd _dotfiles_mise_precmd
+}
+_dotfiles_mise_preexec() {
+  [[ $1 == *(mise|tool-versions)* ]] && _dotfiles_mise_refresh=1
+  return 0
+}
+_dotfiles_mise_precmd() {
+  (( _dotfiles_mise_refresh )) || return 0
+  _dotfiles_mise_refresh=0
+  _mise_hook --reason precmd
+}
+
+# `bonsai init` embeds `eval "$(command bonsai completions zsh)"`, a second
+# spawn on every source; put the completions themselves into the cache instead.
+_dotfiles_bonsai_init() {
+  local init needle='eval "$(command bonsai completions zsh)"'
+  init=$(command bonsai init zsh) || return
+  print -r -- "${init/$needle/:}"
+  command bonsai completions zsh
 }
 
 # zinit plugin manager (auto-install if missing, then source)
@@ -59,24 +90,33 @@ if [[ -d "$ZINIT_HOME" ]]; then
   # plugins (turbo mode: deferred loading for faster startup)
   # All entries below load after the first prompt is rendered, in order.
   # Tool inits (mise/zoxide/carapace) sit after compinit so their
-  # compdefs find a ready completion system.
+  # compdefs find a ready completion system; their output is cached
+  # (_dotfiles_cached_source) so loading them spawns nothing.
+  # zsh-autosuggestions binds its wrappers once (ZSH_AUTOSUGGEST_MANUAL_REBIND)
+  # instead of rebinding every widget before each prompt, so every plugin that
+  # defines widgets (fzf, fzf-git.sh) must load before it.
   # Skip Git's semantic highlighter: it runs Git to validate each typed ref.
+  # zoxide hooks directory changes only; its prompt hook ran `zoxide add` on
+  # every Enter.
+  ZSH_AUTOSUGGEST_MANUAL_REBIND=1
   zinit wait lucid for \
     blockf \
       zsh-users/zsh-completions \
     atinit"_dotfiles_compinit" atload'unset "FAST_HIGHLIGHT[chroma-git]"' \
       zdharma-continuum/fast-syntax-highlighting \
+    has'fzf' id-as'fzf' atinit'_dotfiles_cached_source fzf fzf fzf --zsh' \
+      zdharma-continuum/null \
+    junegunn/fzf-git.sh \
     atload"!_zsh_autosuggest_start" \
       zsh-users/zsh-autosuggestions \
-    has'mise' id-as'mise' atinit'eval "$(mise activate zsh)"' \
+    has'mise' id-as'mise' atinit'_dotfiles_mise_init' \
       zdharma-continuum/null \
-    has'zoxide' id-as'zoxide' atinit'eval "$(zoxide init zsh --hook=prompt --no-cmd)"' \
+    has'zoxide' id-as'zoxide' atinit'_dotfiles_cached_source zoxide zoxide zoxide init zsh --hook=pwd --no-cmd' \
       zdharma-continuum/null \
     has'carapace' id-as'carapace' atinit'_dotfiles_carapace_init' \
       zdharma-continuum/null \
-    has'bonsai' id-as'bonsai' atinit'eval "$(bonsai init zsh)"' \
-      zdharma-continuum/null \
-    junegunn/fzf-git.sh
+    has'bonsai' id-as'bonsai' atinit'_dotfiles_cached_source bonsai bonsai _dotfiles_bonsai_init' \
+      zdharma-continuum/null
 fi
 
 # theme: powerlevel10k config (outside zinit block; prefer dotfiles path, else symlinked)
@@ -157,8 +197,11 @@ wbat() { command watchexec --clear --restart --no-vcs-ignore -w "$1" -- bat --pa
 # man: `man` opens fzf to search all man pages, `man <page>` opens that page
 # cache man -k output async on shell startup (refreshes if older than 1 day)
 _MAN_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/man-k-cache"
-[[ -s "$_MAN_CACHE" && -z $(find "$_MAN_CACHE" -mtime +1 2>/dev/null) ]] || \
-  ( command man -k . > "$_MAN_CACHE" 2>/dev/null & )
+_dotfiles_man_cache() {
+  setopt localoptions extended_glob
+  [[ -n $_MAN_CACHE(#qN.L+0mh-24) ]] || ( command man -k . > "$_MAN_CACHE" 2>/dev/null & )
+}
+_dotfiles_man_cache
 man() {
   if (( $# )); then
     command man "$@"
@@ -240,22 +283,31 @@ unsetopt APPEND_HISTORY INC_APPEND_HISTORY
 setopt INTERACTIVE_COMMENTS RC_QUOTES
 unsetopt FLOW_CONTROL
 
-# restore cursor shape before prompt
+# Hooks write to the terminal through one descriptor opened here, not stdout:
+# p10k runs its own precmd last and keeps stdout redirected into its
+# instant-prompt capture until then, reporting anything it does not recognise
+# (such as mouse-mode resets) as console output during initialization. One
+# open descriptor also avoids reopening /dev/tty before every prompt.
+zmodload -F zsh/system b:sysopen
+sysopen -w -o cloexec -u _dotfiles_tty /dev/tty 2>/dev/null || _dotfiles_tty=
+_tty_print() { [[ -n $_dotfiles_tty ]] && print -n -u "$_dotfiles_tty" "$@"; }
+
+# Restore cursor shape and clear mouse modes left behind by terminal programs.
+# Otherwise pointer movement reaches ZLE as literal mouse-report characters.
 autoload -Uz add-zsh-hook
-_reset_cursor() { echo -ne '\e[5 q'; }
+_reset_cursor() { _tty_print -r -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1005l\e[?1006l\e[5 q'; }
 add-zsh-hook precmd _reset_cursor
 
-# Report context to the terminal title via OSC 2. Over ssh the far-side tmux
-# captures this as pane_title and shows it as "[ssh] ..." (see
-# .tmux.conf pane-border-format). Skipped inside a local tmux ($TMUX set), which
-# reads the pane border directly; ssh does not forward $TMUX, so a remote shell
-# still reports. precmd shows the cwd, preexec the running command.
-if [[ -z "$TMUX" ]]; then
-  _title_precmd() { print -Pn '\e]2;%~\a'; }
-  _title_preexec() { print -rn -- $'\e]2;'"${1}"$'\a'; }
-  add-zsh-hook precmd _title_precmd
-  add-zsh-hook preexec _title_preexec
-fi
+# Every program reports context through the terminal title (OSC 2) and tmux
+# shows it on the pane border (docs/terminal-titles.md). zsh reports the
+# directory at the prompt and the command while it runs; a program that sets
+# its own title owns it until the next prompt. Over ssh the host is prefixed so
+# remote panes stay recognisable.
+_title_prefix=${SSH_CONNECTION:+%m:}
+_title_precmd() { _tty_print -P -- "\e]2;${_title_prefix}%~\a"; }
+_title_preexec() { _tty_print -r -- $'\e]2;'"${(%)_title_prefix}${${1%%$'\n'*}[1,80]}"$'\a'; }
+add-zsh-hook precmd _title_precmd
+add-zsh-hook preexec _title_preexec
 
 # edit command line in $EDITOR with ^X^E
 autoload -Uz edit-command-line && zle -N edit-command-line
@@ -264,7 +316,7 @@ bindkey '^X^E' edit-command-line
 # fzf: shell integration — completion + key-bindings (CTRL-R history, CTRL-T files, ALT-C cd).
 # `fzf --zsh` (fzf >= 0.48) emits the integration regardless of install source. This
 # matters because mise's fzf ships only the binary — no shell/ scripts to source.
-command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
+# It loads through zinit turbo above, from the cache, before zsh-autosuggestions.
 export FZF_DEFAULT_OPTS="
   --ansi --border --height=40% --layout=reverse --info=inline
   --bind tab:accept,ctrl-n:down,ctrl-p:up
@@ -274,4 +326,4 @@ export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type=d --strip-cwd-prefix"
 
-# mise, zoxide, carapace are loaded via zinit turbo at the top of this file
+# fzf, mise, zoxide, carapace, and bonsai are loaded via zinit turbo at the top of this file

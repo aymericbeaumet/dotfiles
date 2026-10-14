@@ -30,6 +30,7 @@ cask 'aws-vpn-client'
 cask 'chatgpt'                 # Includes the current Codex desktop app
 cask 'claude'
 cask 'cursor'
+cask 'daisydisk'
 cask 'db-browser-for-sqlite'
 cask 'element'
 cask 'figma'
