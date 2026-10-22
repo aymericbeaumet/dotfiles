@@ -156,6 +156,21 @@ url = "https://aggr.aymericbeaumet.com/rss.xml"
 refresh_interval = 300
 cycle_interval = 30
 
+# Free space before the disk fills: at 90% of the startup volume, clean every
+# bonsai worktree that is safe to remove, then run Mole's non-interactive
+# cleanup (user-level caches; system ones need a sudo session). At most every
+# six hours; the built-in disk monitor still raises its own alert.
+[monitors.disk_cleanup]
+value = "#{flash.plugin.sysinfo.disks_percent}"
+warning = 90
+alert = false
+timeout = 1800
+cooldown = 21600
+run = [
+  ["bonsai", "clean", "--all", "--force"],
+  ["mo", "clean"],
+]
+
 # macOS preferences that differ from a fresh Mac. Flash applies them on every
 # save and restores a value when its line goes; `flash macos diff` previews.
 # The menu bar's auto-hide comes from [statusbar] enabled.
