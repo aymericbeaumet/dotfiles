@@ -14,7 +14,7 @@ monitor = "primary"
 template = """
 #[align=left]#[pill]#{flash.mode}#[nopill] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#[label]aggr#[default]#[nolink]#[nopopup] #[popup=feed-article]#{flash.plugin.feed.label}#[nopopup]
 
-#[align=centre]#[popup=active-app]#[shrink]#{flash.active_app_name}#[noshrink]#[nopopup]
+#[align=centre]#[popup=active-app]#[shrink]#{flash.focused_app_name}#[noshrink]#[nopopup]
 
 #[align=right]#[popup=ai-usage]#[link=https://claude.ai/new#settings/usage]#[label]Cld#[default] #{flash.source.cld}#[nolink] #[link=https://chatgpt.com/settings/usage?tab=overview]#[label]Cdx#[default] #{flash.source.cdx}#[nolink] #[link=https://grok.com/?_s=usage]#[label]Grk#[default] #{flash.source.grk}#[nolink]#[nopopup] · #[popup=btop]#[label]CPU#[default] #{p-3:flash.plugin.cpu.label} #[label]MEM#[default] #{p-3:flash.plugin.memory.label} #[label]DSK#[default] #{p-3:flash.plugin.disks.label} #[label]NET#[default] #{p-4:flash.plugin.network.label} #[label]BAT#[default] #{flash.plugin.power.label}#[nopopup] · #[popup=date]%a %-d#{?#{m/r:^(1|21|31)$,%-d},st,#{?#{m/r:^(2|22)$,%-d},nd,#{?#{m/r:^(3|23)$,%-d},rd,th}}} %H:%M#[nopopup]
 """
@@ -80,7 +80,7 @@ text = "#{flash.calendar}"
 
 [popup.active-app]
 text = """
-#[fg=#EBCB8B]#{flash.active_app_name}#[default]
+#[fg=#EBCB8B]#{flash.focused_app_name}#[default]
 #{flash.plugin.processes.focused_app_details}
 """
 
@@ -151,7 +151,7 @@ command = [
 cwd = "."
 size = "100x30"
 
-[plugin.feed]
+[plugins.feed]
 url = "https://aggr.aymericbeaumet.com/rss.xml"
 refresh_interval = 300
 cycle_interval = 30
