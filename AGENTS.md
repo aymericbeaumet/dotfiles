@@ -20,6 +20,9 @@ integrate durable lessons into the appropriate surface and revise stale content.
   Never force-push.
 - Run `scripts/check.sh` after material changes. If an unrelated pre-existing change blocks the
   full check, run the relevant focused validators and report the blocker.
+- macOS preferences live in `[macos]` of `.config/flash/flash.toml`: Flash applies them on
+  every save and restores a value when its line is removed. `setup.sh` keeps only what Flash
+  cannot manage (sudo-only system domains, sandboxed apps' containers).
 - Flash status names, colours, links, and hovers live in `.config/flash/flash.toml`
   (`docs/flash-status.md`). Plugins and `scripts/ai-quota` print values only.
   Hovering `aggr` opens the newsboat list; hovering the headline opens that

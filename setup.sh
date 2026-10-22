@@ -727,78 +727,18 @@ fi
 banner "SETUP MACOS"
 if $DO_MACOS; then
 
+  # Flash owns the macOS preferences: `[macos]` in .config/flash/flash.toml is
+  # applied at launch and on every save, and removing a line restores the
+  # value it replaced. Only what Flash cannot manage stays here.
+
   warning "Some steps require administrator privileges (sudo). You may be prompted for your password."
   sudo -v
-
-  info "Keyboard & Input Settings"
-  defaults write -g InitialKeyRepeat -int 15
-  defaults write -g KeyRepeat -int 2
-  defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-  defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-
-  info "Text & Typing Preferences"
-  defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
-  defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-  defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-  defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
-  defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
-
-  info "Windows & Animations"
-  defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
-  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-  defaults write -g QLPanelAnimationDuration -float 0
-
-  info "Mission Control & Spaces"
-  defaults write com.apple.dock "expose-group-apps" -bool "true"
-  defaults write com.apple.dock expose-animation-duration -float 0.1
-  defaults write com.apple.spaces "spans-displays" -bool "true"
-
-  info "Menu Bar"
-  defaults write NSGlobalDomain _HIHideMenuBar -bool true
-
-  info "Dock Configuration"
-  defaults write com.apple.dock autohide -bool true
-  defaults write com.apple.dock autohide-delay -float 0
-  defaults write com.apple.dock autohide-time-modifier -float 0.1
-  defaults write com.apple.dock minimize-to-application -bool true
-  defaults write com.apple.dock orientation -string "left"
-  defaults write com.apple.dock springboard-show-duration -float 0.1
-  defaults write com.apple.dock springboard-hide-duration -float 0.1
-  defaults write com.apple.dock springboard-page-duration -float 0.1
-
-  info "Finder Preferences"
-  defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-  defaults write com.apple.finder AppleShowAllFiles -bool true
-  defaults write com.apple.finder ShowPathbar -bool true
-  defaults write com.apple.finder ShowStatusBar -bool true
-  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-  defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
-
-  info "Save & Print Dialogs"
-  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
-  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-
-  info "Screenshot Settings"
-  defaults write com.apple.screencapture type -string "png"
 
   info "TextEdit Configuration"
   defaults write com.apple.TextEdit RichText -int 0
 
   info "Security Settings"
-  defaults write com.apple.screensaver askForPassword -int 1
-  defaults write com.apple.screensaver askForPasswordDelay -int 0
   sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowSecurityImmediateLock -bool true
-
-  info "Hot Corners"
-  for corner in tl tr bl br; do
-    defaults write com.apple.dock wvous-$corner-corner -int 0
-    defaults write com.apple.dock wvous-$corner-modifier -int 0
-  done
-
-  info "Restarting affected system processes..."
-  bash -c 'killall Dock Finder SystemUIServer 2>/dev/null || true'
 
 else
   skip "System Configuration"

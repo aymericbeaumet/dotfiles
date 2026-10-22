@@ -155,3 +155,61 @@ size = "100x30"
 url = "https://aggr.aymericbeaumet.com/rss.xml"
 refresh_interval = 300
 cycle_interval = 30
+
+# macOS preferences, written on every save and restored when removed
+# (`flash macos diff` previews a pass). `[statusbar] enabled` already hides
+# the native menu bar.
+[macos.keyboard]
+repeat_delay_ms = 250
+repeat_interval_ms = 33
+press_and_hold = false
+keyboard_navigation = true
+
+[macos.text]
+auto_capitalize = false
+smart_quotes = false
+smart_dashes = false
+double_space_period = false
+auto_correct = false
+
+[macos.windows]
+animations = false
+resize_duration_ms = 1
+
+[macos.mission_control]
+group_windows_by_app = true
+animation_ms = 100
+displays_have_separate_spaces = false
+
+[macos.dock]
+autohide = true
+autohide_delay_ms = 0
+minimize_to_application = true
+orientation = "left"
+
+[macos.finder]
+show_all_extensions = true
+show_hidden_files = true
+show_path_bar = true
+show_status_bar = true
+ds_store_on_network_volumes = false
+ds_store_on_usb_volumes = false
+
+[macos.dialogs]
+expand_save_panel = true
+expand_print_panel = true
+
+[macos.screenshots]
+format = "png"
+
+[macos.hot_corners]
+top_left = "none"
+top_right = "none"
+bottom_left = "none"
+bottom_right = "none"
+
+[macos.defaults.NSGlobalDomain]
+QLPanelAnimationDuration = 0.0
+
+[macos.defaults."com.apple.dock"]
+autohide-time-modifier = 0.1
