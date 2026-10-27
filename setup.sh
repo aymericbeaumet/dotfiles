@@ -727,9 +727,9 @@ fi
 banner "SETUP MACOS"
 if $DO_MACOS; then
 
-  # Flash owns the macOS preferences: `[macos]` in .config/flash/flash.toml is
-  # applied at launch and on every save, and removing a line restores the
-  # value it replaced. Only what Flash cannot manage stays here.
+  # Flash runs the preference commands in [startup] run of .config/flash/flash.toml
+  # at launch or through `flash startup run`. Removing one leaves its last value.
+  # Sudo-only settings and sandboxed app containers stay here.
 
   warning "Some steps require administrator privileges (sudo). You may be prompted for your password."
   sudo -v

@@ -300,10 +300,10 @@ check_flash_status() (
   # defaults are bound to the keys Karabiner emits. Ctrl-F and Ctrl-Shift-F
   # stay Unix arrow chords and are not rebound onto mouse actions.
   for karabiner_flash_mapping in \
-    '"<delete_forward>" = ["flash", "scroll_half_page_down"]' \
-    '"cmd+<right>" = ["flash", "scroll_down"]' \
+    '"<delete_forward>" = ["flash", "move", "half_page_down"]' \
+    '"cmd+<right>" = ["flash", "scroll", "line_down"]' \
     '"<tab>" = ["flash", "movement_forward"]' \
-    '"cmd+<delete>" = ["flash", "scroll_half_page_up"]'; do
+    '"cmd+<delete>" = ["flash", "move", "half_page_up"]'; do
     rg -F "$karabiner_flash_mapping" .config/flash/flash.toml >/dev/null ||
       fail "Flash NORMAL must bind the Karabiner form of a default ctrl chord: $karabiner_flash_mapping"
   done
