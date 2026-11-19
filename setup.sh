@@ -45,9 +45,10 @@ DO_APT=true
 DO_HOMEBREW=true
 DO_BREWFILE=true
 DO_SYMLINKS=true
+DO_OLLAMA=true
+DO_VOICEINK=true
 DO_NEOVIM=true
 DO_ZSH=true
-DO_TMUX=true
 DO_MACOS=true
 DO_MISE=true
 
@@ -61,9 +62,10 @@ Options:
   --no-homebrew   Skip Homebrew installation
   --no-brewfile   Skip macOS software installation (Brewfile)
   --no-symlinks   Skip symlinking dotfiles
+  --no-ollama     Skip Ollama service startup and model installation
+  --no-voiceink   Skip VoiceInk model installation and configuration
   --no-neovim     Skip Neovim plugin sync
   --no-zsh        Skip ZSH plugin installation
-  --no-tmux       Skip tmux plugin installation
   --no-macos      Skip macOS defaults configuration
   --no-mise       Skip mise tool installation
   -h, --help      Show this help message
@@ -77,9 +79,10 @@ for arg in "$@"; do
     --no-homebrew) DO_HOMEBREW=false ;;
     --no-brewfile) DO_BREWFILE=false ;;
     --no-symlinks) DO_SYMLINKS=false ;;
+    --no-ollama) DO_OLLAMA=false ;;
+    --no-voiceink) DO_VOICEINK=false ;;
     --no-neovim) DO_NEOVIM=false ;;
     --no-zsh) DO_ZSH=false ;;
-    --no-tmux) DO_TMUX=false ;;
     --no-macos) DO_MACOS=false ;;
     --no-mise) DO_MISE=false ;;
     -h | --help)
@@ -307,13 +310,18 @@ if $DO_HOMEBREW; then
     info "Homebrew version: $(brew --version | head -n1)"
   fi
 
+  # Keep the bootstrappers current, not merely present: `brew bundle` runs with
+  # --no-upgrade, and an old mise rejects backends that project configs use.
   if $IS_DARWIN && command -v brew &>/dev/null; then
     for package in mise zsh; do
-      if brew list --formula "$package" &>/dev/null; then
-        info "Homebrew bootstrap package already installed: $package"
-      else
+      if ! brew list --formula "$package" &>/dev/null; then
         info "Installing Homebrew bootstrap package: $package"
         brew install "$package"
+      elif [[ -n $(brew outdated --formula --quiet "$package" 2>/dev/null) ]]; then
+        info "Upgrading Homebrew bootstrap package: $package"
+        brew upgrade --formula "$package"
+      else
+        info "Homebrew bootstrap package already current: $package"
       fi
     done
   fi
@@ -347,12 +355,11 @@ if $DO_BREWFILE; then
     } | sort -u)
     brew bundle install --no-upgrade --file ./Brewfile
     info "Pruning Homebrew packages not listed in Brewfile..."
-    # Homebrew Bundle does not forward --force to its nested `brew untap`, and
-    # forced cleanup resets trust before uninstalling stale third-party items.
-    # Clean packages without tap removal under the narrowly scoped compatibility
-    # override, then force-untap stale taps explicitly so neither step prompts.
-    HOMEBREW_NO_REQUIRE_TAP_TRUST=1 \
-      brew bundle cleanup --force --no-tap --file ./Brewfile
+    # Homebrew Bundle does not forward --force to its nested `brew untap`, so
+    # clean packages without tap removal, then force-untap stale taps explicitly
+    # so neither step prompts. Forced cleanup resets trust to the Brewfile's, and
+    # Homebrew uninstalls kegs and installed casks of untrusted taps without it.
+    brew bundle cleanup --force --no-tap --file ./Brewfile
 
     brewfile_taps=$(brew bundle list --tap --file ./Brewfile)
     while IFS= read -r tap_name; do
@@ -361,7 +368,7 @@ if $DO_BREWFILE; then
       grep -Fxq "$tap_name" <<<"$brewfile_taps" && continue
 
       info "Untapping Homebrew tap not listed in Brewfile: $tap_name"
-      HOMEBREW_NO_REQUIRE_TAP_TRUST=1 brew untap --force "$tap_name"
+      brew untap --force "$tap_name"
     done < <(brew tap)
   else
     warning "Brewfile not found, skipping Homebrew dependencies"
@@ -423,6 +430,36 @@ if $DO_MISE; then
       fi
     }
 
+    # mise holds back releases younger than minimum_release_age (24h by
+    # default) and warns about each one. That quarantine is intentional, so its
+    # notices become one summary line; every other message passes through.
+    mise_with_release_age_summary() {
+      local held status
+      held=$(mktemp)
+      mise_with_github_token "$@" 2>&1 | awk -v held="$held" '
+        /ignored by minimum_release_age/ && match($0, /newer [^ ]+ release [^ ]+/) {
+          split(substr($0, RSTART, RLENGTH), field, " ")
+          print field[2] " " field[4] >>held
+          next
+        }
+        { print; fflush() }'
+      status=${PIPESTATUS[0]}
+      if [[ -s "$held" ]]; then
+        info "Held back until a day old: $(paste -sd, "$held" | sed 's/,/, /g')"
+      fi
+      rm -f "$held"
+      return "$status"
+    }
+
+    # Homebrew keeps the macOS mise current; the mise.run install on Linux
+    # updates itself. Package-managed installs refuse self-update.
+    if [[ "$(command -v mise)" == "$HOME/.local/bin/mise" ]]; then
+      info "Updating mise..."
+      if ! mise_with_github_token self-update --yes; then
+        warning "mise self-update failed; continuing with $(mise --version)"
+      fi
+    fi
+
     install_mise_bootstrap_tool() {
       local tool="$1"
       if ! grep -Eq "^[[:space:]]*${tool}[[:space:]]*=" "$mise_source_config" 2>/dev/null; then
@@ -440,17 +477,15 @@ if $DO_MISE; then
     install_mise_bootstrap_tool uv
 
     info "Installing mise tools from global config..."
-    if ! mise_with_github_token install; then
+    if ! mise_with_release_age_summary install; then
       warning "Some mise tools failed to install; continuing with available tools"
     fi
     export PATH="$HOME/.local/share/mise/shims:$PATH"
 
     # Upgrade every tool, not just the agent clients: `mise install` only adds
     # missing tools, so pins like "latest" otherwise keep their first install.
-    # mise holds back releases younger than minimum_release_age (24h by
-    # default) and warns about each one; that quarantine is intentional.
     info "Upgrading all mise tools to their configured latest versions..."
-    if ! mise_with_github_token upgrade; then
+    if ! mise_with_release_age_summary upgrade; then
       warning "Some mise tools failed to upgrade; continuing with installed versions"
     fi
     # An upgrade moves version-stamped install directories, so refresh the shims
@@ -566,6 +601,26 @@ else
   skip "Symlinking Dotfiles"
 fi
 
+if $IS_DARWIN && $DO_OLLAMA; then
+  if command -v brew &>/dev/null && command -v ollama &>/dev/null; then
+    info "Starting Ollama and installing local models..."
+    node scripts/configure-ollama.mjs
+  else
+    warning "Ollama is not installed; install the Brewfile before configuring local models"
+  fi
+fi
+
+if $IS_DARWIN && $DO_VOICEINK && [[ -d /Applications/VoiceInk.app ]]; then
+  info "Installing VoiceInk local dictation models..."
+  node scripts/install-voiceink-models.mjs
+  if [[ -r "$HOME/.config/voiceink/settings.json" ]]; then
+    info "Configuring VoiceInk local dictation..."
+    node scripts/configure-voiceink.mjs
+  else
+    warning "VoiceInk settings are not linked; rerun setup without --no-symlinks to configure dictation"
+  fi
+fi
+
 banner "SETUP AGENT CONTINUITY"
 if command -v codex &>/dev/null; then
   codex features enable hooks
@@ -637,7 +692,9 @@ banner "SETUP NEOVIM"
 if $DO_NEOVIM; then
 
   if command -v nvim &>/dev/null; then
-    # Clean plugins with local changes before sync (prevents merge conflicts)
+    # Clean plugins with local changes before sync (prevents merge conflicts).
+    # lazy.nvim generates doc/tags itself, untracked wherever a plugin does not
+    # ignore it, so that file alone is not a local change.
     LAZY_PLUGINS_DIR="$HOME/.local/share/nvim/lazy"
     if [[ -d "$LAZY_PLUGINS_DIR" ]]; then
       cleaned=0
@@ -645,7 +702,7 @@ if $DO_NEOVIM; then
         [[ -d "$plugin_dir/.git" ]] || continue
         if ! git -C "$plugin_dir" diff --quiet 2>/dev/null ||
           ! git -C "$plugin_dir" diff --cached --quiet 2>/dev/null ||
-          [[ -n $(git -C "$plugin_dir" status --porcelain 2>/dev/null) ]]; then
+          [[ -n $(git -C "$plugin_dir" status --porcelain -- . ':(exclude)doc/tags' 2>/dev/null) ]]; then
           warning "Found local changes in $(basename "$plugin_dir"), cleaning..."
           rm -rf "$plugin_dir"
           ((cleaned++)) || true
@@ -689,39 +746,6 @@ if $DO_ZSH; then
 
 else
   skip "ZSH Plugins"
-fi
-
-banner "SETUP TMUX"
-if $DO_TMUX; then
-
-  if command -v tmux &>/dev/null; then
-    # Clone TPM directly rather than relying on the async if-shell hook in
-    # .tmux.conf. The hook still acts as a fallback for users who never run
-    # setup.sh, but doing it here removes the race that left TPM half-installed
-    # when tmux new-session returned.
-    TPM_DIR="$HOME/.tmux/plugins/tpm"
-    if [[ ! -d "$TPM_DIR" ]]; then
-      info "Cloning TPM into $TPM_DIR..."
-      git clone --depth=1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
-    fi
-
-    info "Installing tmux plugins (TPM bootstraps from .tmux.conf)..."
-    tmux new-session -d -s __setup__
-
-    if [[ -x "$TPM_DIR/bin/install_plugins" ]]; then
-      "$TPM_DIR/bin/install_plugins"
-      "$TPM_DIR/bin/update_plugins" all
-    else
-      warning "TPM not available at $TPM_DIR after clone attempt"
-    fi
-
-    tmux kill-session -t __setup__ 2>/dev/null || true
-  else
-    warning "tmux not found, skipping plugin installation"
-  fi
-
-else
-  skip "Tmux Setup"
 fi
 
 banner "SETUP MACOS"

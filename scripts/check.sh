@@ -139,6 +139,12 @@ jq -e '
 [ -x scripts/worktree-guard.sh ] || fail "worktree guard must be executable"
 [ -x scripts/configure-codex-hooks.mjs ] || fail "Codex hook configurator must be executable"
 node --check scripts/configure-codex-hooks.mjs
+node --check scripts/configure-voiceink.mjs
+node --test scripts/configure-voiceink.test.mjs
+node --check scripts/install-voiceink-models.mjs
+node --test scripts/install-voiceink-models.test.mjs
+node --check scripts/configure-ollama.mjs
+node --test scripts/configure-ollama.test.mjs
 rg -F 'command codex --dangerously-bypass-hook-trust "$@"' .zshrc >/dev/null ||
   fail "interactive Codex must bypass hook trust prompts"
 
@@ -233,30 +239,24 @@ check_hn_status
 
 check_flash_status() (
   config=$(yq -p toml -o json '.' .config/flash/flash.toml)
-  # The bar owns the quota names. ai-quota prints only the metric and keeps
-  # the last reading; tokscale's TUI stays resident behind the hover.
+  # The bar owns the quota names. Flash's aiproviders plugin prints only the
+  # metric and keeps the last reading; tokscale's TUI stays resident behind
+  # the hover.
   printf '%s' "$config" | jq -e '
     . as $config |
-    def item($source; $name; $provider; $link):
-      ($config.statusbar.template | contains("#[link=\($link)]#[label]\($name)#[default] #{flash.source.\($source)}")) and
-      ($config.statusbar.sources[$source].command == ["~/.dotfiles/scripts/ai-quota", $provider]) and
-      ($config.statusbar.sources[$source].interval == 60);
-    item("cld"; "Cld"; "claude"; "https://claude.ai/new#settings/usage") and
-    item("cdx"; "Cdx"; "codex"; "https://chatgpt.com/settings/usage?tab=overview") and
-    item("grk"; "Grk"; "grok"; "https://grok.com/?_s=usage") and
+    def item($name; $provider; $link):
+      ($config.statusbar.template | contains("#[link=\($link)]#[label]\($name)#[default] #{flash.plugin.aiproviders.\($provider)}"));
+    item("Cld"; "claude"; "https://claude.ai/new#settings/usage") and
+    item("Cdx"; "codex"; "https://chatgpt.com/settings/usage?tab=overview") and
     ($config.statusbar.template | contains("#[popup=ai-usage]")) and
-    ($config.statusbar.template | contains("aiproviders") | not) and
+    ((($config.statusbar.sources // {}) | has("cld") or has("cdx") or has("grk")) | not) and
     $config.popup["ai-usage"].command == ["tokscale"] and
     $config.popup["ai-usage"].persistent == true
-  ' >/dev/null || fail "Flash AI names must be #[label]s fed by ai-quota, with tokscale on hover"
-  if rg -n 'refresh_claude_code_credentials|aiproviders|agent-quota-status\.sh' .config/flash/flash.toml >/dev/null; then
-    fail "Cld/Cdx/Grk must come from scripts/ai-quota, not a Flash plugin or a side status script"
+  ' >/dev/null || fail "Flash AI names must be #[label]s fed by the aiproviders plugin, with tokscale on hover"
+  if rg -n 'refresh_claude_code_credentials|ai-quota|agent-quota-status\.sh' .config/flash/flash.toml >/dev/null; then
+    fail "Cld/Cdx must come from the aiproviders plugin, not a side status script"
   fi
-  [ -x scripts/ai-quota ] || fail "ai-quota must be executable"
-  scripts/ai-quota --self-test || fail "ai-quota must keep the last quota reading"
-  if rg -n 'api\.anthropic\.com|keychain|refresh_token' scripts/ai-quota >/dev/null; then
-    fail "ai-quota must not read Claude credentials, the keychain, or a Grok refresh token"
-  fi
+  [ ! -e scripts/ai-quota ] || fail "scripts/ai-quota is retired; the aiproviders plugin owns the quotas"
   rg -x '"npm:tokscale" = "[0-9]+\.[0-9]+\.[0-9]+"' .config/mise/config.toml >/dev/null ||
     fail "tokscale must be installed through mise at a pinned version"
   jq -e '.usage.disabledProviders | index("copilot")' .config/tokscale/settings.json >/dev/null ||
@@ -269,12 +269,13 @@ check_flash_status() (
       fail "tokscale runtime state must stay out of the repository: $tokscale_state"
   done
   printf '%s' "$config" | jq -e '
-    (.plugin.feed | has("label") | not) and
-    .plugin.feed.url == "https://aggr.aymericbeaumet.com/rss.xml" and
+    (.plugins.feed | has("label") | not) and
+    .plugins.feed.url == "https://aggr.aymericbeaumet.com/rss.xml" and
     (.statusbar.template |
-      contains("#[popup=feed]#[link=https://aggr.aymericbeaumet.com]#[label]aggr#[default]#[nolink]#[nopopup] #[popup=feed-article]#{flash.plugin.feed.label}#[nopopup]")) and
+      contains("#[popup=feed]#[link=https://aggr.aymericbeaumet.com]#[label]aggr#[default]#[nolink] #{flash.plugin.feed.label}#[nopopup]")) and
+    (.statusbar.template | contains("feed-article") | not) and
     (.statusbar.template |
-      contains("#[popup=btop]#[label]CPU#[default] #{p-3:flash.plugin.cpu.label} #[label]MEM#[default] #{p-3:flash.plugin.memory.label} #[label]DSK#[default] #{p-3:flash.plugin.disks.label} #[label]NET#[default] #{p-4:flash.plugin.network.label} #[label]BAT#[default] #{flash.plugin.power.label}#[nopopup]")) and
+      contains("#[popup=btop]#[label]CPU#[default] #{p-3:flash.plugin.sysinfo.cpu_label} #[label]MEM#[default] #{p-3:flash.plugin.sysinfo.memory_label} #[label]NET#[default] #{p-4:flash.plugin.sysinfo.network_label} #[label]BAT#[default] #{flash.plugin.sysinfo.power_label}#[nopopup]")) and
     (.popup.feed.command | index("../newsboat/urls")) != null and
     (.popup.feed.command | index("../newsboat/config")) != null and
     (.popup.feed.command | any(test("scripts/newsboat\\.sh"))) and
@@ -282,10 +283,8 @@ check_flash_status() (
     (.popup.feed.command | index("-c")) != null and
     (.popup.feed.command | index("~/.cache/newsboat/flash-feed.db")) != null and
     (.popup.feed.env | not) and
-    (.popup["feed-article"].command | any(test("scripts/newsboat-article\\.sh"))) and
-    (.popup["feed-article"].command | index("$FLASH_STATUS_LINK")) != null and
-    ((.popup["feed-article"].persistent // false) == false)
-  ' >/dev/null || fail "aggr, CPU, MEM, DSK, NET, and BAT must be #[label]s around plain plugin values, with newsboat on the aggr hover and the article text on the headline"
+    (.popup | has("feed-article") | not)
+  ' >/dev/null || fail "aggr, CPU, MEM, NET, and BAT must be #[label]s around plain plugin values, and the aggr label and headline must share the newsboat hover"
   # One newsboat setup serves both the popup and a bare `newsboat` in a
   # terminal, so the popup must own no config of its own. It stays resident
   # because newsboat only fetches while it runs, which holds a cache lock the
@@ -302,7 +301,7 @@ check_flash_status() (
   for karabiner_flash_mapping in \
     '"<delete_forward>" = ["flash", "move", "half_page_down"]' \
     '"cmd+<right>" = ["flash", "scroll", "line_down"]' \
-    '"<tab>" = ["flash", "movement_forward"]' \
+    '"<tab>" = ["flash", "movement", "forward"]' \
     '"cmd+<delete>" = ["flash", "move", "half_page_up"]'; do
     rg -F "$karabiner_flash_mapping" .config/flash/flash.toml >/dev/null ||
       fail "Flash NORMAL must bind the Karabiner form of a default ctrl chord: $karabiner_flash_mapping"
@@ -385,23 +384,19 @@ PY
   fi
   # Vim scrolling. ^D must stay bound here: newsboat ships it as
   # delete-all-articles, which wipes the list on a scroll reflex.
-  for newsboat_binding in '^E down' '^Y up' '^D halfpagedown' '^U halfpageup'; do
+  for newsboat_binding in '^E down' '^Y up' '^D halfpagedown' '^U halfpageup' \
+    '^O quit' 'TAB open'; do
     rg -Fx "bind-key $newsboat_binding" .config/newsboat/config >/dev/null ||
-      fail "newsboat must bind vim scrolling: $newsboat_binding"
+      fail "newsboat must bind the vim key: $newsboat_binding"
   done
-  # ^Y only reaches newsboat once the tty stops treating it as delayed suspend,
-  # so neither entry point may launch the binary directly.
+  # ^Y and ^O only reach newsboat once the tty stops treating them as delayed
+  # suspend and discard, so neither entry point may launch the binary directly.
   rg -Fx 'stty dsusp undef 2>/dev/null || true' scripts/newsboat.sh >/dev/null ||
     fail "the newsboat wrapper must drop the tty delayed-suspend character"
-  [ -x scripts/newsboat-article.sh ] ||
-    fail "the article hover must be an executable reader"
-  rg -F 'flash-feed.db' scripts/newsboat-article.sh >/dev/null ||
-    fail "the article hover must read the resident feed cache"
-  rg -F 'SELECT title, content FROM rss_item' scripts/newsboat-article.sh >/dev/null ||
-    fail "the article hover must show the stored item body"
-  if rg -F 'newsboat.sh' scripts/newsboat-article.sh >/dev/null; then
-    fail "the article hover shows the item text, not a second newsboat"
-  fi
+  rg -Fx 'stty discard undef 2>/dev/null || true' scripts/newsboat.sh >/dev/null ||
+    fail "the newsboat wrapper must drop the tty discard character"
+  [ ! -e scripts/newsboat-article.sh ] ||
+    fail "the headline hover is the same newsboat, not a second reader"
   rg -Fx 'alias newsboat=~/.dotfiles/scripts/newsboat.sh' .zshrc >/dev/null ||
     fail "the terminal newsboat must launch through that wrapper"
   # Newsboat only fetches while it is running, so the reader keeps itself
@@ -422,8 +417,8 @@ PY
   # the side lanes leave and ends it with an ellipsis, so no fixed trim width.
   printf '%s' "$config" | jq -e '
     (.statusbar.template |
-      contains("#[popup=active-app]#[shrink]#{flash.active_app_name}#[noshrink]#[nopopup]")) and
-    (.popup["active-app"].text | contains("#{flash.plugin.processes.focused_app_details}"))
+      contains("#[popup=active-app]#[shrink]#{flash.focused_app_name}#[noshrink]#[nopopup]")) and
+    (.popup["active-app"].text | contains("#{flash.focused_app_details}"))
   ' >/dev/null || fail "Flash must shrink the active-app label and retain focused-process details"
   # One resident btop sits behind every system label rather than a homemade
   # popup per metric.
@@ -431,22 +426,23 @@ PY
     . as $config |
     ($config.statusbar.template |
       capture("#\\[popup=btop\\](?<labels>[^\n]*?)#\\[nopopup\\]").labels) as $labels |
-    ($labels | contains("#{p-3:flash.plugin.cpu.label}")) and
-    ($labels | contains("#{p-3:flash.plugin.memory.label}")) and
-    ($labels | contains("#{p-3:flash.plugin.disks.label}")) and
-    ($labels | contains("#{p-4:flash.plugin.network.label}")) and
-    ($labels | contains("#{flash.plugin.power.label}")) and
+    ($labels | contains("#{p-3:flash.plugin.sysinfo.cpu_label}")) and
+    ($labels | contains("#{p-3:flash.plugin.sysinfo.memory_label}")) and
+    ($labels | contains("disks_") | not) and
+    ($labels | contains("flash.plugin.disks") | not) and
+    ($labels | contains("DSK") | not) and
+    ($labels | contains("#{p-4:flash.plugin.sysinfo.network_label}")) and
+    ($labels | contains("#{flash.plugin.sysinfo.power_label}")) and
     $config.popup.btop.command == ["btop"] and
     $config.popup.btop.persistent == true and
     ($config.statusbar.template | contains("#[popup=date]")) and
     $config.popup.date.text == "#{flash.calendar}"
   ' >/dev/null || fail "Flash system labels must open btop and the date the built-in calendar popup"
-  # strftime has no ordinal day. The expanded day selects st, nd, rd, or th,
-  # so the clock reads "Mon 5th 20:51" and still opens the calendar.
+  # Weekday, three-letter month, unpadded day, 24-hour time: "Thu Oct 15 18:55".
   printf '%s' "$config" | jq -e '
     .statusbar.template |
-      contains("#[popup=date]%a %-d#{?#{m/r:^(1|21|31)$,%-d},st,#{?#{m/r:^(2|22)$,%-d},nd,#{?#{m/r:^(3|23)$,%-d},rd,th}}} %H:%M#[nopopup]")
-  ' >/dev/null || fail "Flash clock must read like Mon 5th 20:51"
+      contains("#[popup=date]%a %b %-d %H:%M#[nopopup]")
+  ' >/dev/null || fail "Flash clock must read like Thu Oct 15 18:55"
   # mise's aqua btop is Linux-only, so macOS takes it from Homebrew.
   rg -q "^brew 'btop'" Brewfile || fail "the btop popup needs btop in the Brewfile"
   # The container count polled Colima on its own interval. The label, that
@@ -549,7 +545,7 @@ rg -F '#[popup=inline:' scripts/hn-top-stories.sh >/dev/null ||
 awk '
   $0 == "[mode.all.mappings]" { in_all = 1; next }
   in_all && /^\[/ { exit }
-  in_all && $0 == "\"alt+z\" = [\"flash\", \"window_move\", \"--x=10.6925%\", \"--y=10.6925%\", \"--width=78.615%\", \"--height=78.615%\"]" { found = 1 }
+  in_all && $0 == "\"alt+z\" = [\"flash\", \"window\", \"move\", \"--x=10.6925%\", \"--y=10.6925%\", \"--width=78.615%\", \"--height=78.615%\"]" { found = 1 }
   END { exit found ? 0 : 1 }
 ' .config/flash/flash.toml ||
   fail "Flash all-mode mappings must map alt+z to a centered golden-area layout"
@@ -618,8 +614,11 @@ awk '
 ' Brewfile
 rg -F 'brew bundle cleanup --force --no-tap --file ./Brewfile' setup.sh >/dev/null ||
   fail "Homebrew Bundle cleanup must leave tap removal to the noninteractive force-untap pass"
-rg -F 'HOMEBREW_NO_REQUIRE_TAP_TRUST=1 brew untap --force "$tap_name"' setup.sh >/dev/null ||
+rg -F 'brew untap --force "$tap_name"' setup.sh >/dev/null ||
   fail "stale Homebrew taps must be removed without prompting"
+if rg -n 'HOMEBREW_NO_REQUIRE_TAP_TRUST' setup.sh >/dev/null; then
+  fail "HOMEBREW_NO_REQUIRE_TAP_TRUST is deprecated; Brewfile taps declare trusted: true"
+fi
 rg -Fx "brew 'mole'" Brewfile >/dev/null ||
   fail "Mole must use its current Homebrew Core formula"
 if rg -n 'tw93/tap' Brewfile >/dev/null; then
@@ -742,9 +741,9 @@ for precmd_hook in _reset_cursor _title_precmd _title_preexec; do
     fail "hook $precmd_hook must write to the terminal descriptor, not stdout"
 done
 [ -x scripts/zsh-latency.sh ] || fail "the zsh latency probe must be executable"
-rg -F 'exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\""]' .config/alacritty/alacritty.toml >/dev/null ||
+rg -F 'exec tmux new-session -A -s scratch -c \"$HOME/workspace/aymericbeaumet\"' .config/alacritty/alacritty.toml >/dev/null ||
   fail "Alacritty must attach its single window to the local scratch session"
-if rg -n 'ipc_socket|create-window|ALACRITTY_SOCKET|mosh|moria' .config/alacritty/alacritty.toml scripts/scratch-terminal.sh >/dev/null; then
+if rg -n 'ipc_socket|create-window|ALACRITTY_SOCKET|mosh|moria' .config/alacritty/alacritty.toml >/dev/null; then
   fail "the remote Moria scratch window was retired; Alacritty runs one local window"
 fi
 # Shift suppresses tmux's mouse reporting, so a Shift+drag is Alacritty's own
@@ -809,8 +808,8 @@ rg -Fx 'bind      o select-pane -t :.+' .tmux.conf >/dev/null ||
   fail "tmux prefix o must select the next pane"
 rg -Fx 'bind      O select-pane -t :.-' .tmux.conf >/dev/null ||
   fail "tmux prefix O must select the previous pane"
-rg -Fx 'chars = "\u0011d"' .config/alacritty/alacritty.toml >/dev/null ||
-  fail "Alacritty Cmd+R must ask tmux to detach cleanly"
+rg -Fx 'chars = "\u0011r"' .config/alacritty/alacritty.toml >/dev/null ||
+  fail "Alacritty Cmd+R must reload the tmux configuration"
 for shifted_arrow in 'B:D' 'F:C' 'N:B' 'P:A'; do
   key=${shifted_arrow%%:*}
   arrow=${shifted_arrow##*:}
@@ -875,8 +874,6 @@ fi
 if rg -n 'user-keys|bind -n User' .tmux.conf >/dev/null; then
   fail "Alacritty shortcuts must use normal tmux prefix mappings"
 fi
-rg -F 'tmux new-session -A -s "$LOCAL_SESSION" -c "$LOCAL_ROOT"' scripts/scratch-terminal.sh >/dev/null ||
-  fail "scratch terminal must reattach the local tmux session"
 [ ! -e scripts/grid.sh ] || fail "retired tmux grid helper remains"
 if rg -n 'grid\.sh|rows=3|cols=3' .tmux.conf >/dev/null; then
   fail "retired tmux grid mappings remain"
@@ -885,26 +882,15 @@ if rg -n 'mosh' Brewfile >/dev/null; then
   fail "Mosh was retired with the Moria scratch window"
 fi
 [ ! -e .config/tmuxinator ] || fail "retired tmuxinator profiles remain"
-[ ! -e scripts/tmux-resurrect-save.sh ] || fail "tmux process/content save wrapper remains"
-rg -Fx "set -g @resurrect-default-processes 'false'" .tmux.conf >/dev/null ||
-  fail "tmux restore must not relaunch default non-agent processes"
-rg -Fx "set -g @resurrect-processes '\"~codex->codex --dangerously-bypass-hook-trust\" \"~claude->claude\"'" .tmux.conf >/dev/null ||
-  fail "tmux restore must relaunch only Codex and Claude through stable commands"
-if rg -n '@resurrect-capture-pane-contents|@resurrect-pane-contents-area|@resurrect-save-script-path' .tmux.conf >/dev/null; then
-  fail "tmux restore must not capture pane content"
-fi
 # A #() job on the status line re-runs about once a second and marks the status
 # dirty each time it finishes, and every client redraw repaints an open popup in
 # full. Same for a polling interval on a status line that carries no timed
-# content. Both read as a flickering popup border, so keep the status line inert
-# and tick tmux-continuum from hooks instead.
+# content. Both read as a flickering popup border, so keep the status line inert.
 if rg -n '^set -g status-format\[0\].*#\(' .tmux.conf >/dev/null; then
   fail "the status line must run no #() job; each tick repaints open popups"
 fi
 rg -Fx 'set -g status-interval 0' .tmux.conf >/dev/null ||
   fail "the status line carries no timed content, so it must not poll"
-rg -n 'set-hook -g [a-z-]+\[10\] +.run -b "~/\.tmux/plugins/tmux-continuum/scripts/continuum_save\.sh"' .tmux.conf >/dev/null ||
-  fail "tmux-continuum autosave must tick from hooks, not from a status-line job"
 if rg -n 'tmuxinator|headquarter|beside|session-picker' .tmux.conf scripts/status-click.sh >/dev/null; then
   fail "retired named-session routing remains configured"
 fi

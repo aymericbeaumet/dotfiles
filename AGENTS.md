@@ -25,11 +25,15 @@ integrate durable lessons into the appropriate surface and revise stale content.
   its last value in place. Declare only changes from a fresh Mac. Keep password-dependent
   settings manual; `setup.sh` retains sudo-only system domains and sandboxed app containers.
 - Flash status names, colours, links, and hovers live in `.config/flash/flash.toml`
-  (`docs/flash-status.md`). Plugins and `scripts/ai-quota` print values only.
-  Hovering `aggr` opens the newsboat list; hovering the headline opens that
-  article's text. The Cld/Cdx/Grk segment stays here; do not move it back into a Flash plugin.
+  (`docs/flash-status.md`). Plugins print values only.
+  Hovering `aggr` or the headline opens the newsboat list. The Cld/Cdx
+  metrics come from Flash's aiproviders plugin; their names and links stay here.
 - Cross-platform user-facing CLIs belong in `.config/mise/config.toml`. Prefer a mise registry
   short name, then `aqua:`, `ubi:`, `npm:`, or `pipx:`.
+- VoiceInk settings are applied from `.config/voiceink/`; do not symlink its native preferences
+  or databases, which contain licensing state and history. Read `docs/voice-dictation.md`.
+- Ollama and VoiceInk are macOS-only. Ollama's daemon belongs in `Brewfile`, not mise;
+  `.config/ollama/models.txt` declares its models (`docs/ollama.md`).
 - Use Colima for local containers on macOS and native Docker Engine on Linux. Colima's macOS VM
   integration is an explicit Homebrew exception; keep the Docker CLI in mise. On Apple Silicon,
   prefer VZ, virtiofs, and Rosetta. Read `docs/containers.md` before changing runtime or storage.

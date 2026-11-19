@@ -47,7 +47,10 @@ M4 costs about 1 ms, and each tool binary adds its own startup on top.
   removes that hook and refreshes at the next prompt only after a command line
   mentioning `mise` or `tool-versions`, which covers `mise use`, `mise install`,
   and editing a config in the editor. After a config changes by other means
-  (for example `git pull`), `cd .` applies it.
+  (for example `git pull`), `cd .` applies it. The cached hook comes from the
+  first `mise` outside a shims directory: a project that pins mise
+  (`aqua:jdx/mise`) adds a `mise` shim, and a hook generated through it calls
+  flags that the installed mise rejects everywhere else.
 - **No `find` or `$(...)` at startup for cheap checks.** The man cache age uses
   a glob qualifier under a local `extended_glob`.
 

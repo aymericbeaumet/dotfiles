@@ -44,8 +44,14 @@ _dotfiles_carapace_init() {
 # after a command line that names mise or a tool-versions file, which covers
 # `mise use`, `mise install`, and editing a mise config. After anything else
 # changes a config, `cd .` applies it.
+# A project that pins mise itself puts a `mise` shim ahead of the installed
+# binary, and the hook generated through it belongs to that project's version.
+# Generate from the first mise outside a shims directory instead.
 _dotfiles_mise_init() {
-  _dotfiles_cached_source mise mise mise activate zsh || return
+  local -a bins=(${^path}/mise(N-*))
+  bins=(${bins:#*/shims/mise})
+  (( $#bins )) || return
+  _dotfiles_cached_source mise $bins[1] $bins[1] activate zsh || return
   typeset -gi _dotfiles_mise_refresh=0
   add-zsh-hook -d precmd _mise_hook_precmd
   add-zsh-hook preexec _dotfiles_mise_preexec

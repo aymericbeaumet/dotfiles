@@ -85,6 +85,11 @@ bind-key h quit
 bind-key d pagedown
 bind-key u pageup
 bind-key b open-in-browser
+# Vim jumplist. Ctrl-O steps back out of a view and Ctrl-I steps into the
+# selection, the same directions as h and l. A terminal cannot tell Ctrl-I
+# from Tab, and STFL reports that input as TAB.
+bind-key ^O quit
+bind-key TAB open
 
 # Vim scrolling. The article view has no cursor, so down/up there scroll the text
 # a line at a time, which is what ^E/^Y do in vim; in the lists they step the

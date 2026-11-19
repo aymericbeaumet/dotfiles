@@ -3,9 +3,8 @@
 #
 # Claude pipes one JSON object on stdin after each response. This prints a
 # one-line summary and, when that object carries a weekly rate limit, records
-# it at ${XDG_CACHE_HOME:-$HOME/.cache}/claude/rate-limits.json. The Flash Cld
-# label and claude-week read that file. It holds percentages and reset times
-# only. CLAUDE_USAGE_NOW pins the clock for tests; otherwise the clock is now.
+# it at ${XDG_CACHE_HOME:-$HOME/.cache}/claude/rate-limits.json, which
+# claude-week reads. It holds percentages and reset times only. CLAUDE_USAGE_NOW pins the clock for tests; otherwise the clock is now.
 set -u
 
 if ! command -v jq >/dev/null 2>&1; then

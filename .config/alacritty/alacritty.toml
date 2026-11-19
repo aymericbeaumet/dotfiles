@@ -159,10 +159,9 @@ action = "None"
 key = "N"
 mods = "Command"
 
-# Detach the tmux client; scripts/scratch-terminal.sh reattaches immediately,
-# which reloads the tmux configuration and resets the client state.
+# Reload the tmux configuration through its prefix+r binding.
 [[keyboard.bindings]]
-chars = "\u0011d"
+chars = "\u0011r"
 key = "R"
 mods = "Command"
 
@@ -225,7 +224,7 @@ save_to_clipboard = true
 # single window attached to the local scratch session.
 [terminal.shell]
 program = "/bin/zsh"
-args = ["-l", "-c", "exec \"$HOME/.dotfiles/scripts/scratch-terminal.sh\""]
+args = ["-l", "-c", "exec tmux new-session -A -s scratch -c \"$HOME/workspace/aymericbeaumet\""]
 
 [window]
 decorations = "None"

@@ -20,14 +20,16 @@ brew 'newsboat'                # Flash's news feed popup
 brew 'mole'
 brew 'netbirdio/tap/netbird'   # NetBird VPN daemon/CLI (required by netbird-ui)
 brew 'nowplaying-cli'
+brew 'ollama'                  # Local model daemon, managed by Homebrew services
 brew 'xcodegen'                # Generate Xcode projects from YAML specifications
 cask 'antigravity-cli'         # Antigravity agent CLI; macOS-only, so not mise
 cask 'ngrok'                   # ngrok tunnels CLI (Homebrew ships it as a cask)
 
 # macOS GUI applications
+cask 'aerial'                  # Hobbiton video wallpaper and screen saver
 cask 'alacritty'
 cask 'aws-vpn-client'
-cask 'chatgpt'                 # Includes the current Codex desktop app
+cask 'chatgpt'                 # ChatGPT desktop app
 cask 'claude'
 cask 'cursor'
 cask 'daisydisk'
@@ -55,5 +57,6 @@ cask 'telegram'
 cask 'transmission'
 cask 'utm'
 cask 'vlc'
+cask 'voiceink'                # Local English/French dictation
 cask 'whatsapp'
 cask 'zoom'

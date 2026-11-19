@@ -60,6 +60,9 @@ This preserves context selection and compatibility with remote Docker engines.
 
 ## Storage and migration
 
+Flash's disk cleanup runs `colima prune --all --force` to remove Colima and Lima's
+cached downloads. It does not prune container images, containers, or volumes.
+
 Inspect the selected engine with `rtk proxy docker system df -v`, `rtk proxy docker ps -a`, and
 `rtk proxy docker volume ls` before cleanup. Build caches and unused images can be regenerated;
 named volumes and container filesystems may contain the only copy of a database. Stop is the

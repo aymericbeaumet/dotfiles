@@ -1,0 +1,60 @@
+{
+  "microphones": [
+    {
+      "name": "Sennheiser Profile",
+      "modelUID": "Sennheiser Profile:1377:1100"
+    },
+    {
+      "name": "Shure MV7"
+    },
+    {
+      "name": "Studio Display Microphone",
+      "modelUID": "Studio Display Audio Control:05AC:1114"
+    },
+    {
+      "name": "MacBook Pro Microphone",
+      "ids": ["BuiltInMicrophoneDevice"],
+      "modelUID": "Digital Mic"
+    }
+  ],
+  "preferences": {
+    "CurrentTranscriptionModel": "parakeet-ultra",
+    "SelectedLanguage": "auto",
+    "ollamaBaseURL": "http://127.0.0.1:11434",
+    "ollamaSelectedModel": "ministral-3:8b",
+    "primaryRecordingShortcut": "custom",
+    "primaryRecordingShortcutMode": "toggle",
+    "secondaryRecordingShortcut": "none",
+    "secondaryRecordingShortcutMode": "pushToTalk",
+    "Shortcut_primaryRecording_cleared": false,
+    "audioInputMode": "Prioritized",
+    "IsAutoLearnDictionaryEnabled": false,
+    "AutoLearnDictionaryReviewerProvider": "",
+    "AutoLearnDictionaryReviewerModel": "",
+    "AutoLearnDictionaryReviewerSelectionMigratedV1": true,
+    "PrewarmModelOnWake": true
+  },
+  "shortcut": {
+    "kind": "key",
+    "keyCode": 49,
+    "modifierFlagsRawValue": 524288
+  },
+  "mode": {
+    "id": "0240865A-F2BD-40D1-97D9-C02CD140E15A",
+    "name": "Local English + French",
+    "isAIEnhancementEnabled": true,
+    "selectedAIProvider": "Ollama",
+    "selectedAIModel": "ministral-3:8b",
+    "selectedTranscriptionModelName": "parakeet-ultra",
+    "selectedLanguage": "auto",
+    "isRealtimeTranscriptionEnabled": true,
+    "useClipboardContext": false,
+    "useSelectedTextContext": false,
+    "useScreenCapture": false,
+    "isTextFormattingEnabled": false,
+    "outputMode": "paste",
+    "autoSendKey": "none",
+    "isEnabled": true,
+    "isDefault": true
+  }
+}

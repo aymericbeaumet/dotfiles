@@ -1,0 +1,2 @@
+# One explicit model tag per line. Setup installs missing models and keeps others.
+ministral-3:8b

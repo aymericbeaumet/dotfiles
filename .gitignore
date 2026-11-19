@@ -38,6 +38,8 @@ xcuserdata
 .env*.local
 .zshsecret
 .zshsecret.*
+/.config/voiceink/dictionary.json
+/.config/voiceink/microphones.local.json
 
 # Python
 __pycache__/

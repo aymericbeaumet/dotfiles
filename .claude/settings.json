@@ -20,7 +20,7 @@
       "EnterWorktree",
       "ExitWorktree"
     ],
-    "defaultMode": "bypassPermissions"
+    "defaultMode": "auto"
   },
   "hooks": {
     "PreToolUse": [
@@ -77,9 +77,12 @@
       "effortLevel": "high"
     },
     "claude-fable-5-1": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     },
     "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    },
+    "claude-fable-5-2": {
       "effortLevel": "high"
     }
   }

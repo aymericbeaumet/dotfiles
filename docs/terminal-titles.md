@@ -33,6 +33,10 @@ basename) for the status line. The Alacritty window uses a fixed title with
 
 ## Rules
 
+- Alacritty launches tmux directly and attaches to the live `scratch` session,
+  creating it when needed. Sessions have no disk save/restore, plugin manager,
+  or terminal retry loop. Closing Alacritty leaves the live session running;
+  stopping tmux or rebooting discards it. Cmd+R reloads `.tmux.conf`.
 - Do not add client hooks, tmux user options (`@agent-*`), or
   `pane_current_command` matching to label panes. If a program's title is
   missing or wrong, fix it at the program (its title setting) or report it

@@ -3,7 +3,6 @@ layout = "colemak"
 
 [flashlight]
 ignored_apps = ["com.flash.native-fixture", "com.flash.native-oracle", "com.flash.vimium-oracle"]
-suggestion_count = 10
 
 [debug]
 log_level = "trace"
@@ -12,64 +11,64 @@ log_level = "trace"
 enabled = true
 monitor = "primary"
 template = """
-#[align=left]#[pill]#{flash.mode}#[nopill] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#[label]aggr#[default]#[nolink]#[nopopup] #[popup=feed-article]#{flash.plugin.feed.label}#[nopopup]
+#[align=left]#[pill]#{flash.mode}#[nopill] · #[popup=feed]#[link=https://aggr.aymericbeaumet.com]#[label]aggr#[default]#[nolink] #{flash.plugin.feed.label}#[nopopup]
 
 #[align=centre]#[popup=active-app]#[shrink]#{flash.focused_app_name}#[noshrink]#[nopopup]
 
-#[align=right]#[popup=ai-usage]#[link=https://claude.ai/new#settings/usage]#[label]Cld#[default] #{flash.source.cld}#[nolink] #[link=https://chatgpt.com/settings/usage?tab=overview]#[label]Cdx#[default] #{flash.source.cdx}#[nolink] #[link=https://grok.com/?_s=usage]#[label]Grk#[default] #{flash.source.grk}#[nolink]#[nopopup] · #[popup=btop]#[label]CPU#[default] #{p-3:flash.plugin.cpu.label} #[label]MEM#[default] #{p-3:flash.plugin.memory.label} #[label]DSK#[default] #{p-3:flash.plugin.disks.label} #[label]NET#[default] #{p-4:flash.plugin.network.label} #[label]BAT#[default] #{flash.plugin.power.label}#[nopopup] · #[popup=date]%a %-d#{?#{m/r:^(1|21|31)$,%-d},st,#{?#{m/r:^(2|22)$,%-d},nd,#{?#{m/r:^(3|23)$,%-d},rd,th}}} %H:%M#[nopopup]
+#[align=right]#[popup=ai-usage]#[link=https://claude.ai/new#settings/usage]#[label]Cld#[default] #{flash.plugin.aiproviders.claude}#[nolink] #[link=https://chatgpt.com/settings/usage?tab=overview]#[label]Cdx#[default] #{flash.plugin.aiproviders.codex}#[nolink]#[nopopup] · #[popup=btop]#[label]CPU#[default] #{p-3:flash.plugin.sysinfo.cpu_label} #[label]MEM#[default] #{p-3:flash.plugin.sysinfo.memory_label} #[label]NET#[default] #{p-4:flash.plugin.sysinfo.network_label} #[label]BAT#[default] #{flash.plugin.sysinfo.power_label}#[nopopup] · #[popup=date]%a %b %-d %H:%M#[nopopup]
 """
 
 [mode]
-scroll_step_lines = 3
-scroll_page_lines = 20
-sequence_timeout_ms = 1000
 
 [mode.all.mappings]
 # enter normal mode
-"cmd+ctrl+[" = ["flash", "enter_normal_mode"]
+"cmd+ctrl+[" = ["flash", "mode", "normal"]
 # enter insert mode
-"cmd+ctrl+i" = ["flash", "enter_insert_mode"]
+"cmd+ctrl+i" = ["flash", "mode", "insert"]
 # enter command mode
-"cmd+ctrl+semicolon" = ["flash", "enter_command_mode"]
+"cmd+ctrl+semicolon" = ["flash", "mode", "command"]
+# enter hold mode (grab what is under the pointer; press again to drop)
 # enter flashlight
-"cmd+<space>" = ["flash", "enter_command_mode", "--input=:flashlight "]
-"cmd+ctrl+<space>" = ["flash", "enter_command_mode", "--input=:flashlight @emojis.glyphs ", "--restore-mode"]
+"cmd+<space>" = ["flash", "mode", "command", "--input=:flashlight "]
+"cmd+ctrl+<space>" = ["flash", "mode", "flashlight", "--query=@emojis", "--restore-mode"]
 # window management
-"alt+h" = ["flash", "window_move", "--position=lefthalf"]
-"alt+j" = ["flash", "window_move", "--position=bottomhalf"]
-"alt+k" = ["flash", "window_move", "--position=tophalf"]
-"alt+l" = ["flash", "window_move", "--position=righthalf"]
-"alt+m" = ["flash", "window_move", "--position=maximized"]
-"alt+z" = ["flash", "window_move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]
-"alt+n" = ["flash", "window_move", "--screen=+1"]
-"alt+p" = ["flash", "window_move", "--screen=-1"]
+"alt+h" = ["flash", "window", "move", "--position=lefthalf"]
+"alt+j" = ["flash", "window", "move", "--position=bottomhalf"]
+"alt+k" = ["flash", "window", "move", "--position=tophalf"]
+"alt+l" = ["flash", "window", "move", "--position=righthalf"]
+"alt+m" = ["flash", "window", "move", "--position=maximized"]
+"alt+n" = ["flash", "window", "move", "--screen=+1"]
+"alt+p" = ["flash", "window", "move", "--screen=-1"]
+"alt+z" = ["flash", "window", "move", "--x=10.6925%", "--y=10.6925%", "--width=78.615%", "--height=78.615%"]
 
 [mode.normal]
 leader = "<space>"
 
 [mode.normal.mappings]
 # app switch chords
-"'a" = ["flash", "app_open", "--name=Alacritty"]
-"'b" = ["flash", "enter_terminal_mode", "--name=bonsai"]
-"'c" = ["flash", "app_open", "--name=Claude"]
-"'e" = ["flash", "app_open", "--name=Element"]
-"'f" = ["flash", "app_open", "--name=Firefox"]
-"'i" = ["flash", "app_open", "--name=Messages"]
-"'l" = ["flash", "app_open", "--name=Linear"]
-"'n" = ["flash", "app_open", "--name=Notes"]
-"'p" = ["flash", "app_open", "--name=Postico 2"]
-"'r" = ["flash", "app_open", "--name=Reminders"]
-"'s" = ["flash", "app_open", "--name=Slack"]
-"'y" = ["flash", "app_open", "--name=Spotify"]
-"'w" = ["flash", "app_open", "--name=WhatsApp"]
+"'a" = ["flash", "app", "open", "--name=Alacritty"]
+"'b" = ["flash", "mode", "terminal", "--name=bonsai"]
+"'c" = ["flash", "app", "open", "--name=Claude"]
+"'e" = ["flash", "app", "open", "--name=Element"]
+"'f" = ["flash", "app", "open", "--name=Firefox"]
+"'h" = ["flash", "app", "open", "--name=ChatGPT"]
+"'i" = ["flash", "app", "open", "--name=Messages"]
+"'l" = ["flash", "app", "open", "--name=Linear"]
+"'n" = ["flash", "app", "open", "--name=Notes"]
+"'p" = ["flash", "app", "open", "--name=Postico 2"]
+"'r" = ["flash", "app", "open", "--name=Reminders"]
+"'s" = ["flash", "app", "open", "--name=Slack"]
+"'w" = ["flash", "app", "open", "--name=WhatsApp"]
+"'y" = ["flash", "app", "open", "--name=Spotify"]
 # convenient utilities
 "<leader>c" = ["flash", "caffeinate", "toggle"]
 "<leader>p" = ["../../scripts/toggle_play.sh"]
+"<leader>w" = ["flash", "notificationcenter", "toggle"]
 # karabiner remaps (Ctrl-Y already uses the default scroll line_up)
 "<delete_forward>" = ["flash", "move", "half_page_down"] # Ctrl-D
-"cmd+<right>" = ["flash", "scroll", "line_down"]                # Ctrl-E
-"<tab>" = ["flash", "movement_forward"]                 # Ctrl-I
+"<tab>" = ["flash", "movement", "forward"]               # Ctrl-I
 "cmd+<delete>" = ["flash", "move", "half_page_up"]       # Ctrl-U
+"cmd+<right>" = ["flash", "scroll", "line_down"]         # Ctrl-E
 
 [popup]
 bg = "#242933"
@@ -79,46 +78,32 @@ padding = 10
 text = "#{flash.calendar}"
 
 [popup.active-app]
-text = """
-#[fg=#EBCB8B]#{flash.focused_app_name}#[default]
-#{flash.plugin.processes.focused_app_details}
-"""
+text = "#{flash.focused_app_details}"
 
 # AI usage from tokscale's own TUI (installed through mise): tokens and cost by
 # day and model, subscription quotas under Usage. It stays resident and refreshes
 # itself every five minutes (tokscale's autoRefresh setting); r refreshes now.
 [popup.ai-usage]
 command = ["tokscale"]
-size = "140x40"
 persistent = true
+size = "140x40"
 
-# Cld, Cdx, and Grk names, colours, links, and the tokscale hover live in the
-# template. scripts/ai-quota prints only the metric and keeps the last reading.
-# Claude's number comes from the status-line cache; credentials stay untouched.
-
-[statusbar.sources.cld]
-command = ["~/.dotfiles/scripts/ai-quota", "claude"]
-interval = 60
-
-[statusbar.sources.cdx]
-command = ["~/.dotfiles/scripts/ai-quota", "codex"]
-interval = 60
-
-[statusbar.sources.grk]
-command = ["~/.dotfiles/scripts/ai-quota", "grok"]
-interval = 60
+# Cld and Cdx names, colours, links, and the tokscale hover live in the
+# template. The aiproviders plugin prints only the metric and keeps the last
+# reading. Claude's number comes from the status-line cache; credentials stay
+# untouched.
 
 # One resident system monitor behind every system label.
 [popup.btop]
 command = ["btop"]
-size = "90%x85%"
 persistent = true
+size = "90%x85%"
 
 [popup.bonsai]
 command = ["bonsai", "hq"]
 cwd = "~"
-size = "78.615%x78.615%"
 persistent = true
+size = "78.615%x78.615%"
 
 [popup.feed]
 command = [
@@ -134,42 +119,28 @@ command = [
   "~/.cache/newsboat/flash-feed.db",
 ]
 cwd = "."
-size = "100x30"
 persistent = true
-
-# The headline hover. Fresh, so each showing reads the item under the pointer:
-# $FLASH_STATUS_LINK is that span's link, and the pager shows its text. A
-# prewarmed process would start before the hover and would not have the link.
-[popup.feed-article]
-command = [
-  "sh",
-  "-c",
-  "exec ~/.dotfiles/scripts/newsboat-article.sh \"$@\"",
-  "newsboat",
-  "$FLASH_STATUS_LINK",
-]
-cwd = "."
 size = "100x30"
 
 [plugins.feed]
-url = "https://aggr.aymericbeaumet.com/rss.xml"
-refresh_interval = 300
 cycle_interval = 30
+refresh_interval = 300
+url = "https://aggr.aymericbeaumet.com/rss.xml"
 
-# Free space before the disk fills: at 90% of the startup volume, clean every
-# bonsai worktree that is safe to remove, then run Mole's non-interactive
-# cleanup (user-level caches; system ones need a sudo session). At most every
-# six hours; the built-in disk monitor still raises its own alert.
 [monitors.disk_cleanup]
-value = "#{flash.plugin.sysinfo.disks_percent}"
-warning = 90
 alert = false
-timeout = 1800
 cooldown = 21600
 run = [
+  # system cleanup
+  ["mole", "clean"],
+  # Colima and Lima download caches
+  ["colima", "prune", "--all", "--force"],
+  # bonsai cleanup
   ["bonsai", "clean", "--all", "--force"],
-  ["mo", "clean"],
 ]
+timeout = 1800
+value = "#{flash.plugin.sysinfo.disks_percent}"
+warning = 90
 
 # Commands run at Flash launch, or with `flash startup run`.
 # Removing a command leaves its last value in place. The menu bar belongs to [statusbar].
