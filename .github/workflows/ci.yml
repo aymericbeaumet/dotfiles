@@ -18,6 +18,9 @@ jobs:
     name: Checks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
+    env:
+      # mise discovers the workstation config from the checkout directory.
+      MISE_IGNORED_CONFIG_PATHS: ${{ github.workspace }}/.config/mise/config.toml
     strategy:
       fail-fast: false
       matrix:
@@ -40,14 +43,13 @@ jobs:
       - name: Install portable validators
         uses: jdx/mise-action@v4
         with:
-          # CI also installs the tools in .config/mise/config.toml. The http:f3
-          # entry needs HTTP backend headers, supported since 2026.10.4.
           version: 2026.11.9
           mise_toml: |
             [tools]
             actionlint = "1.7.12"
             jq = "1.8.1"
             neovim = "0.12.3"
+            node = "26.0.0"
             ripgrep = "14.1.1"
             shellcheck = "0.11.0"
             shfmt = "3.13.1"
